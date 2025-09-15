@@ -5,10 +5,11 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'About Us', path: '/who-we-are' },
-    { label: 'Brands', path: '/brands' },
-    { label: 'Contact Us', path: '/contact' }
+    { label: 'Domov', path: '/' },
+    { label: 'Komponenty', path: '/components' },
+    { label: 'O nás', path: '/who-we-are' },
+    { label: 'Značky', path: '/brands' },
+    { label: 'Kontakt', path: '/contact' }
   ];
 
   const handleNavClick = (path) => {
@@ -16,16 +17,30 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="w-full bg-black border-b border-white/20 py-6 px-6 sm:px-8 lg:px-12">
+    <nav className="w-full bg-black border-b border-white/20 py-6 px-6 sm:px-8 lg:px-12 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo/Brand */}
+        {/* Logo/Brand - Moved to left side */}
         <div 
-          className="text-white font-light text-xl tracking-wide cursor-pointer hover:opacity-80 transition-opacity"
+          className="cursor-pointer hover:opacity-80 transition-opacity bg-white rounded-lg p-2 -ml-32"
           onClick={() => handleNavClick('/')}
         >
-          SMART SANITY
+          <img 
+            src="/logo.png" 
+            alt="SMART SANITY" 
+            className="h-12 w-auto"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'block';
+            }}
+          />
+          <div 
+            className="text-black font-light text-xl tracking-wide" 
+            style={{ display: 'none' }}
+          >
+            SMART SANITY
+          </div>
         </div>
-
+        
         {/* Navigation Links */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (

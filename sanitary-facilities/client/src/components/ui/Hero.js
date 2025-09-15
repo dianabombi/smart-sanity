@@ -37,7 +37,7 @@ const Hero = ({
         )}
         
         {subtitle && (
-          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white opacity-90 mb-12 max-w-5xl mx-auto leading-relaxed">
+          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white opacity-90 mb-8 max-w-5xl mx-auto leading-relaxed -mt-4">
             {subtitle}
           </p>
         )}

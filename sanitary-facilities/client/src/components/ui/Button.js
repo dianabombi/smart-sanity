@@ -8,7 +8,7 @@ const Button = ({
   className = '',
   ...props 
 }) => {
-  const baseClasses = 'font-medium tracking-wide uppercase transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 shadow-2xl hover:shadow-[0_20px_50px_rgba(255,255,255,0.4)]';
+  const baseClasses = 'font-medium tracking-wide uppercase transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 shadow-2xl hover:shadow-[0_20px_50px_rgba(255,255,255,0.4)] rounded-lg';
   
   const variants = {
     primary: 'bg-transparent border-2 border-white text-white hover:bg-white hover:text-black shadow-[0_10px_30px_rgba(255,255,255,0.3)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.5)]',

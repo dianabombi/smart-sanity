@@ -42,6 +42,27 @@ export const BathtubIcon = ({ size = 64, className = "" }) => (
   </div>
 );
 
+// Bidet Icon
+export const BidetIcon = ({ size = 64, className = "" }) => (
+  <div className={`text-white ${className}`} style={{ fontSize: size }}>
+    🚿
+  </div>
+);
+
+// Tiles Icon (Obklady)
+export const TilesIcon = ({ size = 64, className = "" }) => (
+  <div className={`text-white ${className}`} style={{ fontSize: size }}>
+    🔲
+  </div>
+);
+
+// Lighting Icon (Osvetlenie)
+export const LightingIcon = ({ size = 64, className = "" }) => (
+  <div className={`text-white ${className}`} style={{ fontSize: size }}>
+    💡
+  </div>
+);
+
 export const getIconComponent = (iconName) => {
   const icons = {
     battery: BatteryIcon,
@@ -49,7 +70,10 @@ export const getIconComponent = (iconName) => {
     sink: SinkIcon,
     toilet: ToiletIcon,
     shower: ShowerIcon,
-    bathtub: BathtubIcon
+    bathtub: BathtubIcon,
+    bidet: BidetIcon,
+    tiles: TilesIcon,
+    lighting: LightingIcon
   };
   return icons[iconName] || TapIcon;
 };

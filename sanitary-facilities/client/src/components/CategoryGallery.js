@@ -1,7 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from './layout/Layout';
-import Navigation from './layout/Navigation';
+import Breadcrumbs from './ui/Breadcrumbs';
+import NavBar from './layout/NavBar';
 
 const CategoryGallery = () => {
   const { category } = useParams();
@@ -14,26 +15,31 @@ const CategoryGallery = () => {
   ];
 
   const categoryTitles = {
-    battery: 'BATTERY SOLUTIONS',
-    tap: 'TAP INSTALLATIONS',
-    sink: 'SINK DESIGNS',
-    toilet: 'TOILET FACILITIES',
-    shower: 'SHOWER SYSTEMS',
-    bathtub: 'BATHTUB COLLECTIONS'
+    battery: 'RIEŠENIA BATÉRIÍ',
+    tap: 'INŠTALÁCIE KOHÚTIKOV',
+    sink: 'DIZAJNY UMÝVADIEL',
+    toilet: 'TOALETNÉ ZARIADENIA',
+    shower: 'SPRCHOVÉ SYSTÉMY',
+    bathtub: 'KOLEKCIE VANÍ'
   };
 
   const categoryDescriptions = {
-    battery: 'Explore our range of battery-powered sanitary solutions and backup systems.',
-    tap: 'Discover premium tap designs and installations for modern households.',
-    sink: 'Browse our collection of elegant and functional sink solutions.',
-    toilet: 'View our comprehensive toilet facilities and modern designs.',
-    shower: 'Explore innovative shower systems and installations.',
-    bathtub: 'Discover luxurious bathtub collections and designs.'
+    battery: 'Preskúmajte náš sortiment batériových sanitárnych riešení a záložných systémov.',
+    tap: 'Objavte prémiové dizajny kohútikov a inštalácie pre moderné domácnosti.',
+    sink: 'Prehliadnite si našu kolekciu elegantných a funkčných riešení umývadiel.',
+    toilet: 'Pozrite si naše komplexné toaletné zariadenia a moderné dizajny.',
+    shower: 'Preskúmajte inovatívne sprchové systémy a inštalácie.',
+    bathtub: 'Objavte luxusné kolekcie vaní a dizajny.'
   };
 
   return (
     <Layout>
-      <Navigation showBackButton={true} backTo="/entrance" />
+      <NavBar />
+      
+      {/* Breadcrumbs */}
+      <div className="pt-4 px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs />
+      </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">

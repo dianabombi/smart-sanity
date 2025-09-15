@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import Entrance from './components/Entrance';
 import WhoWeAre from './components/WhoWeAre';
+import Contact from './components/Contact';
+import Brands from './components/Brands';
 import CategoryGallery from './components/CategoryGallery';
+import CookieConsent from './components/ui/CookieConsent';
 
 function App() {
   return (
@@ -11,10 +14,13 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/entrance" element={<Entrance />} />
+          <Route path="/components" element={<Entrance />} />
           <Route path="/who-we-are" element={<WhoWeAre />} />
-          <Route path="/category/:category" element={<CategoryGallery />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/brands" element={<Brands />} />
+          <Route path="/components/category/:category" element={<CategoryGallery />} />
         </Routes>
+        <CookieConsent />
       </div>
     </Router>
   );

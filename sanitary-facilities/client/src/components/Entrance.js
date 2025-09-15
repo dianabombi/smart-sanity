@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
-import Navigation from './layout/Navigation';
+import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
 import CategoryTile from './ui/CategoryTile';
-import { BatteryIcon, TapIcon, SinkIcon, ToiletIcon, ShowerIcon, BathtubIcon } from './icons/CategoryIcons';
+import { BatteryIcon, TapIcon, SinkIcon, ToiletIcon, ShowerIcon, BathtubIcon, BidetIcon, TilesIcon, LightingIcon } from './icons/CategoryIcons';
 
 const Entrance = () => {
   const navigate = useNavigate();
@@ -12,39 +12,57 @@ const Entrance = () => {
   const categories = [
     {
       id: 'battery',
-      title: 'BATTERY',
+      title: 'BATÉRIE',
       IconComponent: BatteryIcon,
-      path: '/category/battery'
+      path: '/components/category/battery'
     },
     {
       id: 'tap',
-      title: 'TAP',
+      title: 'KOHÚTIKY',
       IconComponent: TapIcon,
-      path: '/category/tap'
+      path: '/components/category/tap'
     },
     {
       id: 'sink',
-      title: 'SINK',
+      title: 'UMÝVADLÁ',
       IconComponent: SinkIcon,
-      path: '/category/sink'
+      path: '/components/category/sink'
     },
     {
       id: 'toilet',
-      title: 'TOILET',
+      title: 'TOALETY',
       IconComponent: ToiletIcon,
-      path: '/category/toilet'
+      path: '/components/category/toilet'
     },
     {
       id: 'shower',
-      title: 'SHOWER',
+      title: 'SPRCHOVACIE KÚTY',
       IconComponent: ShowerIcon,
-      path: '/category/shower'
+      path: '/components/category/shower'
     },
     {
       id: 'bathtub',
-      title: 'BATHTUB',
+      title: 'VANE',
       IconComponent: BathtubIcon,
-      path: '/category/bathtub'
+      path: '/components/category/bathtub'
+    },
+    {
+      id: 'bidet',
+      title: 'BIDETY',
+      IconComponent: BidetIcon,
+      path: '/components/category/bidet'
+    },
+    {
+      id: 'tiles',
+      title: 'OBKLADY',
+      IconComponent: TilesIcon,
+      path: '/components/category/tiles'
+    },
+    {
+      id: 'lighting',
+      title: 'OSVETLENIE',
+      IconComponent: LightingIcon,
+      path: '/components/category/lighting'
     }
   ];
 
@@ -56,12 +74,17 @@ const Entrance = () => {
     <Layout>
       <NavBar />
       
+      {/* Breadcrumbs */}
+      <div className="pt-4 px-4 sm:px-6 lg:px-8">
+        <Breadcrumbs />
+      </div>
+      
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-lg text-white opacity-80 max-w-2xl mx-auto leading-relaxed">
-            Select a category to explore our sanitary facilities and solutions
-          </p>
+          <p className="text-xl text-white opacity-80 max-w-3xl mx-auto leading-relaxed mb-12">
+          Vyberte si kategóriu z ponuky sanitárnych zariadení a riešení
+        </p>
         </div>
       </div>
 
@@ -78,13 +101,6 @@ const Entrance = () => {
               />
             ))}
           </div>
-        </div>
-      </div>
-      
-      {/* Back to Home Button - Moved to bottom */}
-      <div className="pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <Navigation showBackButton={true} />
         </div>
       </div>
     </Layout>

@@ -12,13 +12,13 @@ const Navigation = ({ showBackButton = false, backTo = '/' }) => {
   if (!showBackButton) return null;
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-start">
       <Button
         variant="secondary"
         size="small"
         onClick={handleBackClick}
       >
-        BACK
+SPÄŤ
       </Button>
     </div>
   );
