@@ -18,7 +18,7 @@ const Brands = () => {
       description: 'PRÉMIOVÁ SPOLUPRÁCA',
       website: 'https://www.elitebathkitchen.sk/',
       logo: '/new.svg',
-      category: 'Prémiová spolupráca',
+      category: 'Prémiová spolupráca ',
       darkBackground: true,
       isPremiumPartner: true
     },
