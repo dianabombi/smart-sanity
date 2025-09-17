@@ -82,9 +82,6 @@ const Entrance = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-xl text-white opacity-80 max-w-3xl mx-auto leading-relaxed mb-12">
-          Vyberte si kategóriu z ponuky sanitárnych zariadení a riešení
-        </p>
         </div>
       </div>
 

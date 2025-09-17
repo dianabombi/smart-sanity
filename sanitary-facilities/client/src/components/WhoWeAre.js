@@ -15,6 +15,11 @@ const WhoWeAre = () => {
               src="/logo.png" 
               alt="SMART SANITY Logo" 
               className="h-32 w-auto"
+              style={{
+                imageRendering: 'high-quality',
+                imageRendering: '-webkit-optimize-contrast',
+                imageRendering: 'crisp-edges'
+              }}
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'block';

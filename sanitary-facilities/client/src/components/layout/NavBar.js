@@ -28,6 +28,11 @@ const NavBar = () => {
             src="/logo.png" 
             alt="SMART SANITY" 
             className="h-16 w-auto"
+            style={{
+              imageRendering: 'high-quality',
+              imageRendering: '-webkit-optimize-contrast',
+              imageRendering: 'crisp-edges'
+            }}
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'block';
@@ -47,7 +52,8 @@ const NavBar = () => {
             <button
               key={item.label}
               onClick={() => handleNavClick(item.path)}
-              className="text-black font-bold tracking-wide uppercase text-lg hover:opacity-60 transition-opacity duration-300"
+              className="font-bold tracking-wide uppercase text-lg hover:opacity-60 transition-opacity duration-300"
+              style={{ color: '#595959' }}
             >
               {item.label}
             </button>

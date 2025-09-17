@@ -15,7 +15,7 @@ const Brands = () => {
     },
     {
       name: 'Elite Bath & Kitchen',
-      description: 'Prémiové kúpeľňové a kuchynské riešenia - naša exkluzívna spolupráca',
+      description: 'PRÉMIOVÁ SPOLUPRÁCA',
       website: 'https://www.elitebathkitchen.sk/',
       logo: '/new.svg',
       category: 'Prémiová spolupráca',
@@ -147,7 +147,7 @@ const Brands = () => {
                 {/* Premium Partnership Badge */}
                 {brand.isPremiumPartner && (
                   <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    PREMIUM COOPERATION
+                    PRÉMIOVÁ SPOLUPRÁCA
                   </div>
                 )}
                 {/* Logo Container */}
@@ -156,6 +156,11 @@ const Brands = () => {
                     src={brand.logo} 
                     alt={`${brand.name} Logo`}
                     className="max-h-16 max-w-full object-contain"
+                    style={{
+                      imageRendering: 'high-quality',
+                      imageRendering: '-webkit-optimize-contrast',
+                      imageRendering: 'crisp-edges'
+                    }}
                     onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'flex';
@@ -179,7 +184,7 @@ const Brands = () => {
                     {brand.category}
                   </div>
                   
-                  <p className="text-white/70 text-sm leading-relaxed">
+                  <p className={`text-sm leading-relaxed ${brand.isPremiumPartner ? 'text-yellow-300 font-semibold text-base' : 'text-white/70'}`}>
                     {brand.description}
                   </p>
                 </div>

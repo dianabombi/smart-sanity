@@ -32,7 +32,7 @@ const Home = () => {
   ];
 
   return (
-    <Layout>
+    <Layout showFooter={false}>
       {/* Split Layout - Carousel Left, Content Right */}
       <div className="min-h-screen bg-black flex flex-col lg:flex-row">
         {/* Left Side - Carousel */}
@@ -44,7 +44,7 @@ const Home = () => {
               autoPlay={true}
               autoPlayInterval={5000}
               showDots={true}
-              showArrows={false}
+              showArrows={true}
               showCounter={false}
               className="w-full h-full"
             />

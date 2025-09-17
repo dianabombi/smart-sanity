@@ -67,6 +67,11 @@ const CategoryGallery = () => {
                     src={image}
                     alt={`${category} ${index + 1}`}
                     className="max-w-full max-h-full object-contain"
+                    style={{
+                      imageRendering: 'high-quality',
+                      imageRendering: '-webkit-optimize-contrast',
+                      imageRendering: 'crisp-edges'
+                    }}
                   />
                 </div>
                 <div className="p-4">
