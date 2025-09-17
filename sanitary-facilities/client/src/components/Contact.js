@@ -6,6 +6,7 @@ import Breadcrumbs from './ui/Breadcrumbs';
 const Contact = () => {
   return (
     <Layout>
+      <NavBar />
       {/* Breadcrumbs */}
       <div className="pt-4 px-4 sm:px-6 lg:px-8">
         <Breadcrumbs />

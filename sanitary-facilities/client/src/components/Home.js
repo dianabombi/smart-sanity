@@ -18,20 +18,16 @@ const Home = () => {
   // Carousel images from public folder
   const carouselImages = [
     {
-      src: '/agape-normal-freistehende-badewanne-vasca-1.jpg',
-      alt: 'Modern bathroom facilities'
+      src: '/photos/kaldewei.avif',
+      alt: 'Kaldewei premium bathroom solutions'
     },
     {
-      src: '/SEN_VASCA_FRONT_bn.jpg', 
-      alt: 'Premium sink installations'
+      src: '/photos/umyvadlo.jpeg', 
+      alt: 'Modern sink installations'
     },
     {
-      src: '/ufo-ac2f2f9f4e6ed82256b013165f760256.jpg',
-      alt: 'High-quality fixtures'
-    },
-    {
-      src: '/1-1.webp',
-      alt: 'Professional installations'
+      src: '/photos/vanaPs.png',
+      alt: 'Premium bathtub design'
     }
   ];
 
