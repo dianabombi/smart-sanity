@@ -5,10 +5,10 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    { label: 'Domov', path: '/' },
-    { label: 'Komponenty', path: '/components' },
     { label: 'O nás', path: '/who-we-are' },
-    { label: 'Značky', path: '/brands' },
+    { label: 'Čo ponúkame', path: '/components' },
+    { label: 'Obchodované značky', path: '/brands' },
+    { label: 'Referencie', path: '/references' },
     { label: 'Kontakt', path: '/contact' }
   ];
 

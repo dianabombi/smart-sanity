@@ -15,41 +15,41 @@ const Carousel = ({
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
 
-  // Helper function to draw image with proper proportions (object-fit: cover behavior for better width fitting)
-  const drawImageProportional = (ctx, img, canvasWidth, canvasHeight) => {
+  // Helper function to draw image with proper proportions and zoom effect
+  const drawImageProportional = (ctx, img, canvasWidth, canvasHeight, zoomFactor = 1, centerX = 0.5, centerY = 0.5) => {
     const imgAspect = img.width / img.height;
     const canvasAspect = canvasWidth / canvasHeight;
     
     let drawWidth, drawHeight, offsetX, offsetY;
     let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
     
+    // Apply zoom factor to the drawing dimensions
+    drawWidth = canvasWidth * zoomFactor;
+    drawHeight = canvasHeight * zoomFactor;
+    
+    // Center the zoomed image based on centerX and centerY
+    offsetX = (canvasWidth - drawWidth) * centerX;
+    offsetY = (canvasHeight - drawHeight) * centerY;
+    
     if (imgAspect > canvasAspect) {
       // Image is wider than canvas - crop sides to fit height
-      drawWidth = canvasWidth;
-      drawHeight = canvasHeight;
       const scaledImgWidth = canvasHeight * imgAspect;
       const cropWidth = (scaledImgWidth - canvasWidth) / (canvasHeight / img.height);
       srcX = cropWidth / 2;
       srcWidth = img.width - cropWidth;
-      offsetX = 0;
-      offsetY = 0;
     } else {
       // Image is taller than canvas - crop top/bottom to fit width
-      drawWidth = canvasWidth;
-      drawHeight = canvasHeight;
       const scaledImgHeight = canvasWidth / imgAspect;
       const cropHeight = (scaledImgHeight - canvasHeight) / (canvasWidth / img.width);
       srcY = cropHeight / 2;
       srcHeight = img.height - cropHeight;
-      offsetX = 0;
-      offsetY = 0;
     }
     
     // Fill background with black
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     
-    // Draw image to fill entire canvas (object-fit: cover behavior)
+    // Draw image with zoom effect
     ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, offsetX, offsetY, drawWidth, drawHeight);
   };
 
@@ -105,7 +105,7 @@ const Carousel = ({
     );
   };
 
-  // Mosaic/Tile break transition function
+  // Dynamic zoom transition function with coming closer effect
   const morphToNext = (fromIndex, toIndex) => {
     if (isTransitioning) return;
     
@@ -120,106 +120,38 @@ const Carousel = ({
     fromImg.onload = () => {
       toImg.onload = () => {
         let progress = 0;
-        const duration = 2000; // 2 seconds for mosaic effect
+        const duration = 3000; // 3 seconds for smooth zoom effect
         const startTime = Date.now();
-        
-        // Create tile grid
-        const tileSize = 40;
-        const tilesX = Math.ceil(canvas.width / tileSize);
-        const tilesY = Math.ceil(canvas.height / tileSize);
-        const tiles = [];
-        
-        // Initialize tiles with random delays and rotation directions
-        for (let x = 0; x < tilesX; x++) {
-          for (let y = 0; y < tilesY; y++) {
-            tiles.push({
-              x: x * tileSize,
-              y: y * tileSize,
-              delay: Math.random() * 0.5, // Random delay up to 50% of duration
-              rotationDir: Math.random() > 0.5 ? 1 : -1,
-              flipDir: Math.random() > 0.5 ? 'horizontal' : 'vertical'
-            });
-          }
-        }
-        
-        // Initial setup - draw the starting image on canvas with proper aspect ratio
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawImageProportional(ctx, fromImg, canvas.width, canvas.height);
         
         const animate = () => {
           const elapsed = Date.now() - startTime;
           progress = Math.min(elapsed / duration, 1);
           
+          // Easing function for smooth animation (ease-out)
+          const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+          const easedProgress = easeOut(progress);
+          
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           
-          // Draw tiles
-          tiles.forEach(tile => {
-            const tileProgress = Math.max(0, Math.min(1, (progress - tile.delay) / (1 - tile.delay)));
-            
-            // Get proportional dimensions for both images
-            const fromDims = getProportionalDimensions(fromImg, canvas.width, canvas.height);
-            const toDims = getProportionalDimensions(toImg, canvas.width, canvas.height);
-            
-            // Calculate tile coordinates relative to the proportional image area
-            const fromTileInBounds = isTileInImageBounds(tile, fromDims);
-            const toTileInBounds = isTileInImageBounds(tile, toDims);
-            
-            if (tileProgress === 0) {
-              // Show original image tile when not started
-              if (fromTileInBounds) {
-                drawTileFromImage(ctx, fromImg, tile, fromDims, canvas.width, canvas.height);
-              } else {
-                // Fill with black background
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(tile.x, tile.y, tileSize, tileSize);
-              }
-            } else if (tileProgress === 1) {
-              // Show final image tile when complete
-              if (toTileInBounds) {
-                drawTileFromImage(ctx, toImg, tile, toDims, canvas.width, canvas.height);
-              } else {
-                // Fill with black background
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(tile.x, tile.y, tileSize, tileSize);
-              }
-            } else {
-              // Simple fade transition between tiles
-              const alpha = tileProgress;
-              
-              // Draw outgoing image with decreasing opacity
-              ctx.globalAlpha = 1 - alpha;
-              if (fromTileInBounds) {
-                drawTileFromImage(ctx, fromImg, tile, fromDims, canvas.width, canvas.height);
-              } else {
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(tile.x, tile.y, tileSize, tileSize);
-              }
-              
-              // Draw incoming image with increasing opacity
-              ctx.globalAlpha = alpha;
-              if (toTileInBounds) {
-                drawTileFromImage(ctx, toImg, tile, toDims, canvas.width, canvas.height);
-              } else {
-                ctx.fillStyle = '#000000';
-                ctx.fillRect(tile.x, tile.y, tileSize, tileSize);
-              }
-              
-              // Reset alpha
-              ctx.globalAlpha = 1;
-              
-              // Add subtle border effect during transition
-              ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-              ctx.lineWidth = 1;
-              ctx.strokeRect(tile.x, tile.y, tileSize, tileSize);
-            }
-          });
+          // Draw current image at normal scale (no fade out)
+          if (progress < 0.3) {
+            drawImageProportional(ctx, fromImg, canvas.width, canvas.height, 1);
+          }
+          
+          // New image zooms in from current size with crossfade
+          const zoomIn = 1 + easedProgress * 0.3; // Start at 100% zoom, end at 130%
+          const alpha = progress; // Fade in
+          
+          ctx.globalAlpha = alpha;
+          drawImageProportional(ctx, toImg, canvas.width, canvas.height, zoomIn);
+          ctx.globalAlpha = 1;
           
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
-            // Final state - draw complete new image with proper proportions
+            // Final state - draw complete new image at normal scale
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawImageProportional(ctx, toImg, canvas.width, canvas.height);
+            drawImageProportional(ctx, toImg, canvas.width, canvas.height, 1);
             setCurrentIndex(toIndex);
             setIsTransitioning(false);
           }

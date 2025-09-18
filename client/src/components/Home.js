@@ -33,44 +33,55 @@ const Home = () => {
 
   return (
     <Layout showFooter={false}>
-      {/* Split Layout - Carousel Left, Content Right */}
-      <div className="min-h-screen bg-black flex flex-col lg:flex-row">
-        {/* Left Side - Carousel */}
-        <div className="w-full lg:w-2/3 flex items-center justify-center">
-          <div className="w-full h-[50vh] lg:h-screen">
-            <Carousel
-              images={carouselImages}
-              height="h-full"
-              autoPlay={true}
-              autoPlayInterval={5000}
-              showDots={true}
-              showArrows={true}
-              showCounter={false}
-              className="w-full h-full"
-            />
-          </div>
+      {/* Full Width Hero Banner */}
+      <div className="relative min-h-screen w-full">
+        {/* Full Width Carousel Background */}
+        <div className="absolute w-full h-full" style={{ top: '200px' }}>
+          <Carousel
+            images={carouselImages}
+            height="h-full"
+            autoPlay={true}
+            autoPlayInterval={5000}
+            showDots={true}
+            showArrows={false}
+            showCounter={false}
+            className="w-full h-full"
+          />
         </div>
         
-        {/* Right Side - Text and Buttons */}
-        <div className="w-full lg:w-1/3 flex items-center justify-center p-8">
-          <div className="text-center space-y-8 max-w-lg">
-            <p className="text-2xl md:text-3xl lg:text-4xl text-white font-light leading-relaxed">
-              Profesionálne riešenia kúpeľní pre interiérových dizajnérov a architektov
-            </p>
+        {/* Text Overlay at Top */}
+        <div className="absolute top-0 left-0 right-0 z-10 bg-black bg-opacity-80 py-6 pl-6 pr-2">
+          <div className="max-w-7xl mx-auto flex items-end">
+            {/* Smart Sanit Logo on the left */}
+            <div className="flex-shrink-0">
+              <img 
+                src="/logo.png" 
+                alt="Smart Sanit" 
+                className="h-32 w-auto object-contain"
+                style={{
+                  imageRendering: 'high-quality',
+                  imageRendering: 'crisp-edges'
+                }}
+              />
+            </div>
             
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            {/* Spacer */}
+            <div className="flex-grow"></div>
+            
+            {/* Text and Button on the right */}
+            <div className="flex items-end gap-6">
+              <div className="text-right">
+                <p className="text-base md:text-lg lg:text-xl text-white font-light leading-relaxed">
+                  Profesionálne riešenia kúpeľní pre<br />
+                  interiérových dizajnérov a architektov
+                </p>
+              </div>
+              
               <Button
-                size="large"
+                size="medium"
                 onClick={handleEntranceClick}
               >
                 VSTUP
-              </Button>
-              
-              <Button
-                size="large"
-                onClick={handleWhoWeAreClick}
-              >
-                KTO SME
               </Button>
             </div>
           </div>
