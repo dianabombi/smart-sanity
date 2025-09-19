@@ -51,7 +51,7 @@ const Home = () => {
         {/* Right Section - 1/3 of screen width with logo, text and button */}
         <div className="w-1/3 h-screen bg-black flex flex-col px-6">
           {/* Smart Sanit Logo - positioned higher */}
-          <div className="flex-shrink-0 pt-16 flex justify-center">
+          <div className="flex-shrink-0 pt-24 flex justify-center">
             <img 
               src="/logo.png" 
               alt="Smart Sanit" 
@@ -63,17 +63,18 @@ const Home = () => {
             />
           </div>
           
-          {/* Text and Button - centered in remaining space */}
-          <div className="flex-1 flex flex-col items-center justify-center space-y-8">
-            {/* Text */}
+          {/* Text - centered in remaining space */}
+          <div className="flex-1 flex flex-col items-center justify-center">
             <div className="text-center">
-              <p className="text-base md:text-lg lg:text-xl text-white font-light leading-relaxed">
+              <p className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed">
                 Profesionálne riešenia kúpeľní pre<br />
                 interiérových dizajnérov a architektov
               </p>
             </div>
-            
-            {/* Button */}
+          </div>
+          
+          {/* Button - separate div at bottom */}
+          <div className="flex justify-center pb-24">
             <Button
               size="medium"
               onClick={handleEntranceClick}
