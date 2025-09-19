@@ -33,10 +33,9 @@ const Home = () => {
 
   return (
     <Layout showFooter={false}>
-      {/* Full Width Hero Banner */}
-      <div className="relative min-h-screen w-full">
-        {/* Full Width Carousel Background */}
-        <div className="absolute w-full h-full" style={{ top: '200px' }}>
+      <div className="min-h-screen w-full bg-black flex">
+        {/* Hero Banner - 2/3 of screen width */}
+        <div className="relative w-2/3 h-screen">
           <Carousel
             images={carouselImages}
             height="h-full"
@@ -49,41 +48,38 @@ const Home = () => {
           />
         </div>
         
-        {/* Text Overlay at Top */}
-        <div className="absolute top-0 left-0 right-0 z-10 bg-black bg-opacity-80 py-6 pl-6 pr-2">
-          <div className="max-w-7xl mx-auto flex items-end">
-            {/* Smart Sanit Logo on the left */}
-            <div className="flex-shrink-0">
-              <img 
-                src="/logo.png" 
-                alt="Smart Sanit" 
-                className="h-32 w-auto object-contain"
-                style={{
-                  imageRendering: 'high-quality',
-                  imageRendering: 'crisp-edges'
-                }}
-              />
+        {/* Right Section - 1/3 of screen width with logo, text and button */}
+        <div className="w-1/3 h-screen bg-black flex flex-col px-6">
+          {/* Smart Sanit Logo - positioned higher */}
+          <div className="flex-shrink-0 pt-16 flex justify-center">
+            <img 
+              src="/logo.png" 
+              alt="Smart Sanit" 
+              className="h-32 w-auto object-contain"
+              style={{
+                imageRendering: 'high-quality',
+                imageRendering: 'crisp-edges'
+              }}
+            />
+          </div>
+          
+          {/* Text and Button - centered in remaining space */}
+          <div className="flex-1 flex flex-col items-center justify-center space-y-8">
+            {/* Text */}
+            <div className="text-center">
+              <p className="text-base md:text-lg lg:text-xl text-white font-light leading-relaxed">
+                Profesionálne riešenia kúpeľní pre<br />
+                interiérových dizajnérov a architektov
+              </p>
             </div>
             
-            {/* Spacer */}
-            <div className="flex-grow"></div>
-            
-            {/* Text and Button on the right */}
-            <div className="flex items-end gap-6">
-              <div className="text-right">
-                <p className="text-base md:text-lg lg:text-xl text-white font-light leading-relaxed">
-                  Profesionálne riešenia kúpeľní pre<br />
-                  interiérových dizajnérov a architektov
-                </p>
-              </div>
-              
-              <Button
-                size="medium"
-                onClick={handleEntranceClick}
-              >
-                VSTUP
-              </Button>
-            </div>
+            {/* Button */}
+            <Button
+              size="medium"
+              onClick={handleEntranceClick}
+            >
+              VSTUP
+            </Button>
           </div>
         </div>
       </div>
