@@ -18,16 +18,16 @@ const NavBar = () => {
 
   return (
     <nav className="bg-black shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="flex items-center justify-between px-1 pr-16">
         {/* Logo/Brand - Moved to left side */}
         <div 
-          className="cursor-pointer hover:opacity-80 transition-opacity rounded-lg p-2 -ml-32"
+          className="cursor-pointer hover:opacity-80 transition-opacity ml-8 -mt-8"
           onClick={() => handleNavClick('/')}
         >
           <img 
             src="/logoBlack.webp" 
             alt="SMART SANITY" 
-            className="h-40 w-auto"
+            className="h-60 w-auto my-0 -mt-4"
             style={{
               imageRendering: 'high-quality',
               imageRendering: '-webkit-optimize-contrast',
