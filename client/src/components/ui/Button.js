@@ -11,8 +11,8 @@ const Button = ({
   const baseClasses = 'font-medium tracking-wide uppercase transition-all duration-300 focus:outline-none rounded-lg';
   
   const variants = {
-    primary: 'bg-black border-2 border-gray-800 text-white hover:bg-gray-900 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)] hover:shadow-[inset_-1px_-1px_3px_rgba(255,255,255,0.1),inset_1px_1px_3px_rgba(0,0,0,0.8)]',
-    secondary: 'bg-black border border-gray-800 text-white hover:bg-gray-900 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)] hover:shadow-[inset_-1px_-1px_3px_rgba(255,255,255,0.1),inset_1px_1px_3px_rgba(0,0,0,0.8)]',
+    primary: 'bg-black border-2 border-white text-white hover:bg-gray-900 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)] hover:shadow-[inset_-1px_-1px_3px_rgba(255,255,255,0.1),inset_1px_1px_3px_rgba(0,0,0,0.8)]',
+    secondary: 'bg-black border border-white text-white hover:bg-gray-900 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)] hover:shadow-[inset_-1px_-1px_3px_rgba(255,255,255,0.1),inset_1px_1px_3px_rgba(0,0,0,0.8)]',
     ghost: 'text-white hover:text-gray-300 bg-black shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)]'
   };
   

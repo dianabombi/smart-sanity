@@ -55,7 +55,7 @@ const Home = () => {
             <img 
               src="/logo.png" 
               alt="Smart Sanit" 
-              className="h-20 w-auto object-contain"
+              className="h-24 w-auto object-contain"
               style={{
                 imageRendering: 'high-quality',
                 imageRendering: 'crisp-edges'
@@ -63,24 +63,25 @@ const Home = () => {
             />
           </div>
           
-          {/* Text - centered in remaining space */}
-          <div className="flex-1 flex flex-col items-center justify-center">
+          {/* Text and Button - positioned higher */}
+          <div className="flex-1 flex flex-col items-center justify-center -mt-8">
             <div className="text-center">
-              <p className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed">
-                Profesionálne riešenia kúpeľní pre<br />
-                interiérových dizajnérov a architektov
+              <p className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed mb-8">
+                Profesionálne riešenia kúpeľní<br />
+                pre interiérových dizajnérov<br />
+                a architektov.
               </p>
+              <div className="mt-4">
+                <Button
+                  size="medium"
+                  variant="primary"
+                  onClick={() => navigate('/components')}
+                  className="w-full max-w-[200px] m-8"
+                >
+                  VSTÚPTE
+                </Button>
+              </div>
             </div>
-          </div>
-          
-          {/* Button - separate div at bottom */}
-          <div className="flex justify-center pb-24">
-            <Button
-              size="medium"
-              onClick={handleEntranceClick}
-            >
-              VSTUP
-            </Button>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -30,8 +30,6 @@ const NavBar = () => {
             className="h-60 w-auto my-0 -mt-4"
             style={{
               imageRendering: 'high-quality',
-              imageRendering: '-webkit-optimize-contrast',
-              imageRendering: 'crisp-edges'
             }}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -47,13 +45,12 @@ const NavBar = () => {
         </div>
         
         {/* Navigation Links */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 -mt-8">
           {navItems.map((item) => (
             <button
               key={item.label}
               onClick={() => handleNavClick(item.path)}
-              className="font-bold tracking-wide uppercase text-lg hover:opacity-60 transition-opacity duration-300"
-              style={{ color: '#595959' }}
+              className="text-gray-400 hover:text-gray-300 transition-colors text-2xl"
             >
               {item.label}
             </button>
