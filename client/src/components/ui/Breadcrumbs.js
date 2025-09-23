@@ -36,11 +36,11 @@ const Breadcrumbs = () => {
   }
 
   return (
-    <nav className="flex items-center space-x-2 text-white text-sm">
+    <nav className="flex items-center space-x-2 text-gray-400 text-lg">
       {/* Home link */}
       <Link 
         to="/" 
-        className="text-white opacity-70 hover:opacity-100 transition-opacity duration-200"
+        className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
       >
         Domov
       </Link>
@@ -52,13 +52,13 @@ const Breadcrumbs = () => {
         
         return (
           <React.Fragment key={pathname}>
-            <span className="text-white opacity-50">/</span>
+            <span className="text-gray-500">{'>'}</span>
             {isLast ? (
-              <span className="text-white font-medium">{label}</span>
+              <span className="text-gray-300 font-medium">{label}</span>
             ) : (
               <Link 
                 to={routeTo}
-                className="text-white opacity-70 hover:opacity-100 transition-opacity duration-200"
+                className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               >
                 {label}
               </Link>

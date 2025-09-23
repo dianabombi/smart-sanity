@@ -8,6 +8,7 @@ const NavBar = () => {
     { label: 'O nás', path: '/who-we-are' },
     { label: 'Čo ponúkame', path: '/components' },
     { label: 'Obchodované značky', path: '/brands' },
+    { label: 'Inšpirácie', path: '/inspirations' },
     { label: 'Referencie', path: '/references' },
     { label: 'Kontakt', path: '/contact' }
   ];
