@@ -8,12 +8,12 @@ const Button = ({
   className = '',
   ...props 
 }) => {
-  const baseClasses = 'font-medium tracking-wide uppercase transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 shadow-2xl hover:shadow-[0_20px_50px_rgba(255,255,255,0.4)] rounded-lg';
+  const baseClasses = 'font-medium tracking-wide uppercase transition-all duration-300 focus:outline-none rounded-lg';
   
   const variants = {
-    primary: 'bg-transparent border-2 border-white text-white hover:bg-white hover:text-black shadow-[0_10px_30px_rgba(255,255,255,0.3)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.5)]',
-    secondary: 'bg-transparent border border-white text-white hover:bg-white hover:text-black shadow-[0_8px_25px_rgba(255,255,255,0.25)] hover:shadow-[0_15px_40px_rgba(255,255,255,0.4)]',
-    ghost: 'text-white hover:text-gray-300 shadow-[0_8px_25px_rgba(156,163,175,0.3)] hover:shadow-[0_15px_40px_rgba(156,163,175,0.4)]'
+    primary: 'bg-black border-2 border-white text-white hover:bg-gray-900 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)] hover:shadow-[inset_-1px_-1px_3px_rgba(255,255,255,0.1),inset_1px_1px_3px_rgba(0,0,0,0.8)]',
+    secondary: 'bg-black border border-white text-white hover:bg-gray-900 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)] hover:shadow-[inset_-1px_-1px_3px_rgba(255,255,255,0.1),inset_1px_1px_3px_rgba(0,0,0,0.8)]',
+    ghost: 'text-white hover:text-gray-300 bg-black shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.8)]'
   };
   
   const sizes = {

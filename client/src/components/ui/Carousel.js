@@ -120,7 +120,7 @@ const Carousel = ({
     fromImg.onload = () => {
       toImg.onload = () => {
         let progress = 0;
-        const duration = 3000; // 3 seconds for smooth zoom effect
+        const duration = 4500; // 4.5 seconds for slower, smoother zoom effect
         const startTime = Date.now();
         
         const animate = () => {
@@ -139,7 +139,7 @@ const Carousel = ({
           }
           
           // New image zooms in from current size with crossfade
-          const zoomIn = 1 + easedProgress * 0.3; // Start at 100% zoom, end at 130%
+          const zoomIn = 1 + easedProgress * 0.2; // Start at 100% zoom, end at 120% (less aggressive zoom)
           const alpha = progress; // Fade in
           
           ctx.globalAlpha = alpha;
@@ -149,9 +149,8 @@ const Carousel = ({
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
-            // Final state - draw complete new image at normal scale
+            // Final state - clear canvas and set index without drawing static image
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawImageProportional(ctx, toImg, canvas.width, canvas.height, 1);
             setCurrentIndex(toIndex);
             setIsTransitioning(false);
           }
@@ -193,7 +192,7 @@ const Carousel = ({
     morphToNext(currentIndex, index);
   };
 
-  // Canvas setup and initial image display
+  // Canvas setup without initial image display
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas && images[currentIndex]) {
@@ -202,15 +201,16 @@ const Carousel = ({
         canvas.width = rect.width;
         canvas.height = rect.height;
         
-        // Always draw current image on canvas with high quality
+        // Set up canvas context with high quality
         const ctx = canvas.getContext('2d');
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         
+        // Display initial image on load
         const img = new Image();
         img.onload = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawImageProportional(ctx, img, canvas.width, canvas.height);
+          drawImageProportional(ctx, img, canvas.width, canvas.height, 1);
         };
         img.src = images[currentIndex].src;
       };

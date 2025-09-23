@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Button from './Button';
 
 const CookieConsent = () => {
   const [showBanner, setShowBanner] = useState(false);

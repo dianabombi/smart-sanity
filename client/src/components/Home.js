@@ -7,13 +7,6 @@ import Carousel from './ui/Carousel';
 const Home = () => {
   const navigate = useNavigate();
 
-  const handleEntranceClick = () => {
-    navigate('/components');
-  };
-
-  const handleWhoWeAreClick = () => {
-    navigate('/who-we-are');
-  };
 
   // Carousel images from public folder
   const carouselImages = [
@@ -51,36 +44,40 @@ const Home = () => {
         {/* Right Section - 1/3 of screen width with logo, text and button */}
         <div className="w-1/3 h-screen bg-black flex flex-col px-6">
           {/* Smart Sanit Logo - positioned higher */}
-          <div className="flex-shrink-0 pt-16 flex justify-center">
+          <div className="flex-shrink-0 pt-24 flex justify-center">
             <img 
               src="/logo.png" 
               alt="Smart Sanit" 
-              className="h-32 w-auto object-contain"
+              className="h-24 w-auto object-contain"
               style={{
-                imageRendering: 'high-quality',
                 imageRendering: 'crisp-edges'
               }}
             />
           </div>
           
-          {/* Text and Button - centered in remaining space */}
-          <div className="flex-1 flex flex-col items-center justify-center space-y-8">
-            {/* Text */}
+          {/* Text and Button Section */}
+          <div className="flex-1 flex flex-col items-center justify-center ">
             <div className="text-center">
-              <p className="text-base md:text-lg lg:text-xl text-white font-light leading-relaxed">
-                Profesionálne riešenia kúpeľní pre<br />
-                interiérových dizajnérov a architektov
+              <p className="text-white font-light leading-relaxed mb-8 text-[28px]">
+                Profesionálne riešenia<br />
+                pre interiérových dizajnérov<br />
+                a architektov
               </p>
+              <div className="mt-24">
+                <Button
+                  size="medium"
+                  variant="primary"
+                  onClick={() => navigate('/components')}
+                  className="w-full max-w-[200px]"
+                >
+                  VSTÚPTE
+                </Button>
+              </div>
             </div>
-            
-            {/* Button */}
-            <Button
-              size="medium"
-              onClick={handleEntranceClick}
-            >
-              VSTUP
-            </Button>
           </div>
+          
+          {/* Bottom spacer */}
+          <div className="flex-shrink-0 pb-16"></div>
         </div>
       </div>
     </Layout>

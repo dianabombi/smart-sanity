@@ -8,6 +8,7 @@ const NavBar = () => {
     { label: 'O nás', path: '/who-we-are' },
     { label: 'Čo ponúkame', path: '/components' },
     { label: 'Obchodované značky', path: '/brands' },
+    { label: 'Inšpirácie', path: '/inspirations' },
     { label: 'Referencie', path: '/references' },
     { label: 'Kontakt', path: '/contact' }
   ];
@@ -18,20 +19,18 @@ const NavBar = () => {
 
   return (
     <nav className="bg-black shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="flex items-center justify-between px-1 pr-16">
         {/* Logo/Brand - Moved to left side */}
         <div 
-          className="cursor-pointer hover:opacity-80 transition-opacity rounded-lg p-2 -ml-32"
+          className="cursor-pointer hover:opacity-80 transition-opacity ml-8 -mt-8"
           onClick={() => handleNavClick('/')}
         >
           <img 
             src="/logoBlack.webp" 
             alt="SMART SANITY" 
-            className="h-40 w-auto"
+            className="h-60 w-auto my-0 -mt-4"
             style={{
               imageRendering: 'high-quality',
-              imageRendering: '-webkit-optimize-contrast',
-              imageRendering: 'crisp-edges'
             }}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -47,13 +46,12 @@ const NavBar = () => {
         </div>
         
         {/* Navigation Links */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 -mt-8">
           {navItems.map((item) => (
             <button
               key={item.label}
               onClick={() => handleNavClick(item.path)}
-              className="font-bold tracking-wide uppercase text-lg hover:opacity-60 transition-opacity duration-300"
-              style={{ color: '#595959' }}
+              className="text-gray-400 hover:text-gray-300 transition-colors text-2xl"
             >
               {item.label}
             </button>
