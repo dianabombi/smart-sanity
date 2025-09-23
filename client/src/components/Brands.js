@@ -157,8 +157,6 @@ const Brands = () => {
                     alt={`${brand.name} Logo`}
                     className="max-h-16 max-w-full object-contain"
                     style={{
-                      imageRendering: 'high-quality',
-                      imageRendering: '-webkit-optimize-contrast',
                       imageRendering: 'crisp-edges'
                     }}
                     onError={(e) => {

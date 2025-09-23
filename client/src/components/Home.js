@@ -7,13 +7,6 @@ import Carousel from './ui/Carousel';
 const Home = () => {
   const navigate = useNavigate();
 
-  const handleEntranceClick = () => {
-    navigate('/components');
-  };
-
-  const handleWhoWeAreClick = () => {
-    navigate('/who-we-are');
-  };
 
   // Carousel images from public folder
   const carouselImages = [
@@ -57,7 +50,6 @@ const Home = () => {
               alt="Smart Sanit" 
               className="h-24 w-auto object-contain"
               style={{
-                imageRendering: 'high-quality',
                 imageRendering: 'crisp-edges'
               }}
             />
