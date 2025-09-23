@@ -63,26 +63,29 @@ const Home = () => {
             />
           </div>
           
-          {/* Text and Button - positioned higher */}
-          <div className="flex-1 flex flex-col items-center justify-center -mt-8">
+          {/* Text and Button Section */}
+          <div className="flex-1 flex flex-col items-center justify-center ">
             <div className="text-center">
               <p className="text-xl md:text-2xl lg:text-3xl text-white font-light leading-relaxed mb-8">
                 Profesionálne riešenia kúpeľní<br />
                 pre interiérových dizajnérov<br />
-                a architektov.
+                a architektov
               </p>
-              <div className="mt-4">
+              <div className="mt-20">
                 <Button
                   size="medium"
                   variant="primary"
                   onClick={() => navigate('/components')}
-                  className="w-full max-w-[200px] m-8"
+                  className="w-full max-w-[200px]"
                 >
                   VSTÚPTE
                 </Button>
               </div>
             </div>
           </div>
+          
+          {/* Bottom spacer */}
+          <div className="flex-shrink-0 pb-16"></div>
         </div>
       </div>
     </Layout>

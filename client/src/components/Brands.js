@@ -124,10 +124,10 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-light text-white mb-8 tracking-wide">
+          <h1 className="text-2xl md:text-3xl font-light text-white mb-8 tracking-wide">
             ZNAČKY
           </h1>
-          <p className="text-xl text-white opacity-80 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-white opacity-80 max-w-3xl mx-auto leading-relaxed">
             Spolupracujeme s najlepšími značkami v oblasti sanitárnych zariadení 
             a ponúkame produkty najvyššej kvality pre vaše domácnosti.
           </p>
