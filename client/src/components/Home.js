@@ -58,7 +58,7 @@ const Home = () => {
           {/* Text and Button Section */}
           <div className="flex-1 flex flex-col items-center justify-center ">
             <div className="text-center">
-              <p className="text-white font-light leading-relaxed mb-8" style={{fontSize: '28px'}}>
+              <p className="text-white font-light leading-relaxed mb-8 text-2xl">
                 Profesionálne riešenia<br />
                 pre interiérových dizajnérov<br />
                 a architektov
