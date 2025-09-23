@@ -76,18 +76,18 @@ const Footer = () => {
               © 2024 Smart Sanity. Všetky práva vyhradené.
             </p>
             <div className="flex space-x-6 mt-4 sm:mt-0">
-              <a 
-                href="#" 
-                className="text-sm text-white hover:text-gray-300 transition-colors duration-200"
+              <button 
+                className="text-sm text-white hover:text-gray-300 transition-colors duration-200 bg-transparent border-none cursor-pointer"
+                onClick={() => console.log('Privacy policy clicked')}
               >
                 Ochrana súkromia
-              </a>
-              <a 
-                href="#" 
-                className="text-sm text-white hover:text-gray-300 transition-colors duration-200"
+              </button>
+              <button 
+                className="text-sm text-white hover:text-gray-300 transition-colors duration-200 bg-transparent border-none cursor-pointer"
+                onClick={() => console.log('Terms of use clicked')}
               >
                 Podmienky použitia
-              </a>
+              </button>
             </div>
           </div>
         </div>
