@@ -5,8 +5,8 @@ const Breadcrumbs = () => {
   const location = useLocation();
   let pathnames = location.pathname.split('/').filter((x) => x);
   
-  // Add 'components' as middle step for About Us, Brands, and Contact pages
-  if (['who-we-are', 'contact', 'brands'].includes(pathnames[0])) {
+  // Add 'components' as middle step for About Us, Brands, Contact, References, and Inspirations pages
+  if (['who-we-are', 'contact', 'brands', 'references', 'inspirations'].includes(pathnames[0])) {
     pathnames = ['components', ...pathnames];
   }
 
@@ -17,6 +17,8 @@ const Breadcrumbs = () => {
     'who-we-are': 'O nás',
     'contact': 'Kontakt',
     'brands': 'Značky',
+    'references': 'Referencie',
+    'inspirations': 'Inšpirácie',
     'category': 'Kategória',
     'battery': 'Batérie',
     'tap': 'Kohútik',

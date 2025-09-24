@@ -57,13 +57,18 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white">Kontakt</h3>
             <div className="space-y-2">
               <p className="text-sm text-white">
-                Email: info@smartsanity.sk
+                <span className="font-medium">Výkonný riaditeľ:</span><br />
+                Ing. Dušan Drinka, PhD.
               </p>
               <p className="text-sm text-white">
-                Telefón: +421 XXX XXX XXX
+                <span className="font-medium">Email:</span> dusan.drinka@smartsanit.sk
               </p>
               <p className="text-sm text-white">
-                Adresa: Bratislava, Slovensko
+                <span className="font-medium">Telefón:</span> +421 948 882 376
+              </p>
+              <p className="text-sm text-white">
+                <span className="font-medium">Adresa:</span><br />
+                Továrenská 14, 811 09 Bratislava
               </p>
             </div>
           </div>

@@ -56,14 +56,14 @@ const Home = () => {
           </div>
           
           {/* Text and Button Section */}
-          <div className="flex-1 flex flex-col items-center justify-center ">
+          <div className="flex-1 flex flex-col items-center justify-center pt-16">
             <div className="text-center">
-              <p className="text-white font-light leading-relaxed mb-8 text-[28px]">
+              <p className="text-white font-light leading-tight mb-8 text-[28px]">
                 Profesionálne riešenia<br />
                 pre interiérových dizajnérov<br />
                 a architektov
               </p>
-              <div className="mt-24">
+              <div className="mt-32">
                 <Button
                   size="medium"
                   variant="primary"

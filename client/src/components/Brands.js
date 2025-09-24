@@ -60,7 +60,7 @@ const Brands = () => {
       website: 'https://zenonsurfaces.com/en/',
       logo: '/ZENON_2024.png',
       category: 'Povrchy a vane',
-      darkBackground: false
+      darkBackground: true
     },
     {
       name: 'AXOR',
@@ -84,15 +84,15 @@ const Brands = () => {
       website: 'https://fondovalle.it/',
       logo: '/Logo_Fondovalle.png',
       category: 'Obklady a dlažby',
-      darkBackground: false
+      darkBackground: true
     },
     {
       name: 'Kaldewei',
       description: 'Prémiové vane, sprchy a umývadlá pre vaše vysnívaná kúpeľňa',
       website: 'https://www.kaldewei.com/',
-      logo: '/kaldewei.png',
+      logo: '/icons/csm_kaldewei_white_rgb_f6885cdf89.png',
       category: 'Vane a sprchy',
-      darkBackground: false
+      darkBackground: true
     },
     {
       name: 'Cielo',
@@ -151,7 +151,7 @@ const Brands = () => {
                   </div>
                 )}
                 {/* Logo Container */}
-                <div className={`${brand.darkBackground ? '' : 'bg-white rounded-lg'} p-4 mb-4 h-24 flex items-center justify-center`}>
+                <div className="p-4 mb-4 h-24 flex items-center justify-center">
                   <img 
                     src={brand.logo} 
                     alt={`${brand.name} Logo`}
@@ -165,7 +165,7 @@ const Brands = () => {
                     }}
                   />
                   <div 
-                    className={`${brand.darkBackground ? 'text-white' : 'text-black'} font-bold text-lg text-center items-center justify-center h-full w-full`}
+                    className="text-white font-bold text-lg text-center items-center justify-center h-full w-full"
                     style={{display: 'none'}}
                   >
                     {brand.name}
