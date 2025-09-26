@@ -195,7 +195,7 @@ const Contact = () => {
                   <div className="flex items-start space-x-4">
                     <div className="text-white text-xl">👤</div>
                     <div>
-                      <h3 className="text-lg font-medium text-white">Výkonný riaditeľ</h3>
+                      <h3 className="text-lg font-medium text-white">Konateľ spoločnosti</h3>
                       <p className="text-gray-300">Ing. Dušan Drinka, PhD.</p>
                     </div>
                   </div>

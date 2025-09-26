@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Smart Sanity</h3>
+            <h3 className="text-lg font-semibold text-white">Smart Sanit</h3>
             <p className="text-sm text-white">
               Profesionálne riešenia sanitárnych zariadení pre domácnosti a údržbu
             </p>
@@ -57,7 +57,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white">Kontakt</h3>
             <div className="space-y-2">
               <p className="text-sm text-white">
-                <span className="font-medium">Výkonný riaditeľ:</span><br />
+                <span className="font-medium">Konateľ spoločnosti:</span><br />
                 Ing. Dušan Drinka, PhD.
               </p>
               <p className="text-sm text-white">
@@ -78,7 +78,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-gray-700">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-sm text-white">
-              © 2024 Smart Sanity. Všetky práva vyhradené.
+              © 2024 Smart Sanit. Všetky práva vyhradené.
             </p>
             <div className="flex space-x-6 mt-4 sm:mt-0">
               <button 

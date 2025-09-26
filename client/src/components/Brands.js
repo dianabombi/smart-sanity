@@ -1,115 +1,137 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from './layout/Layout';
 import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
 
 const Brands = () => {
-  const brands = [
-    {
-      name: 'CEA Design',
-      description: 'Taliansky výrobca luxusných batérií a kúpeľňových doplnkov',
-      website: 'https://www.ceadesign.it/',
-      logo: '/cea.svg',
-      category: 'Batérie a doplnky',
-      darkBackground: true
-    },
-    {
-      name: 'Elite Bath & Kitchen',
-      description: 'PRÉMIOVÁ SPOLUPRÁCA',
-      website: 'https://www.elitebathkitchen.sk/',
-      logo: '/new.svg',
-      category: 'Prémiová spolupráca ',
-      darkBackground: true,
-      isPremiumPartner: true
-    },
+  const [selectedLogo, setSelectedLogo] = useState(null);
+
+  const openLogoPreview = (brand) => {
+    setSelectedLogo(brand);
+  };
+
+  const closeLogoPreview = () => {
+    setSelectedLogo(null);
+  };
+  const mainBrands = [
     {
       name: 'Agape',
-      description: 'Taliansky dizajn kúpeľňového nábytku a sanitárnych zariadení',
+      description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov.',
       website: 'https://www.agapedesign.it/',
-      logo: '/Agape.jpg',
+      logo: '/icons/Agape_transparent.png',
       category: 'Kúpeľňový nábytok',
-      darkBackground: true
+      darkBackground: true,
+      logoSize: 'max-h-20'
     },
     {
       name: 'Fantini',
-      description: 'Taliansky výrobca luxusných batérií a sprchových systémov',
+      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
       website: 'https://www.fantini.it/',
       logo: '/fantini.png',
       category: 'Batérie a sprchy',
       darkBackground: true
     },
     {
-      name: 'Azzurra',
-      description: 'Taliansky výrobca sanitárnej keramiky a kúpeľňového vybavenia',
-      website: 'https://www.azzurra.it/',
-      logo: '/logo Azzurra bianco su fondo nero.png',
+      name: 'Cielo',
+      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov.',
+      website: 'https://www.ceramicacielo.it/',
+      logo: '/logo_cielo_white.png',
       category: 'Sanitárna keramika',
-      darkBackground: true
+      darkBackground: true,
+      logoSize: 'max-h-14'
     },
     {
-      name: 'Alcadrain',
-      description: 'Odvodňovacie systémy a riešenia',
-      website: 'https://alcadrain.sk/',
-      logo: '/alca.svg',
-      category: 'Odvodňovanie',
-      darkBackground: true
+      name: 'Azzurra',
+      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+      website: 'https://www.azzurra.it/',
+      logo: '/icons/logo.svg',
+      category: 'Sanitárna keramika',
+      darkBackground: true,
+      logoSize: 'max-h-32',
+      logoFilter: 'brightness(0) invert(1)'
+    },
+    {
+      name: 'CEA Design',
+      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
+      website: 'https://www.ceadesign.it/',
+      logo: '/cea.svg',
+      category: 'Batérie a doplnky',
+      darkBackground: true,
+      logoSize: 'max-h-14'
     },
     {
       name: 'Zenon Surfaces',
-      description: 'Bath & SPC Surfaces - Asymmetrické vane pre avantgardné projekty',
+      description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek.',
       website: 'https://zenonsurfaces.com/en/',
-      logo: '/ZENON_2024.png',
+      logo: '/icons/ZENON_white.png',
       category: 'Povrchy a vane',
       darkBackground: true
     },
     {
-      name: 'AXOR',
-      description: 'Luxusné batérie a sprchy pre prémiové kúpeľne a kuchyne',
-      website: 'https://www.axor-design.com/int/',
-      logo: '/Axor-logo-white.png',
-      category: 'Batérie a sprchy',
-      darkBackground: true
+      name: 'Fondovalle',
+      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
+      website: 'https://fondovalle.it/',
+      logo: '/icons/Fondovalle.png',
+      category: 'Obklady a dlažby',
+      darkBackground: true,
+      logoSize: 'max-h-32'
     },
     {
       name: 'Fiandre',
-      description: 'Porcelánové kameniny - keramika pre architektúru a dizajn',
+      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
       website: 'https://www.fiandre.com/',
       logo: '/logogf.png',
       category: 'Obklady a dlažby',
       darkBackground: true
+    }
+  ];
+
+  const otherBrands = [
+    {
+      name: 'Tres',
+      website: 'https://tresgriferia.com/',
+      logo: '/tres-logo.png'
     },
     {
-      name: 'Fondovalle',
-      description: 'Keramické obklady z porcelánovej kameniny',
-      website: 'https://fondovalle.it/',
-      logo: '/Logo_Fondovalle.png',
-      category: 'Obklady a dlažby',
-      darkBackground: true
+      name: 'AXOR',
+      website: 'https://www.axor-design.com/int/',
+      logo: '/Axor-logo-white.png'
     },
     {
       name: 'Kaldewei',
-      description: 'Prémiové vane, sprchy a umývadlá pre vaše vysnívaná kúpeľňa',
       website: 'https://www.kaldewei.com/',
-      logo: '/icons/csm_kaldewei_white_rgb_f6885cdf89.png',
-      category: 'Vane a sprchy',
-      darkBackground: true
+      logo: '/icons/csm_kaldewei_white_rgb_f6885cdf89.png'
     },
     {
-      name: 'Cielo',
-      description: 'Taliansky dizajn sanitárnej keramiky',
-      website: 'https://www.ceramicacielo.it/',
-      logo: '/logo_cielo_white.png',
-      category: 'Sanitárna keramika',
-      darkBackground: true
+      name: 'Alca',
+      website: 'https://alcadrain.sk/',
+      logo: '/alca.svg'
     },
     {
       name: 'Hansgrohe',
-      description: 'Prémiové batérie pre kúpeľne a kuchyne',
       website: 'https://www.hansgrohe.com/',
-      logo: '/Hansgrohe-Logo-2.svg',
-      category: 'Batérie a sprchy',
-      darkBackground: true
+      logo: '/Hansgrohe-Logo-2.svg'
     },
+    {
+      name: 'Huppe',
+      website: 'https://www.huppe.com/',
+      logo: '/huppe-logo.png'
+    },
+    {
+      name: 'Dornbracht',
+      website: 'https://www.dornbracht.com/',
+      logo: '/dornbracht-logo.png'
+    },
+    {
+      name: 'Laufen',
+      website: 'https://www.laufen.com/',
+      logo: '/laufen-logo.png'
+    },
+    {
+      name: 'Kludi',
+      website: 'https://www.kludi.com/',
+      logo: '/kludi-logo.png'
+    }
   ];
 
   return (
@@ -134,42 +156,45 @@ const Brands = () => {
         </div>
       </div>
 
-      {/* Brands Grid */}
+      {/* Main Brands Grid */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {brands.map((brand, index) => (
+            {mainBrands.map((brand, index) => (
               <div
                 key={index}
-                className={`group ${brand.isPremiumPartner ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-400/30 ring-2 ring-yellow-400/20' : 'bg-white/5 border-white/10'} backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer relative`}
-                onClick={() => window.open(brand.website, '_blank')}
+                className="group bg-white/5 border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer"
+                onClick={() => openLogoPreview(brand)}
               >
-                {/* Premium Partnership Badge */}
-                {brand.isPremiumPartner && (
-                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    PRÉMIOVÁ SPOLUPRÁCA
-                  </div>
-                )}
                 {/* Logo Container */}
-                <div className="p-4 mb-4 h-24 flex items-center justify-center">
-                  <img 
-                    src={brand.logo} 
-                    alt={`${brand.name} Logo`}
-                    className="max-h-16 max-w-full object-contain"
-                    style={{
-                      imageRendering: 'crisp-edges'
-                    }}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                  <div 
-                    className="text-white font-bold text-lg text-center items-center justify-center h-full w-full"
-                    style={{display: 'none'}}
-                  >
-                    {brand.name}
-                  </div>
+                <div className={`p-4 mb-4 h-24 flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
+                  {brand.useTextLogo ? (
+                    <div className="text-white font-bold text-xl text-center flex items-center justify-center h-full w-full">
+                      {brand.name}
+                    </div>
+                  ) : (
+                    <>
+                      <img 
+                        src={brand.logo} 
+                        alt={`${brand.name} Logo`}
+                        className={`${brand.logoSize || 'max-h-16'} max-w-full object-contain`}
+                        style={{
+                          imageRendering: 'crisp-edges',
+                          filter: brand.logoFilter || 'none'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div 
+                        className="text-white font-bold text-lg text-center items-center justify-center h-full w-full"
+                        style={{display: 'none'}}
+                      >
+                        {brand.name}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Brand Info */}
@@ -182,17 +207,49 @@ const Brands = () => {
                     {brand.category}
                   </div>
                   
-                  <p className={`text-sm leading-relaxed ${brand.isPremiumPartner ? 'text-yellow-300 font-semibold text-base' : 'text-white/70'}`}>
+                  <p className="text-sm leading-relaxed text-white/70">
                     {brand.description}
                   </p>
                 </div>
 
-                {/* Hover indicator */}
-                <div className="mt-4 flex items-center text-white/50 group-hover:text-white transition-colors">
-                  <span className="text-xs uppercase tracking-wide">Navštíviť web</span>
-                  <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Ostatné Section */}
+      <div className="pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-light text-white mb-8 text-center tracking-wide">
+            OSTATNÉ
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {otherBrands.map((brand, index) => (
+              <div
+                key={index}
+                className="group bg-white/5 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                onClick={() => openLogoPreview(brand)}
+              >
+                <div className="h-16 flex items-center justify-center">
+                  <img 
+                    src={brand.logo} 
+                    alt={`${brand.name} Logo`}
+                    className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                    style={{
+                      imageRendering: 'crisp-edges'
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div 
+                    className="text-white font-bold text-sm text-center items-center justify-center h-full w-full"
+                    style={{display: 'none'}}
+                  >
+                    {brand.name}
+                  </div>
                 </div>
               </div>
             ))}
@@ -224,6 +281,54 @@ const Brands = () => {
           </div>
         </div>
       </div>
+
+      {/* Logo Preview Modal */}
+      {selectedLogo && (
+        <div className="fixed inset-0 bg-black flex items-center justify-center z-50 p-4">
+          <div className="bg-black rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">{selectedLogo.name}</h2>
+                <button
+                  onClick={closeLogoPreview}
+                  className="text-gray-400 hover:text-white text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="bg-black p-8 rounded-lg mb-6 flex items-center justify-center">
+                <img
+                  src={selectedLogo.logo}
+                  alt={selectedLogo.name}
+                  className="max-w-full max-h-32 object-contain"
+                  style={{
+                    filter: selectedLogo.name === 'Agape' ? 'none' : 'none'
+                  }}
+                />
+              </div>
+              
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {selectedLogo.category}
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  {selectedLogo.description}
+                </p>
+              </div>
+              
+              <div className="flex justify-center">
+                <button
+                  onClick={closeLogoPreview}
+                  className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                >
+                  Zavrieť
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

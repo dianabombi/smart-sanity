@@ -85,19 +85,10 @@ const Entrance = () => {
         </div>
       </div>
 
-      {/* Categories Grid */}
+      {/* Categories Grid - Empty space for now */}
       <div className="pb-24 px-8 sm:px-12 lg:px-16 py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-            {categories.map((category) => (
-              <CategoryTile
-                key={category.id}
-                title={category.title}
-                IconComponent={category.IconComponent}
-                onClick={() => handleCategoryClick(category.path)}
-              />
-            ))}
-          </div>
+          {/* Category tiles removed - empty space ready for new content */}
         </div>
       </div>
     </Layout>

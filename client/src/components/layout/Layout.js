@@ -3,8 +3,10 @@ import Footer from './Footer';
 
 const Layout = ({ children, className = '', showFooter = true }) => {
   return (
-    <div className={`min-h-screen bg-black ${className}`}>
-      {children}
+    <div className={`min-h-screen bg-black flex flex-col ${className}`}>
+      <div className="flex-grow">
+        {children}
+      </div>
       {showFooter && <Footer />}
     </div>
   );

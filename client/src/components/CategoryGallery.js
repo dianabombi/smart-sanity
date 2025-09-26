@@ -53,35 +53,10 @@ const CategoryGallery = () => {
         </div>
       </div>
 
-      {/* Gallery Grid */}
+      {/* Gallery Grid - Empty space for now */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {galleryImages.map((image, index) => (
-              <div 
-                key={index}
-                className="bg-black border-2 border-white rounded-lg overflow-hidden shadow-[0_10px_30px_rgba(255,255,255,0.2)] hover:shadow-[0_20px_50px_rgba(255,255,255,0.4)] transition-all duration-300 hover:scale-105 transform"
-              >
-                <div className="aspect-square bg-black flex items-center justify-center">
-                  <img
-                    src={image}
-                    alt={`${category} ${index + 1}`}
-                    className="max-w-full max-h-full object-contain"
-                    style={{
-                      imageRendering: 'high-quality',
-                      imageRendering: '-webkit-optimize-contrast',
-                      imageRendering: 'crisp-edges'
-                    }}
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-white font-medium tracking-wide uppercase text-center">
-                    {category} {index + 1}
-                  </h3>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Tiles removed - empty space ready for new content */}
         </div>
       </div>
     </Layout>

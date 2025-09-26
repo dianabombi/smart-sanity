@@ -149,8 +149,8 @@ const Carousel = ({
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
-            // Final state - clear canvas and set index without drawing static image
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Final state - draw the final image and complete transition
+            drawImageProportional(ctx, toImg, canvas.width, canvas.height, 1);
             setCurrentIndex(toIndex);
             setIsTransitioning(false);
           }
@@ -192,7 +192,7 @@ const Carousel = ({
     morphToNext(currentIndex, index);
   };
 
-  // Canvas setup without initial image display
+  // Canvas setup with improved image loading
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas && images[currentIndex]) {
@@ -206,20 +206,24 @@ const Carousel = ({
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
         
-        // Display initial image on load
-        const img = new Image();
-        img.onload = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawImageProportional(ctx, img, canvas.width, canvas.height, 1);
-        };
-        img.src = images[currentIndex].src;
+        // Only display initial image if not transitioning
+        if (!isTransitioning) {
+          const img = new Image();
+          img.onload = () => {
+            // Double check we're still not transitioning before drawing
+            if (!isTransitioning) {
+              drawImageProportional(ctx, img, canvas.width, canvas.height, 1);
+            }
+          };
+          img.src = images[currentIndex].src;
+        }
       };
       
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
       return () => window.removeEventListener('resize', resizeCanvas);
     }
-  }, [currentIndex, images]);
+  }, [currentIndex, images, isTransitioning]);
 
   // Cleanup animation on unmount
   useEffect(() => {
