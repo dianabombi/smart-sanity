@@ -6,7 +6,7 @@ const NavBar = () => {
 
   const navItems = [
     { label: 'O nás', path: '/who-we-are' },
-    { label: 'Čo ponúkame', path: '/components' },
+    { label: 'Čo ponúkame', path: '/what-we-offer' },
     { label: 'Obchodované značky', path: '/brands' },
     { label: 'Inšpirácie', path: '/inspirations' },
     { label: 'Referencie', path: '/references' },

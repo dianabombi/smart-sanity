@@ -5,15 +5,12 @@ const Breadcrumbs = () => {
   const location = useLocation();
   let pathnames = location.pathname.split('/').filter((x) => x);
   
-  // Add 'components' as middle step for About Us, Brands, Contact, References, and Inspirations pages
-  if (['who-we-are', 'contact', 'brands', 'references', 'inspirations'].includes(pathnames[0])) {
-    pathnames = ['components', ...pathnames];
-  }
+  // Remove the automatic addition of 'components' breadcrumb
 
   // Define breadcrumb labels in Slovak
   const breadcrumbLabels = {
     '': 'Domov',
-    'components': 'Komponenty',
+    'what-we-offer': 'Čo ponúkame',
     'who-we-are': 'O nás',
     'contact': 'Kontakt',
     'brands': 'Značky',

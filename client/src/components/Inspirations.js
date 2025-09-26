@@ -149,6 +149,11 @@ const Inspirations = () => {
                   src={inspiration.image} 
                   alt={inspiration.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  style={{
+                    backgroundColor: '#1f2937',
+                    minHeight: '256px'
+                  }}
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextSibling.style.display = 'flex';

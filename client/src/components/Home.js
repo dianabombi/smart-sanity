@@ -33,7 +33,7 @@ const Home = () => {
             images={carouselImages}
             height="h-full"
             autoPlay={true}
-            autoPlayInterval={5000}
+            autoPlayInterval={20000}
             showDots={true}
             showArrows={false}
             showCounter={false}
@@ -55,7 +55,7 @@ const Home = () => {
             />
           </div>
           
-          {/* Text and Button Section */}
+          {/* Text Section */}
           <div className="flex-1 flex flex-col items-center justify-center pt-16">
             <div className="text-center">
               <p className="text-white font-light leading-tight mb-8 text-[28px]">
@@ -63,21 +63,20 @@ const Home = () => {
                 pre interiérových dizajnérov<br />
                 a architektov
               </p>
-              <div className="mt-32">
-                <Button
-                  size="medium"
-                  variant="primary"
-                  onClick={() => navigate('/components')}
-                  className="w-full max-w-[200px]"
-                >
-                  VSTÚPTE
-                </Button>
-              </div>
             </div>
           </div>
           
-          {/* Bottom spacer */}
-          <div className="flex-shrink-0 pb-16"></div>
+          {/* Button in middle of lower section */}
+          <div className="flex-shrink-0 pb-32 flex justify-center">
+            <Button
+              size="medium"
+              variant="primary"
+              onClick={() => navigate('/what-we-offer')}
+              className="w-full max-w-[200px]"
+            >
+              VSTÚPTE
+            </Button>
+          </div>
         </div>
       </div>
     </Layout>

@@ -81,7 +81,36 @@ const Entrance = () => {
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto">
+          
+          <div className="text-white space-y-4 text-lg leading-relaxed text-left">
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <span className="text-blue-300 mr-3">-</span>
+                <span>Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-300 mr-3">-</span>
+                <span>Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-300 mr-3">-</span>
+                <span>Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-300 mr-3">-</span>
+                <span>Vyskladáme vám náročné sprchové, či vaňové zostavy batérií</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-300 mr-3">-</span>
+                <span>Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-blue-300 mr-3">-</span>
+                <span>Našim partnerom ponúkame dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
