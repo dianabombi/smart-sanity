@@ -27,10 +27,6 @@ const Home = () => {
 
   return (
     <Layout showFooter={false}>
-      {/* NavBar - hidden on mobile, visible on tablet+ */}
-      <div className="hidden tablet:block">
-        <NavBar />
-      </div>
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
         {/* Hero Banner - full width on mobile/tablet, 2/3 on laptop+ */}

@@ -42,9 +42,9 @@ const Brands = () => {
     },
     {
       name: 'Azzurra',
-      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+      description: 'Elegancia, ktorá zmení vašu kúpeľňu na moderný priestor – špičkový taliansky výrobca kúpeľňovej sanity a nábytku.',
       website: 'https://www.azzurra.it/',
-      logo: '/icons/logo.svg',
+      logo: '/logoAZZ.svg',
       category: 'Sanitárna keramika',
       darkBackground: true,
       logoSize: 'max-h-32',
@@ -61,11 +61,12 @@ const Brands = () => {
     },
     {
       name: 'Zenon Surfaces',
-      description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek.',
+      description: 'Zažite s nami nadšenie pre inovácie od španielskeho výrobcu umývadiel, vaní a sprchových vaničiek.',
       website: 'https://zenonsurfaces.com/en/',
-      logo: '/icons/ZENON_white.png',
+      logo: '/icons/ZENON_2024.png',
       category: 'Povrchy a vane',
-      darkBackground: true
+      darkBackground: true,
+      logoFilter: 'brightness(0) invert(1)'
     },
     {
       name: 'Fondovalle',
@@ -90,7 +91,7 @@ const Brands = () => {
     {
       name: 'Tres',
       website: 'https://tresgriferia.com/',
-      logo: '/tres-logo.png'
+      logo: '/icons/Tres.png'
     },
     {
       name: 'AXOR',
@@ -113,24 +114,24 @@ const Brands = () => {
       logo: '/Hansgrohe-Logo-2.svg'
     },
     {
-      name: 'Huppe',
-      website: 'https://www.huppe.com/',
-      logo: '/huppe-logo.png'
+      name: 'HÜPPE',
+      website: 'https://www.hueppe.com/',
+      logo: '/icons/logo_huppe.png'
     },
     {
       name: 'Dornbracht',
       website: 'https://www.dornbracht.com/',
-      logo: '/dornbracht-logo.png'
+      logo: '/icons/dorn_bracht_logo.png'
     },
     {
       name: 'Laufen',
       website: 'https://www.laufen.com/',
-      logo: '/laufen-logo.png'
+      logo: '/LAUFEN_White_RGB_big.png'
     },
     {
       name: 'Kludi',
       website: 'https://www.kludi.com/',
-      logo: '/kludi-logo.png'
+      logo: '/icons/kludi_logo.svg'
     }
   ];
 
@@ -236,7 +237,8 @@ const Brands = () => {
                     alt={`${brand.name} Logo`}
                     className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                     style={{
-                      imageRendering: 'crisp-edges'
+                      imageRendering: 'crisp-edges',
+                      filter: (brand.name === 'HÜPPE' || brand.name === 'Dornbracht' || brand.name === 'Laufen' || brand.name === 'Kludi') ? 'brightness(0) invert(1)' : 'none'
                     }}
                     onError={(e) => {
                       e.target.style.display = 'none';
