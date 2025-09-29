@@ -5,6 +5,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        mobile: '480px',
+        tablet: '768px',
+        laptop: '1024px',
+      },
       colors: {
         'custom-black': '#000000',
         'custom-white': '#ffffff',

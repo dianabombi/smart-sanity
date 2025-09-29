@@ -75,38 +75,37 @@ const Entrance = () => {
       <NavBar />
       
       {/* Breadcrumbs */}
-      <div className="pt-4 px-4 sm:px-6 lg:px-8 ml-14">
+      <div className="pt-4 px-4 sm:px-6 lg:px-8 ml-0 tablet:ml-6 laptop:ml-14">
         <Breadcrumbs />
       </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          
-          <div className="text-white space-y-4 text-lg leading-relaxed text-left">
+          <div className="text-white space-y-4 text-xl tablet:text-2xl leading-relaxed text-left">
             <ul className="space-y-4">
-              <li className="flex items-start">
-                <span className="text-blue-300 mr-3">-</span>
-                <span>Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb</span>
+              <li className="flex items-start gap-4">
+                <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
+                <span>Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb.</span>
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-300 mr-3">-</span>
+              <li className="flex items-start gap-4">
+                <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
                 <span>Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z</span>
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-300 mr-3">-</span>
-                <span>Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami</span>
+              <li className="flex items-start gap-4">
+                <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
+                <span>Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami.</span>
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-300 mr-3">-</span>
+              <li className="flex items-start gap-4">
+                <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
                 <span>Vyskladáme vám náročné sprchové, či vaňové zostavy batérií</span>
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-300 mr-3">-</span>
-                <span>Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom</span>
+              <li className="flex items-start gap-4">
+                <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
+                <span>Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom.</span>
               </li>
-              <li className="flex items-start">
-                <span className="text-blue-300 mr-3">-</span>
+              <li className="flex items-start gap-4">
+                <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
                 <span>Našim partnerom ponúkame dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe</span>
               </li>
             </ul>

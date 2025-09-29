@@ -16,7 +16,7 @@ const Brands = () => {
   const mainBrands = [
     {
       name: 'Agape',
-      description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov.',
+      description: 'Svet plný originality a materiálovej pestrosti z pera tých najlepších svetových dizajnérov – prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a doplnkov.',
       website: 'https://www.agapedesign.it/',
       logo: '/icons/Agape_transparent.png',
       category: 'Kúpeľňový nábytok',
@@ -25,7 +25,7 @@ const Brands = () => {
     },
     {
       name: 'Fantini',
-      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
+      description: 'Symbióza špičkového dizajnu a prvotriednej kvality je výsledkom talianskeho producenta kúpeľňových a kuchynských batérií, doplnkov a komplexných wellness riešení.',
       website: 'https://www.fantini.it/',
       logo: '/fantini.png',
       category: 'Batérie a sprchy',
@@ -33,7 +33,7 @@ const Brands = () => {
     },
     {
       name: 'Cielo',
-      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov.',
+      description: '“Hand Made Italy” – dotknite sa raja – ručne vyrábaná kúpeľňová sanita a nábytok.',
       website: 'https://www.ceramicacielo.it/',
       logo: '/logo_cielo_white.png',
       category: 'Sanitárna keramika',
@@ -42,7 +42,7 @@ const Brands = () => {
     },
     {
       name: 'Azzurra',
-      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+      description: 'Elegancia, ktorá zmení vašu kúpeľňu na moderný priestor – špičkový taliansky výrobca kúpeľňovej sanity a nábytku.',
       website: 'https://www.azzurra.it/',
       logo: '/icons/logo.svg',
       category: 'Sanitárna keramika',
@@ -52,7 +52,7 @@ const Brands = () => {
     },
     {
       name: 'CEA Design',
-      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
+      description: 'Pocítte luxus – nerez ako hlavný materiál tohto prémiového talianskeho producenta kúpeľňových batérií, doplnkov a elektrických sušiakov.',
       website: 'https://www.ceadesign.it/',
       logo: '/cea.svg',
       category: 'Batérie a doplnky',
@@ -61,7 +61,7 @@ const Brands = () => {
     },
     {
       name: 'Zenon Surfaces',
-      description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek.',
+      description: 'Zažite s nami nadšenie pre inovácie od španielskeho výrobcu umývadiel, vaní a sprchových vaničiek.',
       website: 'https://zenonsurfaces.com/en/',
       logo: '/icons/ZENON_white.png',
       category: 'Povrchy a vane',
@@ -69,7 +69,7 @@ const Brands = () => {
     },
     {
       name: 'Fondovalle',
-      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
+      description: 'Pokročilé technológie výroby a špičková kvalita produktov – keramické obklady a dlažby v širokej škále dizajnov a povrchov pre zhmotnenie vašich predstáv.',
       website: 'https://fondovalle.it/',
       logo: '/icons/Fondovalle.png',
       category: 'Obklady a dlažby',
@@ -78,7 +78,7 @@ const Brands = () => {
     },
     {
       name: 'Fiandre',
-      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
+      description: 'Povrchy, ktoré formujú jedinečnosť – prémiový taliansky výrobca gresových obkladov a dlažieb, ktorý medzi prvými prišiel s veľkoformátovými obkladmi.',
       website: 'https://www.fiandre.com/',
       logo: '/logogf.png',
       category: 'Obklady a dlažby',
@@ -147,11 +147,10 @@ const Brands = () => {
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-2xl md:text-3xl font-light text-white mb-8 tracking-wide">
-            ZNAČKY
+            OBCHODOVANÉ ZNAČKY
           </h1>
           <p className="text-lg text-white opacity-80 max-w-3xl mx-auto leading-relaxed">
-            Spolupracujeme s najlepšími značkami v oblasti sanitárnych zariadení 
-            a ponúkame produkty najvyššej kvality pre vaše domácnosti.
+          Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
         </div>
       </div>

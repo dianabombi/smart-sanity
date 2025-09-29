@@ -226,28 +226,6 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* Business Hours */}
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-8">
-                <h2 className="text-2xl font-semibold text-white mb-6">
-                  Pracovné hodiny
-                </h2>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Pondelok - Piatok</span>
-                    <span className="text-white">8:00 - 17:00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Sobota</span>
-                    <span className="text-white">9:00 - 14:00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Nedeľa</span>
-                    <span className="text-white">Zatvorené</span>
-                  </div>
-                </div>
-              </div>
-
               {/* Services */}
               <div className="bg-gray-900 border border-gray-700 rounded-lg p-8">
                 <h2 className="text-2xl font-semibold text-white mb-6">
