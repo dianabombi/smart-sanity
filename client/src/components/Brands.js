@@ -33,7 +33,7 @@ const Brands = () => {
     },
     {
       name: 'Cielo',
-      description: '“Hand Made Italy” – dotknite sa raja – ručne vyrábaná kúpeľňová sanita a nábytok.',
+      description: '"Hand Made Italy" – dotknite sa raja – ručne vyrábaná kúpeľňová sanita a nábytok.',
       website: 'https://www.ceramicacielo.it/',
       logo: '/logo_cielo_white.png',
       category: 'Sanitárna keramika',
@@ -63,9 +63,10 @@ const Brands = () => {
       name: 'Zenon Surfaces',
       description: 'Zažite s nami nadšenie pre inovácie od španielskeho výrobcu umývadiel, vaní a sprchových vaničiek.',
       website: 'https://zenonsurfaces.com/en/',
-      logo: '/icons/ZENON_white.png',
+      logo: '/icons/ZENON_2024.png',
       category: 'Povrchy a vane',
-      darkBackground: true
+      darkBackground: true,
+      logoFilter: 'brightness(0) invert(1)'
     },
     {
       name: 'Fondovalle',
@@ -74,7 +75,8 @@ const Brands = () => {
       logo: '/icons/Fondovalle.png',
       category: 'Obklady a dlažby',
       darkBackground: true,
-      logoSize: 'max-h-32'
+      logoSize: 'max-h-32',
+      logoFilter: 'none'
     },
     {
       name: 'Fiandre',
@@ -90,7 +92,7 @@ const Brands = () => {
     {
       name: 'Tres',
       website: 'https://tresgriferia.com/',
-      logo: '/tres-logo.png'
+      logo: '/icons/Tres.png'
     },
     {
       name: 'AXOR',
@@ -113,24 +115,24 @@ const Brands = () => {
       logo: '/Hansgrohe-Logo-2.svg'
     },
     {
-      name: 'Huppe',
-      website: 'https://www.huppe.com/',
-      logo: '/huppe-logo.png'
+      name: 'HÜPPE',
+      website: 'https://www.hueppe.com/',
+      logo: '/icons/logo_huppe.png'
     },
     {
       name: 'Dornbracht',
       website: 'https://www.dornbracht.com/',
-      logo: '/dornbracht-logo.png'
+      logo: '/icons/dorn_bracht_logo.png'
     },
     {
       name: 'Laufen',
       website: 'https://www.laufen.com/',
-      logo: '/laufen-logo.png'
+      logo: '/icons/logo_laufen_standard.png'
     },
     {
       name: 'Kludi',
       website: 'https://www.kludi.com/',
-      logo: '/kludi-logo.png'
+      logo: '/icons/kludi_logo.svg'
     }
   ];
 
@@ -166,7 +168,7 @@ const Brands = () => {
                 onClick={() => openLogoPreview(brand)}
               >
                 {/* Logo Container */}
-                <div className={`p-4 mb-4 h-24 flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
+                <div className={`${brand.logoPadding || 'p-4'} mb-4 ${brand.logoContainerHeight || 'h-24'} flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
                   {brand.useTextLogo ? (
                     <div className="text-white font-bold text-xl text-center flex items-center justify-center h-full w-full">
                       {brand.name}
@@ -236,7 +238,8 @@ const Brands = () => {
                     alt={`${brand.name} Logo`}
                     className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                     style={{
-                      imageRendering: 'crisp-edges'
+                      imageRendering: 'crisp-edges',
+                      filter: (brand.name === 'HÜPPE' || brand.name === 'Dornbracht' || brand.name === 'Laufen' || brand.name === 'Kludi') ? 'brightness(0) invert(1)' : 'none'
                     }}
                     onError={(e) => {
                       e.target.style.display = 'none';
