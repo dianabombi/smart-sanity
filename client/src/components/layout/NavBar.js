@@ -14,33 +14,34 @@ const NavBar = () => {
     { label: 'Kontakt', path: '/contact' }
   ];
 
+  // Mobile menu state
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [lang, setLang] = useState('sk');
-  // Swipe-down to close state
+
+  // Touch gesture state for swipe-down to close
   const [touchStartY, setTouchStartY] = useState(null);
   const [dragOffset, setDragOffset] = useState(0);
 
   const handleNavClick = (path) => {
-    // Close the sheet first, then navigate to ensure content is visible
     setMobileOpen(false);
     setDragOffset(0);
     setTouchStartY(null);
     setTimeout(() => navigate(path), 50);
   };
 
-  // Handlers for swipe-down gesture on the bottom sheet
+  // Touch handlers for swipe-down gesture
   const onTouchStart = (e) => {
     if (!mobileOpen) return;
-    const y = e.touches?.[0]?.clientY ?? 0;
-    setTouchStartY(y);
+    setTouchStartY(e.touches[0].clientY);
     setDragOffset(0);
   };
 
   const onTouchMove = (e) => {
     if (!mobileOpen || touchStartY === null) return;
-    const y = e.touches?.[0]?.clientY ?? 0;
-    const delta = Math.max(0, y - touchStartY);
-    setDragOffset(delta);
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - touchStartY;
+    if (diff > 0) { // Only allow downward drag
+      setDragOffset(diff);
+    }
   };
 
   const onTouchEnd = () => {
@@ -72,7 +73,7 @@ const NavBar = () => {
           <img 
             src="/logoBlack.webp" 
             alt="SMART SANITY" 
-            className="shrink-0 block h-48 mobile:h-40 tablet:h-48 laptop:h-56 w-auto object-contain"
+            className="shrink-0 block h-36 mobile:h-40 tablet:h-48 laptop:h-56 w-auto object-contain"
             style={{
               imageRendering: 'high-quality',
             }}
@@ -95,7 +96,7 @@ const NavBar = () => {
             <button
               key={item.label}
               onClick={() => handleNavClick(item.path)}
-              className="text-gray-400 hover:text-gray-300 transition-colors text-lg sm:max-w-[200px] laptop:text-xl"
+              className="text-gray-400 hover:text-gray-300 transition-colors text-lg laptop:text-xl"
             >
               {item.label}
             </button>
@@ -120,27 +121,26 @@ const NavBar = () => {
         )}
       </div>
 
-      {/* Mobile/Tablet Bottom Sheet + Overlay */}
-      {/* Overlay */}
+      {/* Mobile Menu Overlay */}
       {mobileOpen && (
-        <button
-          type="button"
-          aria-hidden="true"
-          onClick={() => setMobileOpen(false)}
+        <div 
           className="laptop:hidden sm:h-40 fixed inset-0 z-[70] bg-black/40 backdrop-blur-[2px]"
+          onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Bottom Sheet */}
-      <div
+      {/* Mobile Bottom Sheet */}
+      <div 
         id="mobile-bottom-sheet"
-        className={`laptop:hidden fixed left-0 right-0 bottom-0 z-[90] bg-black text-white rounded-t-2xl border-t border-gray-800 shadow-[0_-12px_30px_rgba(255,255,255,0.25)] transform transition-transform duration-300 h-[85vh] ${mobileOpen ? 'translate-y-0' : 'translate-y-full'} relative`}
+        className={`laptop:hidden fixed left-0 right-0 bottom-0 z-[90] bg-black border-t border-gray-700 transition-transform duration-300 ease-out ${
+          mobileOpen ? 'translate-y-0' : 'translate-y-full'
+        } h-[85vh] rounded-t-2xl`}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         style={{ transform: `${mobileOpen ? `translateY(${dragOffset}px)` : ''}` }}
       >
-        {/* Sheet Close Button (top-right) */}
+        {/* Close button inside the sheet */}
         <button
           type="button"
           aria-label="Zavrieť menu"
@@ -151,47 +151,35 @@ const NavBar = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <div className="h-full flex flex-col px-5 pt-4 pb-2">
-          {/* Drag handle indicator */}
-          <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-white/40" />
-          {/* Scrollable menu area */}
-          <div className="flex-1 overflow-y-auto pr-1">
-            <div className="flex flex-col">
-              {navItems.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => {
-                    setMobileOpen(false);
-                    handleNavClick(item.path);
-                  }}
-                  className="text-gray-100 hover:text-white transition-colors text-xl py-4 text-left"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+
+        {/* Drag indicator */}
+        <div className="flex justify-center pt-3 pb-2">
+          <div className="w-12 h-1 bg-gray-600 rounded-full"></div>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="space-y-1">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => handleNavClick(item.path)}
+                className="block w-full text-left px-4 py-4 text-white text-xl font-light hover:bg-gray-800 rounded-lg transition-colors"
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
-          {/* Bottom divider and language switcher (always visible) */}
-          <div
-            className="pt-4 border-t border-gray-700 flex items-center justify-between bg-black shadow-[0_-6px_16px_rgba(0,0,0,0.6)]"
-            style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 12px)' }}
-          >
-            <span className="text-gray-400 text-sm">Jazyk / Language</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setLang('sk')}
-                className={`${lang === 'sk' ? 'bg-white text-black' : 'bg-transparent text-white border border-white/40'} px-3 py-1 rounded-full text-sm`}
-              >
-                SK
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`${lang === 'en' ? 'bg-white text-black' : 'bg-transparent text-white border border-white/40'} px-3 py-1 rounded-full text-sm`}
-              >
-                EN
-              </button>
+        </div>
+
+        {/* Language switcher - always visible */}
+        <div className="pt-4 border-t border-gray-700 flex items-center justify-between bg-black shadow-[0_-6px_16px_rgba(0,0,0,0.6)]"
+             style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 12px)' }}>
+          <div className="px-6">
+            <span className="text-gray-400 text-sm">Jazyk</span>
+            <div className="flex gap-3 mt-1">
+              <button className="text-white text-lg font-medium">SK</button>
+              <button className="text-gray-500 text-lg">EN</button>
             </div>
           </div>
         </div>

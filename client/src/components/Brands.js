@@ -16,7 +16,7 @@ const Brands = () => {
   const mainBrands = [
     {
       name: 'Agape',
-      description: 'Svet plný originality a materiálovej pestrosti z pera tých najlepších svetových dizajnérov – prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a doplnkov.',
+      description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov.',
       website: 'https://www.agapedesign.it/',
       logo: '/icons/Agape_transparent.png',
       category: 'Kúpeľňový nábytok',
@@ -25,7 +25,7 @@ const Brands = () => {
     },
     {
       name: 'Fantini',
-      description: 'Symbióza špičkového dizajnu a prvotriednej kvality je výsledkom talianskeho producenta kúpeľňových a kuchynských batérií, doplnkov a komplexných wellness riešení.',
+      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
       website: 'https://www.fantini.it/',
       logo: '/fantini.png',
       category: 'Batérie a sprchy',
@@ -33,7 +33,7 @@ const Brands = () => {
     },
     {
       name: 'Cielo',
-      description: '"Hand Made Italy" – dotknite sa raja – ručne vyrábaná kúpeľňová sanita a nábytok.',
+      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov.',
       website: 'https://www.ceramicacielo.it/',
       logo: '/logo_cielo_white.png',
       category: 'Sanitárna keramika',
@@ -42,7 +42,7 @@ const Brands = () => {
     },
     {
       name: 'Azzurra',
-      description: 'Elegancia, ktorá zmení vašu kúpeľňu na moderný priestor – špičkový taliansky výrobca kúpeľňovej sanity a nábytku.',
+      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
       website: 'https://www.azzurra.it/',
       logo: '/icons/logo.svg',
       category: 'Sanitárna keramika',
@@ -52,7 +52,7 @@ const Brands = () => {
     },
     {
       name: 'CEA Design',
-      description: 'Pocítte luxus – nerez ako hlavný materiál tohto prémiového talianskeho producenta kúpeľňových batérií, doplnkov a elektrických sušiakov.',
+      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
       website: 'https://www.ceadesign.it/',
       logo: '/cea.svg',
       category: 'Batérie a doplnky',
@@ -61,26 +61,24 @@ const Brands = () => {
     },
     {
       name: 'Zenon Surfaces',
-      description: 'Zažite s nami nadšenie pre inovácie od španielskeho výrobcu umývadiel, vaní a sprchových vaničiek.',
+      description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek.',
       website: 'https://zenonsurfaces.com/en/',
-      logo: '/icons/ZENON_2024.png',
+      logo: '/icons/ZENON_white.png',
       category: 'Povrchy a vane',
-      darkBackground: true,
-      logoFilter: 'brightness(0) invert(1)'
+      darkBackground: true
     },
     {
       name: 'Fondovalle',
-      description: 'Pokročilé technológie výroby a špičková kvalita produktov – keramické obklady a dlažby v širokej škále dizajnov a povrchov pre zhmotnenie vašich predstáv.',
+      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
       website: 'https://fondovalle.it/',
       logo: '/icons/Fondovalle.png',
       category: 'Obklady a dlažby',
       darkBackground: true,
-      logoSize: 'max-h-32',
-      logoFilter: 'none'
+      logoSize: 'max-h-32'
     },
     {
       name: 'Fiandre',
-      description: 'Povrchy, ktoré formujú jedinečnosť – prémiový taliansky výrobca gresových obkladov a dlažieb, ktorý medzi prvými prišiel s veľkoformátovými obkladmi.',
+      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
       website: 'https://www.fiandre.com/',
       logo: '/logogf.png',
       category: 'Obklady a dlažby',
@@ -92,7 +90,7 @@ const Brands = () => {
     {
       name: 'Tres',
       website: 'https://tresgriferia.com/',
-      logo: '/icons/Tres.png'
+      logo: '/tres-logo.png'
     },
     {
       name: 'AXOR',
@@ -115,24 +113,24 @@ const Brands = () => {
       logo: '/Hansgrohe-Logo-2.svg'
     },
     {
-      name: 'HÜPPE',
-      website: 'https://www.hueppe.com/',
-      logo: '/icons/logo_huppe.png'
+      name: 'Huppe',
+      website: 'https://www.huppe.com/',
+      logo: '/huppe-logo.png'
     },
     {
       name: 'Dornbracht',
       website: 'https://www.dornbracht.com/',
-      logo: '/icons/dorn_bracht_logo.png'
+      logo: '/dornbracht-logo.png'
     },
     {
       name: 'Laufen',
       website: 'https://www.laufen.com/',
-      logo: '/icons/logo_laufen_standard.png'
+      logo: '/laufen-logo.png'
     },
     {
       name: 'Kludi',
       website: 'https://www.kludi.com/',
-      logo: '/icons/kludi_logo.svg'
+      logo: '/kludi-logo.png'
     }
   ];
 
@@ -168,7 +166,7 @@ const Brands = () => {
                 onClick={() => openLogoPreview(brand)}
               >
                 {/* Logo Container */}
-                <div className={`${brand.logoPadding || 'p-4'} mb-4 ${brand.logoContainerHeight || 'h-24'} flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
+                <div className={`p-4 mb-4 h-24 flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
                   {brand.useTextLogo ? (
                     <div className="text-white font-bold text-xl text-center flex items-center justify-center h-full w-full">
                       {brand.name}
@@ -238,8 +236,7 @@ const Brands = () => {
                     alt={`${brand.name} Logo`}
                     className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                     style={{
-                      imageRendering: 'crisp-edges',
-                      filter: (brand.name === 'HÜPPE' || brand.name === 'Dornbracht' || brand.name === 'Laufen' || brand.name === 'Kludi') ? 'brightness(0) invert(1)' : 'none'
+                      imageRendering: 'crisp-edges'
                     }}
                     onError={(e) => {
                       e.target.style.display = 'none';

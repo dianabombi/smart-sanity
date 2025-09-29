@@ -39,7 +39,7 @@ const Breadcrumbs = () => {
       {/* Home link */}
       <Link 
         to="/" 
-        className="text-[#595959] hover:text-gray-300 transition-colors duration-200"
+        className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
       >
         Domov
       </Link>
