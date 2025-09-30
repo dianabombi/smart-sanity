@@ -73,7 +73,7 @@ const NavBar = () => {
           <img 
             src="/logoBlack.webp" 
             alt="SMART SANITY" 
-            className="shrink-0 block h-36 mobile:h-40 tablet:h-48 laptop:h-56 w-auto object-contain"
+            className="shrink-0 block h-40 mobile:h-44 tablet:h-48 laptop:h-56 w-auto object-contain"
             style={{
               imageRendering: 'high-quality',
             }}

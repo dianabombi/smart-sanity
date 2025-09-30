@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="bg-black border-t border-gray-700 py-8 px-4 sm:px-6 lg:px-8 shadow-[0_-10px_30px_rgba(255,255,255,0.1)]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Smart Sanit</h3>
@@ -76,7 +76,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-gray-700">
-          <div className="flex flex-col sm:flex-row justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left">
             <p className="text-sm text-white">
               © 2024 Smart Sanit. Všetky práva vyhradené.
             </p>

@@ -86,7 +86,7 @@ const Entrance = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-4">
                 <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
-                <span>Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb.</span>
+                <span>Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb</span>
               </li>
               <li className="flex items-start gap-4">
                 <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
@@ -94,7 +94,7 @@ const Entrance = () => {
               </li>
               <li className="flex items-start gap-4">
                 <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
-                <span>Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami.</span>
+                <span>Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami</span>
               </li>
               <li className="flex items-start gap-4">
                 <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
@@ -102,11 +102,11 @@ const Entrance = () => {
               </li>
               <li className="flex items-start gap-4">
                 <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
-                <span>Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom.</span>
+                <span>Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom</span>
               </li>
               <li className="flex items-start gap-4">
                 <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
-                <span>Našim partnerom ponúkame dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe</span>
+                <span>Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe</span>
               </li>
             </ul>
           </div>
