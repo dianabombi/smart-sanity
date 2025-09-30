@@ -129,9 +129,9 @@ const Brands = () => {
       logo: '/LAUFEN_White_RGB_big.png'
     },
     {
-      name: 'Kludi',
-      website: 'https://www.kludi.com/',
-      logo: '/icons/kludi_logo.svg'
+      name: 'Keco',
+      website: '#',
+      logo: '/placeholder-logo.png'
     }
   ];
 
@@ -238,7 +238,7 @@ const Brands = () => {
                     className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                     style={{
                       imageRendering: 'crisp-edges',
-                      filter: (brand.name === 'HÜPPE' || brand.name === 'Dornbracht' || brand.name === 'Laufen' || brand.name === 'Kludi') ? 'brightness(0) invert(1)' : 'none'
+                      filter: (brand.name === 'HÜPPE' || brand.name === 'Dornbracht' || brand.name === 'Laufen') ? 'brightness(0) invert(1)' : 'none'
                     }}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -304,7 +304,8 @@ const Brands = () => {
                   alt={selectedLogo.name}
                   className="max-w-full max-h-32 object-contain"
                   style={{
-                    filter: selectedLogo.name === 'Agape' ? 'none' : 'none'
+                    filter: selectedLogo.logoFilter || 
+                           (selectedLogo.name === 'HÜPPE' || selectedLogo.name === 'Dornbracht' || selectedLogo.name === 'Laufen') ? 'brightness(0) invert(1)' : 'none'
                   }}
                 />
               </div>
