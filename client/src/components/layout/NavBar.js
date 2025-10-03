@@ -64,10 +64,10 @@ const NavBar = () => {
 
   return (
     <nav className="bg-black shadow-md sticky top-0 z-[100] relative">
-      <div className="flex items-center justify-between pl-1 pr-2 md:px-6 lg:px-8 tablet:px-6 laptop:px-8">
+      <div className="flex items-center justify-between pl-1 pr-4 md:px-6 lg:px-8 tablet:px-6 laptop:px-8">
         {/* Logo/Brand */}
         <div 
-          className="cursor-pointer hover:opacity-80 transition-opacity py-2 shrink-0 -ml-1 sm:ml-0 sm:min-w-[350px] md:min-w-[280px] lg:min-w-[360px]"
+          className="cursor-pointer hover:opacity-80 transition-opacity py-2 shrink-0 -ml-1 sm:ml-0 max-w-[70%] laptop:min-w-[360px] laptop:max-w-none"
           onClick={() => handleNavClick('/')}
         >
           <img 
@@ -105,9 +105,9 @@ const NavBar = () => {
 
         {/* Mobile/Tablet Menu Button */}
         {!mobileOpen && (
-          <div className="laptop:hidden mr-2">
+          <div className="laptop:hidden flex-shrink-0 ml-2 min-w-[60px]">
             <button
-              className="text-white p-1 mr-6 rounded-md border-2 border-[#595959] shadow-[6px_6px_14px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
+              className="text-white p-2 rounded-md border-2 border-[#595959] shadow-[6px_6px_14px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
               aria-label="Open menu"
               aria-expanded={false}
               aria-controls="mobile-bottom-sheet"

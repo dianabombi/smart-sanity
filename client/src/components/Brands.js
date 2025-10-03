@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Layout from './layout/Layout';
 import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
+import ApiService from '../services/api';
 
 const Brands = () => {
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [visibleBrands, setVisibleBrands] = useState([]);
   const [showOtherBrands, setShowOtherBrands] = useState(false);
+  const [brands, setBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedBrandImages, setSelectedBrandImages] = useState(null);
 
   const openLogoPreview = (brand) => {
     setSelectedLogo(brand);
@@ -16,102 +20,64 @@ const Brands = () => {
     setSelectedLogo(null);
   };
 
+  const openImageGallery = (brand) => {
+    setSelectedBrandImages(brand);
+  };
+
+  const closeImageGallery = () => {
+    setSelectedBrandImages(null);
+  };
+
+  // Load brands from API
+  useEffect(() => {
+    loadBrands();
+  }, []);
+
+  const loadBrands = async () => {
+    try {
+      setLoading(true);
+      const result = await ApiService.getBrands();
+      if (result.success) {
+        setBrands(result.brands);
+      }
+    } catch (error) {
+      console.error('Error loading brands:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Animation for brands
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisibleBrands([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-    }, 400);
-    
-    const otherBrandsTimer = setTimeout(() => {
-      setShowOtherBrands(true);
-    }, 1200);
+    if (brands.length > 0) {
+      const timer = setTimeout(() => {
+        setVisibleBrands(brands.map((_, index) => index));
+      }, 400);
+      
+      const otherBrandsTimer = setTimeout(() => {
+        setShowOtherBrands(true);
+      }, 1200);
 
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(otherBrandsTimer);
-    };
-  }, []);
-  const mainBrands = [
-    {
-      name: 'Agape',
-      description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
-      website: 'https://www.agapedesign.it/',
-      logo: '/icons/Agape_transparent.png',
-      category: 'Kúpeľňový nábytok',
-      darkBackground: true,
-      logoSize: 'max-h-20'
-    },
-    {
-      name: 'Fantini',
-      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
-      website: 'https://www.fantini.it/',
-      logo: '/fantini.png',
-      category: 'Batérie a sprchy',
-      darkBackground: true
-    },
-    {
-      name: 'Cielo',
-      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
-      website: 'https://www.ceramicacielo.it/',
-      logo: '/logo_cielo_white.png',
-      category: 'Sanitárna keramika',
-      darkBackground: true,
-      logoSize: 'max-h-14'
-    },
-    {
-      name: 'Azzurra',
-      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
-      website: 'https://www.azzurra.it/',
-      logo: '/logoAZZ.svg',
-      category: 'Sanitárna keramika',
-      darkBackground: true,
-      logoSize: 'max-h-40',
-      logoFilter: 'brightness(0) invert(1)'
-    },
-    {
-      name: 'Cea',
-      description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
-      website: 'https://www.ceadesign.it/',
-      logo: '/cea.svg',
-      category: 'Batérie a doplnky',
-      darkBackground: true,
-      logoSize: 'max-h-14'
-    },
-    {
-      name: 'Zenon',
-      description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek',
-      website: 'https://zenonsurfaces.com/en/',
-      logo: '/icons/ZENON_2024.png',
-      category: 'Povrchy a vane',
-      darkBackground: true,
-      logoFilter: 'brightness(0) invert(1)'
-    },
-    {
-      name: 'Fondovalle',
-      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
-      website: 'https://fondovalle.it/',
-      logo: '/icons/Fondovalle.png',
-      category: 'Obklady a dlažby',
-      darkBackground: true,
-      logoSize: 'max-h-32'
-    },
-    {
-      name: 'Fiandre',
-      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
-      website: 'https://www.fiandre.com/',
-      logo: '/logogf.png',
-      category: 'Obklady a dlažby',
-      darkBackground: true
-    },
-    {
-      name: 'Antrax',
-      description: 'Prémiový taliansky výrobca dizajnových radiátorov',
-      website: 'https://www.antrax.it/',
-      logo: '/antrax-logo.png',
-      category: 'Radiátory',
-      darkBackground: true
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(otherBrandsTimer);
+      };
     }
-  ];
+  }, [brands]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <NavBar />
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-white">Načítavam značky...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   const otherBrands = [
     {
@@ -187,7 +153,7 @@ const Brands = () => {
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {mainBrands.map((brand, index) => (
+            {brands.filter(brand => brand.category !== 'Ostatné').map((brand, index) => (
               <div
                 key={index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
@@ -242,6 +208,22 @@ const Brands = () => {
                   <p className="text-sm leading-relaxed text-white/70">
                     {brand.description}
                   </p>
+
+                  {/* Image Gallery Button */}
+                  {brand.images && brand.images.length > 0 && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openImageGallery(brand);
+                      }}
+                      className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Zobraziť obrázky ({brand.images.length})
+                    </button>
+                  )}
                 </div>
 
               </div>
@@ -264,7 +246,7 @@ const Brands = () => {
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {otherBrands.map((brand, index) => (
+            {brands.filter(brand => brand.category === 'Ostatné').map((brand, index) => (
               <div
                 key={index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
@@ -369,6 +351,73 @@ const Brands = () => {
                   className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
                 >
                   Zavrieť
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Gallery Modal */}
+      {selectedBrandImages && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">{selectedBrandImages.name}</h2>
+                  <p className="text-blue-300 text-sm mt-1">{selectedBrandImages.category}</p>
+                </div>
+                <button
+                  onClick={closeImageGallery}
+                  className="text-gray-400 hover:text-white text-3xl p-2"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {selectedBrandImages.images && selectedBrandImages.images.length > 0 ? (
+                <div className="max-h-[70vh] overflow-y-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {selectedBrandImages.images.map((image, index) => (
+                      <div key={image._id || index} className="group relative">
+                        <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
+                          <img
+                            src={process.env.NODE_ENV === 'production' 
+                              ? `/${image.path}` 
+                              : `http://localhost:5001/${image.path}`}
+                            alt={image.originalName}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 mb-4">
+                    <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-400 text-lg">Žiadne obrázky nie sú k dispozícii</p>
+                </div>
+              )}
+              
+              <div className="flex justify-center mt-6 pt-4 border-t border-gray-700">
+                <button
+                  onClick={closeImageGallery}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Zavrieť galériu
                 </button>
               </div>
             </div>
