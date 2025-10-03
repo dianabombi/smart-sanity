@@ -162,7 +162,9 @@ const AdminBrands = ({ onLogout }) => {
                     <div key={image._id || index} className="relative group">
                       <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                         <img
-                          src={`http://localhost:5001/${image.path}`}
+                          src={process.env.NODE_ENV === 'production' 
+                            ? `/${image.path}` 
+                            : `http://localhost:5001/${image.path}`}
                           alt={image.originalName}
                           className="w-full h-full object-cover"
                         />
