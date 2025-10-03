@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './layout/Layout';
 import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
 
 const Brands = () => {
   const [selectedLogo, setSelectedLogo] = useState(null);
+  const [visibleBrands, setVisibleBrands] = useState([]);
+  const [showOtherBrands, setShowOtherBrands] = useState(false);
 
   const openLogoPreview = (brand) => {
     setSelectedLogo(brand);
@@ -13,6 +15,22 @@ const Brands = () => {
   const closeLogoPreview = () => {
     setSelectedLogo(null);
   };
+
+  // Animation for brands
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisibleBrands([0, 1, 2, 3, 4, 5, 6, 7]);
+    }, 400);
+    
+    const otherBrandsTimer = setTimeout(() => {
+      setShowOtherBrands(true);
+    }, 1200);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(otherBrandsTimer);
+    };
+  }, []);
   const mainBrands = [
     {
       name: 'Agape',
@@ -91,7 +109,7 @@ const Brands = () => {
     {
       name: 'Tres',
       website: 'https://tresgriferia.com/',
-      logo: '/icons/Tres.png'
+      logo: '/TRES_logo_W.svg'
     },
     {
       name: 'AXOR',
@@ -147,10 +165,11 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-2xl md:text-3xl font-light text-white mb-8 tracking-wide">
+          <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-light text-white mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             OBCHODOVANÉ ZNAČKY
           </h1>
-          <p className="text-lg text-white opacity-80 max-w-3xl mx-auto leading-relaxed">
+          <div className="w-32 h-1 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto mb-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]"></div>
+          <p className="text-lg tablet:text-xl text-white opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
         </div>
@@ -163,7 +182,12 @@ const Brands = () => {
             {mainBrands.map((brand, index) => (
               <div
                 key={index}
-                className="group bg-white/5 border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer"
+                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
+                  visibleBrands.includes(index) 
+                    ? 'translate-y-0 opacity-100 scale-100' 
+                    : 'translate-y-8 opacity-0 scale-95'
+                } hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20`}
+                style={{ transitionDelay: `${index * 100}ms` }}
                 onClick={() => openLogoPreview(brand)}
               >
                 {/* Logo Container */}
@@ -221,14 +245,21 @@ const Brands = () => {
       {/* Ostatné Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-light text-white mb-8 text-center tracking-wide">
+          <h2 className={`text-2xl tablet:text-3xl font-light text-white mb-8 text-center tracking-wide transform transition-all duration-1000 ${
+            showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+          }`}>
             OSTATNÉ
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {otherBrands.map((brand, index) => (
               <div
                 key={index}
-                className="group bg-white/5 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
+                  showOtherBrands 
+                    ? 'translate-y-0 opacity-100 scale-100' 
+                    : 'translate-y-8 opacity-0 scale-95'
+                } hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20`}
+                style={{ transitionDelay: `${index * 80 + 200}ms` }}
                 onClick={() => openLogoPreview(brand)}
               >
                 <div className="h-16 flex items-center justify-center">

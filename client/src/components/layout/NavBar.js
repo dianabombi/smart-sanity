@@ -134,7 +134,7 @@ const NavBar = () => {
         id="mobile-bottom-sheet"
         className={`laptop:hidden fixed left-0 right-0 bottom-0 z-[90] bg-black border-t border-gray-700 transition-transform duration-300 ease-out ${
           mobileOpen ? 'translate-y-0' : 'translate-y-full'
-        } h-[85vh] rounded-t-2xl`}
+        } h-[60vh] tablet:h-[70vh] rounded-t-2xl`}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
