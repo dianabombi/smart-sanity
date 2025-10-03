@@ -8,6 +8,7 @@ import Brands from './components/Brands';
 import CategoryGallery from './components/CategoryGallery';
 import References from './components/References';
 import Inspirations from './components/Inspirations';
+import Admin from './components/Admin';
 import CookieConsent from './components/ui/CookieConsent';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/references" element={<References />} />
           <Route path="/inspirations" element={<Inspirations />} />
           <Route path="/components/category/:category" element={<CategoryGallery />} />
+          <Route path="/admin/*" element={<Admin />} />
         </Routes>
         <CookieConsent />
       </div>

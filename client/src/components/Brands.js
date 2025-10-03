@@ -19,7 +19,7 @@ const Brands = () => {
   // Animation for brands
   useEffect(() => {
     const timer = setTimeout(() => {
-      setVisibleBrands([0, 1, 2, 3, 4, 5, 6, 7]);
+      setVisibleBrands([0, 1, 2, 3, 4, 5, 6, 7, 8]);
     }, 400);
     
     const otherBrandsTimer = setTimeout(() => {
@@ -34,7 +34,7 @@ const Brands = () => {
   const mainBrands = [
     {
       name: 'Agape',
-      description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov.',
+      description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
       website: 'https://www.agapedesign.it/',
       logo: '/icons/Agape_transparent.png',
       category: 'Kúpeľňový nábytok',
@@ -51,7 +51,7 @@ const Brands = () => {
     },
     {
       name: 'Cielo',
-      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov.',
+      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
       website: 'https://www.ceramicacielo.it/',
       logo: '/logo_cielo_white.png',
       category: 'Sanitárna keramika',
@@ -60,16 +60,16 @@ const Brands = () => {
     },
     {
       name: 'Azzurra',
-      description: 'Elegancia, ktorá zmení vašu kúpeľňu na moderný priestor – špičkový taliansky výrobca kúpeľňovej sanity a nábytku.',
+      description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
       website: 'https://www.azzurra.it/',
       logo: '/logoAZZ.svg',
       category: 'Sanitárna keramika',
       darkBackground: true,
-      logoSize: 'max-h-32',
+      logoSize: 'max-h-40',
       logoFilter: 'brightness(0) invert(1)'
     },
     {
-      name: 'CEA Design',
+      name: 'Cea',
       description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
       website: 'https://www.ceadesign.it/',
       logo: '/cea.svg',
@@ -78,8 +78,8 @@ const Brands = () => {
       logoSize: 'max-h-14'
     },
     {
-      name: 'Zenon Surfaces',
-      description: 'Zažite s nami nadšenie pre inovácie od španielskeho výrobcu umývadiel, vaní a sprchových vaničiek.',
+      name: 'Zenon',
+      description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek',
       website: 'https://zenonsurfaces.com/en/',
       logo: '/icons/ZENON_2024.png',
       category: 'Povrchy a vane',
@@ -88,7 +88,7 @@ const Brands = () => {
     },
     {
       name: 'Fondovalle',
-      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
+      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
       website: 'https://fondovalle.it/',
       logo: '/icons/Fondovalle.png',
       category: 'Obklady a dlažby',
@@ -97,10 +97,18 @@ const Brands = () => {
     },
     {
       name: 'Fiandre',
-      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb.',
+      description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
       website: 'https://www.fiandre.com/',
       logo: '/logogf.png',
       category: 'Obklady a dlažby',
+      darkBackground: true
+    },
+    {
+      name: 'Antrax',
+      description: 'Prémiový taliansky výrobca dizajnových radiátorov',
+      website: 'https://www.antrax.it/',
+      logo: '/antrax-logo.png',
+      category: 'Radiátory',
       darkBackground: true
     }
   ];
@@ -245,11 +253,16 @@ const Brands = () => {
       {/* Ostatné Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className={`text-2xl tablet:text-3xl font-light text-white mb-8 text-center tracking-wide transform transition-all duration-1000 ${
+          <h2 className={`text-2xl tablet:text-3xl font-light text-white mb-4 text-center tracking-wide transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
             OSTATNÉ
           </h2>
+          <p className={`text-lg text-white opacity-80 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
+            showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+          }`} style={{ transitionDelay: '200ms' }}>
+            Ďalší producenti, ktorých vám vieme ponúknuť
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {otherBrands.map((brand, index) => (
               <div
