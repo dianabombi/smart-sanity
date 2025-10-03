@@ -13,7 +13,7 @@ const Breadcrumbs = () => {
     'what-we-offer': 'Čo ponúkame',
     'who-we-are': 'O nás',
     'contact': 'Kontakt',
-    'brands': 'Značky',
+    'brands': 'Obchodované značky',
     'references': 'Referencie',
     'inspirations': 'Inšpirácie',
     'category': 'Kategória',

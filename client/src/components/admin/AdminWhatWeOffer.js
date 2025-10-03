@@ -136,41 +136,41 @@ const AdminWhatWeOffer = ({ onLogout }) => {
     <AdminLayout onLogout={onLogout}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Správa obsahu - Čo ponúkame
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-300">
             Upravte obsah stránky "Čo ponúkame"
           </p>
         </div>
 
         {/* Success/Error Messages */}
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-green-800">{success}</p>
+          <div className="bg-green-900/20 border border-green-700 rounded-lg p-4">
+            <p className="text-green-400">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-800">{error}</p>
+          <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+            <p className="text-red-400">{error}</p>
           </div>
         )}
 
         {/* Content Form */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-gray-800 rounded-lg shadow p-6 border border-gray-700">
           <div className="space-y-6">
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Nadpis stránky
               </label>
               <input
                 type="text"
                 value={content?.title || ''}
                 onChange={(e) => handleContentChange('title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Zadajte nadpis stránky"
               />
             </div>
@@ -178,7 +178,7 @@ const AdminWhatWeOffer = ({ onLogout }) => {
             {/* Bullet Points */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-300">
                   Body ponuky (animované na stránke)
                 </label>
                 <button
@@ -191,17 +191,17 @@ const AdminWhatWeOffer = ({ onLogout }) => {
 
               {bulletPoints.map((point, index) => (
                 <div key={index} className="flex items-center gap-3 mb-3">
-                  <span className="text-blue-600 font-bold">•</span>
+                  <span className="text-blue-400 font-bold">•</span>
                   <input
                     type="text"
                     value={point}
                     onChange={(e) => handleBulletPointChange(index, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Zadajte text bodu"
                   />
                   <button
                     onClick={() => removeBulletPoint(index)}
-                    className="text-red-600 hover:text-red-800 px-2"
+                    className="text-red-400 hover:text-red-300 px-2"
                   >
                     ×
                   </button>
@@ -223,16 +223,16 @@ const AdminWhatWeOffer = ({ onLogout }) => {
         </div>
 
         {/* Preview */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Náhľad</h3>
+        <div className="bg-gray-800 rounded-lg shadow p-6 border border-gray-700">
+          <h3 className="text-lg font-semibold text-white mb-4">Náhľad</h3>
           <div className="prose max-w-none">
-            <h1 className="text-2xl font-bold mb-6">{content?.title}</h1>
+            <h1 className="text-2xl font-bold mb-6 text-white">{content?.title}</h1>
             
             <div className="space-y-4">
               {bulletPoints.filter(point => point.trim()).map((point, index) => (
                 <div key={index} className="flex items-start gap-4">
                   <span className="mt-2 h-4 w-4 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex-shrink-0"></span>
-                  <span className="text-lg">{point}</span>
+                  <span className="text-lg text-gray-300">{point}</span>
                 </div>
               ))}
             </div>
@@ -240,9 +240,9 @@ const AdminWhatWeOffer = ({ onLogout }) => {
         </div>
 
         {/* Instructions */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-blue-800 font-medium mb-2">Informácie</h4>
-          <p className="text-blue-700 text-sm">
+        <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
+          <h4 className="text-blue-400 font-medium mb-2">Informácie</h4>
+          <p className="text-blue-300 text-sm">
             Tieto body sa zobrazia na stránke "Čo ponúkame" s animáciami. Každý bod sa zobrazí postupne s pekným efektom.
           </p>
         </div>

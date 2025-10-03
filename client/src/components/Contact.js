@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import Breadcrumbs from './ui/Breadcrumbs';
+import ApiService from '../services/api';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -28,18 +29,23 @@ const Contact = () => {
     setIsSubmitting(true);
     setSubmitStatus('');
 
-    // Simulate form submission
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSubmitStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
+      const result = await ApiService.sendMessage(formData);
+      
+      if (result.success) {
+        setSubmitStatus('success');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+      }
     } catch (error) {
+      console.error('Error sending message:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

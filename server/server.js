@@ -26,11 +26,13 @@ mongoose.connect(MONGODB_URI, {
 const authRoutes = require('./routes/auth');
 const brandRoutes = require('./routes/brands');
 const contentRoutes = require('./routes/content');
+const messageRoutes = require('./routes/messages');
 
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Basic routes
 app.get('/', (req, res) => {

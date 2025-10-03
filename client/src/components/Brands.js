@@ -79,54 +79,6 @@ const Brands = () => {
     );
   }
 
-  const otherBrands = [
-    {
-      name: 'Tres',
-      website: 'https://tresgriferia.com/',
-      logo: '/TRES_logo_W.svg'
-    },
-    {
-      name: 'AXOR',
-      website: 'https://www.axor-design.com/int/',
-      logo: '/Axor-logo-white.png'
-    },
-    {
-      name: 'Kaldewei',
-      website: 'https://www.kaldewei.com/',
-      logo: '/icons/csm_kaldewei_white_rgb_f6885cdf89.png'
-    },
-    {
-      name: 'Alca',
-      website: 'https://alcadrain.sk/',
-      logo: '/alca.svg'
-    },
-    {
-      name: 'Hansgrohe',
-      website: 'https://www.hansgrohe.com/',
-      logo: '/Hansgrohe-Logo-2.svg'
-    },
-    {
-      name: 'HÜPPE',
-      website: 'https://www.hueppe.com/',
-      logo: '/icons/logo_huppe.png'
-    },
-    {
-      name: 'Dornbracht',
-      website: 'https://www.dornbracht.com/',
-      logo: '/icons/dorn_bracht_logo.png'
-    },
-    {
-      name: 'Laufen',
-      website: 'https://www.laufen.com/',
-      logo: '/LAUFEN_White_RGB_big.png'
-    },
-    {
-      name: 'Keco',
-      website: '#',
-      logo: '/placeholder-logo.png'
-    }
-  ];
-
   return (
     <Layout>
       <NavBar />
@@ -162,7 +114,13 @@ const Brands = () => {
                     : 'translate-y-8 opacity-0 scale-95'
                 } hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20`}
                 style={{ transitionDelay: `${index * 100}ms` }}
-                onClick={() => openLogoPreview(brand)}
+                onClick={() => {
+                  if (brand.images && brand.images.length > 0) {
+                    openImageGallery(brand);
+                  } else {
+                    openLogoPreview(brand);
+                  }
+                }}
               >
                 {/* Logo Container */}
                 <div className={`p-4 mb-4 h-24 flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
@@ -209,20 +167,19 @@ const Brands = () => {
                     {brand.description}
                   </p>
 
-                  {/* Image Gallery Button */}
+                  {/* Image Gallery Indicator */}
                   {brand.images && brand.images.length > 0 && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openImageGallery(brand);
-                      }}
-                      className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
-                    >
+                    <div className="mt-3 w-full bg-green-600/20 border border-green-500/30 text-green-300 py-2 px-4 rounded-lg text-sm flex items-center justify-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      Zobraziť obrázky ({brand.images.length})
-                    </button>
+                      {brand.images.length === 1 
+                        ? '1 obrázok k dispozícii'
+                        : brand.images.length >= 2 && brand.images.length <= 4
+                        ? `${brand.images.length} obrázky k dispozícii`
+                        : `${brand.images.length} obrázkov k dispozícii`
+                      }
+                    </div>
                   )}
                 </div>
 
@@ -255,7 +212,13 @@ const Brands = () => {
                     : 'translate-y-8 opacity-0 scale-95'
                 } hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20`}
                 style={{ transitionDelay: `${index * 80 + 200}ms` }}
-                onClick={() => openLogoPreview(brand)}
+                onClick={() => {
+                  if (brand.images && brand.images.length > 0) {
+                    openImageGallery(brand);
+                  } else {
+                    openLogoPreview(brand);
+                  }
+                }}
               >
                 <div className="h-16 flex items-center justify-center">
                   <img 

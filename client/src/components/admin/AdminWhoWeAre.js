@@ -135,55 +135,55 @@ const AdminWhoWeAre = ({ onLogout }) => {
     <AdminLayout onLogout={onLogout}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Správa obsahu - O nás
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-300">
             Upravte obsah stránky "O nás"
           </p>
         </div>
 
         {/* Success/Error Messages */}
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-green-800">{success}</p>
+          <div className="bg-green-900/20 border border-green-700 rounded-lg p-4">
+            <p className="text-green-400">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-800">{error}</p>
+          <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+            <p className="text-red-400">{error}</p>
           </div>
         )}
 
         {/* Content Form */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-gray-800 rounded-lg shadow p-6 border border-gray-700">
           <div className="space-y-6">
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Nadpis stránky
               </label>
               <input
                 type="text"
                 value={content?.title || ''}
                 onChange={(e) => handleContentChange('title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Zadajte nadpis stránky"
               />
             </div>
 
             {/* Main Content */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Hlavný obsah
               </label>
               <textarea
                 value={content?.content || ''}
                 onChange={(e) => handleContentChange('content', e.target.value)}
                 rows={10}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Zadajte hlavný obsah stránky"
               />
             </div>
@@ -191,7 +191,7 @@ const AdminWhoWeAre = ({ onLogout }) => {
             {/* Sections */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-300">
                   Sekcie
                 </label>
                 <button
@@ -203,12 +203,12 @@ const AdminWhoWeAre = ({ onLogout }) => {
               </div>
 
               {content?.sections?.map((section, index) => (
-                <div key={section.sectionId || index} className="border border-gray-200 rounded-lg p-4 mb-4">
+                <div key={section.sectionId || index} className="border border-gray-600 bg-gray-700 rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-medium text-gray-700">Sekcia {index + 1}</h4>
+                    <h4 className="text-sm font-medium text-white">Sekcia {index + 1}</h4>
                     <button
                       onClick={() => removeSection(index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="text-red-400 hover:text-red-300 text-sm"
                     >
                       Odstrániť
                     </button>
@@ -219,14 +219,14 @@ const AdminWhoWeAre = ({ onLogout }) => {
                       type="text"
                       value={section.title || ''}
                       onChange={(e) => handleSectionChange(index, 'title', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Nadpis sekcie"
                     />
                     <textarea
                       value={section.content || ''}
                       onChange={(e) => handleSectionChange(index, 'content', e.target.value)}
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-600 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Obsah sekcie"
                     />
                   </div>
@@ -248,16 +248,16 @@ const AdminWhoWeAre = ({ onLogout }) => {
         </div>
 
         {/* Preview */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Náhľad</h3>
+        <div className="bg-gray-800 rounded-lg shadow p-6 border border-gray-700">
+          <h3 className="text-lg font-semibold text-white mb-4">Náhľad</h3>
           <div className="prose max-w-none">
-            <h1 className="text-2xl font-bold mb-4">{content?.title}</h1>
-            <div className="whitespace-pre-wrap mb-6">{content?.content}</div>
+            <h1 className="text-2xl font-bold mb-4 text-white">{content?.title}</h1>
+            <div className="whitespace-pre-wrap mb-6 text-gray-300">{content?.content}</div>
             
             {content?.sections?.map((section, index) => (
               <div key={section.sectionId || index} className="mb-4">
-                <h2 className="text-xl font-semibold mb-2">{section.title}</h2>
-                <div className="whitespace-pre-wrap">{section.content}</div>
+                <h2 className="text-xl font-semibold mb-2 text-white">{section.title}</h2>
+                <div className="whitespace-pre-wrap text-gray-300">{section.content}</div>
               </div>
             ))}
           </div>

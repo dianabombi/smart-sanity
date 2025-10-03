@@ -8,9 +8,10 @@ const AdminLayout = ({ children, onLogout }) => {
 
   const menuItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
-    { label: 'O nás', path: '/admin/who-we-are', icon: '👥' },
-    { label: 'Čo ponúkame', path: '/admin/what-we-offer', icon: '🛠️' },
     { label: 'Obchodované značky', path: '/admin/brands', icon: '🏷️' },
+    { label: 'Kontaktné správy', path: '/admin/messages', icon: '📧' },
+    { label: 'O nás', path: '/admin/who-we-are', icon: '👥' },
+    { label: 'Čo ponúkame', path: '/admin/what-we-offer', icon: '💼' },
     { label: 'Inšpirácie', path: '/admin/inspirations', icon: '💡' },
     { label: 'Referencie', path: '/admin/references', icon: '📋' },
     { label: 'Kontakt', path: '/admin/contact', icon: '📞' }
@@ -23,9 +24,9 @@ const AdminLayout = ({ children, onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gray-900 flex">
       {/* Sidebar */}
-      <div className={`bg-gray-900 text-white transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'}`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-black text-white transition-all duration-300 relative`}>
         {/* Header */}
         <div className="p-4 border-b border-gray-700">
           <div className="flex items-center justify-between">
@@ -65,10 +66,10 @@ const AdminLayout = ({ children, onLogout }) => {
         </nav>
 
         {/* Logout */}
-        <div className="absolute bottom-4 left-4 right-4">
+        <div className="absolute bottom-4 left-4">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-red-600 hover:text-white rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-3 py-2 text-gray-300 hover:bg-red-600 hover:text-white rounded-lg transition-colors text-sm"
           >
             <span className="text-lg">🚪</span>
             {sidebarOpen && <span>Odhlásiť sa</span>}
@@ -79,18 +80,18 @@ const AdminLayout = ({ children, onLogout }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+        <header className="bg-gray-800 shadow-sm border-b border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-800">
+            <h1 className="text-2xl font-semibold text-white">
               Smart Sanit - Administrácia
             </h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-300">
                 Prihlásený ako: Dusan.drinka@smartsanit.sk
               </span>
               <button
                 onClick={() => navigate('/')}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                className="text-blue-400 hover:text-blue-300 text-sm font-medium"
               >
                 Zobraziť stránku →
               </button>
@@ -99,7 +100,7 @@ const AdminLayout = ({ children, onLogout }) => {
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 p-6 bg-gray-50">
+        <main className="flex-1 p-6 bg-gray-900">
           {children}
         </main>
       </div>

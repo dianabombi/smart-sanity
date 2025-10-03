@@ -41,6 +41,16 @@ const AdminBrands = ({ onLogout }) => {
       if (result.success) {
         // Reload brands to get updated data
         await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b._id === brandId);
+          if (updatedBrand) {
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
         alert('Obrázky boli úspešne nahrané!');
       } else {
         alert('Chyba pri nahrávaní obrázkov: ' + result.message);
@@ -68,9 +78,9 @@ const AdminBrands = ({ onLogout }) => {
   };
 
   const BrandCard = ({ brand }) => (
-    <div className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6">
+    <div className="rounded-lg shadow hover:shadow-md transition-shadow p-6 border border-gray-700">
       <div className="flex items-center mb-4">
-        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
+        <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center mr-4">
           <img 
             src={brand.logo} 
             alt={brand.name}
@@ -85,9 +95,9 @@ const AdminBrands = ({ onLogout }) => {
           </div>
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-800">{brand.name}</h3>
-          <p className="text-sm text-gray-600">{brand.category}</p>
-          <p className="text-xs text-gray-500 mt-1">
+          <h3 className="text-lg font-semibold text-white">{brand.name}</h3>
+          <p className="text-sm text-gray-300">{brand.category}</p>
+          <p className="text-xs text-gray-400 mt-1">
             Obrázky: {brand.images?.length || 0}
           </p>
         </div>
@@ -106,16 +116,16 @@ const AdminBrands = ({ onLogout }) => {
     if (!selectedBrand) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden border border-gray-700">
           {/* Header */}
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-800">
+          <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-white">
               Spravovať obrázky - {selectedBrand.name}
             </h2>
             <button
               onClick={() => setSelectedBrand(null)}
-              className="text-gray-400 hover:text-gray-600 text-2xl"
+              className="text-gray-400 hover:text-gray-200 text-2xl"
             >
               ×
             </button>
@@ -125,10 +135,10 @@ const AdminBrands = ({ onLogout }) => {
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
             {/* Upload Area */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Pridať nové obrázky
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+              <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors bg-gray-700">
                 <input
                   type="file"
                   multiple
@@ -143,10 +153,10 @@ const AdminBrands = ({ onLogout }) => {
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
-                  <p className="text-gray-600">
-                    <span className="font-medium text-blue-600">Kliknite pre výber súborov</span> alebo pretiahnite sem
+                  <p className="text-gray-300">
+                    <span className="font-medium text-blue-400">Kliknite pre výber súborov</span> alebo pretiahnite sem
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF do 10MB</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF do 10MB</p>
                 </label>
               </div>
             </div>
@@ -154,13 +164,13 @@ const AdminBrands = ({ onLogout }) => {
             {/* Uploaded Images Grid */}
             {selectedBrand.images?.length > 0 && (
               <div>
-                <h3 className="text-lg font-medium text-gray-800 mb-4">
+                <h3 className="text-lg font-medium text-white mb-4">
                   Nahrané obrázky ({selectedBrand.images.length})
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {selectedBrand.images.map((image, index) => (
                     <div key={image._id || index} className="relative group">
-                      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden">
                         <img
                           src={process.env.NODE_ENV === 'production' 
                             ? `/${image.path}` 
@@ -175,7 +185,7 @@ const AdminBrands = ({ onLogout }) => {
                       >
                         ×
                       </button>
-                      <p className="text-xs text-gray-600 mt-1 truncate">{image.originalName}</p>
+                      <p className="text-xs text-gray-400 mt-1 truncate">{image.originalName}</p>
                     </div>
                   ))}
                 </div>
@@ -183,21 +193,24 @@ const AdminBrands = ({ onLogout }) => {
             )}
 
             {(!selectedBrand.images || selectedBrand.images.length === 0) && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-gray-400">
                 <p>Žiadne obrázky zatiaľ neboli nahrané</p>
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+          <div className="p-6 border-t border-gray-700 flex justify-end space-x-3">
             <button
               onClick={() => setSelectedBrand(null)}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
             >
               Zavrieť
             </button>
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+            <button 
+              onClick={() => setSelectedBrand(null)}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
               Uložiť zmeny
             </button>
           </div>
@@ -212,7 +225,7 @@ const AdminBrands = ({ onLogout }) => {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Načítavam značky...</p>
+            <p className="text-gray-300">Načítavam značky...</p>
           </div>
         </div>
       </AdminLayout>
@@ -222,9 +235,9 @@ const AdminBrands = ({ onLogout }) => {
   if (error) {
     return (
       <AdminLayout onLogout={onLogout}>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-red-800 font-medium mb-2">Chyba</h3>
-          <p className="text-red-600">{error}</p>
+        <div className="bg-red-900/20 border border-red-700 rounded-lg p-6">
+          <h3 className="text-red-400 font-medium mb-2">Chyba</h3>
+          <p className="text-red-300">{error}</p>
           <button
             onClick={loadBrands}
             className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
@@ -240,11 +253,11 @@ const AdminBrands = ({ onLogout }) => {
     <AdminLayout onLogout={onLogout}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Správa značiek
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-300">
             Spravujte obrázky a obsah pre jednotlivé značky
           </p>
         </div>
@@ -257,30 +270,30 @@ const AdminBrands = ({ onLogout }) => {
         </div>
 
         {/* Statistics */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Štatistiky</h3>
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Štatistiky</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-blue-600">{brands.length}</p>
-              <p className="text-sm text-gray-600">Celkom značiek</p>
+              <p className="text-sm text-gray-300">Celkom značiek</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-2xl font-bold text-green-400">
                 {brands.reduce((acc, brand) => acc + (brand.images?.length || 0), 0)}
               </p>
-              <p className="text-sm text-gray-600">Nahrané obrázky</p>
+              <p className="text-sm text-gray-300">Nahrané obrázky</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600">
+              <p className="text-2xl font-bold text-purple-400">
                 {brands.filter(brand => brand.images?.length > 0).length}
               </p>
-              <p className="text-sm text-gray-600">Značky s obrázkami</p>
+              <p className="text-sm text-gray-300">Značky s obrázkami</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-orange-600">
+              <p className="text-2xl font-bold text-orange-400">
                 {brands.length > 0 ? Math.round((brands.filter(brand => brand.images?.length > 0).length / brands.length) * 100) : 0}%
               </p>
-              <p className="text-sm text-gray-600">Pokrytie</p>
+              <p className="text-sm text-gray-300">Pokrytie</p>
             </div>
           </div>
         </div>
