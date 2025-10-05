@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
-import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
-import CategoryTile from './ui/CategoryTile';
-import { BatteryIcon, TapIcon, SinkIcon, ToiletIcon, ShowerIcon, BathtubIcon, BidetIcon, TilesIcon, LightingIcon } from './icons/CategoryIcons';
 
 const Entrance = () => {
-  const navigate = useNavigate();
   const [visibleItems, setVisibleItems] = useState([]);
 
   // Animation for bullet points
@@ -15,81 +10,14 @@ const Entrance = () => {
     const timer = setTimeout(() => {
       setVisibleItems([0, 1, 2, 3, 4, 5]);
     }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    
+    return () => clearTimeout(timer);
   }, []);
-
-  const categories = [
-    {
-      id: 'battery',
-      title: 'BATÉRIE',
-      IconComponent: BatteryIcon,
-      path: '/components/category/battery'
-    },
-    {
-      id: 'tap',
-      title: 'KOHÚTIKY',
-      IconComponent: TapIcon,
-      path: '/components/category/tap'
-    },
-    {
-      id: 'sink',
-      title: 'UMÝVADLÁ',
-      IconComponent: SinkIcon,
-      path: '/components/category/sink'
-    },
-    {
-      id: 'toilet',
-      title: 'TOALETY',
-      IconComponent: ToiletIcon,
-      path: '/components/category/toilet'
-    },
-    {
-      id: 'shower',
-      title: 'SPRCHOVACIE KÚTY',
-      IconComponent: ShowerIcon,
-      path: '/components/category/shower'
-    },
-    {
-      id: 'bathtub',
-      title: 'VANE',
-      IconComponent: BathtubIcon,
-      path: '/components/category/bathtub'
-    },
-    {
-      id: 'bidet',
-      title: 'BIDETY',
-      IconComponent: BidetIcon,
-      path: '/components/category/bidet'
-    },
-    {
-      id: 'tiles',
-      title: 'OBKLADY',
-      IconComponent: TilesIcon,
-      path: '/components/category/tiles'
-    },
-    {
-      id: 'lighting',
-      title: 'OSVETLENIE',
-      IconComponent: LightingIcon,
-      path: '/components/category/lighting'
-    }
-  ];
-
-  const handleCategoryClick = (path) => {
-    navigate(path);
-  };
 
   return (
     <Layout>
       <NavBar />
       
-      {/* Breadcrumbs */}
-      <div className="pt-4 px-4 sm:px-6 lg:px-8 ml-0 tablet:ml-6 laptop:ml-14">
-        <Breadcrumbs />
-      </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">

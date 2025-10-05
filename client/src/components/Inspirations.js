@@ -4,7 +4,7 @@ import Footer from './layout/Footer';
 import Breadcrumbs from './ui/Breadcrumbs';
 
 const Inspirations = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory] = useState('all');
 
   const inspirations = [
     {

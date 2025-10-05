@@ -8,11 +8,11 @@ const CategoryGallery = () => {
   const { category } = useParams();
   
   // Placeholder images - you can replace these with actual category-specific images
-  const galleryImages = [
-    '/bathroom.png',
-    '/sinks.png', 
-    '/tap_silver.png'
-  ];
+  // const galleryImages = [
+  //   '/bathroom.png',
+  //   '/sinks.png', 
+  //   '/tap_silver.png'
+  // ];
 
   const categoryTitles = {
     battery: 'RIEŠENIA BATÉRIÍ',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './layout/Layout';
 import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
@@ -29,29 +29,26 @@ const Brands = () => {
   };
 
   // Load brands from API
-  useEffect(() => {
-    loadBrands();
-  }, []);
-
-  const loadBrands = async () => {
+  const loadBrands = useCallback(async () => {
     try {
       setLoading(true);
       const result = await ApiService.getBrands();
       if (result.success) {
         setBrands(result.brands);
       } else {
-        // Fallback to static brands if API fails
-        console.warn('API failed, using fallback brands');
         setBrands(getFallbackBrands());
       }
     } catch (error) {
       console.error('Error loading brands:', error);
-      // Fallback to static brands if API fails
       setBrands(getFallbackBrands());
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadBrands();
+  }, [loadBrands]);
 
   const getFallbackBrands = () => {
     // Hlavné značky s popismi
