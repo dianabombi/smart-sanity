@@ -33,10 +33,7 @@ const Brands = () => {
     try {
       setLoading(true);
       const result = await ApiService.getBrands();
-      console.log('Brands loaded:', result);
       if (result.success) {
-        console.log('Main brands:', result.brands.filter(brand => brand.category !== 'Ostatné'));
-        console.log('Other brands:', result.brands.filter(brand => brand.category === 'Ostatné'));
         setBrands(result.brands);
       } else {
         setBrands(getFallbackBrands());
