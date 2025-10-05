@@ -81,42 +81,42 @@ const Inspirations = () => {
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'Všetky inšpirácie', icon: '🏠' },
-    { id: 'modern', name: 'Moderné', icon: '✨' },
-    { id: 'luxury', name: 'Luxusné', icon: '💎' },
-    { id: 'industrial', name: 'Industriálne', icon: '🏭' },
-    { id: 'classic', name: 'Klasické', icon: '🏛️' },
-    { id: 'small', name: 'Malé priestory', icon: '📐' },
-    { id: 'natural', name: 'Prírodné', icon: '🌿' }
-  ];
+  // const categories = [
+  //   { id: 'all', name: 'Všetky inšpirácie', icon: '🏠' },
+  //   { id: 'modern', name: 'Moderné', icon: '✨' },
+  //   { id: 'luxury', name: 'Luxusné', icon: '💎' },
+  //   { id: 'industrial', name: 'Industriálne', icon: '🏭' },
+  //   { id: 'classic', name: 'Klasické', icon: '🏛️' },
+  //   { id: 'small', name: 'Malé priestory', icon: '📐' },
+  //   { id: 'natural', name: 'Prírodné', icon: '🌿' }
+  // ];
 
   const filteredInspirations = selectedCategory === 'all' 
     ? inspirations 
     : inspirations.filter(item => item.category === selectedCategory);
 
-  const tips = [
-    {
-      title: 'Osvetlenie je kľúčové',
-      description: 'Kombinujte všeobecné, úlohové a atmosférické osvetlenie pre dokonalý výsledok.',
-      icon: '💡'
-    },
-    {
-      title: 'Kvalitné materiály',
-      description: 'Investujte do odolných materiálov, ktoré vydržia vlhkosť a časté používanie.',
-      icon: '🛠️'
-    },
-    {
-      title: 'Funkčnosť na prvom mieste',
-      description: 'Krásny dizajn musí byť aj praktický. Myslite na každodenné používanie.',
-      icon: '⚙️'
-    },
-    {
-      title: 'Ventilá­cia je dôležitá',
-      description: 'Správna ventilácia predchádza vlhkosti a zabezpečuje zdravé prostredie.',
-      icon: '🌬️'
-    }
-  ];
+  // const tips = [
+  //   {
+  //     title: 'Osvetlenie je kľúčové',
+  //     description: 'Kombinujte všeobecné, úlohové a atmosférické osvetlenie pre dokonalý výsledok.',
+  //     icon: '💡'
+  //   },
+  //   {
+  //     title: 'Kvalitné materiály',
+  //     description: 'Investujte do odolných materiálov, ktoré vydržia vlhkosť a časté používanie.',
+  //     icon: '🛠️'
+  //   },
+  //   {
+  //     title: 'Funkčnosť na prvom mieste',
+  //     description: 'Krásny dizajn musí byť aj praktický. Myslite na každodenné používanie.',
+  //     icon: '⚙️'
+  //   },
+  //   {
+  //     title: 'Ventilá­cia je dôležitá',
+  //     description: 'Správna ventilácia predchádza vlhkosti a zabezpečuje zdravé prostredie.',
+  //     icon: '🌬️'
+  //   }
+  // ];
 
   return (
     <div className="min-h-screen bg-black">

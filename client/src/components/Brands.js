@@ -39,12 +39,175 @@ const Brands = () => {
       const result = await ApiService.getBrands();
       if (result.success) {
         setBrands(result.brands);
+      } else {
+        // Fallback to static brands if API fails
+        console.warn('API failed, using fallback brands');
+        setBrands(getFallbackBrands());
       }
     } catch (error) {
       console.error('Error loading brands:', error);
+      // Fallback to static brands if API fails
+      setBrands(getFallbackBrands());
     } finally {
       setLoading(false);
     }
+  };
+
+  const getFallbackBrands = () => {
+    // Hlavné značky s popismi
+    const mainBrands = [
+      {
+        _id: '1',
+        name: 'Agape',
+        category: 'Kúpeľňový nábytok',
+        logo: '/Users/diana/Desktop/SMART SANIT/CascadeProjects/windsurf-project/client/public/icons/Agape_transparent.png', // použijem dostupné logo
+        description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '2',
+        name: 'Fantini',
+        category: 'Batérie a sprchy',
+        logo: '/fantini.png',
+        description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '1',
+        name: 'Agape',
+        category: 'Kúpeľňový nábytok',
+        logo: '/white-logo.svg', // použijem dostupné logo
+        description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '3',
+        name: 'Cielo',
+        category: 'Sanitárna keramika',
+        logo: '/logo_cielo_white.png',
+        description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '4',
+        name: 'Azzurra',
+        category: 'Sanitárne zariadenia',
+        logo: '/logo Azzurra bianco su fondo nero.png',
+        description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '5',
+        name: 'CEA',
+        category: 'Batérie a doplnky',
+        logo: '/cea.svg',
+        description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '6',
+        name: 'Antrax',
+        category: 'Dizajnové radiátory',
+        logo: '/antraxIt.jpg',
+        description: 'Prémiový taliansky výrobca dizajnových radiátorov',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '7',
+        name: 'Zenon',
+        category: 'Umývadlá a vane',
+        logo: '/new.svg', // použijem dostupné logo
+        description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '8',
+        name: 'Fondovalle',
+        category: 'Obklady a dlažby',
+        logo: '/logogf.png',
+        description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
+        images: [],
+        isMain: true
+      },
+      {
+        _id: '9',
+        name: 'Fiandre',
+        category: 'Obklady a dlažby',
+        logo: '/elite_logoRGB-11.jpg',
+        description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
+        images: [],
+        isMain: true
+      }
+    ];
+
+    // Ostatné značky - iba logá bez popisov
+    const otherBrands = [
+      {
+        _id: '10',
+        name: 'Tres',
+        logo: '/TRES_logo_W.svg',
+        website: 'tresgriferia.com',
+        isOther: true
+      },
+      {
+        _id: '11',
+        name: 'Axor',
+        logo: '/Axor-logo-white.png',
+        isOther: true
+      },
+      {
+        _id: '12',
+        name: 'Kaldewei',
+        logo: '/kaldewei.png',
+        isOther: true
+      },
+      {
+        _id: '13',
+        name: 'Alca',
+        logo: '/alca.svg',
+        isOther: true
+      },
+      {
+        _id: '14',
+        name: 'Hansgrohe',
+        logo: '/Hansgrohe-Logo-2.svg',
+        isOther: true
+      },
+      {
+        _id: '15',
+        name: 'Huppe',
+        logo: '/logoWhite.svg', // fallback logo
+        isOther: true
+      },
+      {
+        _id: '16',
+        name: 'Dornbracht',
+        logo: '/logoWhite.svg', // fallback logo
+        isOther: true
+      },
+      {
+        _id: '17',
+        name: 'Laufen',
+        logo: '/LAUFEN_White_RGB_big.png',
+        isOther: true
+      },
+      {
+        _id: '18',
+        name: 'Kludi',
+        logo: '/logoWhite.svg', // fallback logo
+        isOther: true
+      }
+    ];
+
+    return [...mainBrands, ...otherBrands];
   };
 
   // Animation for brands
@@ -105,7 +268,7 @@ const Brands = () => {
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {brands.filter(brand => brand.category !== 'Ostatné').map((brand, index) => (
+            {brands.filter(brand => brand.isMain).map((brand, index) => (
               <div
                 key={index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
@@ -203,7 +366,7 @@ const Brands = () => {
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {brands.filter(brand => brand.category === 'Ostatné').map((brand, index) => (
+            {brands.filter(brand => brand.isOther).map((brand, index) => (
               <div
                 key={index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
@@ -227,7 +390,7 @@ const Brands = () => {
                     className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
                     style={{
                       imageRendering: 'crisp-edges',
-                      filter: (brand.name === 'HÜPPE' || brand.name === 'Dornbracht' || brand.name === 'Laufen') ? 'brightness(0) invert(1)' : 'none'
+                      filter: (brand.name === 'Huppe' || brand.name === 'Dornbracht' || brand.name === 'Laufen') ? 'brightness(0) invert(1)' : 'none'
                     }}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -241,6 +404,12 @@ const Brands = () => {
                     {brand.name}
                   </div>
                 </div>
+                {/* Website info for Tres */}
+                {brand.website && (
+                  <div className="mt-2 text-center">
+                    <p className="text-xs text-blue-300 opacity-80">{brand.website}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>

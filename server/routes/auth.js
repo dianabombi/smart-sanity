@@ -10,28 +10,32 @@ router.post('/login', async (req, res) => {
     // For now, we'll use hardcoded credentials as requested
     // In production, you'd hash passwords and store them in database
     if (email === 'Dusan.drinka@smartsanit.sk' && password === 'WeAreAwesome2025@!') {
-      // Update or create user record
-      let user = await User.findOne({ email });
-      if (!user) {
-        user = new User({
-          email,
-          password: 'hashed_password_placeholder', // In production, hash this
-          role: 'admin'
-        });
+      // Try to update database, but don't fail if MongoDB is unavailable
+      try {
+        let user = await User.findOne({ email });
+        if (!user) {
+          user = new User({
+            email,
+            password: 'hashed_password_placeholder', // In production, hash this
+            role: 'admin'
+          });
+          await user.save();
+        }
+        
+        // Update last login
+        user.lastLogin = new Date();
         await user.save();
+      } catch (dbError) {
+        console.log('Database unavailable, proceeding with hardcoded auth:', dbError.message);
       }
-      
-      // Update last login
-      user.lastLogin = new Date();
-      await user.save();
 
       res.json({
         success: true,
         message: 'Login successful',
         user: {
-          id: user._id,
-          email: user.email,
-          role: user.role
+          id: 'admin',
+          email: email,
+          role: 'admin'
         }
       });
     } else {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from './layout/Layout';
-import Hero from './ui/Hero';
+// import Hero from './ui/Hero';
 import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
 

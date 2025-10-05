@@ -9,12 +9,12 @@ const AdminMessages = ({ onLogout }) => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [statusFilter, setStatusFilter] = useState('all');
   const [stats, setStats] = useState({});
-  const [pagination, setPagination] = useState({});
+  // const [pagination, setPagination] = useState({});
 
   useEffect(() => {
     loadMessages();
     loadStats();
-  }, [statusFilter]);
+  }, [statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadMessages = async (page = 1) => {
     try {
@@ -22,7 +22,7 @@ const AdminMessages = ({ onLogout }) => {
       const result = await ApiService.getMessages(statusFilter, page, 20);
       if (result.success) {
         setMessages(result.messages);
-        setPagination(result.pagination);
+        // setPagination(result.pagination);
       } else {
         setError('Chyba pri načítavaní správ');
       }

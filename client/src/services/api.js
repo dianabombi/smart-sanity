@@ -1,5 +1,5 @@
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
+  ? (process.env.REACT_APP_API_URL || '/api')
   : 'http://localhost:5001/api';
 
 class ApiService {
@@ -221,4 +221,5 @@ class ApiService {
   }
 }
 
-export default new ApiService();
+const apiService = new ApiService();
+export default apiService;
