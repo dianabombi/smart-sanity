@@ -1,18 +1,26 @@
 {
   "version": 2,
-  "buildCommand": "cd client && npm install && CI=false npm run build",
-  "outputDirectory": "client/build",
-  "installCommand": "npm install",
-  "framework": null,
-  "functions": {
-    "server/routes/*.js": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
+      "src": "server/server.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server/index.js"
+      "dest": "/server/server.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/server/uploads/$1"
     },
     {
       "src": "/(.*)",
@@ -20,6 +28,6 @@
     }
   ],
   "env": {
-    "MONGODB_URI": "@mongodb_uri"
+    "MONGODB_URI": "mongodb+srv://smart_sanit:nxZhWiJpURb61y54@cluster0.lhm3dkv.mongodb.net/smart_sanit"
   }
 }
