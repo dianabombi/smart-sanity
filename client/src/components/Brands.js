@@ -33,7 +33,10 @@ const Brands = () => {
     try {
       setLoading(true);
       const result = await ApiService.getBrands();
+      console.log('Brands loaded:', result);
       if (result.success) {
+        console.log('Main brands:', result.brands.filter(brand => brand.category !== 'Ostatné'));
+        console.log('Other brands:', result.brands.filter(brand => brand.category === 'Ostatné'));
         setBrands(result.brands);
       } else {
         setBrands(getFallbackBrands());
@@ -265,9 +268,9 @@ const Brands = () => {
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {brands.filter(brand => brand.isMain).map((brand, index) => (
+            {brands.filter(brand => brand.category !== 'Ostatné').map((brand, index) => (
               <div
-                key={index}
+                key={brand._id || index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
                   visibleBrands.includes(index) 
                     ? 'translate-y-0 opacity-100 scale-100' 
@@ -363,9 +366,9 @@ const Brands = () => {
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {brands.filter(brand => brand.isOther).map((brand, index) => (
+            {brands.filter(brand => brand.category === 'Ostatné').map((brand, index) => (
               <div
-                key={index}
+                key={brand._id || index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
                   showOtherBrands 
                     ? 'translate-y-0 opacity-100 scale-100' 
