@@ -5,8 +5,8 @@
   "installCommand": "npm install",
   "outputDirectory": "client/build",
   "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x"
+    "api/index.js": {
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
@@ -18,8 +18,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "mongodb+srv://smart_sanit:nxZhWiJpURb61y54@cluster0.lhm3dkv.mongodb.net/smart_sanit"
-  }
+  ]
 }
