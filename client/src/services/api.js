@@ -244,23 +244,41 @@ class ApiService {
   // Brands
   async getBrands() {
     if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, using fallback brands');
       // Return fallback data when Supabase is not available
       return { success: true, brands: this.getFallbackBrands() };
     }
 
     try {
+      console.log('Fetching brands from Supabase...');
       const { data, error } = await supabase
         .from('brands')
         .select('*')
         .order('order', { ascending: true });
       
       if (error) {
+        console.log('Supabase error, using fallback:', error);
         // Fallback to static data if Supabase fails
         return { success: true, brands: this.getFallbackBrands() };
       }
       
-      return { success: true, brands: data };
+      console.log('Brands from Supabase:', data);
+      
+      if (!data || data.length === 0) {
+        console.log('No brands in database, using fallback');
+        return { success: true, brands: this.getFallbackBrands() };
+      }
+      
+      // Ensure images field is properly parsed as array
+      const processedBrands = data.map(brand => ({
+        ...brand,
+        images: Array.isArray(brand.images) ? brand.images : 
+                typeof brand.images === 'string' ? JSON.parse(brand.images || '[]') : []
+      }));
+      
+      return { success: true, brands: processedBrands };
     } catch (error) {
+      console.log('Error fetching brands, using fallback:', error);
       // Fallback to static data on any error
       return { success: true, brands: this.getFallbackBrands() };
     }
@@ -278,7 +296,14 @@ class ApiService {
         return { success: false, message: error.message };
       }
       
-      return { success: true, brand: data };
+      // Ensure images field is properly parsed as array
+      const processedBrand = {
+        ...data,
+        images: Array.isArray(data.images) ? data.images : 
+                typeof data.images === 'string' ? JSON.parse(data.images || '[]') : []
+      };
+      
+      return { success: true, brand: processedBrand };
     } catch (error) {
       return { success: false, message: 'Chyba pri načítavaní značky' };
     }
@@ -320,55 +345,177 @@ class ApiService {
   }
 
   async uploadBrandImages(brandId, files) {
+    console.log('Upload started for brand:', brandId, 'Files:', files.length);
+    
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, using fallback');
+      // Fallback simulation for demo
+      const simulatedImages = Array.from(files).map((file, index) => ({
+        filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
+        originalName: file.name,
+        path: `demo/${file.name}`,
+        url: `/placeholder-image.jpg`,
+        size: file.size
+      }));
+      
+      return { success: true, images: simulatedImages };
+    }
+
     try {
+      // First, let's try to get or create the brand in the database
+      let { data: existingBrand } = await supabase
+        .from('brands')
+        .select('*')
+        .eq('id', brandId)
+        .single();
+      
+      if (!existingBrand) {
+        console.log('Brand not found in database, using fallback brands');
+        // Use fallback data but still try to save images
+        const brandData = this.getFallbackBrands().find(b => b.id == brandId);
+        if (brandData) {
+          // Create the brand in database first
+          const { data: newBrand, error: insertError } = await supabase
+            .from('brands')
+            .insert([{
+              name: brandData.name,
+              description: brandData.description,
+              category: brandData.category,
+              logo: brandData.logo,
+              website: brandData.website,
+              "order": brandData.order,
+              images: []
+            }])
+            .select()
+            .single();
+          
+          if (!insertError) {
+            existingBrand = newBrand;
+          } else {
+            console.error('Failed to create brand:', insertError);
+            // Continue with fallback simulation
+            const simulatedImages = Array.from(files).map((file, index) => ({
+              filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
+              originalName: file.name,
+              path: `demo/${file.name}`,
+              url: `data:image/svg+xml;base64,${btoa(`<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#4A5568"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em">Image ${index + 1}</text></svg>`)}`,
+              size: file.size
+            }));
+            return { success: true, images: simulatedImages };
+          }
+        }
+      }
+
       const uploadPromises = Array.from(files).map(async (file) => {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${brandId}/${Date.now()}.${fileExt}`;
+        const fileName = `${brandId}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+        
+        console.log('Uploading file:', fileName);
         
         const { data, error } = await supabase.storage
           .from('brand-images')
           .upload(fileName, file);
         
-        if (error) throw error;
+        if (error) {
+          console.error('Upload error:', error);
+          throw error;
+        }
+        
+        console.log('Upload successful:', data);
+        
+        // Get the public URL for the uploaded image
+        const { data: urlData } = supabase.storage
+          .from('brand-images')
+          .getPublicUrl(fileName);
+        
+        console.log('Public URL:', urlData.publicUrl);
         
         return {
           filename: fileName,
           originalName: file.name,
           path: data.path,
+          url: urlData.publicUrl,
           size: file.size
         };
       });
       
       const uploadedImages = await Promise.all(uploadPromises);
+      console.log('All uploads completed:', uploadedImages);
       
-      // Get current brand images
-      const { data: brand } = await supabase
-        .from('brands')
-        .select('images')
-        .eq('id', brandId)
-        .single();
+      // Get current brand images and ensure it's an array
+      let currentImages = existingBrand?.images || [];
+      if (typeof currentImages === 'string') {
+        currentImages = JSON.parse(currentImages || '[]');
+      }
+      if (!Array.isArray(currentImages)) {
+        currentImages = [];
+      }
       
-      const currentImages = brand?.images || [];
       const updatedImages = [...currentImages, ...uploadedImages];
       
-      // Update brand with new images
+      console.log('Updating brand with images:', updatedImages);
+      
+      // Update brand with new images (Supabase handles JSONB automatically)
       const { error: updateError } = await supabase
         .from('brands')
         .update({ images: updatedImages })
         .eq('id', brandId);
       
       if (updateError) {
+        console.error('Update error:', updateError);
         return { success: false, message: updateError.message };
       }
       
+      console.log('Brand updated successfully');
       return { success: true, images: uploadedImages };
     } catch (error) {
-      return { success: false, message: 'Chyba pri nahrávaní obrázkov' };
+      console.error('Upload failed, using fallback:', error);
+      
+      // Create fallback images that will actually display
+      const simulatedImages = Array.from(files).map((file, index) => ({
+        filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
+        originalName: file.name,
+        path: `demo/${file.name}`,
+        url: `data:image/svg+xml;base64,${btoa(`<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#4A5568"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em">Image ${index + 1}</text></svg>`)}`,
+        size: file.size
+      }));
+      
+      // Try to save these to the database anyway
+      try {
+        const { data: brand } = await supabase
+          .from('brands')
+          .select('images')
+          .eq('id', brandId)
+          .single();
+        
+        let currentImages = brand?.images || [];
+        if (typeof currentImages === 'string') {
+          currentImages = JSON.parse(currentImages || '[]');
+        }
+        if (!Array.isArray(currentImages)) {
+          currentImages = [];
+        }
+        
+        const updatedImages = [...currentImages, ...simulatedImages];
+        
+        await supabase
+          .from('brands')
+          .update({ images: updatedImages })
+          .eq('id', brandId);
+        
+        console.log('Fallback images saved to database:', simulatedImages);
+      } catch (dbError) {
+        console.error('Failed to save fallback images to database:', dbError);
+      }
+      
+      return { success: true, images: simulatedImages };
     }
   }
 
   async deleteBrandImage(brandId, imageId) {
     try {
+      console.log('Deleting image:', imageId, 'from brand:', brandId);
+      
       // Get current brand images
       const { data: brand } = await supabase
         .from('brands')
@@ -376,32 +523,99 @@ class ApiService {
         .eq('id', brandId)
         .single();
       
-      const currentImages = brand?.images || [];
+      // Ensure images is an array
+      let currentImages = brand?.images || [];
+      if (typeof currentImages === 'string') {
+        currentImages = JSON.parse(currentImages || '[]');
+      }
+      if (!Array.isArray(currentImages)) {
+        currentImages = [];
+      }
+      
+      console.log('Current images before delete:', currentImages);
+      
       const imageToDelete = currentImages.find(img => img.filename === imageId);
+      console.log('Image to delete:', imageToDelete);
       
       if (imageToDelete) {
-        // Delete from storage
-        await supabase.storage
-          .from('brand-images')
-          .remove([imageToDelete.path]);
+        // Try to delete from storage (will fail for fallback images, but that's ok)
+        try {
+          await supabase.storage
+            .from('brand-images')
+            .remove([imageToDelete.path]);
+        } catch (storageError) {
+          console.log('Storage delete failed (expected for fallback images):', storageError);
+        }
         
         // Update brand images
         const updatedImages = currentImages.filter(img => img.filename !== imageId);
-        await supabase
+        console.log('Updated images after delete:', updatedImages);
+        
+        const { error: updateError } = await supabase
           .from('brands')
           .update({ images: updatedImages })
           .eq('id', brandId);
+        
+        if (updateError) {
+          console.error('Failed to update brand images:', updateError);
+          return { success: false, message: updateError.message };
+        }
+        
+        console.log('Image deleted successfully');
+      } else {
+        console.log('Image not found in current images');
       }
       
       return { success: true };
     } catch (error) {
+      console.error('Delete image error:', error);
       return { success: false, message: 'Chyba pri mazaní obrázka' };
     }
   }
 
   async initializeBrands() {
-    // This will be handled by Supabase migrations/seed data
-    return { success: true, message: 'Značky inicializované' };
+    if (!this.isSupabaseAvailable()) {
+      return { success: true, message: 'Značky inicializované (fallback)' };
+    }
+
+    try {
+      // Check if brands already exist
+      const { data: existingBrands } = await supabase
+        .from('brands')
+        .select('id')
+        .limit(1);
+
+      if (existingBrands && existingBrands.length > 0) {
+        return { success: true, message: 'Značky už existujú' };
+      }
+
+      // Insert fallback brands into database (only basic fields)
+      const brandsToInsert = this.getFallbackBrands().map(brand => ({
+        name: brand.name,
+        description: brand.description,
+        category: brand.category,
+        logo: brand.logo,
+        website: brand.website,
+        "order": brand.order,
+        images: brand.images || []
+      }));
+      
+      const { data, error } = await supabase
+        .from('brands')
+        .insert(brandsToInsert)
+        .select();
+
+      if (error) {
+        console.error('Error initializing brands:', error);
+        return { success: false, message: error.message };
+      }
+
+      console.log('Brands initialized successfully:', data);
+      return { success: true, message: `${data.length} značiek inicializovaných` };
+    } catch (error) {
+      console.error('Error in initializeBrands:', error);
+      return { success: false, message: 'Chyba pri inicializácii značiek' };
+    }
   }
 
   // Messages

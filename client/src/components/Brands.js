@@ -512,11 +512,12 @@ const Brands = () => {
                       <div key={image._id || index} className="group relative">
                         <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
                           <img
-                            src={process.env.NODE_ENV === 'production' 
-                              ? `/${image.path}` 
-                              : `http://localhost:5001/${image.path}`}
+                            src={image.url || image.path || '/placeholder-image.jpg'}
                             alt={image.originalName}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              e.target.src = '/placeholder-image.jpg';
+                            }}
                           />
                         </div>
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg flex items-center justify-center">

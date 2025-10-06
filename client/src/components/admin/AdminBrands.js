@@ -37,17 +37,25 @@ const AdminBrands = ({ onLogout }) => {
 
   const handleImageUpload = async (brandId, files) => {
     try {
+      console.log('Starting upload for brand:', brandId, 'Files:', files.length);
       const result = await ApiService.uploadBrandImages(brandId, files);
+      console.log('Upload result:', result);
+      
       if (result.success) {
         // Reload brands to get updated data
         await loadBrands();
         
         // Update selectedBrand with the new data
         const updatedBrands = await ApiService.getBrands();
+        console.log('Updated brands after upload:', updatedBrands);
+        
         if (updatedBrands.success) {
-          const updatedBrand = updatedBrands.brands.find(b => b._id === brandId);
+          const updatedBrand = updatedBrands.brands.find(b => b.id === brandId || b._id === brandId);
+          console.log('Found updated brand:', updatedBrand);
+          
           if (updatedBrand) {
             setSelectedBrand(updatedBrand);
+            console.log('Updated selectedBrand with images:', updatedBrand.images);
           }
         }
         
@@ -63,10 +71,22 @@ const AdminBrands = ({ onLogout }) => {
 
   const removeImage = async (brandId, imageId) => {
     try {
+      console.log('Removing image:', imageId, 'from brand:', brandId);
       const result = await ApiService.deleteBrandImage(brandId, imageId);
       if (result.success) {
         // Reload brands to get updated data
         await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b.id === brandId || b._id === brandId);
+          if (updatedBrand) {
+            console.log('Updated selectedBrand after delete:', updatedBrand);
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
         alert('Obrázok bol úspešne odstránený!');
       } else {
         alert('Chyba pri odstraňovaní obrázka: ' + result.message);
@@ -94,12 +114,18 @@ const AdminBrands = ({ onLogout }) => {
             {brand.name}
           </div>
         </div>
-        <div className="flex-1">
+        <div className="space-y-2">
           <h3 className="text-lg font-semibold text-white">{brand.name}</h3>
           <p className="text-sm text-gray-300">{brand.category}</p>
           <p className="text-xs text-gray-400 mt-1">
             Obrázky: {brand.images?.length || 0}
           </p>
+          {/* Debug info */}
+          {brand.images?.length > 0 && (
+            <p className="text-xs text-green-400">
+              ✅ Má obrázky: {brand.images[0]?.filename || 'no filename'}
+            </p>
+          )}
         </div>
       </div>
       
@@ -143,7 +169,12 @@ const AdminBrands = ({ onLogout }) => {
                   type="file"
                   multiple
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(selectedBrand._id, e.target.files)}
+                  onChange={(e) => {
+                    console.log('File input changed, files:', e.target.files);
+                    if (e.target.files && e.target.files.length > 0) {
+                      handleImageUpload(selectedBrand.id, e.target.files);
+                    }
+                  }}
                   className="hidden"
                   id="image-upload"
                 />
@@ -161,6 +192,18 @@ const AdminBrands = ({ onLogout }) => {
               </div>
             </div>
 
+            {/* Debug Info */}
+            <div className="mb-4 p-3 bg-yellow-900/20 border border-yellow-700 rounded">
+              <p className="text-yellow-300 text-sm">
+                🔍 Debug: Brand ID: {selectedBrand.id}, Images: {selectedBrand.images?.length || 0}
+              </p>
+              {selectedBrand.images?.length > 0 && (
+                <p className="text-yellow-300 text-xs mt-1">
+                  First image: {JSON.stringify(selectedBrand.images[0])}
+                </p>
+              )}
+            </div>
+
             {/* Uploaded Images Grid */}
             {selectedBrand.images?.length > 0 && (
               <div>
@@ -169,23 +212,26 @@ const AdminBrands = ({ onLogout }) => {
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {selectedBrand.images.map((image, index) => (
-                    <div key={image._id || index} className="relative group">
+                    <div key={image.filename || index} className="relative group">
                       <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden">
                         <img
-                          src={process.env.NODE_ENV === 'production' 
-                            ? `/${image.path}` 
-                            : `http://localhost:5001/${image.path}`}
-                          alt={image.originalName}
+                          src={image.url || image.path || 'https://via.placeholder.com/300x300/4A5568/FFFFFF?text=No+URL'}
+                          alt={image.originalName || 'Uploaded image'}
                           className="w-full h-full object-cover"
+                          onLoad={() => console.log('Image loaded successfully:', image.url)}
+                          onError={(e) => {
+                            console.log('Image load error:', e.target.src);
+                            e.target.src = 'https://via.placeholder.com/300x300/FF0000/FFFFFF?text=Error';
+                          }}
                         />
                       </div>
                       <button
-                        onClick={() => removeImage(selectedBrand._id, image._id)}
+                        onClick={() => removeImage(selectedBrand.id, image.filename)}
                         className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         ×
                       </button>
-                      <p className="text-xs text-gray-400 mt-1 truncate">{image.originalName}</p>
+                      <p className="text-xs text-gray-400 mt-1 truncate">{image.originalName || 'No name'}</p>
                     </div>
                   ))}
                 </div>
@@ -195,24 +241,44 @@ const AdminBrands = ({ onLogout }) => {
             {(!selectedBrand.images || selectedBrand.images.length === 0) && (
               <div className="text-center py-8 text-gray-400">
                 <p>Žiadne obrázky zatiaľ neboli nahrané</p>
+                <p className="text-xs mt-2">Debug: {JSON.stringify(selectedBrand.images)}</p>
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-gray-700 flex justify-end space-x-3">
+          <div className="p-6 border-t border-gray-700 flex justify-between">
             <button
-              onClick={() => setSelectedBrand(null)}
-              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+              onClick={async () => {
+                console.log('Force refreshing brand data...');
+                await loadBrands();
+                const updatedBrands = await ApiService.getBrands();
+                if (updatedBrands.success) {
+                  const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
+                  if (updatedBrand) {
+                    console.log('Force updated selectedBrand:', updatedBrand);
+                    setSelectedBrand(updatedBrand);
+                  }
+                }
+              }}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
             >
-              Zavrieť
+              🔄 Obnoviť
             </button>
-            <button 
-              onClick={() => setSelectedBrand(null)}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              Uložiť zmeny
-            </button>
+            <div className="space-x-3">
+              <button
+                onClick={() => setSelectedBrand(null)}
+                className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+              >
+                Zavrieť
+              </button>
+              <button 
+                onClick={() => setSelectedBrand(null)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Uložiť zmeny
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -254,12 +320,26 @@ const AdminBrands = ({ onLogout }) => {
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Správa značiek
-          </h2>
-          <p className="text-gray-300">
-            Spravujte obrázky a obsah pre jednotlivé značky
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Správa značiek
+              </h2>
+              <p className="text-gray-300">
+                Spravujte obrázky a obsah pre jednotlivé značky
+              </p>
+            </div>
+            <button
+              onClick={async () => {
+                const result = await ApiService.initializeBrands();
+                alert(result.success ? '✅ ' + result.message : '❌ ' + result.message);
+                if (result.success) await loadBrands();
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+            >
+              🔄 Inicializovať značky
+            </button>
+          </div>
         </div>
 
         {/* Brands Grid */}
