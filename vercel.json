@@ -1,7 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd client && npm install && npm run build",
-  "devCommand": "cd client && npm start",
+  "devCommand": "cd client && npm start", 
   "installCommand": "npm install",
-  "outputDirectory": "client/build"
+  "outputDirectory": "client/build",
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": "mongodb+srv://smart_sanit:nxZhWiJpURb61y54@cluster0.lhm3dkv.mongodb.net/smart_sanit"
+  }
 }
