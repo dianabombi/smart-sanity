@@ -16,8 +16,8 @@ class ApiService {
         description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
         category: 'Kúpeľňový nábytok',
         logo: '/icons/Agape_transparent.png',
-        logoSize: 'max-h-20',
-        useBlackBackground: true,
+        logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 1,
         images: []
       },
@@ -28,6 +28,7 @@ class ApiService {
         category: 'Batérie a sprchy',
         logo: '/fantini.png',
         logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 2,
         images: []
       },
@@ -37,7 +38,8 @@ class ApiService {
         description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
         category: 'Sanitárna keramika',
         logo: '/logo_cielo_white.png',
-        logoSize: 'max-h-12',
+        logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 3,
         images: []
       },
@@ -47,7 +49,7 @@ class ApiService {
         description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
         category: 'Sanitárna keramika',
         logo: '/logoAZZ.svg',
-        logoSize: 'max-h-24',
+        logoSize: 'max-h-16',
         logoFilter: 'brightness(0) invert(1)',
         order: 4,
         images: []
@@ -58,7 +60,8 @@ class ApiService {
         description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
         category: 'Batérie a doplnky',
         logo: '/cea.svg',
-        logoSize: 'max-h-12',
+        logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 5,
         images: []
       },
@@ -79,7 +82,8 @@ class ApiService {
         description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
         category: 'Obklady a dlažby',
         logo: '/icons/Fondovalle.png',
-        logoSize: 'max-h-20',
+        logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 7,
         images: []
       },
@@ -89,7 +93,8 @@ class ApiService {
         description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
         category: 'Obklady a dlažby',
         logo: '/logogf.png',
-        logoSize: 'max-h-20',
+        logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 8,
         images: []
       },
@@ -102,6 +107,7 @@ class ApiService {
         category: 'Ostatné',
         logo: '/TRES_logo_W.svg',
         logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 9,
         images: []
       },
@@ -111,6 +117,7 @@ class ApiService {
         category: 'Ostatné',
         logo: '/Axor-logo-white.png',
         logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 10,
         images: []
       },
@@ -120,6 +127,7 @@ class ApiService {
         category: 'Ostatné',
         logo: '/kaldewei.png',
         logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 11,
         images: []
       },
@@ -129,6 +137,7 @@ class ApiService {
         category: 'Ostatné',
         logo: '/alca.svg',
         logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 12,
         images: []
       },
@@ -168,6 +177,7 @@ class ApiService {
         category: 'Ostatné',
         logo: '/LAUFEN_White_RGB_big.png',
         logoSize: 'max-h-16',
+        logoFilter: 'brightness(0) invert(1)',
         order: 16,
         images: []
       },
