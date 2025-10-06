@@ -12,6 +12,8 @@ import Admin from './components/Admin';
 import CookieConsent from './components/ui/CookieConsent';
 
 function App() {
+  console.log('App component rendering...');
+  
   return (
     <Router>
       <div className="App">

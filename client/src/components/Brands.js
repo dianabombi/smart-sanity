@@ -384,10 +384,10 @@ const Brands = () => {
                   <img 
                     src={brand.logo} 
                     alt={`${brand.name} Logo`}
-                    className="max-h-12 max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                    className={`${brand.logoSize || 'max-h-12'} max-w-full object-contain group-hover:scale-110 transition-transform duration-300`}
                     style={{
                       imageRendering: 'crisp-edges',
-                      filter: (brand.name === 'Huppe' || brand.name === 'Dornbracht' || brand.name === 'Laufen') ? 'brightness(0) invert(1)' : 'none'
+                      filter: brand.logoFilter || 'none'
                     }}
                     onError={(e) => {
                       e.target.style.display = 'none';
