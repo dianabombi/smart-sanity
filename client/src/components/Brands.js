@@ -21,6 +21,8 @@ const Brands = () => {
   };
 
   const openImageGallery = (brand) => {
+    console.log('Opening image gallery for brand:', brand.name);
+    console.log('Brand images:', brand.images);
     setSelectedBrandImages(brand);
   };
 
@@ -28,19 +30,26 @@ const Brands = () => {
     setSelectedBrandImages(null);
   };
 
-  // Load brands from API
   const loadBrands = useCallback(async () => {
     try {
       setLoading(true);
       const result = await ApiService.getBrands();
       if (result.success) {
+        console.log('All loaded brands:', result.brands);
+        // Log brands with images
+        const brandsWithImages = result.brands.filter(b => b.images && b.images.length > 0);
+        console.log('Brands with images:', brandsWithImages);
         setBrands(result.brands);
       } else {
-        setBrands(getFallbackBrands());
+        const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
+        console.log('Using fallback brands:', fallbackBrands);
+        setBrands(fallbackBrands);
       }
     } catch (error) {
       console.error('Error loading brands:', error);
-      setBrands(getFallbackBrands());
+      const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
+      console.log('Using fallback brands:', fallbackBrands);
+      setBrands(fallbackBrands);
     } finally {
       setLoading(false);
     }
@@ -50,162 +59,6 @@ const Brands = () => {
     loadBrands();
   }, [loadBrands]);
 
-  const getFallbackBrands = () => {
-    // Hlavné značky s popismi
-    const mainBrands = [
-      {
-        _id: '1',
-        name: 'Agape',
-        category: 'Kúpeľňový nábytok',
-        logo: '/Users/diana/Desktop/SMART SANIT/CascadeProjects/windsurf-project/client/public/icons/Agape_transparent.png', // použijem dostupné logo
-        description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '2',
-        name: 'Fantini',
-        category: 'Batérie a sprchy',
-        logo: '/fantini.png',
-        description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '1',
-        name: 'Agape',
-        category: 'Kúpeľňový nábytok',
-        logo: '/white-logo.svg', // použijem dostupné logo
-        description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '3',
-        name: 'Cielo',
-        category: 'Sanitárna keramika',
-        logo: '/logo_cielo_white.png',
-        description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '4',
-        name: 'Azzurra',
-        category: 'Sanitárne zariadenia',
-        logo: '/logo Azzurra bianco su fondo nero.png',
-        description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '5',
-        name: 'CEA',
-        category: 'Batérie a doplnky',
-        logo: '/cea.svg',
-        description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '6',
-        name: 'Antrax',
-        category: 'Dizajnové radiátory',
-        logo: '/antraxIt.jpg',
-        description: 'Prémiový taliansky výrobca dizajnových radiátorov',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '7',
-        name: 'Zenon',
-        category: 'Umývadlá a vane',
-        logo: '/new.svg', // použijem dostupné logo
-        description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '8',
-        name: 'Fondovalle',
-        category: 'Obklady a dlažby',
-        logo: '/logogf.png',
-        description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
-        images: [],
-        isMain: true
-      },
-      {
-        _id: '9',
-        name: 'Fiandre',
-        category: 'Obklady a dlažby',
-        logo: '/elite_logoRGB-11.jpg',
-        description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
-        images: [],
-        isMain: true
-      }
-    ];
-
-    // Ostatné značky - iba logá bez popisov
-    const otherBrands = [
-      {
-        _id: '10',
-        name: 'Tres',
-        logo: '/TRES_logo_W.svg',
-        website: 'tresgriferia.com',
-        isOther: true
-      },
-      {
-        _id: '11',
-        name: 'Axor',
-        logo: '/Axor-logo-white.png',
-        isOther: true
-      },
-      {
-        _id: '12',
-        name: 'Kaldewei',
-        logo: '/kaldewei.png',
-        isOther: true
-      },
-      {
-        _id: '13',
-        name: 'Alca',
-        logo: '/alca.svg',
-        isOther: true
-      },
-      {
-        _id: '14',
-        name: 'Hansgrohe',
-        logo: '/Hansgrohe-Logo-2.svg',
-        isOther: true
-      },
-      {
-        _id: '15',
-        name: 'Huppe',
-        logo: '/logoWhite.svg', // fallback logo
-        isOther: true
-      },
-      {
-        _id: '16',
-        name: 'Dornbracht',
-        logo: '/logoWhite.svg', // fallback logo
-        isOther: true
-      },
-      {
-        _id: '17',
-        name: 'Laufen',
-        logo: '/LAUFEN_White_RGB_big.png',
-        isOther: true
-      },
-      {
-        _id: '18',
-        name: 'Kludi',
-        logo: '/logoWhite.svg', // fallback logo
-        isOther: true
-      }
-    ];
-
-    return [...mainBrands, ...otherBrands];
-  };
 
   // Animation for brands
   useEffect(() => {
@@ -459,8 +312,7 @@ const Brands = () => {
                   alt={selectedLogo.name}
                   className="max-w-full max-h-32 object-contain"
                   style={{
-                    filter: selectedLogo.logoFilter || 
-                           (selectedLogo.name === 'HÜPPE' || selectedLogo.name === 'Dornbracht' || selectedLogo.name === 'Laufen') ? 'brightness(0) invert(1)' : 'none'
+                    filter: selectedLogo.logoFilter || 'none'
                   }}
                 />
               </div>
@@ -508,27 +360,35 @@ const Brands = () => {
               {selectedBrandImages.images && selectedBrandImages.images.length > 0 ? (
                 <div className="max-h-[70vh] overflow-y-auto">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {selectedBrandImages.images.map((image, index) => (
-                      <div key={image._id || index} className="group relative">
-                        <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
-                          <img
-                            src={image.url || image.path || '/placeholder-image.jpg'}
-                            alt={image.originalName}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              e.target.src = '/placeholder-image.jpg';
-                            }}
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                    {selectedBrandImages.images.map((image, index) => {
+                      console.log(`Image ${index + 1} data:`, image);
+                      const imageSource = image.url || image.path || image.dataUrl || image.src || (typeof image === 'string' ? image : null);
+                      console.log(`Image ${index + 1} source:`, imageSource);
+                      
+                      return (
+                        <div key={image._id || image.id || index} className="group relative">
+                          <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
+                            <img
+                              src={imageSource || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23374151'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='16' fill='%23D1D5DB' text-anchor='middle' dy='0.3em'%3EImage ${index + 1}%3C/text%3E%3C/svg%3E`}
+                              alt={image.originalName || image.filename || `Image ${index + 1}`}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              onError={(e) => {
+                                console.log('Image load error for:', image);
+                                console.log('Failed source:', e.target.src);
+                                e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23374151'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='16' fill='%23D1D5DB' text-anchor='middle' dy='0.3em'%3EError loading image%3C/text%3E%3C/svg%3E`;
+                              }}
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                              </svg>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ) : (

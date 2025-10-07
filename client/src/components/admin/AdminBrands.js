@@ -7,6 +7,9 @@ const AdminBrands = ({ onLogout }) => {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [tempDescription, setTempDescription] = useState('');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   // Load brands from API
   useEffect(() => {
@@ -37,9 +40,7 @@ const AdminBrands = ({ onLogout }) => {
 
   const handleImageUpload = async (brandId, files) => {
     try {
-      console.log('Starting upload for brand:', brandId, 'Files:', files.length);
       const result = await ApiService.uploadBrandImages(brandId, files);
-      console.log('Upload result:', result);
       
       if (result.success) {
         // Reload brands to get updated data
@@ -47,15 +48,10 @@ const AdminBrands = ({ onLogout }) => {
         
         // Update selectedBrand with the new data
         const updatedBrands = await ApiService.getBrands();
-        console.log('Updated brands after upload:', updatedBrands);
-        
         if (updatedBrands.success) {
           const updatedBrand = updatedBrands.brands.find(b => b.id === brandId || b._id === brandId);
-          console.log('Found updated brand:', updatedBrand);
-          
           if (updatedBrand) {
             setSelectedBrand(updatedBrand);
-            console.log('Updated selectedBrand with images:', updatedBrand.images);
           }
         }
         
@@ -71,7 +67,6 @@ const AdminBrands = ({ onLogout }) => {
 
   const removeImage = async (brandId, imageId) => {
     try {
-      console.log('Removing image:', imageId, 'from brand:', brandId);
       const result = await ApiService.deleteBrandImage(brandId, imageId);
       if (result.success) {
         // Reload brands to get updated data
@@ -82,7 +77,6 @@ const AdminBrands = ({ onLogout }) => {
         if (updatedBrands.success) {
           const updatedBrand = updatedBrands.brands.find(b => b.id === brandId || b._id === brandId);
           if (updatedBrand) {
-            console.log('Updated selectedBrand after delete:', updatedBrand);
             setSelectedBrand(updatedBrand);
           }
         }
@@ -94,6 +88,91 @@ const AdminBrands = ({ onLogout }) => {
     } catch (error) {
       console.error('Error deleting image:', error);
       alert('Chyba pri odstraňovaní obrázka');
+    }
+  };
+
+  const handleDescriptionEdit = () => {
+    setTempDescription(selectedBrand.description || '');
+    setEditingDescription(true);
+  };
+
+  const handleDescriptionSave = async () => {
+    try {
+      const result = await ApiService.updateBrandDescription(selectedBrand.id, tempDescription);
+      if (result.success) {
+        // Reload brands to get updated data
+        await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
+          if (updatedBrand) {
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
+        setEditingDescription(false);
+        alert('Popis značky bol úspešne aktualizovaný!');
+      } else {
+        alert('Chyba pri aktualizácii popisu: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating description:', error);
+      alert('Chyba pri aktualizácii popisu');
+    }
+  };
+
+  const handleDescriptionCancel = () => {
+    setEditingDescription(false);
+    setTempDescription('');
+  };
+
+  const handleLogoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Podporované sú iba obrázky (JPG, PNG, SVG, WebP)');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
+    try {
+      setUploadingLogo(true);
+      const result = await ApiService.updateBrandLogo(selectedBrand.id, file);
+      
+      if (result.success) {
+        // Reload brands to get updated data
+        await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
+          if (updatedBrand) {
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
+        alert('Logo značky bol úspešne aktualizovaný!');
+      } else {
+        alert('Chyba pri aktualizácii loga: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      alert('Chyba pri nahrávaní loga');
+    } finally {
+      setUploadingLogo(false);
+      // Reset file input
+      event.target.value = '';
     }
   };
 
@@ -133,7 +212,7 @@ const AdminBrands = ({ onLogout }) => {
         onClick={() => setSelectedBrand(brand)}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
       >
-        Spravovať obrázky
+        Spravovať značku
       </button>
     </div>
   );
@@ -147,10 +226,14 @@ const AdminBrands = ({ onLogout }) => {
           {/* Header */}
           <div className="p-6 border-b border-gray-700 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-white">
-              Spravovať obrázky - {selectedBrand.name}
+              Spravovať značku - {selectedBrand.name}
             </h2>
             <button
-              onClick={() => setSelectedBrand(null)}
+              onClick={() => {
+                setSelectedBrand(null);
+                setEditingDescription(false);
+                setTempDescription('');
+              }}
               className="text-gray-400 hover:text-gray-200 text-2xl"
             >
               ×
@@ -159,6 +242,127 @@ const AdminBrands = ({ onLogout }) => {
 
           {/* Content */}
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+            {/* Brand Description Section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Popis značky
+                </label>
+                {!editingDescription && (
+                  <button
+                    onClick={handleDescriptionEdit}
+                    className="text-blue-400 hover:text-blue-300 text-sm flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Upraviť
+                  </button>
+                )}
+              </div>
+              
+              {editingDescription ? (
+                <div className="space-y-3">
+                  <textarea
+                    value={tempDescription}
+                    onChange={(e) => setTempDescription(e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows="4"
+                    placeholder="Zadajte popis značky..."
+                  />
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleDescriptionSave}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
+                    >
+                      Uložiť
+                    </button>
+                    <button
+                      onClick={handleDescriptionCancel}
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg">
+                  <p className="text-gray-300 text-sm">
+                    {selectedBrand.description || 'Žiadny popis nie je zadaný'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Brand Logo Section */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Logo značky
+              </label>
+              
+              <div className="flex items-center space-x-4">
+                {/* Current Logo Display */}
+                <div className="w-20 h-20 bg-gray-700 border border-gray-600 rounded-lg flex items-center justify-center">
+                  <img 
+                    src={selectedBrand.logo} 
+                    alt={`${selectedBrand.name} Logo`}
+                    className="max-w-full max-h-full object-contain"
+                    style={{
+                      filter: selectedBrand.logoFilter || 'none'
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div 
+                    className="text-gray-400 text-xs text-center"
+                    style={{display: 'none'}}
+                  >
+                    Žiadne logo
+                  </div>
+                </div>
+                
+                {/* Logo Upload */}
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    disabled={uploadingLogo}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+                  <label
+                    htmlFor="logo-upload"
+                    className={`inline-flex items-center px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer transition-colors ${
+                      uploadingLogo ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {uploadingLogo ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Nahrávam...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        Zmeniť logo
+                      </>
+                    )}
+                  </label>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Podporované formáty: JPG, PNG, SVG, WebP (max 5MB)
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Upload Area */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -170,7 +374,6 @@ const AdminBrands = ({ onLogout }) => {
                   multiple
                   accept="image/*"
                   onChange={(e) => {
-                    console.log('File input changed, files:', e.target.files);
                     if (e.target.files && e.target.files.length > 0) {
                       handleImageUpload(selectedBrand.id, e.target.files);
                     }
@@ -192,17 +395,6 @@ const AdminBrands = ({ onLogout }) => {
               </div>
             </div>
 
-            {/* Debug Info */}
-            <div className="mb-4 p-3 bg-yellow-900/20 border border-yellow-700 rounded">
-              <p className="text-yellow-300 text-sm">
-                🔍 Debug: Brand ID: {selectedBrand.id}, Images: {selectedBrand.images?.length || 0}
-              </p>
-              {selectedBrand.images?.length > 0 && (
-                <p className="text-yellow-300 text-xs mt-1">
-                  First image: {JSON.stringify(selectedBrand.images[0])}
-                </p>
-              )}
-            </div>
 
             {/* Uploaded Images Grid */}
             {selectedBrand.images?.length > 0 && (
@@ -218,10 +410,8 @@ const AdminBrands = ({ onLogout }) => {
                           src={image.url || image.path || 'https://via.placeholder.com/300x300/4A5568/FFFFFF?text=No+URL'}
                           alt={image.originalName || 'Uploaded image'}
                           className="w-full h-full object-cover"
-                          onLoad={() => console.log('Image loaded successfully:', image.url)}
                           onError={(e) => {
-                            console.log('Image load error:', e.target.src);
-                            e.target.src = 'https://via.placeholder.com/300x300/FF0000/FFFFFF?text=Error';
+                            e.target.src = 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23FF0000"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em"%3EError%3C/text%3E%3C/svg%3E';
                           }}
                         />
                       </div>
@@ -241,7 +431,6 @@ const AdminBrands = ({ onLogout }) => {
             {(!selectedBrand.images || selectedBrand.images.length === 0) && (
               <div className="text-center py-8 text-gray-400">
                 <p>Žiadne obrázky zatiaľ neboli nahrané</p>
-                <p className="text-xs mt-2">Debug: {JSON.stringify(selectedBrand.images)}</p>
               </div>
             )}
           </div>
@@ -250,13 +439,11 @@ const AdminBrands = ({ onLogout }) => {
           <div className="p-6 border-t border-gray-700 flex justify-between">
             <button
               onClick={async () => {
-                console.log('Force refreshing brand data...');
                 await loadBrands();
                 const updatedBrands = await ApiService.getBrands();
                 if (updatedBrands.success) {
                   const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
                   if (updatedBrand) {
-                    console.log('Force updated selectedBrand:', updatedBrand);
                     setSelectedBrand(updatedBrand);
                   }
                 }

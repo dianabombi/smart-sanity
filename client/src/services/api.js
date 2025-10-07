@@ -13,181 +13,201 @@ class ApiService {
       {
         id: 1,
         name: 'Agape',
-        description: 'Prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a kúpeľňových doplnkov',
         category: 'Kúpeľňový nábytok',
-        logo: '/icons/Agape_transparent.png',
+        logo: '/logoWhite.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
-        order: 1,
-        images: []
+        logoFilter: 'none',
+        description: 'Agape – svet plný originality a materiálovej pestrosti z pera tých najlepších svetových dizajnérov - prémiový taliansky dodávateľ kúpeľňových batérií, sanity, nábytku a doplnkov',
+        images: [],
+        isMain: true,
+        order: 1
       },
       {
         id: 2,
         name: 'Fantini',
-        description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií a doplnkov',
+        description: 'Fantini – symbióza špičkového dizajnu a prvotriednej kvality sú výsledkom talianskeho producenta kúpeľňových a kuchynských batérií, doplnkov a komplexných wellness riešení',
         category: 'Batérie a sprchy',
         logo: '/fantini.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 2,
-        images: []
+        images: [],
+        isMain: true
       },
       {
         id: 3,
         name: 'Cielo',
-        description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+        description: 'Cielo – „Hand Made Italy" – dotknite sa raja - ručne vyrábaná kúpeľňová sanita a nábytok',
         category: 'Sanitárna keramika',
         logo: '/logo_cielo_white.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 3,
-        images: []
+        images: [],
+        isMain: true
       },
       {
         id: 4,
         name: 'Azzurra',
-        description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
+        description: 'Azzurra – elegancia, ktorá zmení vašu kúpeľňu na moderný priestor - špičkový taliansky výrobca kúpeľňovej sanity a nábytku',
         category: 'Sanitárna keramika',
-        logo: '/logoAZZ.svg',
+        logo: '/logo Azzurra bianco su fondo nero.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 4,
-        images: []
+        images: [],
+        isMain: true
       },
       {
         id: 5,
         name: 'Cea',
-        description: 'Prémiový taliansky výrobca kúpeľňových a kuchynských batérií, elektrických sušiakov a doplnkov',
+        description: 'Cea – pocíťte luxus – nerez, ako hlavný materiál tohto prémiového talianskeho producenta kúpeľňových batérií, doplnkov a elektrických sušiakov',
         category: 'Batérie a doplnky',
         logo: '/cea.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 5,
-        images: []
+        images: [],
+        isMain: true
       },
       {
         id: 6,
-        name: 'Zenon',
-        description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek',
-        category: 'Povrchy a vane',
-        logo: '/icons/ZENON_2024.png',
+        name: 'Antrax',
+        description: 'Antrax – poďte sa hrať – moderný dizajn, originalita a jedinečnosť azda najviac charakterizujú tohto výrobcu kúpeľňových a bytových radiátorov z Talianska',
+        category: 'Dizajnové radiátory',
+        logo: '/antraxIt.jpg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 6,
-        images: []
+        images: [],
+        isMain: true
       },
       {
         id: 7,
-        name: 'Fondovalle',
-        description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
-        category: 'Obklady a dlažby',
-        logo: '/icons/Fondovalle.png',
+        name: 'Zenon',
+        description: 'Zenon – zažite s nami nadšenie pre inovácie od španielskeho výrobcu umývadiel, vaní a sprchových vaničiek',
+        category: 'Povrchy a vane',
+        logo: '/logoBlack.webp',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 7,
-        images: []
+        images: [],
+        isMain: true
       },
       {
         id: 8,
+        name: 'Fondovalle',
+        description: 'Fondovalle – pokročilé technológie výroby a špičková kvalita produktov, to sú keramické obklady a dlažby v širokej škále dizajnov a povrchov pre zhmotnenie vašich predstáv',
+        category: 'Obklady a dlažby',
+        logo: '/icons/Fondovalle.png',
+        logoSize: 'max-h-16',
+        logoFilter: 'none',
+        order: 8,
+        images: [],
+        isMain: true
+      },
+      {
+        id: 9,
         name: 'Fiandre',
-        description: 'Prémiový taliansky výrobca keramických obkladov a dlažieb',
+        description: 'Fiandre – povrchy, ktoré formujú jedinečnosť - prémiový taliansky výrobca gresových obkladov a dlažieb, ktorý medzi prvými prišiel s veľkoformátovými obkladmi',
         category: 'Obklady a dlažby',
         logo: '/logogf.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
-        order: 8,
-        images: []
+        logoFilter: 'none',
+        order: 9,
+        images: [],
+        isMain: true
       },
       
       // Ostatné brands (logos only, no descriptions)
       {
-        id: 9,
+        id: 10,
         name: 'Tres',
         website: 'tresgriferia.com',
         category: 'Ostatné',
         logo: '/TRES_logo_W.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 9,
         images: []
       },
       {
-        id: 10,
+        id: 11,
         name: 'Axor',
         category: 'Ostatné',
         logo: '/Axor-logo-white.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 10,
         images: []
       },
       {
-        id: 11,
+        id: 12,
         name: 'Kaldewei',
         category: 'Ostatné',
         logo: '/kaldewei.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 11,
         images: []
       },
       {
-        id: 12,
+        id: 13,
         name: 'Alca',
         category: 'Ostatné',
         logo: '/alca.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 12,
         images: []
       },
       {
-        id: 13,
+        id: 14,
         name: 'Hansgrohe',
         category: 'Ostatné',
         logo: '/Hansgrohe-Logo-2.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 13,
         images: []
       },
       {
-        id: 14,
+        id: 15,
         name: 'Huppe',
         category: 'Ostatné',
         logo: '/logoWhite.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 14,
         images: []
       },
       {
-        id: 15,
+        id: 16,
         name: 'Dornbracht',
         category: 'Ostatné',
         logo: '/logoWhite.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 15,
         images: []
       },
       {
-        id: 16,
+        id: 17,
         name: 'Laufen',
         category: 'Ostatné',
         logo: '/LAUFEN_White_RGB_big.png',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 16,
         images: []
       },
       {
-        id: 17,
+        id: 18,
         name: 'Kludi',
         category: 'Ostatné',
         logo: '/logoWhite.svg',
         logoSize: 'max-h-16',
-        logoFilter: 'brightness(0) invert(1)',
+        logoFilter: 'none',
         order: 17,
         images: []
       }
@@ -263,15 +283,17 @@ class ApiService {
       }
       
       console.log('Brands from Supabase:', data);
+      console.log('First brand with images example:', data.find(b => b.images && b.images.length > 0));
       
       if (!data || data.length === 0) {
         console.log('No brands in database, using fallback');
         return { success: true, brands: this.getFallbackBrands() };
       }
       
-      // Ensure images field is properly parsed as array
+      // Ensure images field is properly parsed as array and set logoFilter to none for all
       const processedBrands = data.map(brand => ({
         ...brand,
+        logoFilter: 'none', // Force no filter for all logos
         images: Array.isArray(brand.images) ? brand.images : 
                 typeof brand.images === 'string' ? JSON.parse(brand.images || '[]') : []
       }));
@@ -398,7 +420,7 @@ class ApiService {
               filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
               originalName: file.name,
               path: `demo/${file.name}`,
-              url: `data:image/svg+xml;base64,${btoa(`<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#4A5568"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em">Image ${index + 1}</text></svg>`)}`,
+              url: `data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%234A5568'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EImage ${index + 1}%3C/text%3E%3C/svg%3E`,
               size: file.size
             }));
             return { success: true, images: simulatedImages };
@@ -476,7 +498,7 @@ class ApiService {
         filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
         originalName: file.name,
         path: `demo/${file.name}`,
-        url: `data:image/svg+xml;base64,${btoa(`<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#4A5568"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em">Image ${index + 1}</text></svg>`)}`,
+        url: `data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%234A5568'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EImage ${index + 1}%3C/text%3E%3C/svg%3E`,
         size: file.size
       }));
       
@@ -509,6 +531,141 @@ class ApiService {
       }
       
       return { success: true, images: simulatedImages };
+    }
+  }
+
+  async updateBrandDescription(brandId, newDescription) {
+    try {
+      console.log('Updating brand description:', brandId, newDescription);
+      
+      if (!this.isSupabaseAvailable()) {
+        console.log('Supabase not available, description update simulated');
+        return { success: true, message: 'Popis značky bol aktualizovaný (simulácia)' };
+      }
+
+      const { error } = await supabase
+        .from('brands')
+        .update({ description: newDescription })
+        .eq('id', brandId);
+
+      if (error) {
+        console.error('Failed to update brand description:', error);
+        return { success: false, message: error.message };
+      }
+
+      console.log('Brand description updated successfully');
+      return { success: true, message: 'Popis značky bol úspešne aktualizovaný' };
+    } catch (error) {
+      console.error('Update brand description error:', error);
+      return { success: false, message: 'Chyba pri aktualizácii popisu značky' };
+    }
+  }
+
+  async updateBrandLogo(brandId, logoFile) {
+    try {
+      console.log('Updating brand logo:', brandId, logoFile.name);
+      
+      // Create data URL for the logo
+      const reader = new FileReader();
+      return new Promise(async (resolve) => {
+        reader.onload = async () => {
+          const logoDataUrl = reader.result;
+          console.log('Logo converted to data URL, updating database...');
+          
+          if (!this.isSupabaseAvailable()) {
+            console.log('Supabase not available, logo update simulated');
+            resolve({ 
+              success: true, 
+              logoUrl: logoDataUrl,
+              message: 'Logo značky bol aktualizovaný (simulácia)' 
+            });
+            return;
+          }
+
+          try {
+            // Update brand record with new logo data URL
+            const { error: updateError } = await supabase
+              .from('brands')
+              .update({ logo: logoDataUrl })
+              .eq('id', brandId);
+
+            if (updateError) {
+              console.error('Failed to update brand logo in database:', updateError);
+              resolve({ success: false, message: updateError.message });
+              return;
+            }
+
+            console.log('Brand logo updated successfully in database');
+            resolve({ 
+              success: true, 
+              logoUrl: logoDataUrl,
+              message: 'Logo značky bol úspešne aktualizovaný' 
+            });
+          } catch (dbError) {
+            console.error('Database update error:', dbError);
+            resolve({ success: false, message: 'Chyba pri aktualizácii v databáze' });
+          }
+        };
+        reader.readAsDataURL(logoFile);
+      });
+
+      // Original Supabase code (disabled due to tenant config issues)
+      /*
+      if (!this.isSupabaseAvailable()) {
+        // Create a fallback data URL for the logo
+        const reader = new FileReader();
+        return new Promise((resolve) => {
+          reader.onload = () => {
+            console.log('Supabase not available, logo update simulated');
+            resolve({ 
+              success: true, 
+              logoUrl: reader.result,
+              message: 'Logo značky bol aktualizovaný (simulácia)' 
+            });
+          };
+          reader.readAsDataURL(logoFile);
+        });
+      }
+
+      // Upload logo to Supabase storage
+      const fileExt = logoFile.name.split('.').pop();
+      const fileName = `brand-${brandId}-logo-${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('brand-logos')
+        .upload(fileName, logoFile);
+
+      if (uploadError) {
+        console.error('Failed to upload logo:', uploadError);
+        return { success: false, message: uploadError.message };
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('brand-logos')
+        .getPublicUrl(fileName);
+
+      // Update brand record with new logo URL
+      const { error: updateError } = await supabase
+        .from('brands')
+        .update({ logo: publicUrl })
+        .eq('id', brandId);
+
+      if (updateError) {
+        console.error('Failed to update brand logo URL:', updateError);
+        return { success: false, message: updateError.message };
+      }
+
+      console.log('Brand logo updated successfully');
+      return { 
+        success: true, 
+        logoUrl: publicUrl,
+        message: 'Logo značky bol úspešne aktualizovaný' 
+      };
+      */
+    } catch (error) {
+      console.error('Update brand logo error:', error);
+      return { success: false, message: 'Chyba pri aktualizácii loga značky' };
     }
   }
 
