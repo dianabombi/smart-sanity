@@ -394,7 +394,7 @@ class ApiService {
       if (!existingBrand) {
         console.log('Brand not found in database, using fallback brands');
         // Use fallback data but still try to save images
-        const brandData = this.getFallbackBrands().find(b => b.id == brandId);
+        const brandData = this.getFallbackBrands().find(b => b.id === brandId);
         if (brandData) {
           // Create the brand in database first
           const { data: newBrand, error: insertError } = await supabase
