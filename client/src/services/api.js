@@ -265,7 +265,6 @@ class ApiService {
   async getBrands() {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available, using fallback brands');
-      // Return fallback data when Supabase is not available
       return { success: true, brands: this.getFallbackBrands() };
     }
 
@@ -278,30 +277,58 @@ class ApiService {
       
       if (error) {
         console.log('Supabase error, using fallback:', error);
-        // Fallback to static data if Supabase fails
         return { success: true, brands: this.getFallbackBrands() };
       }
-      
-      console.log('Brands from Supabase:', data);
-      console.log('First brand with images example:', data.find(b => b.images && b.images.length > 0));
       
       if (!data || data.length === 0) {
         console.log('No brands in database, using fallback');
         return { success: true, brands: this.getFallbackBrands() };
       }
-      
-      // Ensure images field is properly parsed as array and set logoFilter to none for all
-      const processedBrands = data.map(brand => ({
-        ...brand,
-        logoFilter: 'none', // Force no filter for all logos
-        images: Array.isArray(brand.images) ? brand.images : 
-                typeof brand.images === 'string' ? JSON.parse(brand.images || '[]') : []
-      }));
-      
+
+      // Process brands without any automatic cleanup
+      const processedBrands = data.map(brand => {
+        let images = [];
+        try {
+          if (Array.isArray(brand.images)) {
+            images = brand.images;
+          } else if (typeof brand.images === 'string' && brand.images.trim().startsWith('[')) {
+            images = JSON.parse(brand.images);
+          }
+        } catch (e) {
+          images = [];
+        }
+
+        // Process all images without filtering anything out
+        const validatedImages = images.map(img => {
+          if (!img) return null;
+
+          // If the url is already a data URL (real or placeholder), use it as-is
+          if (img.url && img.url.startsWith('data:')) {
+            return img;
+          }
+
+          // Try to build a public URL from a path
+          const imagePath = img.path || img.filename;
+          if (imagePath) {
+            return {
+              ...img,
+              url: `https://lckbwknxfmbjffjsmahs.supabase.co/storage/v1/object/public/brand-images/${imagePath}`
+            };
+          }
+          
+          return null;
+        }).filter(Boolean);
+
+        return {
+          ...brand,
+          logoFilter: 'none',
+          images: validatedImages,
+        };
+      });
+
       return { success: true, brands: processedBrands };
     } catch (error) {
       console.log('Error fetching brands, using fallback:', error);
-      // Fallback to static data on any error
       return { success: true, brands: this.getFallbackBrands() };
     }
   }
@@ -367,170 +394,72 @@ class ApiService {
   }
 
   async uploadBrandImages(brandId, files) {
-    console.log('Upload started for brand:', brandId, 'Files:', files.length);
-    
-    if (!this.isSupabaseAvailable()) {
-      console.log('Supabase not available, using fallback');
-      // Fallback simulation for demo
-      const simulatedImages = Array.from(files).map((file, index) => ({
-        filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
-        originalName: file.name,
-        path: `demo/${file.name}`,
-        url: `/placeholder-image.jpg`,
-        size: file.size
-      }));
-      
-      return { success: true, images: simulatedImages };
-    }
+    console.log('EMERGENCY MODE: Bypassing Supabase Storage. Converting images to data URLs.');
 
     try {
-      // First, let's try to get or create the brand in the database
-      let { data: existingBrand } = await supabase
+      // 1. Convert all files to base64 data URLs
+      const dataUrlPromises = Array.from(files).map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({
+            url: reader.result,
+            originalName: file.name,
+            filename: `${brandId}-${Date.now()}-${file.name}`,
+            size: file.size
+          });
+          reader.onerror = error => reject(error);
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const newImages = await Promise.all(dataUrlPromises);
+      console.log(`${newImages.length} images converted to data URLs.`);
+
+      // 2. Get the current brand data
+      const { data: brand, error: fetchError } = await supabase
         .from('brands')
-        .select('*')
+        .select('images')
         .eq('id', brandId)
         .single();
-      
-      if (!existingBrand) {
-        console.log('Brand not found in database, using fallback brands');
-        // Use fallback data but still try to save images
-        const brandData = this.getFallbackBrands().find(b => b.id === brandId);
-        if (brandData) {
-          // Create the brand in database first
-          const { data: newBrand, error: insertError } = await supabase
-            .from('brands')
-            .insert([{
-              name: brandData.name,
-              description: brandData.description,
-              category: brandData.category,
-              logo: brandData.logo,
-              website: brandData.website,
-              "order": brandData.order,
-              images: []
-            }])
-            .select()
-            .single();
-          
-          if (!insertError) {
-            existingBrand = newBrand;
-          } else {
-            console.error('Failed to create brand:', insertError);
-            // Continue with fallback simulation
-            const simulatedImages = Array.from(files).map((file, index) => ({
-              filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
-              originalName: file.name,
-              path: `demo/${file.name}`,
-              url: `data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%234A5568'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EImage ${index + 1}%3C/text%3E%3C/svg%3E`,
-              size: file.size
-            }));
-            return { success: true, images: simulatedImages };
-          }
-        }
+
+      if (fetchError) {
+        console.error('Failed to fetch brand before update:', fetchError);
+        throw new Error('Could not find the brand to update.');
       }
 
-      const uploadPromises = Array.from(files).map(async (file) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${brandId}/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
-        
-        console.log('Uploading file:', fileName);
-        
-        const { data, error } = await supabase.storage
-          .from('brand-images')
-          .upload(fileName, file);
-        
-        if (error) {
-          console.error('Upload error:', error);
-          throw error;
+      // 3. Merge old images with new ones
+      let existingImages = [];
+      try {
+        if (Array.isArray(brand.images)) {
+          existingImages = brand.images;
+        } else if (typeof brand.images === 'string') {
+          existingImages = JSON.parse(brand.images);
         }
-        
-        console.log('Upload successful:', data);
-        
-        // Get the public URL for the uploaded image
-        const { data: urlData } = supabase.storage
-          .from('brand-images')
-          .getPublicUrl(fileName);
-        
-        console.log('Public URL:', urlData.publicUrl);
-        
-        return {
-          filename: fileName,
-          originalName: file.name,
-          path: data.path,
-          url: urlData.publicUrl,
-          size: file.size
-        };
-      });
-      
-      const uploadedImages = await Promise.all(uploadPromises);
-      console.log('All uploads completed:', uploadedImages);
-      
-      // Get current brand images and ensure it's an array
-      let currentImages = existingBrand?.images || [];
-      if (typeof currentImages === 'string') {
-        currentImages = JSON.parse(currentImages || '[]');
-      }
-      if (!Array.isArray(currentImages)) {
-        currentImages = [];
+      } catch (e) {
+        console.warn('Could not parse existing images, starting fresh.');
+        existingImages = [];
       }
       
-      const updatedImages = [...currentImages, ...uploadedImages];
-      
-      console.log('Updating brand with images:', updatedImages);
-      
-      // Update brand with new images (Supabase handles JSONB automatically)
+      const updatedImages = [...existingImages, ...newImages];
+      console.log(`Updating brand ${brandId} with a total of ${updatedImages.length} images.`);
+
+      // 4. Save the combined array back to the database
       const { error: updateError } = await supabase
         .from('brands')
         .update({ images: updatedImages })
         .eq('id', brandId);
-      
+
       if (updateError) {
-        console.error('Update error:', updateError);
-        return { success: false, message: updateError.message };
+        console.error('Failed to save data URLs to database:', updateError);
+        throw new Error('Database update failed.');
       }
-      
-      console.log('Brand updated successfully');
-      return { success: true, images: uploadedImages };
+
+      console.log('SUCCESS: Images saved directly to database as data URLs.');
+      return { success: true, images: newImages };
+
     } catch (error) {
-      console.error('Upload failed, using fallback:', error);
-      
-      // Create fallback images that will actually display
-      const simulatedImages = Array.from(files).map((file, index) => ({
-        filename: `${brandId}/${Date.now()}_${index}.${file.name.split('.').pop()}`,
-        originalName: file.name,
-        path: `demo/${file.name}`,
-        url: `data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%234A5568'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='white' text-anchor='middle' dy='.3em'%3EImage ${index + 1}%3C/text%3E%3C/svg%3E`,
-        size: file.size
-      }));
-      
-      // Try to save these to the database anyway
-      try {
-        const { data: brand } = await supabase
-          .from('brands')
-          .select('images')
-          .eq('id', brandId)
-          .single();
-        
-        let currentImages = brand?.images || [];
-        if (typeof currentImages === 'string') {
-          currentImages = JSON.parse(currentImages || '[]');
-        }
-        if (!Array.isArray(currentImages)) {
-          currentImages = [];
-        }
-        
-        const updatedImages = [...currentImages, ...simulatedImages];
-        
-        await supabase
-          .from('brands')
-          .update({ images: updatedImages })
-          .eq('id', brandId);
-        
-        console.log('Fallback images saved to database:', simulatedImages);
-      } catch (dbError) {
-        console.error('Failed to save fallback images to database:', dbError);
-      }
-      
-      return { success: true, images: simulatedImages };
+      console.error('EMERGENCY UPLOAD FAILED:', error);
+      return { success: false, message: error.message };
     }
   }
 

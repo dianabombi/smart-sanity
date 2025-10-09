@@ -43,39 +43,51 @@ const Home = () => {
         </div>
         
         {/* Right Section - full width on mobile/tablet, 1/3 on laptop+ */}
-        <div className="w-full laptop:w-1/3 bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-4 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-2 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
+        <div className="w-full laptop:w-1/3 bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
           {/* Smart Sanit Logo - positioned higher */}
-          <div className="flex-shrink-0 pt-0 tablet:pt-6 laptop:pt-16 flex justify-center">
+          <div className="flex-shrink-0 pt-4 tablet:pt-6 laptop:pt-16 flex justify-center">
             <img 
               src="/logo.png" 
               alt="Smart Sanit" 
               className="shrink-0 h-14 tablet:h-20 laptop:h-24 w-auto object-contain"
               style={{
-                imageRendering: 'crisp-edges'
               }}
             />
           </div>
           
           {/* Text Section */}
-          <div className="flex flex-col items-center justify-center pt-0 tablet:pt-2 laptop:pt-8">
-            <div className="text-center">
-              <p className="text-white font-light leading-tight mb-0 tablet:mb-2 text-base tablet:text-xl laptop:text-[22px]">
-                Profesionálne riešenia<br />
-                pre interiérových dizajnérov<br />
-                a architektov
-              </p>
+          <div className="flex flex-col items-center justify-center pt-8 tablet:pt-2 laptop:pt-8">
+            
+            <div className="text-xl tablet:text-2xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
+              <p>Profesionálne riešenia</p>
+              <p>pre interiérových dizajnérov</p>
+              <p>a architektov</p>
             </div>
           </div>
           
           {/* Button in middle of lower section */}
-          <div className="flex-shrink-0 pb-0 tablet:pb-4 laptop:pb-24 flex justify-center">
+          <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
             <Button
               size="small"
               variant="primary"
               onClick={() => navigate('/what-we-offer')}
               className="w-full max-w-[130px] tablet:max-w-[160px]"
+              style={{
+                color: '#9ca3af',
+                borderColor: '#9ca3af',
+                backgroundColor: 'transparent',
+                textTransform: 'none'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = 'white';
+                e.target.style.borderColor = 'white';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#9ca3af';
+                e.target.style.borderColor = '#9ca3af';
+              }}
             >
-              VSTÚPTE
+            Vstúpte
             </Button>
           </div>
         </div>

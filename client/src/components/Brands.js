@@ -23,6 +23,23 @@ const Brands = () => {
   const openImageGallery = (brand) => {
     console.log('Opening image gallery for brand:', brand.name);
     console.log('Brand images:', brand.images);
+    console.log('Brand images length:', brand.images?.length);
+    
+    // Log each image structure for debugging
+    if (brand.images && brand.images.length > 0) {
+      brand.images.forEach((image, index) => {
+        console.log(`Image ${index + 1} structure:`, {
+          url: image.url,
+          dataUrl: image.dataUrl,
+          path: image.path,
+          src: image.src,
+          filename: image.filename,
+          originalName: image.originalName,
+          fullObject: image
+        });
+      });
+    }
+    
     setSelectedBrandImages(brand);
   };
 
@@ -104,11 +121,11 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-light text-white mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-light text-gray-400 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             OBCHODOVANÉ ZNAČKY
           </h1>
           <div className="w-32 h-1 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto mb-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]"></div>
-          <p className="text-lg tablet:text-xl text-white opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
         </div>
@@ -168,7 +185,7 @@ const Brands = () => {
 
                 {/* Brand Info */}
                 <div className="space-y-3">
-                  <h3 className="text-white font-medium text-lg group-hover:text-blue-300 transition-colors">
+                  <h3 className="text-gray-400 font-medium text-lg group-hover:text-blue-300 transition-colors">
                     {brand.name}
                   </h3>
                   
@@ -176,7 +193,7 @@ const Brands = () => {
                     {brand.category}
                   </div>
                   
-                  <p className="text-sm leading-relaxed text-white/70">
+                  <p className="text-sm leading-relaxed text-gray-400/70">
                     {brand.description}
                   </p>
 
@@ -205,12 +222,12 @@ const Brands = () => {
       {/* Ostatné Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className={`text-2xl tablet:text-3xl font-light text-white mb-4 text-center tracking-wide transform transition-all duration-1000 ${
+          <h2 className={`text-2xl tablet:text-3xl font-light text-gray-400 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
             OSTATNÉ
           </h2>
-          <p className={`text-lg text-white opacity-80 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
+          <p className={`text-lg text-gray-400 opacity-80 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`} style={{ transitionDelay: '200ms' }}>
             Ďalší producenti, ktorých vám vieme ponúknuť
@@ -270,10 +287,10 @@ const Brands = () => {
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8">
-            <h2 className="text-2xl font-light text-white mb-6">
+            <h2 className="text-2xl font-light text-gray-400 mb-6">
               Prečo si vybrať naše značky?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white/80">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-400/80">
               <div>
                 <h3 className="font-medium mb-2">Kvalita</h3>
                 <p className="text-sm">Všetky naše značky sú synonymom pre najvyššiu kvalitu a spoľahlivosť.</p>
@@ -297,7 +314,7 @@ const Brands = () => {
           <div className="bg-black rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">{selectedLogo.name}</h2>
+                <h2 className="text-2xl font-bold text-gray-400">{selectedLogo.name}</h2>
                 <button
                   onClick={closeLogoPreview}
                   className="text-gray-400 hover:text-white text-2xl"
@@ -318,10 +335,10 @@ const Brands = () => {
               </div>
               
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className="text-lg font-semibold text-gray-400 mb-2">
                   {selectedLogo.category}
                 </h3>
-                <p className="text-gray-300 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   {selectedLogo.description}
                 </p>
               </div>
@@ -342,12 +359,12 @@ const Brands = () => {
       {/* Image Gallery Modal */}
       {selectedBrandImages && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-gray-700 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden border border-gray-500">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-white">{selectedBrandImages.name}</h2>
-                  <p className="text-blue-300 text-sm mt-1">{selectedBrandImages.category}</p>
+                  <h2 className="text-2xl font-bold text-gray-400">{selectedBrandImages.name}</h2>
+                  <p className="text-white text-lg mt-1">{selectedBrandImages.category}</p>
                 </div>
                 <button
                   onClick={closeImageGallery}
@@ -360,35 +377,29 @@ const Brands = () => {
               {selectedBrandImages.images && selectedBrandImages.images.length > 0 ? (
                 <div className="max-h-[70vh] overflow-y-auto">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {selectedBrandImages.images.map((image, index) => {
-                      console.log(`Image ${index + 1} data:`, image);
-                      const imageSource = image.url || image.path || image.dataUrl || image.src || (typeof image === 'string' ? image : null);
-                      console.log(`Image ${index + 1} source:`, imageSource);
-                      
-                      return (
-                        <div key={image._id || image.id || index} className="group relative">
-                          <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
-                            <img
-                              src={imageSource || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23374151'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='16' fill='%23D1D5DB' text-anchor='middle' dy='0.3em'%3EImage ${index + 1}%3C/text%3E%3C/svg%3E`}
-                              alt={image.originalName || image.filename || `Image ${index + 1}`}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              onError={(e) => {
-                                console.log('Image load error for:', image);
-                                console.log('Failed source:', e.target.src);
-                                e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23374151'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='16' fill='%23D1D5DB' text-anchor='middle' dy='0.3em'%3EError loading image%3C/text%3E%3C/svg%3E`;
-                              }}
-                            />
-                          </div>
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg flex items-center justify-center">
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                              </svg>
-                            </div>
+                    {selectedBrandImages.images.map((image, index) => (
+                      <div key={image.id || image.filename || index} className="group relative">
+                        <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
+                          <img
+                            src={image.url} // Directly use the guaranteed URL from the API
+                            alt={image.originalName || `Image ${index + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              console.error(`Failed to load image: ${image.url}`);
+                              // Simple fallback for the rare case the API-provided URL fails
+                              e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23DC2626'/%3E%3Ctext x='200' y='200' font-family='Arial' font-size='14' fill='white' text-anchor='middle' dy='0.3em'%3EError%3C/text%3E%3C/svg%3E`;
+                            }}
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               ) : (
@@ -405,7 +416,7 @@ const Brands = () => {
               <div className="flex justify-center mt-6 pt-4 border-t border-gray-700">
                 <button
                   onClick={closeImageGallery}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
                 >
                   Zavrieť galériu
                 </button>

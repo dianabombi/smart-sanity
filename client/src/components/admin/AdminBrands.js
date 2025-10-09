@@ -9,6 +9,8 @@ const AdminBrands = ({ onLogout }) => {
   const [error, setError] = useState('');
   const [editingDescription, setEditingDescription] = useState(false);
   const [tempDescription, setTempDescription] = useState('');
+  const [editingName, setEditingName] = useState(false);
+  const [tempName, setTempName] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
   // Load brands from API
@@ -128,6 +130,44 @@ const AdminBrands = ({ onLogout }) => {
     setTempDescription('');
   };
 
+  const handleNameEdit = () => {
+    console.log('Starting name edit for:', selectedBrand.name);
+    setTempName(selectedBrand.name || '');
+    setEditingName(true);
+  };
+
+  const handleNameSave = async () => {
+    try {
+      const result = await ApiService.updateBrand(selectedBrand.id, { name: tempName });
+      if (result.success) {
+        // Reload brands to get updated data
+        await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
+          if (updatedBrand) {
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
+        setEditingName(false);
+        alert('Názov značky bol úspešne aktualizovaný!');
+      } else {
+        alert('Chyba pri aktualizácii názvu: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating name:', error);
+      alert('Chyba pri aktualizácii názvu');
+    }
+  };
+
+  const handleNameCancel = () => {
+    setEditingName(false);
+    setTempName('');
+  };
+
   const handleLogoUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -233,6 +273,8 @@ const AdminBrands = ({ onLogout }) => {
                 setSelectedBrand(null);
                 setEditingDescription(false);
                 setTempDescription('');
+                setEditingName(false);
+                setTempName('');
               }}
               className="text-gray-400 hover:text-gray-200 text-2xl"
             >
@@ -242,6 +284,61 @@ const AdminBrands = ({ onLogout }) => {
 
           {/* Content */}
           <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+            {/* Brand Name Section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Názov značky
+                </label>
+                {!editingName && (
+                  <button
+                    onClick={handleNameEdit}
+                    className="text-blue-400 hover:text-blue-300 text-sm flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Upraviť
+                  </button>
+                )}
+              </div>
+              
+              {editingName ? (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={tempName}
+                    onChange={(e) => {
+                      console.log('Name input changed to:', e.target.value);
+                      setTempName(e.target.value);
+                    }}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Zadajte názov značky"
+                    autoFocus
+                    maxLength={100}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleNameSave}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Uložiť
+                    </button>
+                    <button
+                      onClick={handleNameCancel}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg">
+                  <p className="text-white">{selectedBrand.name}</p>
+                </div>
+              )}
+            </div>
+
             {/* Brand Description Section */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
@@ -407,11 +504,30 @@ const AdminBrands = ({ onLogout }) => {
                     <div key={image.filename || index} className="relative group">
                       <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden">
                         <img
-                          src={image.url || image.path || 'https://via.placeholder.com/300x300/4A5568/FFFFFF?text=No+URL'}
+                          src={image.url || image.dataUrl || image.path || 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%234A5568"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E'}
                           alt={image.originalName || 'Uploaded image'}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            e.target.src = 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23FF0000"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em"%3EError%3C/text%3E%3C/svg%3E';
+                            console.log('Admin image load error:', image);
+                            console.log('Failed source:', e.target.src);
+                            
+                            // Try alternative sources
+                            if (!e.target.dataset.retried) {
+                              e.target.dataset.retried = 'true';
+                              
+                              if (image.dataUrl && e.target.src !== image.dataUrl) {
+                                e.target.src = image.dataUrl;
+                                return;
+                              }
+                              
+                              if (image.filename && image.filename.startsWith('data:')) {
+                                e.target.src = image.filename;
+                                return;
+                              }
+                            }
+                            
+                            // Final fallback
+                            e.target.src = 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23DC2626"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="14" fill="white" text-anchor="middle" dy=".3em"%3EError Loading%3C/text%3E%3C/svg%3E';
                           }}
                         />
                       </div>

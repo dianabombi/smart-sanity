@@ -22,7 +22,7 @@ const Entrance = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-white space-y-4 text-xl tablet:text-2xl leading-relaxed text-left">
+          <div className="text-gray-400 space-y-4 text-xl tablet:text-2xl leading-relaxed text-left">
             <ul className="space-y-4">
               {[
                 "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
@@ -42,7 +42,7 @@ const Entrance = () => {
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
                   <span className="mt-2 h-3.5 w-3.5 tablet:h-4 tablet:w-4 rounded-[4px] bg-blue-300 flex-shrink-0" />
-                  <span className="hover:text-blue-100 transition-colors duration-200">{text}</span>
+                  <span className="hover:text-blue-300 transition-colors duration-200">{text}</span>
                 </li>
               ))}
             </ul>

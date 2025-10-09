@@ -67,13 +67,13 @@ const NavBar = () => {
       <div className="flex items-center justify-between pl-1 pr-4 md:px-6 lg:px-8 tablet:px-6 laptop:px-8">
         {/* Logo/Brand */}
         <div 
-          className="cursor-pointer hover:opacity-80 transition-opacity py-2 shrink-0 -ml-1 sm:ml-0 max-w-[70%] laptop:min-w-[360px] laptop:max-w-none"
+          className="cursor-pointer hover:opacity-80 transition-opacity py-1 shrink-0 -ml-1 sm:ml-0 max-w-[70%] laptop:min-w-[360px] laptop:max-w-none"
           onClick={() => handleNavClick('/')}
         >
           <img 
             src="/logoBlack.webp" 
             alt="SMART SANITY" 
-            className="shrink-0 block h-40 mobile:h-44 tablet:h-48 laptop:h-56 w-auto object-contain"
+            className="shrink-0 block h-48 mobile:h-52 tablet:h-36 laptop:h-40 w-auto object-contain"
             style={{
               imageRendering: 'high-quality',
             }}

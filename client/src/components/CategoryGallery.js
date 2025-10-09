@@ -44,10 +44,10 @@ const CategoryGallery = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-light text-white mb-6 tracking-wide">
+          <h1 className="text-4xl md:text-6xl font-light text-gray-400 mb-6 tracking-wide">
             {categoryTitles[category] || 'GALLERY'}
           </h1>
-          <p className="text-lg text-white opacity-80 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-400 opacity-80 max-w-2xl mx-auto leading-relaxed">
             {categoryDescriptions[category] || 'Explore our collection of sanitary facilities.'}
           </p>
         </div>
