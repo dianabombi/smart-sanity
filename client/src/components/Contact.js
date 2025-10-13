@@ -69,7 +69,7 @@ const Contact = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-8">
+            <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500">
               <h2 className="text-2xl font-semibold text-gray-400 mb-6">
                 Napíšte nám
               </h2>
@@ -87,7 +87,7 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
+                      className="w-full px-4 py-3 bg-gray-500 border border-gray-400 rounded-lg text-white placeholder-black focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
                       placeholder="Vaše meno"
                     />
                   </div>
@@ -103,7 +103,7 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
+                      className="w-full px-4 py-3 bg-gray-500 border border-gray-400 rounded-lg text-white placeholder-black focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
                       placeholder="vas@email.sk"
                     />
                   </div>
@@ -119,7 +119,7 @@ const Contact = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
+                    className="w-full px-4 py-3 bg-gray-500 border border-gray-400 rounded-lg text-white placeholder-black focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
                     placeholder="+421 XXX XXX XXX"
                   />
                 </div>
@@ -134,7 +134,7 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
+                    className="w-full px-4 py-3 bg-gray-500 border border-gray-400 rounded-lg text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
                   >
                     <option value="">Vyberte predmet</option>
                     <option value="general">Všeobecná otázka</option>
@@ -157,7 +157,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors resize-vertical"
+                    className="w-full px-4 py-3 bg-gray-500 border border-gray-400 rounded-lg text-white placeholder-black focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors resize-vertical"
                     placeholder="Opíšte vašu požiadavku alebo otázku..."
                   />
                 </div>
@@ -187,71 +187,71 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="space-y-8">
               {/* Company Info */}
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-8">
-                <h2 className="text-2xl font-semibold text-white mb-6">
+              <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500">
+                <h2 className="text-2xl font-semibold text-gray-400 mb-6">
                   Kontaktné údaje
                 </h2>
                 
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="text-white text-xl">👤</div>
+                    <div className="text-gray-400 text-xl">👤</div>
                     <div>
-                      <h3 className="text-lg font-medium text-white">Konateľ spoločnosti</h3>
-                      <p className="text-gray-300">Ing. Dušan Drinka, PhD.</p>
+                      <h3 className="text-lg font-medium text-gray-400">Konateľ spoločnosti</h3>
+                      <p className="text-gray-400/70">Ing. Dušan Drinka, PhD.</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="text-white text-xl">📞</div>
+                    <div className="text-gray-400 text-xl">📞</div>
                     <div>
-                      <h3 className="text-lg font-medium text-white">Telefón</h3>
-                      <p className="text-gray-300">+421 948 882 376</p>
+                      <h3 className="text-lg font-medium text-gray-400">Telefón</h3>
+                      <p className="text-gray-400/70">+421 948 882 376</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="text-white text-xl">✉️</div>
+                    <div className="text-gray-400 text-xl">✉️</div>
                     <div>
-                      <h3 className="text-lg font-medium text-white">Email</h3>
-                      <p className="text-gray-300">dusan.drinka@smartsanit.sk</p>
+                      <h3 className="text-lg font-medium text-gray-400">Email</h3>
+                      <p className="text-gray-400/70">dusan.drinka@smartsanit.sk</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="text-white text-xl">📍</div>
+                    <div className="text-gray-400 text-xl">📍</div>
                     <div>
-                      <h3 className="text-lg font-medium text-white">Adresa</h3>
-                      <p className="text-gray-300">Továrenská 14<br />811 09 Bratislava</p>
+                      <h3 className="text-lg font-medium text-gray-400">Adresa</h3>
+                      <p className="text-gray-400/70">Továrenská 14<br />811 09 Bratislava</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Services */}
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-8">
-                <h2 className="text-2xl font-semibold text-white mb-6">
+              <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500">
+                <h2 className="text-2xl font-semibold text-gray-400 mb-6">
                   Naše služby
                 </h2>
                 
-                <ul className="space-y-3 text-gray-300">
+                <ul className="space-y-3 text-gray-400/70">
                   <li className="flex items-center space-x-3">
-                    <span className="text-white">✓</span>
+                    <span className="text-gray-400">✓</span>
                     <span>Poradenstvo a návrh kúpeľní</span>
                   </li>
                   <li className="flex items-center space-x-3">
-                    <span className="text-white">✓</span>
+                    <span className="text-gray-400">✓</span>
                     <span>Dodávka sanitárnych zariadení</span>
                   </li>
                   <li className="flex items-center space-x-3">
-                    <span className="text-white">✓</span>
+                    <span className="text-gray-400">✓</span>
                     <span>Inštalácia a montáž</span>
                   </li>
                   <li className="flex items-center space-x-3">
-                    <span className="text-white">✓</span>
+                    <span className="text-gray-400">✓</span>
                     <span>Servis a údržba</span>
                   </li>
                   <li className="flex items-center space-x-3">
-                    <span className="text-white">✓</span>
+                    <span className="text-gray-400">✓</span>
                     <span>Záručný a pozáručný servis</span>
                   </li>
                 </ul>

@@ -264,25 +264,33 @@ class ApiService {
   // Brands
   async getBrands() {
     if (!this.isSupabaseAvailable()) {
-      console.log('Supabase not available, using fallback brands');
-      return { success: true, brands: this.getFallbackBrands() };
+      console.log('🚫 Supabase not available, using fallback brands');
+      return { success: true, brands: this.getFallbackBrands(), source: 'fallback-no-supabase' };
     }
 
     try {
       console.log('Fetching brands from Supabase...');
+      
+      // Add timeout to prevent long waits
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      
       const { data, error } = await supabase
         .from('brands')
         .select('*')
-        .order('order', { ascending: true });
+        .order('order', { ascending: true })
+        .abortSignal(controller.signal);
+      
+      clearTimeout(timeoutId);
       
       if (error) {
-        console.log('Supabase error, using fallback:', error);
-        return { success: true, brands: this.getFallbackBrands() };
+        console.log('🚫 Supabase error, using fallback:', error);
+        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-supabase-error' };
       }
       
       if (!data || data.length === 0) {
-        console.log('No brands in database, using fallback');
-        return { success: true, brands: this.getFallbackBrands() };
+        console.log('🚫 No brands in database, using fallback');
+        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-empty-db' };
       }
 
       // Process brands without any automatic cleanup
@@ -326,10 +334,15 @@ class ApiService {
         };
       });
 
-      return { success: true, brands: processedBrands };
+      console.log('✅ Successfully loaded brands from Supabase database');
+      return { success: true, brands: processedBrands, source: 'supabase-database' };
     } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('🚫 Supabase request timed out, using fallback brands');
+        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-timeout' };
+      }
       console.log('Error fetching brands, using fallback:', error);
-      return { success: true, brands: this.getFallbackBrands() };
+      return { success: true, brands: this.getFallbackBrands(), source: 'fallback-error' };
     }
   }
 
@@ -1284,6 +1297,343 @@ class ApiService {
 
   async initializeContent() {
     return { success: true };
+  }
+
+  // References
+  async getReferences() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('🚫 Supabase not available, using fallback references');
+      return { success: true, references: this.getFallbackReferences(), source: 'fallback-no-supabase' };
+    }
+
+    try {
+      console.log('Fetching references from Supabase...');
+      const { data, error } = await supabase
+        .from('references')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.log('🚫 Supabase error, using fallback:', error);
+        return { success: true, references: this.getFallbackReferences(), source: 'fallback-supabase-error' };
+      }
+      
+      if (!data || data.length === 0) {
+        console.log('🚫 No references in database, using fallback');
+        return { success: true, references: this.getFallbackReferences(), source: 'fallback-empty-db' };
+      }
+
+      console.log('✅ Successfully loaded references from Supabase database');
+      return { success: true, references: data, source: 'supabase-database' };
+    } catch (error) {
+      console.log('Error fetching references, using fallback:', error);
+      return { success: true, references: this.getFallbackReferences(), source: 'fallback-error' };
+    }
+  }
+
+  async createReference(referenceData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating reference creation');
+      return { success: true, message: 'Referencia vytvorená (simulácia - Supabase nedostupný)' };
+    }
+
+    try {
+      console.log('Creating reference in Supabase:', referenceData);
+      
+      const { data, error } = await supabase
+        .from('references')
+        .insert([{
+          title: referenceData.title,
+          description: referenceData.description,
+          year: referenceData.year,
+          location: referenceData.location,
+          client: referenceData.client,
+          images: referenceData.images || [],
+          created_at: new Date().toISOString()
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase error creating reference:', error);
+        
+        // If table doesn't exist, provide helpful message
+        if (error.message && error.message.includes('relation "references" does not exist')) {
+          return { 
+            success: false, 
+            message: 'Tabuľka "references" neexistuje v databáze. Kontaktujte administrátora.' 
+          };
+        }
+        
+        return { 
+          success: false, 
+          message: `Chyba databázy: ${error.message}` 
+        };
+      }
+
+      console.log('Reference created successfully:', data[0]);
+      return { success: true, reference: data[0] };
+    } catch (error) {
+      console.error('Exception creating reference:', error);
+      return { 
+        success: false, 
+        message: `Neočakávaná chyba: ${error.message}` 
+      };
+    }
+  }
+
+  async updateReference(id, referenceData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating reference update');
+      return { success: true, message: 'Reference updated (simulated)' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('references')
+        .update({
+          title: referenceData.title,
+          description: referenceData.description,
+          year: referenceData.year,
+          location: referenceData.location,
+          client: referenceData.client,
+          images: referenceData.images || [],
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('Error updating reference:', error);
+        return { success: false, message: 'Chyba pri aktualizácii referencie' };
+      }
+
+      return { success: true, reference: data[0] };
+    } catch (error) {
+      console.error('Error updating reference:', error);
+      return { success: false, message: 'Chyba pri aktualizácii referencie' };
+    }
+  }
+
+  async deleteReference(id) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating reference deletion');
+      return { success: true, message: 'Reference deleted (simulated)' };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('references')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting reference:', error);
+        return { success: false, message: 'Chyba pri mazaní referencie' };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting reference:', error);
+      return { success: false, message: 'Chyba pri mazaní referencie' };
+    }
+  }
+
+  getFallbackReferences() {
+    return [
+      {
+        id: 1,
+        title: "Hotel Grandezza Bratislava",
+        description: "120 hotelových kúpeľní",
+        year: "2023",
+        location: "Bratislava",
+        client: "Hotel Group s.r.o.",
+        images: []
+      },
+      {
+        id: 2,
+        title: "Wellness AquaRelax",
+        description: "Kompletné wellness vybavenie",
+        year: "2023",
+        location: "Košice",
+        client: "AquaRelax s.r.o.",
+        images: []
+      },
+      {
+        id: 3,
+        title: "Rezidencia Zlaté Piesky",
+        description: "8 luxusných kúpeľní",
+        year: "2022",
+        location: "Bratislava",
+        client: "Rezidencia s.r.o.",
+        images: []
+      }
+    ];
+  }
+
+  // Who We Are Sections
+  async getWhoWeAreSections() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('🚫 Supabase not available, using fallback sections');
+      return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-no-supabase' };
+    }
+
+    try {
+      console.log('Fetching who-we-are sections from Supabase...');
+      const { data, error } = await supabase
+        .from('who_we_are_sections')
+        .select('*')
+        .order('order', { ascending: true });
+      
+      if (error) {
+        console.log('🚫 Supabase error, using fallback:', error);
+        return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-supabase-error' };
+      }
+      
+      if (!data || data.length === 0) {
+        console.log('🚫 No sections in database, using fallback');
+        return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-empty-db' };
+      }
+
+      console.log('✅ Successfully loaded sections from Supabase database');
+      return { success: true, sections: data, source: 'supabase-database' };
+    } catch (error) {
+      console.log('Error fetching sections, using fallback:', error);
+      return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-error' };
+    }
+  }
+
+  async createWhoWeAreSection(sectionData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating section creation');
+      return { success: true, message: 'Sekcia vytvorená (simulácia - Supabase nedostupný)' };
+    }
+
+    try {
+      console.log('Creating section in Supabase:', sectionData);
+      
+      const { data, error } = await supabase
+        .from('who_we_are_sections')
+        .insert([{
+          title: sectionData.title,
+          content: sectionData.content,
+          size: sectionData.size || 'large',
+          order: Date.now(), // Simple ordering
+          created_at: new Date().toISOString()
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase error creating section:', error);
+        
+        if (error.message && error.message.includes('relation "who_we_are_sections" does not exist')) {
+          return { 
+            success: false, 
+            message: 'Tabuľka "who_we_are_sections" neexistuje v databáze. Kontaktujte administrátora.' 
+          };
+        }
+        
+        return { 
+          success: false, 
+          message: `Chyba databázy: ${error.message}` 
+        };
+      }
+
+      console.log('Section created successfully:', data[0]);
+      return { success: true, section: data[0] };
+    } catch (error) {
+      console.error('Exception creating section:', error);
+      return { 
+        success: false, 
+        message: `Neočakávaná chyba: ${error.message}` 
+      };
+    }
+  }
+
+  async updateWhoWeAreSection(id, sectionData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating section update');
+      return { success: true, message: 'Sekcia aktualizovaná (simulácia)' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('who_we_are_sections')
+        .update({
+          title: sectionData.title,
+          content: sectionData.content,
+          size: sectionData.size || 'large',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('Error updating section:', error);
+        return { success: false, message: 'Chyba pri aktualizácii sekcie' };
+      }
+
+      return { success: true, section: data[0] };
+    } catch (error) {
+      console.error('Error updating section:', error);
+      return { success: false, message: 'Chyba pri aktualizácii sekcie' };
+    }
+  }
+
+  async deleteWhoWeAreSection(id) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating section deletion');
+      return { success: true, message: 'Sekcia vymazaná (simulácia)' };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('who_we_are_sections')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting section:', error);
+        return { success: false, message: 'Chyba pri mazaní sekcie' };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting section:', error);
+      return { success: false, message: 'Chyba pri mazaní sekcie' };
+    }
+  }
+
+  getFallbackWhoWeAreSections() {
+    return [
+      {
+        id: 1,
+        title: "O spoločnosti",
+        content: "Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní.",
+        order: 1,
+        size: "large"
+      },
+      {
+        id: 2,
+        title: "Naša vízia",
+        content: "Ako milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.",
+        order: 2,
+        size: "large"
+      },
+      {
+        id: 3,
+        title: "Pre našich klientov",
+        content: "Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojím budúcim užívateľom prinášajú každodenný pocit komfortu, pohody a spoľahlivosti.",
+        order: 3,
+        size: "large"
+      },
+      {
+        id: 4,
+        title: "Partnerstvo",
+        content: "Partnersky spolupracujeme so štúdiom EB+K.",
+        order: 4,
+        size: "small"
+      }
+    ];
   }
 }
 

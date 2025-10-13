@@ -64,16 +64,16 @@ const NavBar = () => {
 
   return (
     <nav className="bg-black shadow-md sticky top-0 z-[100] relative">
-      <div className="flex items-center justify-between pl-1 pr-4 md:px-6 lg:px-8 tablet:px-6 laptop:px-8">
+      <div className="flex items-center justify-between pl-1 pr-2 md:px-2 lg:px-2 tablet:px-2 laptop:px-2">
         {/* Logo/Brand */}
         <div 
-          className="cursor-pointer hover:opacity-80 transition-opacity py-1 shrink-0 -ml-1 sm:ml-0 max-w-[70%] laptop:min-w-[360px] laptop:max-w-none"
+          className="cursor-pointer hover:opacity-80 transition-opacity py-0 shrink-0 -ml-1 sm:ml-0 max-w-[60%] laptop:min-w-[300px] laptop:max-w-none"
           onClick={() => handleNavClick('/')}
         >
           <img 
             src="/logoBlack.webp" 
             alt="SMART SANITY" 
-            className="shrink-0 block h-48 mobile:h-52 tablet:h-36 laptop:h-40 w-auto object-contain"
+            className="shrink-0 block h-48 mobile:h-52 tablet:h-44 laptop:h-48 w-auto object-contain"
             style={{
               imageRendering: 'high-quality',
             }}
@@ -91,7 +91,7 @@ const NavBar = () => {
         </div>
         
         {/* Navigation Links - show only on laptop and above */}
-        <div className="hidden laptop:flex items-center flex-wrap gap-x-6">
+        <div className="hidden laptop:flex items-center justify-center flex-wrap gap-x-6 -mr-1 h-full mt-4">
           {navItems.map((item) => (
             <button
               key={item.label}

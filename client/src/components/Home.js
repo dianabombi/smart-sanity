@@ -118,7 +118,7 @@ const Home = () => {
             <Button
               size="small"
               variant="primary"
-              onClick={() => navigate('/what-we-offer')}
+              onClick={() => navigate('/brands')}
               className="w-full max-w-[130px] tablet:max-w-[160px]"
               style={{
                 color: '#9ca3af',

@@ -7,6 +7,7 @@ import AdminWhoWeAre from './admin/AdminWhoWeAre';
 import AdminWhatWeOffer from './admin/AdminWhatWeOffer';
 import AdminMessages from './admin/AdminMessages';
 import AdminHeroBanners from './admin/AdminHeroBanners';
+import AdminReferences from './admin/AdminReferences';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,14 +59,7 @@ const Admin = () => {
           </div>
         </AdminDashboard>
       } />
-      <Route path="/references" element={
-        <AdminDashboard onLogout={handleLogout}>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">Referencie - Správa obsahu</h2>
-            <p className="text-gray-600">Táto sekcia bude pridaná v budúcnosti.</p>
-          </div>
-        </AdminDashboard>
-      } />
+      <Route path="/references" element={<AdminReferences onLogout={handleLogout} />} />
       <Route path="/contact" element={
         <AdminDashboard onLogout={handleLogout}>
           <div className="bg-white rounded-lg shadow p-6">

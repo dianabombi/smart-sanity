@@ -49,24 +49,37 @@ const Brands = () => {
   const loadBrands = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await ApiService.getBrands();
-      if (result.success) {
-        console.log('All loaded brands:', result.brands);
-        // Log brands with images
-        const brandsWithImages = result.brands.filter(b => b.images && b.images.length > 0);
-        console.log('Brands with images:', brandsWithImages);
-        setBrands(result.brands);
-      } else {
-        const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
-        console.log('Using fallback brands:', fallbackBrands);
-        setBrands(fallbackBrands);
+      
+      // Load fallback brands immediately for fast display
+      const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
+      setBrands(fallbackBrands);
+      setLoading(false);
+      console.log('Loaded fallback brands immediately:', fallbackBrands);
+      
+      // Try to load from API with timeout in background
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('API timeout')), 2000)
+      );
+      
+      try {
+        const result = await Promise.race([
+          ApiService.getBrands(),
+          timeoutPromise
+        ]);
+        
+        if (result.success && result.brands.length > 0) {
+          console.log('Updated with API brands:', result.brands);
+          setBrands(result.brands);
+        }
+      } catch (apiError) {
+        console.log('API failed or timed out, keeping fallback brands:', apiError.message);
+        // Keep fallback brands already loaded
       }
+      
     } catch (error) {
       console.error('Error loading brands:', error);
       const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
-      console.log('Using fallback brands:', fallbackBrands);
       setBrands(fallbackBrands);
-    } finally {
       setLoading(false);
     }
   }, []);
@@ -116,10 +129,9 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl tablet:text-4xl laptop:text-5xl font-light text-gray-400 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-            OBCHODOVANÉ ZNAČKY
+          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-400 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            Obchodované značky
           </h1>
-          <div className="w-32 h-1 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto mb-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]"></div>
           <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
@@ -133,7 +145,7 @@ const Brands = () => {
             {brands.filter(brand => brand.category !== 'Ostatné').map((brand, index) => (
               <div
                 key={brand._id || index}
-                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
+                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform relative pb-16 ${
                   visibleBrands.includes(index) 
                     ? 'translate-y-0 opacity-100 scale-100' 
                     : 'translate-y-8 opacity-0 scale-95'
@@ -188,24 +200,20 @@ const Brands = () => {
                     {brand.category}
                   </div>
                   
-                  <p className="text-sm leading-relaxed text-gray-400/70">
+                  <p className="text-sm leading-relaxed text-gray-400/70 overflow-hidden" style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 4,
+                    WebkitBoxOrient: 'vertical'
+                  }}>
                     {brand.description}
                   </p>
 
-                  {/* Image Gallery Indicator */}
-                  {brand.images && brand.images.length > 0 && (
-                    <div className="mt-3 w-full bg-green-600/20 border border-green-500/30 text-green-300 py-2 px-4 rounded-lg text-sm flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {brand.images.length === 1 
-                        ? '1 obrázok k dispozícii'
-                        : brand.images.length >= 2 && brand.images.length <= 4
-                        ? `${brand.images.length} obrázky k dispozícii`
-                        : `${brand.images.length} obrázkov k dispozícii`
-                      }
-                    </div>
-                  )}
+                  {/* Vstúpte Button - Fixed Position */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <button className="w-full py-2 px-4 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm">
+                      Vstúpte
+                    </button>
+                  </div>
                 </div>
 
               </div>
@@ -283,7 +291,7 @@ const Brands = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8">
             <h2 className="text-2xl font-light text-gray-400 mb-6">
-              Prečo si vybrať naše značky?
+              Prečo si vybrať SMART SANIT?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-400/80">
               <div>
@@ -353,17 +361,47 @@ const Brands = () => {
 
       {/* Image Gallery Modal */}
       {selectedBrandImages && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-700 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden border border-gray-500">
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 pt-20">
+          <div className="bg-gray-700 rounded-lg max-w-6xl w-full max-h-[85vh] overflow-hidden border border-gray-500">
             <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-400">{selectedBrandImages.name}</h2>
-                  <p className="text-white text-lg mt-1">{selectedBrandImages.category}</p>
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-start gap-6 flex-1">
+                  {/* Brand Logo */}
+                  <div className="flex-shrink-0">
+                    <div className={`p-3 h-20 w-32 flex items-center justify-center ${selectedBrandImages.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
+                      {selectedBrandImages.useTextLogo ? (
+                        <div className="text-white font-bold text-lg text-center">
+                          {selectedBrandImages.name}
+                        </div>
+                      ) : (
+                        <img 
+                          src={selectedBrandImages.logo} 
+                          alt={`${selectedBrandImages.name} Logo`}
+                          className={`${selectedBrandImages.logoSize || 'max-h-16'} max-w-full object-contain`}
+                          style={{
+                            imageRendering: 'crisp-edges',
+                            filter: selectedBrandImages.logoFilter || 'none'
+                          }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Brand Info */}
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-gray-400 mb-2">{selectedBrandImages.name}</h2>
+                    <p className="text-blue-300 text-sm font-light uppercase tracking-wide mb-3">{selectedBrandImages.category}</p>
+                    <p className="text-gray-400 text-sm leading-relaxed">{selectedBrandImages.description}</p>
+                  </div>
                 </div>
+                
                 <button
                   onClick={closeImageGallery}
-                  className="text-gray-400 hover:text-white text-3xl p-2"
+                  className="text-gray-400 hover:text-white text-3xl p-2 flex-shrink-0"
                 >
                   ×
                 </button>
