@@ -106,7 +106,7 @@ const WhoWeAre = () => {
           transition: 'all 0.8s ease-out',
           transitionDelay: '0.2s'
         }}>
-          <div className="text-lg leading-relaxed text-gray-400 text-center space-y-6">
+          <div className="text-lg leading-relaxed text-gray-300 text-center space-y-6">
             {content?.mainContent?.map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
@@ -123,7 +123,7 @@ const WhoWeAre = () => {
           transition: 'all 0.8s ease-out',
           transitionDelay: '0.6s'
         }}>
-          <p className="text-lg leading-relaxed text-gray-400 text-center">
+          <p className="text-lg leading-relaxed text-gray-300 text-center">
             {content?.partnershipContent}
           </p>
         </div>

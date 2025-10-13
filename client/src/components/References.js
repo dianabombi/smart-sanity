@@ -82,7 +82,7 @@ const References = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Referencie
           </h1>
-          <p className="text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
             Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.
           </p>
         </div>
@@ -101,7 +101,7 @@ const References = () => {
               >
                 <div className="mb-4">
                   <h3 className="text-xl font-semibold text-white mb-2">{reference.title}</h3>
-                  <p className="text-gray-400 text-sm mb-3">{reference.description}</p>
+                  <p className="text-gray-300 text-sm mb-3">{reference.description}</p>
                   
                   <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
                     <span className="font-medium">{reference.year}</span>

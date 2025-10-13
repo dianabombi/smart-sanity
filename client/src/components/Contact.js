@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import ApiService from '../services/api';
@@ -14,6 +14,20 @@ const Contact = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    // Simulate loading and then start animation
+    const timer = setTimeout(() => {
+      setLoading(false);
+      setTimeout(() => {
+        setVisible(true);
+      }, 400);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +65,20 @@ const Contact = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Layout>
+        <NavBar />
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-white">Načítavam kontakt...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <NavBar />
@@ -59,18 +87,36 @@ const Contact = () => {
         <div className="w-full max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6">
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.2s'
+            }}>
               Kontakt
             </h1>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.4s'
+            }}>
               Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500">
-              <h2 className="text-2xl font-semibold text-gray-400 mb-6">
+            <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.6s'
+            }}>
+              <h2 className="text-2xl font-semibold text-gray-300 mb-6">
                 Napíšte nám
               </h2>
               
@@ -135,8 +181,11 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 bg-gray-500 border border-gray-400 rounded-lg text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-colors"
+                    style={{
+                      color: formData.subject === '' ? 'black' : 'white'
+                    }}
                   >
-                    <option value="">Vyberte predmet</option>
+                    <option value="" style={{ color: 'black' }}>Vyberte predmet</option>
                     <option value="general">Všeobecná otázka</option>
                     <option value="quote">Cenová ponuka</option>
                     <option value="consultation">Poradenstvo</option>
@@ -187,8 +236,14 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="space-y-8">
               {/* Company Info */}
-              <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500">
-                <h2 className="text-2xl font-semibold text-gray-400 mb-6">
+              <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
+                visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{
+                transition: 'all 0.8s ease-out',
+                transitionDelay: '0.8s'
+              }}>
+                <h2 className="text-2xl font-semibold text-gray-300 mb-6">
                   Kontaktné údaje
                 </h2>
                 
@@ -196,44 +251,50 @@ const Contact = () => {
                   <div className="flex items-start space-x-4">
                     <div className="text-gray-400 text-xl">👤</div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-400">Konateľ spoločnosti</h3>
-                      <p className="text-gray-400/70">Ing. Dušan Drinka, PhD.</p>
+                      <h3 className="text-lg font-medium text-gray-300">Konateľ spoločnosti</h3>
+                      <p className="text-gray-300/70">Ing. Dušan Drinka, PhD.</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
                     <div className="text-gray-400 text-xl">📞</div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-400">Telefón</h3>
-                      <p className="text-gray-400/70">+421 948 882 376</p>
+                      <h3 className="text-lg font-medium text-gray-300">Telefón</h3>
+                      <p className="text-gray-300/70">+421 948 882 376</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
                     <div className="text-gray-400 text-xl">✉️</div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-400">Email</h3>
-                      <p className="text-gray-400/70">dusan.drinka@smartsanit.sk</p>
+                      <h3 className="text-lg font-medium text-gray-300">Email</h3>
+                      <p className="text-gray-300/70">dusan.drinka@smartsanit.sk</p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
                     <div className="text-gray-400 text-xl">📍</div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-400">Adresa</h3>
-                      <p className="text-gray-400/70">Továrenská 14<br />811 09 Bratislava</p>
+                      <h3 className="text-lg font-medium text-gray-300">Adresa</h3>
+                      <p className="text-gray-300/70">Továrenská 14<br />811 09 Bratislava</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Services */}
-              <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500">
-                <h2 className="text-2xl font-semibold text-gray-400 mb-6">
+              <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
+                visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{
+                transition: 'all 0.8s ease-out',
+                transitionDelay: '1.0s'
+              }}>
+                <h2 className="text-2xl font-semibold text-gray-300 mb-6">
                   Naše služby
                 </h2>
                 
-                <ul className="space-y-3 text-gray-400/70">
+                <ul className="space-y-3 text-gray-300/70">
                   <li className="flex items-center space-x-3">
                     <span className="text-gray-400">✓</span>
                     <span>Poradenstvo a návrh kúpeľní</span>

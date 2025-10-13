@@ -104,16 +104,15 @@ const Home = () => {
           </div>
           
           {/* Text Section */}
-          <div className="flex flex-col items-center justify-center pt-8 tablet:pt-2 laptop:pt-8">
-            
-            <div className="text-xl tablet:text-2xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
+          <div className="flex flex-col items-center justify-center pt-6 pb-6 tablet:pt-2 tablet:pb-2 laptop:pt-8 laptop:pb-8">
+            <div className="text-xl tablet:text-2xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
               <p>Profesionálne riešenia</p>
               <p>pre interiérových dizajnérov</p>
               <p>a architektov</p>
             </div>
           </div>
           
-          {/* Button in middle of lower section */}
+          {/* Button Section */}
           <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
             <Button
               size="small"

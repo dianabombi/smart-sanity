@@ -192,7 +192,7 @@ const Brands = () => {
 
                 {/* Brand Info */}
                 <div className="space-y-3">
-                  <h3 className="text-gray-400 font-medium text-lg group-hover:text-blue-300 transition-colors">
+                  <h3 className="text-gray-300 font-medium text-lg group-hover:text-blue-300 transition-colors">
                     {brand.name}
                   </h3>
                   
@@ -200,7 +200,7 @@ const Brands = () => {
                     {brand.category}
                   </div>
                   
-                  <p className="text-sm leading-relaxed text-gray-400/70 overflow-hidden" style={{
+                  <p className="text-sm leading-relaxed text-gray-300/70 overflow-hidden" style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 4,
                     WebkitBoxOrient: 'vertical'
@@ -210,7 +210,7 @@ const Brands = () => {
 
                   {/* Vstúpte Button - Fixed Position */}
                   <div className="absolute bottom-4 left-4 right-4">
-                    <button className="w-full py-2 px-4 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm">
+                    <button className="w-full py-2 px-4 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm">
                       Vstúpte
                     </button>
                   </div>

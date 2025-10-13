@@ -91,12 +91,12 @@ const NavBar = () => {
         </div>
         
         {/* Navigation Links - show only on laptop and above */}
-        <div className="hidden laptop:flex items-center justify-center flex-wrap gap-x-6 -mr-1 h-full mt-4">
+        <div className="hidden laptop:flex items-center justify-start flex-wrap gap-x-6 ml-8 mr-8 h-full mt-4">
           {navItems.map((item) => (
             <button
               key={item.label}
               onClick={() => handleNavClick(item.path)}
-              className="text-gray-400 hover:text-gray-300 transition-colors text-lg laptop:text-xl"
+              className="text-gray-300 hover:text-white transition-colors text-lg laptop:text-xl"
             >
               {item.label}
             </button>
