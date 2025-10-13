@@ -1635,6 +1635,222 @@ class ApiService {
       }
     ];
   }
+
+  // Contact Content Management
+  async getContactContent() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, using fallback contact content');
+      return { success: true, content: this.getFallbackContactContent() };
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .from('contact_content')
+        .select('*')
+        .single();
+      
+      if (error) {
+        console.log('Supabase error, using fallback contact content:', error);
+        return { success: true, content: this.getFallbackContactContent() };
+      }
+      
+      if (!data) {
+        console.log('No contact content in database, using fallback');
+        return { success: true, content: this.getFallbackContactContent() };
+      }
+
+      return { success: true, content: data.content };
+    } catch (error) {
+      console.log('Error fetching contact content, using fallback:', error);
+      return { success: true, content: this.getFallbackContactContent() };
+    }
+  }
+
+  async updateContactContent(content) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating contact content update');
+      return { success: true, message: 'Contact content updated (simulated)' };
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .from('contact_content')
+        .upsert({
+          id: 1,
+          content: content,
+          updated_at: new Date().toISOString()
+        })
+        .select();
+
+      if (error) {
+        console.error('Error updating contact content:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, content: data[0] };
+    } catch (error) {
+      console.error('Exception updating contact content:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  getFallbackContactContent() {
+    return {
+      title: 'Kontakt',
+      subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.',
+      formTitle: 'Napíšte nám',
+      contactInfoTitle: 'Kontaktné údaje',
+      servicesTitle: 'Naše služby',
+      contactDetails: {
+        manager: 'Ing. Dušan Drinka, PhD.',
+        phone: '+421 948 882 376',
+        email: 'dusan.drinka@smartsanit.sk',
+        address: 'Továrenská 14\n811 09 Bratislava'
+      },
+      services: [
+        'Poradenstvo a návrh kúpeľní',
+        'Dodávka sanitárnych zariadení',
+        'Inštalácia a montáž',
+        'Servis a údržba',
+        'Technická podpora'
+      ]
+    };
+  }
+
+  // Inspirations Management
+  async getInspirations() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, using fallback inspirations');
+      return { success: true, inspirations: this.getFallbackInspirations() };
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .from('inspirations')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.log('Supabase error, using fallback inspirations:', error);
+        return { success: true, inspirations: this.getFallbackInspirations() };
+      }
+      
+      if (!data || data.length === 0) {
+        console.log('No inspirations in database, using fallback');
+        return { success: true, inspirations: this.getFallbackInspirations() };
+      }
+
+      return { success: true, inspirations: data };
+    } catch (error) {
+      console.log('Error fetching inspirations, using fallback:', error);
+      return { success: true, inspirations: this.getFallbackInspirations() };
+    }
+  }
+
+  async createInspiration(inspirationData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating inspiration creation');
+      return { success: true, message: 'Inspiration created (simulated)' };
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .from('inspirations')
+        .insert([inspirationData])
+        .select();
+
+      if (error) {
+        console.error('Error creating inspiration:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, inspiration: data[0] };
+    } catch (error) {
+      console.error('Exception creating inspiration:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async updateInspiration(id, inspirationData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating inspiration update');
+      return { success: true, message: 'Inspiration updated (simulated)' };
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .from('inspirations')
+        .update(inspirationData)
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('Error updating inspiration:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, inspiration: data[0] };
+    } catch (error) {
+      console.error('Exception updating inspiration:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async deleteInspiration(id) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, simulating inspiration deletion');
+      return { success: true, message: 'Inspiration deleted (simulated)' };
+    }
+
+    try {
+      const { error } = await this.supabase
+        .from('inspirations')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting inspiration:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Exception deleting inspiration:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  getFallbackInspirations() {
+    return [
+      {
+        id: 1,
+        title: 'Moderná kúpeľňa',
+        description: 'Elegantný dizajn s čistými líniami.',
+        category: 'modern',
+        image: '/photos/ATX_AG0088.jpg',
+        features: ['Moderný dizajn', 'Kvalitné materiály', 'Funkčnosť'],
+        brands: ['Agape', 'Fantini', 'Cielo']
+      },
+      {
+        id: 2,
+        title: 'Luxusná kúpeľňa',
+        description: 'Prémiové materiály a vybavenie.',
+        category: 'luxury',
+        image: '/photos/ATX_AG0102.jpg',
+        features: ['Luxusné materiály', 'Prémiové vybavenie', 'Elegantný dizajn'],
+        brands: ['AXOR', 'Fantini', 'Cielo']
+      },
+      {
+        id: 3,
+        title: 'Štýlová kúpeľňa',
+        description: 'Kombinácia funkčnosti a estetiky.',
+        category: 'modern',
+        image: '/photos/ATX_AG0088.jpg',
+        features: ['Štýlový dizajn', 'Praktické riešenia', 'Kvalitné materiály'],
+        brands: ['CEA Design', 'Azzurra', 'Hansgrohe']
+      }
+    ];
+  }
 }
 
 const apiService = new ApiService();

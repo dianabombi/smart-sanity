@@ -16,18 +16,74 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const [contactContent, setContactContent] = useState(null);
 
   useEffect(() => {
-    // Simulate loading and then start animation
-    const timer = setTimeout(() => {
+    loadContactContent();
+  }, []);
+
+  const loadContactContent = async () => {
+    try {
+      setLoading(true);
+      
+      // Load fallback content immediately for fast display
+      const fallbackContent = getDefaultContactContent();
+      setContactContent(fallbackContent);
+      setLoading(false);
+      
+      // Start animation after content is loaded
+      setTimeout(() => {
+        setVisible(true);
+      }, 400);
+      
+      // Try to load from API with timeout in background
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('API timeout')), 2000)
+      );
+      
+      try {
+        const result = await Promise.race([
+          ApiService.getContactContent(),
+          timeoutPromise
+        ]);
+        
+        if (result.success && result.content) {
+          setContactContent(result.content);
+        }
+      } catch (apiError) {
+        console.log('API failed or timed out, keeping fallback content:', apiError.message);
+      }
+      
+    } catch (error) {
+      console.error('Error loading contact content:', error);
+      setContactContent(getDefaultContactContent());
       setLoading(false);
       setTimeout(() => {
         setVisible(true);
       }, 400);
-    }, 300);
+    }
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
+  const getDefaultContactContent = () => ({
+    title: 'Kontakt',
+    subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.',
+    formTitle: 'Napíšte nám',
+    contactInfoTitle: 'Kontaktné údaje',
+    servicesTitle: 'Naše služby',
+    contactDetails: {
+      manager: 'Ing. Dušan Drinka, PhD.',
+      phone: '+421 948 882 376',
+      email: 'dusan.drinka@smartsanit.sk',
+      address: 'Továrenská 14\n811 09 Bratislava'
+    },
+    services: [
+      'Poradenstvo a návrh kúpeľní',
+      'Dodávka sanitárnych zariadení',
+      'Inštalácia a montáž',
+      'Servis a údržba',
+      'Technická podpora'
+    ]
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -94,7 +150,7 @@ const Contact = () => {
               transition: 'all 0.8s ease-out',
               transitionDelay: '0.2s'
             }}>
-              Kontakt
+              {contactContent?.title || 'Kontakt'}
             </h1>
             <p className={`text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -103,7 +159,7 @@ const Contact = () => {
               transition: 'all 0.8s ease-out',
               transitionDelay: '0.4s'
             }}>
-              Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.
+              {contactContent?.subtitle || 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.'}
             </p>
           </div>
 
@@ -117,7 +173,7 @@ const Contact = () => {
               transitionDelay: '0.6s'
             }}>
               <h2 className="text-2xl font-semibold text-gray-300 mb-6">
-                Napíšte nám
+                {contactContent?.formTitle || 'Napíšte nám'}
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -244,7 +300,7 @@ const Contact = () => {
                 transitionDelay: '0.8s'
               }}>
                 <h2 className="text-2xl font-semibold text-gray-300 mb-6">
-                  Kontaktné údaje
+                  {contactContent?.contactInfoTitle || 'Kontaktné údaje'}
                 </h2>
                 
                 <div className="space-y-6">
@@ -252,7 +308,7 @@ const Contact = () => {
                     <div className="text-gray-400 text-xl">👤</div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-300">Konateľ spoločnosti</h3>
-                      <p className="text-gray-300/70">Ing. Dušan Drinka, PhD.</p>
+                      <p className="text-gray-300/70">{contactContent?.contactDetails?.manager || 'Ing. Dušan Drinka, PhD.'}</p>
                     </div>
                   </div>
 
@@ -260,7 +316,7 @@ const Contact = () => {
                     <div className="text-gray-400 text-xl">📞</div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-300">Telefón</h3>
-                      <p className="text-gray-300/70">+421 948 882 376</p>
+                      <p className="text-gray-300/70">{contactContent?.contactDetails?.phone || '+421 948 882 376'}</p>
                     </div>
                   </div>
 
@@ -268,7 +324,7 @@ const Contact = () => {
                     <div className="text-gray-400 text-xl">✉️</div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-300">Email</h3>
-                      <p className="text-gray-300/70">dusan.drinka@smartsanit.sk</p>
+                      <p className="text-gray-300/70">{contactContent?.contactDetails?.email || 'dusan.drinka@smartsanit.sk'}</p>
                     </div>
                   </div>
 
@@ -276,7 +332,7 @@ const Contact = () => {
                     <div className="text-gray-400 text-xl">📍</div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-300">Adresa</h3>
-                      <p className="text-gray-300/70">Továrenská 14<br />811 09 Bratislava</p>
+                      <p className="text-gray-300/70 whitespace-pre-line">{contactContent?.contactDetails?.address || 'Továrenská 14\n811 09 Bratislava'}</p>
                     </div>
                   </div>
                 </div>
@@ -291,30 +347,22 @@ const Contact = () => {
                 transitionDelay: '1.0s'
               }}>
                 <h2 className="text-2xl font-semibold text-gray-300 mb-6">
-                  Naše služby
+                  {contactContent?.servicesTitle || 'Naše služby'}
                 </h2>
                 
                 <ul className="space-y-3 text-gray-300/70">
-                  <li className="flex items-center space-x-3">
-                    <span className="text-gray-400">✓</span>
-                    <span>Poradenstvo a návrh kúpeľní</span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <span className="text-gray-400">✓</span>
-                    <span>Dodávka sanitárnych zariadení</span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <span className="text-gray-400">✓</span>
-                    <span>Inštalácia a montáž</span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <span className="text-gray-400">✓</span>
-                    <span>Servis a údržba</span>
-                  </li>
-                  <li className="flex items-center space-x-3">
-                    <span className="text-gray-400">✓</span>
-                    <span>Záručný a pozáručný servis</span>
-                  </li>
+                  {(contactContent?.services || [
+                    'Poradenstvo a návrh kúpeľní',
+                    'Dodávka sanitárnych zariadení',
+                    'Inštalácia a montáž',
+                    'Servis a údržba',
+                    'Technická podpora'
+                  ]).map((service, index) => (
+                    <li key={index} className="flex items-center space-x-3">
+                      <span className="text-gray-400">✓</span>
+                      <span>{service}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>

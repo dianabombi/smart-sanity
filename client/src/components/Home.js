@@ -81,11 +81,12 @@ const Home = () => {
               images={carouselImages}
               height="h-full"
               autoPlay={true}
-              autoPlayInterval={20000}
-              showDots={false}
+              autoPlayInterval={8000}
+              showDots={true}
               showArrows={false}
               showCounter={false}
               className="w-full h-full"
+              transitionType="ken-burns"
             />
           )}
         </div>

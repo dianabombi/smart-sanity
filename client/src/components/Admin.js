@@ -8,6 +8,8 @@ import AdminWhatWeOffer from './admin/AdminWhatWeOffer';
 import AdminMessages from './admin/AdminMessages';
 import AdminHeroBanners from './admin/AdminHeroBanners';
 import AdminReferences from './admin/AdminReferences';
+import AdminContact from './admin/AdminContact';
+import AdminInspirations from './admin/AdminInspirations';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,23 +53,9 @@ const Admin = () => {
       <Route path="/what-we-offer" element={<AdminWhatWeOffer onLogout={handleLogout} />} />
       <Route path="/messages" element={<AdminMessages onLogout={handleLogout} />} />
       <Route path="/hero-banners" element={<AdminHeroBanners onLogout={handleLogout} />} />
-      <Route path="/inspirations" element={
-        <AdminDashboard onLogout={handleLogout}>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">Inšpirácie - Správa obsahu</h2>
-            <p className="text-gray-600">Táto sekcia bude pridaná v budúcnosti.</p>
-          </div>
-        </AdminDashboard>
-      } />
+      <Route path="/inspirations" element={<AdminInspirations onLogout={handleLogout} />} />
       <Route path="/references" element={<AdminReferences onLogout={handleLogout} />} />
-      <Route path="/contact" element={
-        <AdminDashboard onLogout={handleLogout}>
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">Kontakt - Správa obsahu</h2>
-            <p className="text-gray-600">Táto sekcia bude pridaná v budúcnosti.</p>
-          </div>
-        </AdminDashboard>
-      } />
+      <Route path="/contact" element={<AdminContact onLogout={handleLogout} />} />
     </Routes>
   );
 };

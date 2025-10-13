@@ -8,9 +8,11 @@ const Carousel = ({
   showArrows = true,
   showCounter = true,
   height = 'h-96',
-  className = ''
+  className = '',
+  transitionType = 'fade' // 'fade', 'slide', 'zoom', 'ken-burns'
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Auto-play functionality
   useEffect(() => {
@@ -24,15 +26,57 @@ const Carousel = ({
   }, [autoPlay, autoPlayInterval, images.length]);
 
   const goToPrevious = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     setCurrentIndex(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
+    setTimeout(() => setIsTransitioning(false), 1000);
   };
 
   const goToNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     setCurrentIndex((currentIndex + 1) % images.length);
+    setTimeout(() => setIsTransitioning(false), 1000);
   };
 
   const goToSlide = (index) => {
+    if (isTransitioning || index === currentIndex) return;
+    setIsTransitioning(true);
     setCurrentIndex(index);
+    setTimeout(() => setIsTransitioning(false), 1000);
+  };
+
+  // Get transition styles based on type
+  const getTransitionStyles = (index, isActive) => {
+    const baseTransition = 'transition-all duration-1000 ease-in-out';
+    
+    switch (transitionType) {
+      case 'slide':
+        return {
+          className: `${baseTransition} ${isActive ? 'translate-x-0' : index < currentIndex ? '-translate-x-full' : 'translate-x-full'}`,
+          style: { opacity: isActive ? 1 : 0 }
+        };
+      
+      case 'zoom':
+        return {
+          className: `${baseTransition} ${isActive ? 'scale-100 opacity-100' : 'scale-110 opacity-0'}`,
+          style: {}
+        };
+      
+      case 'ken-burns':
+        return {
+          className: `${baseTransition} ${isActive ? 'scale-110 opacity-100' : 'scale-100 opacity-0'}`,
+          style: {
+            animation: isActive ? 'kenBurns 20s ease-in-out infinite alternate' : 'none'
+          }
+        };
+      
+      default: // fade
+        return {
+          className: `${baseTransition} ${isActive ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`,
+          style: {}
+        };
+    }
   };
 
   if (!images || images.length === 0) {
@@ -45,29 +89,42 @@ const Carousel = ({
 
   return (
     <div className={`relative ${height} overflow-hidden bg-black ${className}`}>
+      {/* Add Ken Burns animation keyframes */}
+      <style jsx>{`
+        @keyframes kenBurns {
+          0% { transform: scale(1) translateX(0) translateY(0); }
+          25% { transform: scale(1.1) translateX(-2%) translateY(-1%); }
+          50% { transform: scale(1.05) translateX(1%) translateY(-2%); }
+          75% { transform: scale(1.08) translateX(-1%) translateY(1%); }
+          100% { transform: scale(1.1) translateX(2%) translateY(-1%); }
+        }
+      `}</style>
+
       {/* Images */}
-      {images.map((image, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 w-full h-full overflow-hidden`}
-        >
-          <img
-            src={image.src}
-            alt={image.alt}
-            className={`w-full h-full object-cover transition-all ease-linear ${
-              index === currentIndex 
-                ? 'opacity-100 scale-105' 
-                : 'opacity-0 scale-100'
+      {images.map((image, index) => {
+        const isActive = index === currentIndex;
+        const transitionStyles = getTransitionStyles(index, isActive);
+        
+        return (
+          <div
+            key={index}
+            className={`absolute inset-0 w-full h-full overflow-hidden ${
+              transitionType === 'slide' ? '' : ''
             }`}
-            style={{
-              imageRendering: 'crisp-edges',
-              transitionDuration: '15000ms',
-              filter: 'none',
-              opacity: index === currentIndex ? 1 : 0
-            }}
-          />
-        </div>
-      ))}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className={`w-full h-full object-cover ${transitionStyles.className}`}
+              style={{
+                imageRendering: 'crisp-edges',
+                filter: 'none',
+                ...transitionStyles.style
+              }}
+            />
+          </div>
+        );
+      })}
 
       {/* Navigation Arrows */}
       {showArrows && images.length > 1 && (
@@ -96,15 +153,15 @@ const Carousel = ({
 
       {/* Dots Indicator */}
       {showDots && images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 ${
+              className={`w-12 h-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 ${
                 index === currentIndex 
-                  ? 'bg-white' 
-                  : 'bg-white bg-opacity-50 hover:bg-opacity-75'
+                  ? 'bg-white shadow-lg' 
+                  : 'bg-white bg-opacity-40 hover:bg-opacity-70'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
