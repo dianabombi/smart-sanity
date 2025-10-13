@@ -6,6 +6,7 @@ import ApiService from '../services/api';
 const References = () => {
   const [references, setReferences] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
 
   useEffect(() => {
@@ -20,6 +21,11 @@ const References = () => {
       const fallbackReferences = ApiService.getFallbackReferences ? ApiService.getFallbackReferences() : [];
       setReferences(fallbackReferences);
       setLoading(false);
+      
+      // Start animation after content is loaded
+      setTimeout(() => {
+        setVisible(true);
+      }, 400);
       
       // Try to load from API with timeout in background
       const timeoutPromise = new Promise((_, reject) => 
@@ -61,7 +67,7 @@ const References = () => {
     return (
       <div className="min-h-screen bg-black">
         <NavBar />
-        <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-white">Načítavam referencie...</p>
@@ -79,10 +85,22 @@ const References = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className={`text-4xl md:text-5xl font-bold text-gray-400 mb-6 tracking-wide ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.2s'
+          }}>
             Referencie
           </h1>
-          <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className={`text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.4s'
+          }}>
             Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.
           </p>
         </div>
@@ -94,9 +112,12 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20"
+                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
+                  visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
                 style={{
-                  animationDelay: `${index * 0.1}s`
+                  transition: 'all 0.8s ease-out',
+                  transitionDelay: `${0.6 + index * 0.1}s`
                 }}
               >
                 <div className="mb-4">
