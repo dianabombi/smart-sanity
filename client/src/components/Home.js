@@ -35,7 +35,7 @@ const Home = () => {
     }, 30000); // 30 seconds
     
     return () => clearInterval(interval);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadHeroBanners = async () => {
     try {
@@ -61,10 +61,10 @@ const Home = () => {
   };
 
   // Manual refresh function for development/testing
-  const handleRefreshBanners = () => {
-    console.log('Manually refreshing hero banners...');
-    loadHeroBanners();
-  };
+  // const handleRefreshBanners = () => {
+  //   console.log('Manually refreshing hero banners...');
+  //   loadHeroBanners();
+  // };
 
   return (
     <Layout showFooter={false}>

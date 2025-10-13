@@ -21,7 +21,7 @@ const AdminInspirations = ({ onLogout }) => {
 
   useEffect(() => {
     loadInspirations();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadInspirations = async () => {
     try {

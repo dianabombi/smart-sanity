@@ -20,7 +20,7 @@ const Contact = () => {
 
   useEffect(() => {
     loadContactContent();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContactContent = async () => {
     try {

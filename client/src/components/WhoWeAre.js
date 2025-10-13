@@ -10,7 +10,7 @@ const WhoWeAre = () => {
 
   useEffect(() => {
     loadContent();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContent = async () => {
     try {

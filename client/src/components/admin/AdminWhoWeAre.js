@@ -5,7 +5,7 @@ import ApiService from '../../services/api';
 const AdminWhoWeAre = ({ onLogout }) => {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  // const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -18,7 +18,7 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
   useEffect(() => {
     loadSections();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadSections = async () => {
     try {
