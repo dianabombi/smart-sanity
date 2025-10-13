@@ -1,30 +1,24 @@
 {
-  "name": "sanitary-facilities",
+  "name": "smart-sanit-project",
   "version": "1.0.0",
-  "description": "Sanitary facilities household management system",
-  "main": "server/server.js",
+  "description": "Smart Sanit - Bathroom Solutions Website",
+  "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && npm run dev",
-    "client": "cd client && npm start",
-    "build": "cd client && npm install && CI=false npm run build",
-    "vercel-build": "cd client && npm install && CI=false npm run build",
-    "install-server": "cd server && npm install",
-    "install-client": "cd client && npm install",
-    "install-all": "npm run install-server && npm run install-client"
+    "dev": "cd client && npm start",
+    "build": "cd client && npm install && npm run build",
+    "start": "cd client && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/smart-sanit.git"
   },
   "keywords": [
+    "bathroom",
     "sanitary",
     "facilities",
-    "household",
-    "MERN"
+    "react",
+    "supabase"
   ],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  },
-  "dependencies": {
-    "react-icons": "^5.5.0"
-  }
+  "author": "Smart Sanit",
+  "license": "MIT"
 }
