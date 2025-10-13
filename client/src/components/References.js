@@ -1,7 +1,6 @@
 import React from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
-import Breadcrumbs from './ui/Breadcrumbs';
 
 const References = () => {
 
@@ -53,10 +52,6 @@ const References = () => {
     <div className="min-h-screen bg-black">
       <NavBar />
       
-      {/* Breadcrumbs */}
-      <div className="pt-4 px-4 sm:px-6 lg:px-8">
-        <Breadcrumbs />
-      </div>
       
       <div className="container mx-auto px-4 py-12">
         {/* Empty content area */}

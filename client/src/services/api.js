@@ -397,17 +397,57 @@ class ApiService {
     console.log('EMERGENCY MODE: Bypassing Supabase Storage. Converting images to data URLs.');
 
     try {
-      // 1. Convert all files to base64 data URLs
+      // Validate file sizes (max 2MB per image to prevent issues)
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
+      if (oversizedFiles.length > 0) {
+        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 2MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
+      }
+
+      // 1. Convert all files to base64 data URLs with compression
       const dataUrlPromises = Array.from(files).map(file => {
         return new Promise((resolve, reject) => {
+          // Create canvas for image compression
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          
+          img.onload = () => {
+            // Calculate new dimensions (max 1200px width/height)
+            const maxDimension = 1200;
+            let { width, height } = img;
+            
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = (height * maxDimension) / width;
+                width = maxDimension;
+              } else {
+                width = (width * maxDimension) / height;
+                height = maxDimension;
+              }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw and compress
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8); // 80% quality
+            
+            resolve({
+              url: compressedDataUrl,
+              originalName: file.name,
+              filename: `${brandId}-${Date.now()}-${file.name}`,
+              size: Math.round(compressedDataUrl.length * 0.75) // Approximate compressed size
+            });
+          };
+          
+          img.onerror = () => reject(new Error(`Chyba pri spracovaní obrázka: ${file.name}`));
+          
+          // Load image from file
           const reader = new FileReader();
-          reader.onload = () => resolve({
-            url: reader.result,
-            originalName: file.name,
-            filename: `${brandId}-${Date.now()}-${file.name}`,
-            size: file.size
-          });
-          reader.onerror = error => reject(error);
+          reader.onload = (e) => { img.src = e.target.result; };
+          reader.onerror = () => reject(new Error(`Chyba pri čítaní súboru: ${file.name}`));
           reader.readAsDataURL(file);
         });
       });
@@ -872,6 +912,360 @@ class ApiService {
       };
     } catch (error) {
       return { success: false, message: 'Chyba pri načítavaní štatistík' };
+    }
+  }
+
+  // Hero Banners
+  getFallbackHeroBanners() {
+    return [
+      {
+        id: 1,
+        src: '/photos/kaldewei.avif',
+        alt: 'Kaldewei premium bathroom solutions',
+        title: 'Kaldewei Premium',
+        description: 'Prémiové kúpeľňové riešenia',
+        order: 1,
+        active: true
+      },
+      {
+        id: 2,
+        src: '/photos/umyvadlo.jpeg',
+        alt: 'Modern sink installations',
+        title: 'Moderné umývadlá',
+        description: 'Inštalácie moderných umývadiel',
+        order: 2,
+        active: true
+      },
+      {
+        id: 3,
+        src: '/photos/vanaPs.png',
+        alt: 'Premium bathtub design',
+        title: 'Prémiové vane',
+        description: 'Dizajnové kúpeľňové vane',
+        order: 3,
+        active: true
+      }
+    ];
+  }
+
+  async getHeroBanners() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, using fallback hero banners');
+      return { success: true, banners: this.getFallbackHeroBanners() };
+    }
+
+    try {
+      console.log('Fetching hero banners from Supabase...');
+      const { data, error } = await supabase
+        .from('hero_banners')
+        .select('*')
+        .eq('active', true)
+        .order('order', { ascending: true });
+      
+      if (error) {
+        console.log('Supabase error, using fallback hero banners:', error);
+        return { success: true, banners: this.getFallbackHeroBanners() };
+      }
+      
+      if (!data || data.length === 0) {
+        console.log('No hero banners in database, using fallback');
+        return { success: true, banners: this.getFallbackHeroBanners() };
+      }
+
+      return { success: true, banners: data };
+    } catch (error) {
+      console.log('Error fetching hero banners, using fallback:', error);
+      return { success: true, banners: this.getFallbackHeroBanners() };
+    }
+  }
+
+  async getAllHeroBanners() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available, using fallback banners');
+      return { success: true, banners: this.getFallbackHeroBanners() };
+    }
+
+    try {
+      console.log('Attempting to fetch hero banners from database...');
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database timeout')), 10000)
+      );
+      
+      const fetchPromise = supabase
+        .from('hero_banners')
+        .select('*')
+        .order('order', { ascending: true });
+      
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+      
+      if (error) {
+        console.error('Database error:', error);
+        // If table doesn't exist, return error to trigger setup
+        if (error.message && error.message.includes('hero_banners')) {
+          return { 
+            success: false, 
+            error: 'TABLE_NOT_EXISTS',
+            message: 'Tabuľka hero_banners neexistuje. Prosím vytvorte ju v Supabase.',
+            banners: this.getFallbackHeroBanners() 
+          };
+        }
+        console.log('Using fallback due to database error');
+        return { success: true, banners: this.getFallbackHeroBanners() };
+      }
+      
+      console.log('Successfully loaded banners from database:', data);
+      console.log('Number of banners loaded:', data ? data.length : 0);
+      return { success: true, banners: data || this.getFallbackHeroBanners() };
+    } catch (error) {
+      console.error('Fetch error (timeout or other):', error);
+      console.log('Using fallback due to error:', error.message);
+      return { success: true, banners: this.getFallbackHeroBanners() };
+    }
+  }
+
+  async createHeroBanner(bannerData) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: true, message: 'Hero banner vytvorený (simulácia)' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('hero_banners')
+        .insert([bannerData])
+        .select();
+      
+      if (error) {
+        // If table doesn't exist, simulate success
+        if (error.message && error.message.includes('hero_banners')) {
+          console.log('Hero banners table does not exist, simulating create');
+          return { success: true, message: 'Hero banner vytvorený (simulácia - tabuľka neexistuje)' };
+        }
+        return { success: false, message: error.message };
+      }
+      
+      return { success: true, banner: data[0] };
+    } catch (error) {
+      console.log('Create hero banner error, using fallback:', error);
+      return { success: true, message: 'Hero banner vytvorený (simulácia)' };
+    }
+  }
+
+  async updateHeroBanner(id, bannerData) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: true, message: 'Hero banner aktualizovaný (simulácia)' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('hero_banners')
+        .update(bannerData)
+        .eq('id', id)
+        .select();
+      
+      if (error) {
+        // If table doesn't exist, simulate success
+        if (error.message && error.message.includes('hero_banners')) {
+          console.log('Hero banners table does not exist, simulating update');
+          return { success: true, message: 'Hero banner aktualizovaný (simulácia - tabuľka neexistuje)' };
+        }
+        return { success: false, message: error.message };
+      }
+      
+      return { success: true, banner: data[0] };
+    } catch (error) {
+      console.log('Update hero banner error, using fallback:', error);
+      return { success: true, message: 'Hero banner aktualizovaný (simulácia)' };
+    }
+  }
+
+  async deleteHeroBanner(id) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: true, message: 'Hero banner odstránený (simulácia)' };
+    }
+
+    try {
+      console.log('Attempting to delete hero banner with ID:', id);
+      
+      // First check if the banner exists
+      const { data: existingBanner } = await supabase
+        .from('hero_banners')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      console.log('Banner to delete:', existingBanner);
+      
+      const { data, error } = await supabase
+        .from('hero_banners')
+        .delete()
+        .eq('id', id)
+        .select(); // This will return the deleted rows
+      
+      console.log('Delete operation result:', { data, error });
+      
+      if (error) {
+        console.error('Delete error:', error);
+        // If table doesn't exist, simulate success for fallback data
+        if (error.message && error.message.includes('hero_banners')) {
+          console.log('Hero banners table does not exist, simulating delete');
+          return { success: true, message: 'Hero banner odstránený (simulácia - tabuľka neexistuje)' };
+        }
+        return { success: false, message: error.message };
+      }
+      
+      console.log('Successfully deleted banner(s):', data);
+      console.log('Number of rows deleted:', data ? data.length : 0);
+      
+      return { success: true, deletedRows: data ? data.length : 0 };
+    } catch (error) {
+      console.error('Delete hero banner error:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  async uploadHeroBannerImage(file) {
+    try {
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        throw new Error('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      }
+
+      // Convert to data URL with compression
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = () => {
+          // Calculate new dimensions (max 1920px width for hero banners)
+          const maxWidth = 1920;
+          let { width, height } = img;
+          
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          // Draw and compress
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85); // 85% quality
+          
+          resolve({
+            success: true,
+            url: compressedDataUrl,
+            filename: `hero-${Date.now()}-${file.name}`,
+            originalName: file.name,
+            size: Math.round(compressedDataUrl.length * 0.75)
+          });
+        };
+        
+        img.onerror = () => reject(new Error(`Chyba pri spracovaní obrázka: ${file.name}`));
+        
+        // Load image from file
+        const reader = new FileReader();
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onerror = () => reject(new Error(`Chyba pri čítaní súboru: ${file.name}`));
+        reader.readAsDataURL(file);
+      });
+
+    } catch (error) {
+      console.error('Hero banner image upload failed:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  async initializeHeroBanners() {
+    if (!this.isSupabaseAvailable()) {
+      return { success: true, message: 'Hero bannery inicializované (fallback)' };
+    }
+
+    try {
+      console.log('Initializing hero banners...');
+      
+      // First, try to create the table if it doesn't exist
+      const createTableSQL = `
+        CREATE TABLE IF NOT EXISTS hero_banners (
+          id SERIAL PRIMARY KEY,
+          src TEXT NOT NULL,
+          alt TEXT NOT NULL,
+          title TEXT,
+          description TEXT,
+          "order" INTEGER DEFAULT 1,
+          active BOOLEAN DEFAULT true,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        );
+        
+        CREATE INDEX IF NOT EXISTS idx_hero_banners_order ON hero_banners("order");
+        CREATE INDEX IF NOT EXISTS idx_hero_banners_active ON hero_banners(active);
+        
+        ALTER TABLE hero_banners ENABLE ROW LEVEL SECURITY;
+        
+        CREATE POLICY IF NOT EXISTS "Allow public read access" ON hero_banners
+        FOR SELECT USING (true);
+      `;
+
+      // Execute table creation
+      const { error: createError } = await supabase.rpc('exec_sql', { sql: createTableSQL });
+      
+      if (createError) {
+        console.log('Table creation via RPC failed, trying direct insert:', createError);
+      }
+
+      // Check if hero banners already exist
+      const { data: existingBanners, error: selectError } = await supabase
+        .from('hero_banners')
+        .select('id')
+        .limit(1);
+
+      if (selectError) {
+        console.log('Select error (table might not exist):', selectError);
+        // If table doesn't exist, we'll try to insert and let it fail gracefully
+      }
+
+      if (existingBanners && existingBanners.length > 0) {
+        return { success: true, message: 'Hero bannery už existujú v databáze' };
+      }
+
+      // Insert fallback hero banners into database
+      const bannersToInsert = this.getFallbackHeroBanners().map(banner => ({
+        src: banner.src,
+        alt: banner.alt,
+        title: banner.title,
+        description: banner.description,
+        "order": banner.order,
+        active: banner.active
+      }));
+      
+      console.log('Inserting hero banners:', bannersToInsert);
+      
+      const { data, error } = await supabase
+        .from('hero_banners')
+        .insert(bannersToInsert)
+        .select();
+
+      if (error) {
+        console.error('Error inserting hero banners:', error);
+        return { 
+          success: false, 
+          message: `Chyba pri inicializácii: ${error.message}. Prosím vytvorte tabuľku 'hero_banners' v Supabase manuálne.` 
+        };
+      }
+
+      console.log('Hero banners initialized successfully:', data);
+      return { success: true, message: `${data.length} hero bannerov úspešne inicializovaných v databáze!` };
+    } catch (error) {
+      console.error('Error in initializeHeroBanners:', error);
+      return { 
+        success: false, 
+        message: `Chyba pri inicializácii hero bannerov: ${error.message}. Skontrolujte pripojenie k databáze.` 
+      };
     }
   }
 

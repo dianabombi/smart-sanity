@@ -6,6 +6,7 @@ import AdminBrands from './admin/AdminBrands';
 import AdminWhoWeAre from './admin/AdminWhoWeAre';
 import AdminWhatWeOffer from './admin/AdminWhatWeOffer';
 import AdminMessages from './admin/AdminMessages';
+import AdminHeroBanners from './admin/AdminHeroBanners';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,6 +49,7 @@ const Admin = () => {
       <Route path="/who-we-are" element={<AdminWhoWeAre onLogout={handleLogout} />} />
       <Route path="/what-we-offer" element={<AdminWhatWeOffer onLogout={handleLogout} />} />
       <Route path="/messages" element={<AdminMessages onLogout={handleLogout} />} />
+      <Route path="/hero-banners" element={<AdminHeroBanners onLogout={handleLogout} />} />
       <Route path="/inspirations" element={
         <AdminDashboard onLogout={handleLogout}>
           <div className="bg-white rounded-lg shadow p-6">

@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import Button from './ui/Button';
 import Carousel from './ui/Carousel';
+import apiService from '../services/api';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [carouselImages, setCarouselImages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-
-  // Carousel images from public folder
-  const carouselImages = [
+  // Fallback carousel images from public folder
+  const fallbackCarouselImages = [
     {
       src: '/photos/kaldewei.avif',
       alt: 'Kaldewei premium bathroom solutions'
@@ -24,22 +26,68 @@ const Home = () => {
     }
   ];
 
+  useEffect(() => {
+    loadHeroBanners();
+    
+    // Auto-refresh hero banners every 30 seconds to catch admin changes
+    const interval = setInterval(() => {
+      loadHeroBanners();
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadHeroBanners = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getHeroBanners();
+      if (response.success && response.banners.length > 0) {
+        // Convert hero banners to carousel format
+        const images = response.banners.map(banner => ({
+          src: banner.src,
+          alt: banner.alt || banner.title || 'Hero banner'
+        }));
+        setCarouselImages(images);
+      } else {
+        // Use fallback images if no hero banners found
+        setCarouselImages(fallbackCarouselImages);
+      }
+    } catch (error) {
+      console.error('Error loading hero banners:', error);
+      setCarouselImages(fallbackCarouselImages);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Manual refresh function for development/testing
+  const handleRefreshBanners = () => {
+    console.log('Manually refreshing hero banners...');
+    loadHeroBanners();
+  };
+
   return (
     <Layout showFooter={false}>
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
         {/* Hero Banner - full width on mobile/tablet, 2/3 on laptop+ */}
         <div className="relative w-full laptop:w-2/3 h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
-          <Carousel
-            images={carouselImages}
-            height="h-full"
-            autoPlay={true}
-            autoPlayInterval={20000}
-            showDots={true}
-            showArrows={false}
-            showCounter={false}
-            className="w-full h-full"
-          />
+          {loading ? (
+            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+              <div className="text-gray-400 text-lg">Načítavam bannery...</div>
+            </div>
+          ) : (
+            <Carousel
+              images={carouselImages}
+              height="h-full"
+              autoPlay={true}
+              autoPlayInterval={20000}
+              showDots={false}
+              showArrows={false}
+              showCounter={false}
+              className="w-full h-full"
+            />
+          )}
         </div>
         
         {/* Right Section - full width on mobile/tablet, 1/3 on laptop+ */}
@@ -49,7 +97,7 @@ const Home = () => {
             <img 
               src="/logo.png" 
               alt="Smart Sanit" 
-              className="shrink-0 h-14 tablet:h-20 laptop:h-24 w-auto object-contain"
+              className="shrink-0 h-14 tablet:h-20 laptop:h-20 w-auto object-contain"
               style={{
               }}
             />

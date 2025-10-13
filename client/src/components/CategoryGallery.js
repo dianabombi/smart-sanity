@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from './layout/Layout';
-import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
 
 const CategoryGallery = () => {
@@ -36,10 +35,6 @@ const CategoryGallery = () => {
     <Layout>
       <NavBar />
       
-      {/* Breadcrumbs */}
-      <div className="pt-4 px-4 sm:px-6 lg:px-8">
-        <Breadcrumbs />
-      </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">

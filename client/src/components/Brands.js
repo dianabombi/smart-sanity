@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './layout/Layout';
-import Breadcrumbs from './ui/Breadcrumbs';
 import NavBar from './layout/NavBar';
 import ApiService from '../services/api';
 
@@ -113,10 +112,6 @@ const Brands = () => {
     <Layout>
       <NavBar />
       
-      {/* Breadcrumbs */}
-      <div className="pt-4 px-4 sm:px-6 lg:px-8">
-        <Breadcrumbs />
-      </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">

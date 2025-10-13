@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
-import Breadcrumbs from './ui/Breadcrumbs';
 import ApiService from '../services/api';
 
 const Contact = () => {
@@ -55,10 +54,6 @@ const Contact = () => {
   return (
     <Layout>
       <NavBar />
-      {/* Breadcrumbs */}
-      <div className="pt-4 px-4 sm:px-6 lg:px-8">
-        <Breadcrumbs />
-      </div>
       
       <div className="min-h-screen bg-black py-16">
         <div className="w-full max-w-6xl mx-auto px-4">
