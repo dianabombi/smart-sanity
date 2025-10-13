@@ -104,21 +104,23 @@ const NavBar = () => {
         </div>
 
         {/* Mobile/Tablet Menu Button */}
-        {!mobileOpen && (
-          <div className="laptop:hidden flex-shrink-0 ml-2 min-w-[60px]">
-            <button
-              className="text-white p-2 rounded-md border-2 border-[#595959] shadow-[6px_6px_14px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
-              aria-label="Open menu"
-              aria-expanded={false}
-              aria-controls="mobile-bottom-sheet"
-              onClick={() => setMobileOpen(true)}
-            >
-              <svg className="w-12 h-12 text-[#595959]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        )}
+        <div className="laptop:hidden flex-shrink-0 ml-2 mr-4 min-w-[40px]">
+          <button
+            className="text-white p-1.5 rounded-md border-2 border-[#595959] shadow-[4px_4px_10px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-bottom-sheet"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <svg className="w-8 h-8 text-[#595959]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 9h16M4 15h16" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Overlay */}

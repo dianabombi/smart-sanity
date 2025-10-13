@@ -87,7 +87,7 @@ const Contact = () => {
         <div className="w-full max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 ${
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-400 mb-6 ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{
@@ -96,7 +96,7 @@ const Contact = () => {
             }}>
               Kontakt
             </h1>
-            <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+            <p className={`text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{
