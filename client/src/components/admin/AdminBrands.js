@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
 import EmergencyBrands from '../../services/emergencyBrands';
@@ -15,6 +15,7 @@ const AdminBrands = ({ onLogout }) => {
   const [editingCategory, setEditingCategory] = useState(false);
   const [tempCategory, setTempCategory] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const categoryInputRef = useRef(null);
 
   // Load brands from API
   useEffect(() => {
@@ -187,18 +188,29 @@ const AdminBrands = ({ onLogout }) => {
     console.log('Starting category edit for:', selectedBrand.category);
     setTempCategory(selectedBrand.category || '');
     setEditingCategory(true);
+    // Focus input after state update
+    setTimeout(() => {
+      if (categoryInputRef.current) {
+        categoryInputRef.current.focus();
+        categoryInputRef.current.value = selectedBrand.category || '';
+      }
+    }, 100);
   };
 
   const handleCategorySave = async () => {
     try {
       console.log('🚨 ADMIN EMERGENCY: Updating category using emergency service...');
-      const result = EmergencyBrands.updateBrand(selectedBrand.id, { category: tempCategory });
+      // Get value directly from input ref
+      const newCategory = categoryInputRef.current ? categoryInputRef.current.value : tempCategory;
+      console.log('Category value from input:', newCategory);
+      
+      const result = EmergencyBrands.updateBrand(selectedBrand.id, { category: newCategory });
       
       if (result.success) {
         console.log('✅ EMERGENCY: Category update successful!');
         
         // Update selectedBrand immediately with the new category
-        const updatedBrand = { ...selectedBrand, category: tempCategory };
+        const updatedBrand = { ...selectedBrand, category: newCategory };
         setSelectedBrand(updatedBrand);
         
         // Reload brands to get updated data from emergency service
@@ -209,6 +221,7 @@ const AdminBrands = ({ onLogout }) => {
         }
         
         setEditingCategory(false);
+        setTempCategory('');
         alert('Kategória značky bola úspešne aktualizovaná!');
       } else {
         alert('Chyba pri aktualizácii kategórie: ' + result.message);
@@ -416,8 +429,9 @@ const AdminBrands = ({ onLogout }) => {
                     type="text"
                     value={tempName}
                     onChange={(e) => {
-                      console.log('Name input changed to:', e.target.value);
-                      setTempName(e.target.value);
+                      const value = e.target.value;
+                      console.log('Name input changed to:', value);
+                      setTempName(value);
                     }}
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Zadajte názov značky"
@@ -468,15 +482,17 @@ const AdminBrands = ({ onLogout }) => {
               {editingCategory ? (
                 <div className="space-y-3">
                   <input
+                    ref={categoryInputRef}
                     type="text"
-                    value={tempCategory}
+                    defaultValue={selectedBrand.category || ''}
                     onChange={(e) => {
-                      console.log('Category input changed to:', e.target.value);
-                      setTempCategory(e.target.value);
+                      const value = e.target.value;
+                      console.log('Category input changed to:', value);
+                      console.log('Input length:', value.length);
+                      console.log('Last character:', value.charAt(value.length - 1));
                     }}
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Zadajte kategóriu značky (napr. KÚPEĽŇOVÝ NÁBYTOK)"
-                    autoFocus
+                    placeholder="Zadajte kategóriu značky (napr. Kúpeľňový nábytok)"
                     maxLength={100}
                   />
                   <div className="flex gap-2">
@@ -526,7 +542,11 @@ const AdminBrands = ({ onLogout }) => {
                 <div className="space-y-3">
                   <textarea
                     value={tempDescription}
-                    onChange={(e) => setTempDescription(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      console.log('Description input changed to:', value);
+                      setTempDescription(value);
+                    }}
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     rows="4"
                     placeholder="Zadajte popis značky..."

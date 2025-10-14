@@ -48,10 +48,22 @@ const Brands = () => {
   };
 
   const loadBrands = useCallback(async () => {
-    console.log('📊 Loading brands from Supabase database...');
+    console.log('🚨 EMERGENCY: Loading brands from localStorage (client meeting mode)...');
     
     try {
-      // Try to load from Supabase database first
+      // PRIORITY: Use EmergencyBrands service first (where admin changes are saved)
+      EmergencyBrands.initializeEmergencyBrands();
+      const emergencyResult = EmergencyBrands.getBrands();
+      
+      if (emergencyResult.success && emergencyResult.brands && emergencyResult.brands.length > 0) {
+        console.log(`✅ EMERGENCY: Loaded ${emergencyResult.brands.length} brands from localStorage`);
+        setBrands(emergencyResult.brands);
+        setError('');
+        return; // Use emergency brands and exit
+      }
+      
+      // Fallback to Supabase only if emergency brands fail
+      console.log('⚠️ Emergency brands failed, trying Supabase...');
       const result = await ApiService.getBrands();
       
       if (result.success && result.brands && result.brands.length > 0) {
@@ -60,28 +72,15 @@ const Brands = () => {
         setError('');
       } else {
         // Show error message about database setup
-        const errorMsg = result.message || 'Failed to load brands from database';
-        console.error('❌ Database error:', errorMsg);
+        const errorMsg = result.message || 'Failed to load brands from any source';
+        console.error('❌ All sources failed:', errorMsg);
         setError(errorMsg);
-        
-        // Use emergency fallback for now
-        console.log('⚠️ Using emergency fallback brands');
-        EmergencyBrands.initializeEmergencyBrands();
-        const emergencyResult = EmergencyBrands.getBrands();
-        if (emergencyResult.success) {
-          setBrands(emergencyResult.brands);
-        }
+        setBrands([]); // Set empty array as final fallback
       }
     } catch (error) {
       console.error('❌ Critical error loading brands:', error);
-      setError('Failed to connect to database. Please check your Supabase configuration.');
-      
-      // Use emergency fallback
-      EmergencyBrands.initializeEmergencyBrands();
-      const emergencyResult = EmergencyBrands.getBrands();
-      if (emergencyResult.success) {
-        setBrands(emergencyResult.brands);
-      }
+      setError('Failed to load brands from any source.');
+      setBrands([]); // Set empty array as final fallback
     }
   }, []);
 
@@ -201,7 +200,7 @@ const Brands = () => {
                     {brand.name}
                   </h3>
                   
-                  <div className="text-blue-300 text-sm font-light uppercase tracking-wide">
+                  <div className="text-blue-300 text-sm font-light tracking-wide">
                     {brand.category}
                   </div>
                   
@@ -399,7 +398,7 @@ const Brands = () => {
                   {/* Brand Info */}
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-gray-400 mb-2">{selectedBrandImages.name}</h2>
-                    <p className="text-blue-300 text-sm font-light uppercase tracking-wide mb-3">{selectedBrandImages.category}</p>
+                    <p className="text-blue-300 text-sm font-light tracking-wide mb-3">{selectedBrandImages.category}</p>
                     <p className="text-gray-400 text-sm leading-relaxed">{selectedBrandImages.description}</p>
                   </div>
                 </div>
