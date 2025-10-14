@@ -10,7 +10,6 @@ const Brands = () => {
   const [selectedBrandImages, setSelectedBrandImages] = useState(null);
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [showOtherBrands, setShowOtherBrands] = useState(false);
-  const [error, setError] = useState('');
 
   const openLogoPreview = (brand) => {
     setSelectedLogo(brand);
@@ -58,7 +57,6 @@ const Brands = () => {
       if (emergencyResult.success && emergencyResult.brands && emergencyResult.brands.length > 0) {
         console.log(`✅ EMERGENCY: Loaded ${emergencyResult.brands.length} brands from localStorage`);
         setBrands(emergencyResult.brands);
-        setError('');
         return; // Use emergency brands and exit
       }
       
@@ -69,17 +67,14 @@ const Brands = () => {
       if (result.success && result.brands && result.brands.length > 0) {
         console.log(`✅ Loaded ${result.brands.length} brands from Supabase database`);
         setBrands(result.brands);
-        setError('');
       } else {
         // Show error message about database setup
         const errorMsg = result.message || 'Failed to load brands from any source';
         console.error('❌ All sources failed:', errorMsg);
-        setError(errorMsg);
         setBrands([]); // Set empty array as final fallback
       }
     } catch (error) {
       console.error('❌ Critical error loading brands:', error);
-      setError('Failed to load brands from any source.');
       setBrands([]); // Set empty array as final fallback
     }
   }, []);
