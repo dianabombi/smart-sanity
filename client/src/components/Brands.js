@@ -2,13 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import ApiService from '../services/api';
+import EmergencyBrands from '../services/emergencyBrands';
 
 const Brands = () => {
   const [selectedLogo, setSelectedLogo] = useState(null);
   const [visibleBrands, setVisibleBrands] = useState([]);
   const [showOtherBrands, setShowOtherBrands] = useState(false);
-  const [brands, setBrands] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [brands, setBrands] = useState([]); // Start empty - no old logos
+  // REMOVED loading state for instant display
   const [selectedBrandImages, setSelectedBrandImages] = useState(null);
 
   const openLogoPreview = (brand) => {
@@ -47,46 +48,44 @@ const Brands = () => {
   };
 
   const loadBrands = useCallback(async () => {
-    try {
-      setLoading(true);
+    console.log('🚨 EMERGENCY CLIENT MEETING: Loading ALL 18 brands instantly...');
+    
+    // Force fresh initialization to ensure we get all 18 brands
+    EmergencyBrands.initializeEmergencyBrands();
+    const result = EmergencyBrands.getBrands();
+    
+    if (result.success) {
+      const uploadedLogos = result.brands.filter(b => b.logo?.startsWith('data:')).length;
+      console.log(`✅ EMERGENCY: Loaded ${result.brands.length} brands (${uploadedLogos} uploaded logos)`);
       
-      // Load fallback brands immediately for fast display
-      const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
-      setBrands(fallbackBrands);
-      setLoading(false);
-      console.log('Loaded fallback brands immediately:', fallbackBrands);
+      // Verify we have all brands
+      const mainBrands = result.brands.filter(b => b.category !== 'Ostatné').length;
+      const otherBrands = result.brands.filter(b => b.category === 'Ostatné').length;
+      console.log(`📊 EMERGENCY: ${mainBrands} main brands, ${otherBrands} other brands`);
       
-      // Try to load from API with timeout in background
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('API timeout')), 2000)
-      );
-      
-      try {
-        const result = await Promise.race([
-          ApiService.getBrands(),
-          timeoutPromise
-        ]);
-        
-        if (result.success && result.brands.length > 0) {
-          console.log('Updated with API brands:', result.brands);
-          setBrands(result.brands);
-        }
-      } catch (apiError) {
-        console.log('API failed or timed out, keeping fallback brands:', apiError.message);
-        // Keep fallback brands already loaded
-      }
-      
-    } catch (error) {
-      console.error('Error loading brands:', error);
-      const fallbackBrands = ApiService.getFallbackBrands ? ApiService.getFallbackBrands() : [];
-      setBrands(fallbackBrands);
-      setLoading(false);
+      setBrands(result.brands);
+    } else {
+      console.log('⚠️ EMERGENCY: Fallback failed, forcing emergency brands');
+      // Force emergency brands directly
+      const emergencyBrands = EmergencyBrands.getFallbackBrands();
+      setBrands(emergencyBrands);
+      console.log(`✅ EMERGENCY: Forced ${emergencyBrands.length} brands`);
     }
   }, []);
 
   useEffect(() => {
     loadBrands();
   }, [loadBrands]);
+
+  // EMERGENCY: Disable auto-refresh to prevent logo overwriting during client meeting
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     console.log('🚨 CRITICAL: Auto-refreshing brands...');
+  //     loadBrands();
+  //   }, 10000); // 10 seconds for critical updates
+
+  //   return () => clearInterval(interval);
+  // }, [loadBrands]);
 
 
   // Animation for brands
@@ -107,19 +106,7 @@ const Brands = () => {
     }
   }, [brands]);
 
-  if (loading) {
-    return (
-      <Layout>
-        <NavBar />
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-white">Načítavam značky...</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  // REMOVED LOADING STATE FOR CLIENT MEETING - INSTANT DISPLAY
 
   return (
     <Layout>
@@ -141,6 +128,7 @@ const Brands = () => {
       {/* Main Brands Grid */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
+          {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.category !== 'Ostatné').length)}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {brands.filter(brand => brand.category !== 'Ostatné').map((brand, index) => (
               <div
@@ -168,6 +156,7 @@ const Brands = () => {
                   ) : (
                     <>
                       <img 
+                        key={brand.logo} // Force re-render when logo changes
                         src={brand.logo} 
                         alt={`${brand.name} Logo`}
                         className={`${brand.logoSize || 'max-h-16'} max-w-full object-contain`}

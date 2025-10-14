@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import EmergencyBrands from '../../services/emergencyBrands';
 
 const AdminBrands = ({ onLogout }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -21,20 +22,26 @@ const AdminBrands = ({ onLogout }) => {
   const loadBrands = async () => {
     try {
       setLoading(true);
-      const result = await ApiService.getBrands();
+      
+      console.log('🚨 ADMIN EMERGENCY: Loading brands instantly...');
+      
+      // Use emergency service for instant loading
+      const result = EmergencyBrands.getBrands();
+      
       if (result.success) {
+        console.log('✅ ADMIN EMERGENCY: Loaded', result.brands.length, 'brands');
         setBrands(result.brands);
       } else {
-        // If no brands exist, initialize them
-        await ApiService.initializeBrands();
-        const retryResult = await ApiService.getBrands();
-        if (retryResult.success) {
-          setBrands(retryResult.brands);
-        }
+        console.log('⚠️ ADMIN EMERGENCY: Using fallback');
+        const fallbackBrands = ApiService.getFallbackBrands();
+        setBrands(fallbackBrands);
       }
+      
     } catch (error) {
-      console.error('Error loading brands:', error);
+      console.error('❌ ADMIN EMERGENCY: Error loading brands:', error);
       setError('Chyba pri načítavaní značiek');
+      const fallbackBrands = ApiService.getFallbackBrands();
+      setBrands(fallbackBrands);
     } finally {
       setLoading(false);
     }
@@ -187,19 +194,22 @@ const AdminBrands = ({ onLogout }) => {
 
     try {
       setUploadingLogo(true);
-      const result = await ApiService.updateBrandLogo(selectedBrand.id, file);
+      
+      console.log('🚨 ADMIN EMERGENCY: Uploading logo using emergency service...');
+      const result = await EmergencyBrands.updateBrandLogo(selectedBrand.id, file);
       
       if (result.success) {
-        // Reload brands to get updated data
-        await loadBrands();
+        console.log('✅ EMERGENCY: Logo upload successful!');
         
-        // Update selectedBrand with the new data
-        const updatedBrands = await ApiService.getBrands();
-        if (updatedBrands.success) {
-          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
-          if (updatedBrand) {
-            setSelectedBrand(updatedBrand);
-          }
+        // Update selectedBrand immediately with the new logo URL
+        const updatedBrand = { ...selectedBrand, logo: result.logoUrl };
+        setSelectedBrand(updatedBrand);
+        
+        // Reload brands to get updated data from emergency service
+        const brandsResult = EmergencyBrands.getBrands();
+        if (brandsResult.success) {
+          setBrands(brandsResult.brands);
+          console.log('✅ EMERGENCY: Brands updated in admin');
         }
         
         alert('Logo značky bol úspešne aktualizovaný!');
@@ -216,11 +226,57 @@ const AdminBrands = ({ onLogout }) => {
     }
   };
 
+  const handleLogoDelete = async () => {
+    if (!selectedBrand) return;
+    
+    if (!window.confirm('Ste si istí, že chcete odstrániť logo značky? Vráti sa pôvodné logo.')) {
+      return;
+    }
+
+    try {
+      setUploadingLogo(true);
+      
+      // Get original logo from fallback brands
+      const fallbackBrands = ApiService.getFallbackBrands();
+      const originalBrand = fallbackBrands.find(b => b.name === selectedBrand.name);
+      const originalLogo = originalBrand ? originalBrand.logo : '/logoWhite.svg';
+      
+      const result = await ApiService.deleteBrandLogo(selectedBrand.id, originalLogo);
+      
+      if (result.success) {
+        console.log('✅ Logo delete successful, reloading brands...');
+        
+        // Reload brands to get updated data
+        await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
+          if (updatedBrand) {
+            console.log('🔄 Reset to original logo:', updatedBrand.logo);
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
+        alert('Logo značky bol úspešne odstránený!');
+      } else {
+        alert('Chyba pri odstraňovaní loga: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error deleting logo:', error);
+      alert('Chyba pri odstraňovaní loga');
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
   const BrandCard = ({ brand }) => (
     <div className="rounded-lg shadow hover:shadow-md transition-shadow p-6 border border-gray-700">
       <div className="flex items-center mb-4">
         <div className="w-16 h-16 bg-gray-700 rounded-lg flex items-center justify-center mr-4">
           <img 
+            key={brand.logo} // Force re-render when logo changes
             src={brand.logo} 
             alt={brand.name}
             className="max-w-full max-h-full object-contain"
@@ -401,6 +457,7 @@ const AdminBrands = ({ onLogout }) => {
                 {/* Current Logo Display */}
                 <div className="w-20 h-20 bg-gray-700 border border-gray-600 rounded-lg flex items-center justify-center">
                   <img 
+                    key={selectedBrand.logo} // Force re-render when logo changes
                     src={selectedBrand.logo} 
                     alt={`${selectedBrand.name} Logo`}
                     className="max-w-full max-h-full object-contain"
@@ -408,8 +465,12 @@ const AdminBrands = ({ onLogout }) => {
                       filter: selectedBrand.logoFilter || 'none'
                     }}
                     onError={(e) => {
+                      console.log('❌ Logo failed to load:', selectedBrand.logo?.substring(0, 50) + '...');
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'flex';
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Logo loaded successfully');
                     }}
                   />
                   <div 
@@ -453,7 +514,22 @@ const AdminBrands = ({ onLogout }) => {
                       </>
                     )}
                   </label>
-                  <p className="text-xs text-gray-400 mt-1">
+                  
+                  {/* Delete Logo Button */}
+                  <button
+                    onClick={handleLogoDelete}
+                    disabled={uploadingLogo}
+                    className={`ml-3 inline-flex items-center px-4 py-2 border border-red-600 rounded-lg text-sm font-medium text-red-400 bg-transparent hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent cursor-pointer transition-colors ${
+                      uploadingLogo ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Odstrániť logo
+                  </button>
+                  
+                  <p className="text-xs text-gray-400 mt-2">
                     Podporované formáty: JPG, PNG, SVG, WebP (max 5MB)
                   </p>
                 </div>
