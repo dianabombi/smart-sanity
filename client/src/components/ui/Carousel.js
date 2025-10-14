@@ -65,9 +65,9 @@ const Carousel = ({
       
       case 'ken-burns':
         return {
-          className: `${baseTransition} ${isActive ? 'scale-110 opacity-100' : 'scale-100 opacity-0'}`,
+          className: `${baseTransition} ${isActive ? 'opacity-100' : 'opacity-0'}`,
           style: {
-            animation: isActive ? 'kenBurns 20s ease-in-out infinite alternate' : 'none'
+            animation: isActive ? 'smoothZoomIn 8s ease-out forwards' : 'none'
           }
         };
       
@@ -89,14 +89,11 @@ const Carousel = ({
 
   return (
     <div className={`relative ${height} overflow-hidden bg-black ${className}`}>
-      {/* Add Ken Burns animation keyframes */}
+      {/* Smooth zoom-in only animation */}
       <style jsx>{`
-        @keyframes kenBurns {
-          0% { transform: scale(1) translateX(0) translateY(0); }
-          25% { transform: scale(1.1) translateX(-2%) translateY(-1%); }
-          50% { transform: scale(1.05) translateX(1%) translateY(-2%); }
-          75% { transform: scale(1.08) translateX(-1%) translateY(1%); }
-          100% { transform: scale(1.1) translateX(2%) translateY(-1%); }
+        @keyframes smoothZoomIn {
+          0% { transform: scale(1.0); }
+          100% { transform: scale(1.15); }
         }
       `}</style>
 

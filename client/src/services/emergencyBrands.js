@@ -77,6 +77,49 @@ class EmergencyBrandsService {
     });
   }
 
+  // Update brand data (name, category, description, etc.)
+  updateBrand(brandId, updateData) {
+    try {
+      // Get current brands
+      const current = localStorage.getItem(this.storageKey);
+      let brands = current ? JSON.parse(current) : this.getFallbackBrands();
+      
+      // Find and update the specific brand
+      let updatedBrand = null;
+      brands = brands.map(brand => {
+        if (brand.id === brandId || brand.name === brandId || brand.order === brandId) {
+          updatedBrand = { ...brand, ...updateData };
+          console.log(`🚨 EMERGENCY: Updated brand ${brand.name}:`, updateData);
+          return updatedBrand;
+        }
+        return brand;
+      });
+      
+      if (updatedBrand) {
+        // Save back to localStorage
+        localStorage.setItem(this.storageKey, JSON.stringify(brands));
+        console.log('✅ EMERGENCY: Brand data saved successfully!');
+        
+        return {
+          success: true,
+          brand: updatedBrand,
+          message: 'Značka úspešne aktualizovaná!'
+        };
+      } else {
+        return {
+          success: false,
+          message: 'Značka nebola nájdená'
+        };
+      }
+    } catch (error) {
+      console.error('❌ EMERGENCY: Update brand error:', error);
+      return {
+        success: false,
+        message: 'Chyba pri aktualizácii značky'
+      };
+    }
+  }
+
   // Get fallback brands - ALL 18 BRANDS
   getFallbackBrands() {
     return [

@@ -9,9 +9,10 @@ const AdminHeroBanners = ({ onLogout }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingBanner, setEditingBanner] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const [showDatabaseSetup, setShowDatabaseSetup] = useState(false);
+  const [editingBanner, setEditingBanner] = useState(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -30,26 +31,31 @@ const AdminHeroBanners = ({ onLogout }) => {
   const loadBanners = async () => {
     try {
       setLoading(true);
-      console.log('Loading hero banners...');
-      const response = await apiService.getAllHeroBanners();
-      console.log('Load banners response:', response);
+      setError(''); // Clear any previous errors
+      console.log('🚨 ADMIN: Loading hero banners...');
       
-      if (response.success) {
-        console.log('Loaded banners:', response.banners);
-        setBanners(response.banners);
+      const response = await apiService.getAllHeroBanners();
+      console.log('🚨 ADMIN: Load banners response:', response);
+      
+      if (response && response.success) {
+        console.log('🚨 ADMIN: Loaded banners:', response.banners);
+        setBanners(response.banners || []);
       } else {
-        console.error('Failed to load banners:', response);
-        // If table doesn't exist, show setup option
-        if (response.error === 'TABLE_NOT_EXISTS') {
+        console.error('🚨 ADMIN: Failed to load banners:', response);
+        setBanners([]); // Set empty array to prevent undefined issues
+        
+        if (response && response.error === 'TABLE_NOT_EXISTS') {
           setError(response.message + ' Kliknite na "Inicializovať" pre vytvorenie tabuľky.');
         } else {
-          setError('Chyba pri načítavaní hero bannerov');
+          setError('Chyba pri načítavaní hero bannerov. Skúste obnoviť stránku.');
         }
       }
     } catch (error) {
-      console.error('Load banners error:', error);
-      setError('Chyba pri načítavaní hero bannerov');
+      console.error('🚨 ADMIN: Load banners error:', error);
+      setBanners([]); // Set empty array to prevent crashes
+      setError('Kritická chyba pri načítavaní hero bannerov: ' + error.message);
     } finally {
+      console.log('🚨 ADMIN: Setting loading to false');
       setLoading(false);
     }
   };
@@ -86,6 +92,18 @@ const AdminHeroBanners = ({ onLogout }) => {
       if (fileInput && fileInput.files[0]) {
         imageUrl = await handleFileUpload(fileInput.files[0]);
         if (!imageUrl) return; // Upload failed
+      }
+
+      // Validation: Check if image URL exists
+      if (!imageUrl || imageUrl.trim() === '') {
+        setError('Chýba obrázok! Musíte nahrať obrázok alebo zadať URL.');
+        return;
+      }
+
+      // Check if we're adding too many banners (max 10)
+      if (!editingBanner && banners.length >= 10) {
+        setError('Maximálny počet hero bannerov je 10. Odstráňte existujúci banner pred pridaním nového.');
+        return;
       }
 
       const bannerData = {
@@ -127,36 +145,52 @@ const AdminHeroBanners = ({ onLogout }) => {
   };
 
   const handleDelete = async (id) => {
+    console.log('🚨 DELETE: Attempting to delete banner with ID:', id);
+    
     if (!window.confirm('Ste si istí, že chcete odstrániť tento hero banner?')) {
+      console.log('🚨 DELETE: User cancelled deletion');
       return;
     }
 
     try {
-      console.log('Deleting hero banner with ID:', id);
+      setError(''); // Clear any previous errors
+      setDeletingId(id); // Set loading state for this specific banner
+      console.log('🚨 DELETE: Calling API to delete banner with ID:', id);
       const response = await apiService.deleteHeroBanner(id);
-      console.log('Delete response:', response);
+      console.log('🚨 DELETE: API response:', response);
       
       if (response.success) {
-        // If we're working with fallback data, remove from local state
-        if (response.message && response.message.includes('simulácia')) {
-          console.log('Using fallback mode - removing from local state');
+        console.log('🚨 DELETE: Success response received');
+        
+        // Check if any rows were actually deleted
+        if (response.deletedRows === 0) {
+          console.log('⚠️ DELETE: No rows deleted, treating as simulation');
           setBanners(prevBanners => prevBanners.filter(banner => banner.id !== id));
-          setSuccess('Hero banner odstránený! (simulácia)');
+          setSuccess('Hero banner odstránený! (simulácia - žiadne riadky)');
         } else {
-          console.log('Using database mode - reloading from database');
-          setSuccess('Hero banner odstránený!');
-          // Add small delay to ensure database has processed the delete
-          setTimeout(async () => {
+          console.log('✅ DELETE: Database delete successful, reloading banners');
+          setSuccess('Hero banner úspešne odstránený!');
+          
+          // Immediately update local state to prevent crashes
+          setBanners(prevBanners => prevBanners.filter(banner => banner.id !== id));
+          
+          // Then reload from database to ensure consistency
+          try {
             await loadBanners();
-          }, 500);
+          } catch (reloadError) {
+            console.error('🚨 DELETE: Error reloading banners:', reloadError);
+            // Don't crash - we already updated local state
+          }
         }
       } else {
         console.error('Delete failed:', response.message);
         setError(response.message);
       }
     } catch (error) {
-      console.error('Delete error:', error);
-      setError('Chyba pri odstraňovaní hero banneru');
+      console.error('🚨 DELETE: Error occurred:', error);
+      setError('Chyba pri odstraňovaní hero banneru: ' + error.message);
+    } finally {
+      setDeletingId(null); // Clear loading state
     }
   };
 
@@ -206,7 +240,12 @@ const AdminHeroBanners = ({ onLogout }) => {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-white">Hero Bannery</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-white">Hero Bannery</h1>
+            <p className="text-gray-400 mt-1">
+              {banners.length} / 10 bannerov • Maximálne 10 obrázkov v carousel
+            </p>
+          </div>
           <div className="flex gap-3">
             <button
               onClick={handleInitialize}
@@ -216,7 +255,12 @@ const AdminHeroBanners = ({ onLogout }) => {
             </button>
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={banners.length >= 10}
+              className={`px-4 py-2 text-white rounded-lg transition-colors ${
+                banners.length >= 10 
+                  ? 'bg-gray-600 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700'
+              }`}
             >
               + Pridať Hero Banner
             </button>
@@ -242,7 +286,7 @@ const AdminHeroBanners = ({ onLogout }) => {
           </div>
         ) : (
           <div className="grid gap-6">
-            {banners.map((banner) => (
+            {banners && banners.length > 0 ? banners.map((banner) => (
               <div key={banner.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700">
                 <div className="flex gap-6">
                   {/* Image Preview */}
@@ -280,9 +324,14 @@ const AdminHeroBanners = ({ onLogout }) => {
                         </button>
                         <button
                           onClick={() => handleDelete(banner.id)}
-                          className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
+                          disabled={deletingId === banner.id}
+                          className={`px-3 py-1 text-white rounded transition-colors text-sm ${
+                            deletingId === banner.id
+                              ? 'bg-gray-600 cursor-not-allowed'
+                              : 'bg-red-600 hover:bg-red-700'
+                          }`}
                         >
-                          Odstrániť
+                          {deletingId === banner.id ? 'Odstraňujem...' : 'Odstrániť'}
                         </button>
                       </div>
                     </div>
@@ -299,9 +348,7 @@ const AdminHeroBanners = ({ onLogout }) => {
                   </div>
                 </div>
               </div>
-            ))}
-
-            {banners.length === 0 && (
+            )) : (
               <div className="text-center py-8 text-gray-400">
                 <p>Žiadne hero bannery nenájdené.</p>
                 <p className="text-sm mt-2">Kliknite na "Inicializovať" pre vytvorenie predvolených bannerov.</p>

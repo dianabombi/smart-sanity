@@ -1851,6 +1851,215 @@ class ApiService {
       }
     ];
   }
+
+  // Dashboard Stats
+  async getDashboardStats() {
+    try {
+      const stats = {
+        brands: 0,
+        references: 0,
+        inspirations: 0,
+        contacts: 0
+      };
+
+      if (!this.isSupabaseAvailable()) {
+        // Fallback stats
+        stats.brands = this.getFallbackBrands().length;
+        stats.references = this.getFallbackReferences().length;
+        stats.inspirations = this.getFallbackInspirations().length;
+        stats.contacts = 0;
+        return { success: true, stats };
+      }
+
+      // Get brands count
+      const { data: brandsData, error: brandsError } = await supabase
+        .from('brands')
+        .select('*', { count: 'exact', head: true });
+      
+      if (!brandsError) {
+        stats.brands = brandsData.count || 0;
+      } else {
+        stats.brands = this.getFallbackBrands().length;
+      }
+
+      // Get references count
+      const { data: referencesData, error: referencesError } = await supabase
+        .from('references')
+        .select('*', { count: 'exact', head: true });
+      
+      if (!referencesError) {
+        stats.references = referencesData.count || 0;
+      } else {
+        stats.references = this.getFallbackReferences().length;
+      }
+
+      // Get inspirations count
+      const { data: inspirationsData, error: inspirationsError } = await supabase
+        .from('inspirations')
+        .select('*', { count: 'exact', head: true });
+      
+      if (!inspirationsError) {
+        stats.inspirations = inspirationsData.count || 0;
+      } else {
+        stats.inspirations = this.getFallbackInspirations().length;
+      }
+
+      // Get messages count
+      const { data: messagesData, error: messagesError } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true });
+      
+      if (!messagesError) {
+        stats.contacts = messagesData.count || 0;
+      }
+
+      return { success: true, stats };
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      // Return fallback stats on error
+      return {
+        success: true,
+        stats: {
+          brands: this.getFallbackBrands().length,
+          references: this.getFallbackReferences().length,
+          inspirations: this.getFallbackInspirations().length,
+          contacts: 0
+        }
+      };
+    }
+  }
+
+  // Recent Activity
+  async getRecentActivity() {
+    try {
+      const activities = [];
+
+      if (!this.isSupabaseAvailable()) {
+        // Fallback activities
+        return {
+          success: true,
+          activities: [
+            {
+              id: 1,
+              type: 'system',
+              message: 'Systém používa fallback dáta',
+              icon: '⚠️',
+              timestamp: new Date().toISOString()
+            },
+            {
+              id: 2,
+              type: 'info',
+              message: 'Pripojte Supabase pre živé dáta',
+              icon: '🔗',
+              timestamp: new Date().toISOString()
+            }
+          ]
+        };
+      }
+
+      // Get recent messages (last 3)
+      try {
+        const { data: messages } = await supabase
+          .from('messages')
+          .select('name, subject, created_at')
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (messages && messages.length > 0) {
+          messages.forEach(message => {
+            activities.push({
+              id: `msg-${message.created_at}`,
+              type: 'message',
+              message: `Nová správa od ${message.name}: ${message.subject}`,
+              icon: '📧',
+              timestamp: message.created_at
+            });
+          });
+        }
+      } catch (error) {
+        console.log('Could not fetch recent messages:', error);
+      }
+
+      // Get recent hero banner updates
+      try {
+        const { data: banners } = await supabase
+          .from('hero_banners')
+          .select('title, updated_at, created_at')
+          .order('updated_at', { ascending: false })
+          .limit(2);
+
+        if (banners && banners.length > 0) {
+          banners.forEach(banner => {
+            const isNew = new Date(banner.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+            activities.push({
+              id: `banner-${banner.updated_at}`,
+              type: 'banner',
+              message: `${isNew ? 'Vytvorený' : 'Aktualizovaný'} hero banner: ${banner.title}`,
+              icon: '🖼️',
+              timestamp: banner.updated_at || banner.created_at
+            });
+          });
+        }
+      } catch (error) {
+        console.log('Could not fetch recent banners:', error);
+      }
+
+      // Get recent brand updates
+      try {
+        const { data: brands } = await supabase
+          .from('brands')
+          .select('name, updated_at, created_at')
+          .order('updated_at', { ascending: false })
+          .limit(2);
+
+        if (brands && brands.length > 0) {
+          brands.forEach(brand => {
+            const isNew = new Date(brand.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000);
+            activities.push({
+              id: `brand-${brand.updated_at}`,
+              type: 'brand',
+              message: `${isNew ? 'Pridaná' : 'Aktualizovaná'} značka: ${brand.name}`,
+              icon: '🏷️',
+              timestamp: brand.updated_at || brand.created_at
+            });
+          });
+        }
+      } catch (error) {
+        console.log('Could not fetch recent brands:', error);
+      }
+
+      // Sort activities by timestamp and take the most recent 5
+      activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      const recentActivities = activities.slice(0, 5);
+
+      // If no activities found, show default message
+      if (recentActivities.length === 0) {
+        recentActivities.push({
+          id: 'default',
+          type: 'info',
+          message: 'Žiadna nedávna aktivita',
+          icon: '📊',
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      return { success: true, activities: recentActivities };
+    } catch (error) {
+      console.error('Error fetching recent activity:', error);
+      return {
+        success: true,
+        activities: [
+          {
+            id: 'error',
+            type: 'error',
+            message: 'Chyba pri načítavaní aktivity',
+            icon: '❌',
+            timestamp: new Date().toISOString()
+          }
+        ]
+      };
+    }
+  }
 }
 
 const apiService = new ApiService();

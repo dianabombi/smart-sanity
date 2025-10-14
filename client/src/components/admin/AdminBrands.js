@@ -12,6 +12,8 @@ const AdminBrands = ({ onLogout }) => {
   const [tempDescription, setTempDescription] = useState('');
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState('');
+  const [editingCategory, setEditingCategory] = useState(false);
+  const [tempCategory, setTempCategory] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
   // Load brands from API
@@ -107,18 +109,21 @@ const AdminBrands = ({ onLogout }) => {
 
   const handleDescriptionSave = async () => {
     try {
-      const result = await ApiService.updateBrandDescription(selectedBrand.id, tempDescription);
+      console.log('🚨 ADMIN EMERGENCY: Updating description using emergency service...');
+      const result = EmergencyBrands.updateBrand(selectedBrand.id, { description: tempDescription });
+      
       if (result.success) {
-        // Reload brands to get updated data
-        await loadBrands();
+        console.log('✅ EMERGENCY: Description update successful!');
         
-        // Update selectedBrand with the new data
-        const updatedBrands = await ApiService.getBrands();
-        if (updatedBrands.success) {
-          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
-          if (updatedBrand) {
-            setSelectedBrand(updatedBrand);
-          }
+        // Update selectedBrand immediately with the new description
+        const updatedBrand = { ...selectedBrand, description: tempDescription };
+        setSelectedBrand(updatedBrand);
+        
+        // Reload brands to get updated data from emergency service
+        const brandsResult = EmergencyBrands.getBrands();
+        if (brandsResult.success) {
+          setBrands(brandsResult.brands);
+          console.log('✅ EMERGENCY: Brands updated in admin');
         }
         
         setEditingDescription(false);
@@ -145,18 +150,21 @@ const AdminBrands = ({ onLogout }) => {
 
   const handleNameSave = async () => {
     try {
-      const result = await ApiService.updateBrand(selectedBrand.id, { name: tempName });
+      console.log('🚨 ADMIN EMERGENCY: Updating name using emergency service...');
+      const result = EmergencyBrands.updateBrand(selectedBrand.id, { name: tempName });
+      
       if (result.success) {
-        // Reload brands to get updated data
-        await loadBrands();
+        console.log('✅ EMERGENCY: Name update successful!');
         
-        // Update selectedBrand with the new data
-        const updatedBrands = await ApiService.getBrands();
-        if (updatedBrands.success) {
-          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
-          if (updatedBrand) {
-            setSelectedBrand(updatedBrand);
-          }
+        // Update selectedBrand immediately with the new name
+        const updatedBrand = { ...selectedBrand, name: tempName };
+        setSelectedBrand(updatedBrand);
+        
+        // Reload brands to get updated data from emergency service
+        const brandsResult = EmergencyBrands.getBrands();
+        if (brandsResult.success) {
+          setBrands(brandsResult.brands);
+          console.log('✅ EMERGENCY: Brands updated in admin');
         }
         
         setEditingName(false);
@@ -173,6 +181,47 @@ const AdminBrands = ({ onLogout }) => {
   const handleNameCancel = () => {
     setEditingName(false);
     setTempName('');
+  };
+
+  const handleCategoryEdit = () => {
+    console.log('Starting category edit for:', selectedBrand.category);
+    setTempCategory(selectedBrand.category || '');
+    setEditingCategory(true);
+  };
+
+  const handleCategorySave = async () => {
+    try {
+      console.log('🚨 ADMIN EMERGENCY: Updating category using emergency service...');
+      const result = EmergencyBrands.updateBrand(selectedBrand.id, { category: tempCategory });
+      
+      if (result.success) {
+        console.log('✅ EMERGENCY: Category update successful!');
+        
+        // Update selectedBrand immediately with the new category
+        const updatedBrand = { ...selectedBrand, category: tempCategory };
+        setSelectedBrand(updatedBrand);
+        
+        // Reload brands to get updated data from emergency service
+        const brandsResult = EmergencyBrands.getBrands();
+        if (brandsResult.success) {
+          setBrands(brandsResult.brands);
+          console.log('✅ EMERGENCY: Brands updated in admin');
+        }
+        
+        setEditingCategory(false);
+        alert('Kategória značky bola úspešne aktualizovaná!');
+      } else {
+        alert('Chyba pri aktualizácii kategórie: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating category:', error);
+      alert('Chyba pri aktualizácii kategórie');
+    }
+  };
+
+  const handleCategoryCancel = () => {
+    setEditingCategory(false);
+    setTempCategory('');
   };
 
   const handleLogoUpload = async (event) => {
@@ -331,6 +380,8 @@ const AdminBrands = ({ onLogout }) => {
                 setTempDescription('');
                 setEditingName(false);
                 setTempName('');
+                setEditingCategory(false);
+                setTempCategory('');
               }}
               className="text-gray-400 hover:text-gray-200 text-2xl"
             >
@@ -391,6 +442,63 @@ const AdminBrands = ({ onLogout }) => {
               ) : (
                 <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg">
                   <p className="text-white">{selectedBrand.name}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Brand Category Section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-300">
+                  Kategória značky
+                </label>
+                {!editingCategory && (
+                  <button
+                    onClick={handleCategoryEdit}
+                    className="text-blue-400 hover:text-blue-300 text-sm flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Upraviť
+                  </button>
+                )}
+              </div>
+              
+              {editingCategory ? (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={tempCategory}
+                    onChange={(e) => {
+                      console.log('Category input changed to:', e.target.value);
+                      setTempCategory(e.target.value);
+                    }}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Zadajte kategóriu značky (napr. KÚPEĽŇOVÝ NÁBYTOK)"
+                    autoFocus
+                    maxLength={100}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleCategorySave}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Uložiť
+                    </button>
+                    <button
+                      onClick={handleCategoryCancel}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg">
+                  <p className="text-white font-medium text-sm tracking-wider">
+                    {selectedBrand.category || 'Žiadna kategória nie je zadaná'}
+                  </p>
                 </div>
               )}
             </div>
