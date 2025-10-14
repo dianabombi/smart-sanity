@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import EmergencyBrands from '../../services/emergencyBrands';
 
 const AdminWhoWeAre = ({ onLogout }) => {
   const [sections, setSections] = useState([]);
@@ -15,6 +16,8 @@ const AdminWhoWeAre = ({ onLogout }) => {
     content: '',
     size: 'large'
   });
+  const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   useEffect(() => {
     loadSections();
@@ -24,34 +27,74 @@ const AdminWhoWeAre = ({ onLogout }) => {
     try {
       setLoading(true);
       
-      // Try to load from localStorage first (for offline functionality)
-      const localSections = localStorage.getItem('adminWhoWeAreSections');
-      if (localSections) {
-        const parsed = JSON.parse(localSections);
-        setSections(parsed);
+      // CRITICAL FIX: Load EB+K logo from Supabase database (not localStorage)
+      try {
+        console.log('🚨 ADMIN: Loading EB+K logo from Supabase database...');
+        const brandsResult = await ApiService.getBrands();
+        if (brandsResult.success && brandsResult.brands) {
+          const ebkBrand = brandsResult.brands.find(brand => 
+            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
+          );
+          if (ebkBrand && ebkBrand.logo) {
+            console.log('✅ ADMIN: Found EB+K logo in database:', ebkBrand.logo.substring(0, 50) + '...');
+            setEbkLogo(ebkBrand.logo);
+          } else {
+            console.log('⚠️ ADMIN: No EB+K logo found in database');
+          }
+        }
+      } catch (error) {
+        console.error('🚨 ADMIN: Database error loading EB+K logo:', error);
+        // Fallback to emergency brands only if database fails
+        const brandsResult = EmergencyBrands.getBrands();
+        if (brandsResult.success) {
+          const ebkBrand = brandsResult.brands.find(brand => 
+            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
+          );
+          if (ebkBrand && ebkBrand.logo) {
+            setEbkLogo(ebkBrand.logo);
+          }
+        }
       }
       
-      // Then try to load from API
-      const result = await ApiService.getWhoWeAreSections();
-      if (result.success) {
-        setSections(result.sections);
-      } else {
-        if (!localSections) {
-          // Load default sections
-          const defaultSections = getDefaultSections();
+      // EMERGENCY: Always load default sections first to ensure they exist
+      const defaultSections = getDefaultSections();
+      console.log('🚨 ADMIN: Loading default sections:', defaultSections);
+      
+      // Try to load from localStorage
+      const localSections = localStorage.getItem('adminWhoWeAreSections');
+      if (localSections) {
+        try {
+          const parsed = JSON.parse(localSections);
+          console.log('✅ ADMIN: Loaded sections from localStorage:', parsed);
+          setSections(parsed);
+        } catch (parseError) {
+          console.log('⚠️ ADMIN: localStorage corrupted, using defaults');
           setSections(defaultSections);
           localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
         }
-      }
-    } catch (error) {
-      console.error('Error loading sections:', error);
-      const localSections = localStorage.getItem('adminWhoWeAreSections');
-      if (localSections) {
-        setSections(JSON.parse(localSections));
       } else {
-        const defaultSections = getDefaultSections();
+        console.log('⚠️ ADMIN: No localStorage, using defaults');
         setSections(defaultSections);
+        localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
       }
+      
+      // Try API in background (optional)
+      try {
+        const result = await ApiService.getWhoWeAreSections();
+        if (result.success && result.sections && result.sections.length > 0) {
+          console.log('✅ ADMIN: Also loaded from API:', result.sections);
+          setSections(result.sections);
+          localStorage.setItem('adminWhoWeAreSections', JSON.stringify(result.sections));
+        }
+      } catch (apiError) {
+        console.log('⚠️ ADMIN: API failed, keeping current sections');
+      }
+      
+    } catch (error) {
+      console.error('🚨 ADMIN: Critical error loading sections:', error);
+      const defaultSections = getDefaultSections();
+      setSections(defaultSections);
+      localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
     } finally {
       setLoading(false);
     }
@@ -82,7 +125,7 @@ const AdminWhoWeAre = ({ onLogout }) => {
     {
       id: 4,
       title: "Partnerstvo",
-      content: "Partnersky spolupracujeme so štúdiom EB+K.",
+      content: "Partnersky spolupracujeme so štúdiom Elite Bath + Kitchen (EB+K).",
       order: 4,
       size: "small"
     }
@@ -96,57 +139,122 @@ const AdminWhoWeAre = ({ onLogout }) => {
     }));
   };
 
+  const handleEbkLogoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Podporované sú iba obrázky (JPG, PNG, SVG, WebP)');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
+    try {
+      setUploadingLogo(true);
+      
+      console.log('🚨 ADMIN: Uploading EB+K logo to Supabase database...');
+      
+      // Convert file to data URL
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const logoDataUrl = e.target.result;
+        
+        try {
+          // Update EB+K brand in Supabase database
+          const result = await ApiService.updateBrandLogo('Elite Bath + Kitchen (EB+K)', logoDataUrl);
+          
+          if (result.success) {
+            console.log('✅ ADMIN: EB+K logo uploaded to database successfully!');
+            setEbkLogo(logoDataUrl);
+            setSuccess('EB+K logo bol úspešne aktualizovaný v databáze!');
+            
+            // Clear success message after 3 seconds
+            setTimeout(() => setSuccess(''), 3000);
+          } else {
+            console.error('❌ ADMIN: Database upload failed:', result.message);
+            setError('Chyba pri ukladaní do databázy: ' + result.message);
+          }
+        } catch (error) {
+          console.error('🚨 ADMIN: Critical database error:', error);
+          setError('Kritická chyba databázy: ' + error.message);
+        } finally {
+          setUploadingLogo(false);
+        }
+      };
+      
+      reader.readAsDataURL(file);
+      
+    } catch (error) {
+      console.error('🚨 ADMIN: Error uploading EB+K logo:', error);
+      setError('Chyba pri nahrávaní EB+K loga');
+      setUploadingLogo(false);
+    }
+    
+    // Clear file input
+    event.target.value = '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let result;
+      console.log('🚨 ADMIN: Saving section to emergency localStorage...');
+      
+      // EMERGENCY: Save directly to localStorage for immediate updates
+      const localSections = JSON.parse(localStorage.getItem('adminWhoWeAreSections') || '[]');
+      
       if (editingSection) {
-        result = await ApiService.updateWhoWeAreSection(editingSection.id, formData);
+        // Update existing section
+        const updatedSections = localSections.map(section => 
+          section.id === editingSection.id ? { ...section, ...formData } : section
+        );
+        localStorage.setItem('adminWhoWeAreSections', JSON.stringify(updatedSections));
+        setSections(updatedSections);
+        console.log('✅ ADMIN: Section updated in localStorage');
       } else {
-        result = await ApiService.createWhoWeAreSection(formData);
+        // Add new section
+        const newSection = {
+          id: Date.now(),
+          ...formData,
+          order: localSections.length + 1,
+          created_at: new Date().toISOString()
+        };
+        const updatedSections = [...localSections, newSection];
+        localStorage.setItem('adminWhoWeAreSections', JSON.stringify(updatedSections));
+        setSections(updatedSections);
+        console.log('✅ ADMIN: New section added to localStorage');
       }
 
-      if (result.success) {
-        await loadSections();
-        resetForm();
-        setShowAddModal(false);
-        setEditingSection(null);
-        setSuccess('Sekcia bola úspešne uložená!');
-        setTimeout(() => setSuccess(''), 3000);
-      } else {
-        // Try to save locally as fallback
-        try {
-          const localSections = JSON.parse(localStorage.getItem('adminWhoWeAreSections') || '[]');
-          const newSection = {
-            id: Date.now(),
-            ...formData,
-            order: localSections.length + 1,
-            created_at: new Date().toISOString()
-          };
-          
-          if (editingSection) {
-            const index = localSections.findIndex(sec => sec.id === editingSection.id);
-            if (index !== -1) {
-              localSections[index] = { ...editingSection, ...formData };
-            }
-          } else {
-            localSections.push(newSection);
-          }
-          
-          localStorage.setItem('adminWhoWeAreSections', JSON.stringify(localSections));
-          setSections(localSections);
-          resetForm();
-          setShowAddModal(false);
-          setEditingSection(null);
-          setSuccess('Sekcia uložená lokálne (databáza nedostupná)');
-          setTimeout(() => setSuccess(''), 3000);
-        } catch (localError) {
-          setError(result.message || 'Chyba pri ukladaní sekcie');
+      resetForm();
+      setShowAddModal(false);
+      setEditingSection(null);
+      setSuccess('Sekcia bola úspešne uložená do emergency systému!');
+      setTimeout(() => setSuccess(''), 3000);
+
+      // Try API save in background (optional)
+      try {
+        let result;
+        if (editingSection) {
+          result = await ApiService.updateWhoWeAreSection(editingSection.id, formData);
+        } else {
+          result = await ApiService.createWhoWeAreSection(formData);
         }
+        if (result.success) {
+          console.log('✅ ADMIN: Also saved to API successfully');
+        }
+      } catch (apiError) {
+        console.log('⚠️ ADMIN: API save failed, but localStorage save succeeded');
       }
+
     } catch (error) {
-      console.error('Error saving section:', error);
-      setError('Chyba pri ukladaní sekcie: ' + error.message);
+      console.error('🚨 ADMIN: Critical save error:', error);
+      setError('Chyba pri ukladaní sekcie');
     }
   };
 
@@ -220,6 +328,65 @@ const AdminWhoWeAre = ({ onLogout }) => {
             <h1 className="text-3xl font-bold text-white mb-2">Správa sekcií - O nás</h1>
             <p className="text-gray-400">Spravujte sekcie na stránke "O nás"</p>
           </div>
+        </div>
+
+        {/* EB+K Logo Management */}
+        <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <h2 className="text-xl font-semibold text-white mb-4">EB+K Logo Management</h2>
+          <div className="flex items-center space-x-6">
+            {/* Current Logo Preview */}
+            <div className="flex-shrink-0">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                <img 
+                  src={ebkLogo} 
+                  alt="Elite Bath + Kitchen (EB+K)"
+                  className="h-16 w-auto object-contain filter brightness-0 invert"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'block';
+                  }}
+                />
+                <div className="text-white font-semibold text-center hidden">
+                  EB+K
+                </div>
+              </div>
+            </div>
+
+            {/* Upload Controls */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-4">
+                <label 
+                  htmlFor="ebk-logo-upload"
+                  className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+                    uploadingLogo 
+                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                >
+                  {uploadingLogo ? 'Nahrávam...' : 'Nahrať EB+K Logo'}
+                </label>
+                <input
+                  type="file"
+                  id="ebk-logo-upload"
+                  accept="image/*"
+                  onChange={handleEbkLogoUpload}
+                  disabled={uploadingLogo}
+                  className="hidden"
+                />
+                <span className="text-gray-400 text-sm">
+                  JPG, PNG, SVG, WebP (max 5MB)
+                </span>
+              </div>
+              <p className="text-gray-400 text-sm mt-2">
+                Logo sa zobrazí na stránke "O nás" v sekcii partnerstva a na stránke značiek.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Add Section Button */}
+        <div className="flex justify-between items-center mb-8">
+          <div></div>
           <button
             onClick={handleAddNew}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"

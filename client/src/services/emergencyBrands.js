@@ -119,7 +119,7 @@ class EmergencyBrandsService {
         name: 'Azzurra',
         description: 'Prémiový taliansky výrobca kúpeľňovej sanity, nábytku a kúpeľňových doplnkov',
         category: 'Sanitárna keramika',
-        logo: '/logo Azzurra bianco su fondo nero.png',
+        logo: '/logoWhite.svg',
         website: 'https://www.azzurra.it',
         order: 4,
         images: [],
@@ -152,7 +152,7 @@ class EmergencyBrandsService {
         name: 'Zenon',
         description: 'Prémiový španielsky výrobca umývadiel, vaní a sprchových vaničiek',
         category: 'Sanitárna keramika',
-        logo: '/logoBlack.webp',
+        logo: '/logoWhite.svg',
         website: 'https://www.zenon.es',
         order: 7,
         images: [],
@@ -288,6 +288,18 @@ class EmergencyBrandsService {
         images: [],
         isMain: false,
         isOther: true
+      },
+      {
+        id: 19,
+        name: 'Elite Bath + Kitchen (EB+K)',
+        description: 'Partnersky spolupracujeme so štúdiom Elite Bath + Kitchen',
+        category: 'Partnerstvo',
+        logo: '/ebk-logo.svg', // Specific EB+K logo path
+        website: 'https://www.elitebathkitchen.com',
+        order: 19,
+        images: [],
+        isMain: true,
+        isPartnership: true
       }
     ];
   }

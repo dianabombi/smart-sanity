@@ -5,12 +5,12 @@ import ApiService from '../services/api';
 import EmergencyBrands from '../services/emergencyBrands';
 
 const Brands = () => {
-  const [selectedLogo, setSelectedLogo] = useState(null);
+  const [brands, setBrands] = useState([]);
   const [visibleBrands, setVisibleBrands] = useState([]);
-  const [showOtherBrands, setShowOtherBrands] = useState(false);
-  const [brands, setBrands] = useState([]); // Start empty - no old logos
-  // REMOVED loading state for instant display
   const [selectedBrandImages, setSelectedBrandImages] = useState(null);
+  const [selectedLogo, setSelectedLogo] = useState(null);
+  const [showOtherBrands, setShowOtherBrands] = useState(false);
+  const [error, setError] = useState('');
 
   const openLogoPreview = (brand) => {
     setSelectedLogo(brand);
@@ -48,28 +48,40 @@ const Brands = () => {
   };
 
   const loadBrands = useCallback(async () => {
-    console.log('🚨 EMERGENCY CLIENT MEETING: Loading ALL 18 brands instantly...');
+    console.log('📊 Loading brands from Supabase database...');
     
-    // Force fresh initialization to ensure we get all 18 brands
-    EmergencyBrands.initializeEmergencyBrands();
-    const result = EmergencyBrands.getBrands();
-    
-    if (result.success) {
-      const uploadedLogos = result.brands.filter(b => b.logo?.startsWith('data:')).length;
-      console.log(`✅ EMERGENCY: Loaded ${result.brands.length} brands (${uploadedLogos} uploaded logos)`);
+    try {
+      // Try to load from Supabase database first
+      const result = await ApiService.getBrands();
       
-      // Verify we have all brands
-      const mainBrands = result.brands.filter(b => b.category !== 'Ostatné').length;
-      const otherBrands = result.brands.filter(b => b.category === 'Ostatné').length;
-      console.log(`📊 EMERGENCY: ${mainBrands} main brands, ${otherBrands} other brands`);
+      if (result.success && result.brands && result.brands.length > 0) {
+        console.log(`✅ Loaded ${result.brands.length} brands from Supabase database`);
+        setBrands(result.brands);
+        setError('');
+      } else {
+        // Show error message about database setup
+        const errorMsg = result.message || 'Failed to load brands from database';
+        console.error('❌ Database error:', errorMsg);
+        setError(errorMsg);
+        
+        // Use emergency fallback for now
+        console.log('⚠️ Using emergency fallback brands');
+        EmergencyBrands.initializeEmergencyBrands();
+        const emergencyResult = EmergencyBrands.getBrands();
+        if (emergencyResult.success) {
+          setBrands(emergencyResult.brands);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Critical error loading brands:', error);
+      setError('Failed to connect to database. Please check your Supabase configuration.');
       
-      setBrands(result.brands);
-    } else {
-      console.log('⚠️ EMERGENCY: Fallback failed, forcing emergency brands');
-      // Force emergency brands directly
-      const emergencyBrands = EmergencyBrands.getFallbackBrands();
-      setBrands(emergencyBrands);
-      console.log(`✅ EMERGENCY: Forced ${emergencyBrands.length} brands`);
+      // Use emergency fallback
+      EmergencyBrands.initializeEmergencyBrands();
+      const emergencyResult = EmergencyBrands.getBrands();
+      if (emergencyResult.success) {
+        setBrands(emergencyResult.brands);
+      }
     }
   }, []);
 
@@ -122,15 +134,19 @@ const Brands = () => {
           <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
+          
         </div>
       </div>
 
       {/* Main Brands Grid */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.category !== 'Ostatné').length)}
+          {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').length, 'Partnership brands:', brands.filter(brand => brand.category === 'Partnerstvo').length)}
+          
+
+          {/* Main Brands Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {brands.filter(brand => brand.category !== 'Ostatné').map((brand, index) => (
+            {brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').map((brand, index) => (
               <div
                 key={brand._id || index}
                 className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform relative pb-16 ${
