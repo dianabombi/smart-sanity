@@ -125,10 +125,10 @@ const Inspirations = () => {
       <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Inšpirácie
           </h1>
-          <p className="text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
             Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. 
             Od moderných minimalistických riešení až po luxusné wellness priestory.
           </p>

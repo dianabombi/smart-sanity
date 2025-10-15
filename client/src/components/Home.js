@@ -74,7 +74,7 @@ const Home = () => {
         <div className="relative w-full laptop:w-2/3 h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
           {loading ? (
             <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-              <div className="text-gray-400 text-lg">Načítavam bannery...</div>
+              <div className="text-gray-300 text-lg">Načítavam bannery...</div>
             </div>
           ) : (
             <Carousel
@@ -98,7 +98,7 @@ const Home = () => {
             <img 
               src="/logo.png" 
               alt="Smart Sanit" 
-              className="shrink-0 h-14 tablet:h-20 laptop:h-20 w-auto object-contain"
+              className="shrink-0 h-14 tablet:h-16 laptop:h-18 w-auto object-contain"
               style={{
               }}
             />

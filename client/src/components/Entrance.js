@@ -21,19 +21,16 @@ const Entrance = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Čo ponúkame
           </h1>
-          <p className="text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
-            Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
-          </p>
         </div>
       </div>
       
       {/* Services Cards Section */}
       <div className="pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 gap-6 md:gap-8">
             {[
               "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
               "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
@@ -52,7 +49,7 @@ const Entrance = () => {
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="space-y-3">
-                  <p className="text-gray-400 leading-relaxed text-base group-hover:text-blue-300 transition-colors duration-200">
+                  <p className="text-gray-300 leading-relaxed text-lg">
                     {text}
                   </p>
                 </div>

@@ -192,7 +192,7 @@ const WhoWeAre = () => {
         <NavBar />
         <div className="pt-8 pb-4 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Smart Sanit s.r.o.
             </h1>
           </div>
@@ -209,23 +209,6 @@ const WhoWeAre = () => {
 
   const contentSection = (
     <div className="w-full max-w-6xl mx-auto px-4 space-y-8">
-      {/* Main Content - Single Card with Animation */}
-      <div className="flex justify-center">
-        <div className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 max-w-4xl ${
-          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-        style={{
-          transition: 'all 0.8s ease-out',
-          transitionDelay: '0.2s'
-        }}>
-          <div className="text-lg leading-relaxed text-gray-300 text-center space-y-6">
-            {content?.mainContent?.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Partnership Section - Separate Card with Animation */}
       <div className="flex justify-center">
         <div className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 max-w-md ${
@@ -233,7 +216,7 @@ const WhoWeAre = () => {
         }`}
         style={{
           transition: 'all 0.8s ease-out',
-          transitionDelay: '0.6s'
+          transitionDelay: '0.2s'
         }}>
           <div className="flex flex-col items-center space-y-6">
             <p className="text-lg leading-relaxed text-gray-300 text-center">
@@ -264,7 +247,7 @@ const WhoWeAre = () => {
                 <h3 className="text-xl font-semibold text-white mb-2">
                   Elite Bath + Kitchen (EB+K)
                 </h3>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-300 text-sm">
                   Dizajnové štúdio pre kúpeľne a kuchyne
                 </p>
               </div>
@@ -282,7 +265,7 @@ const WhoWeAre = () => {
       {/* Header Section */}
       <div className="pt-8 pb-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Smart Sanit s.r.o.
           </h1>
         </div>

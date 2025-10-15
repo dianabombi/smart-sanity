@@ -122,10 +122,10 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-400 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Obchodované značky
           </h1>
-          <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
           
@@ -199,7 +199,7 @@ const Brands = () => {
                     {brand.category}
                   </div>
                   
-                  <p className="text-sm leading-relaxed text-gray-300/70 overflow-hidden" style={{
+                  <p className="text-sm leading-relaxed text-gray-300 overflow-hidden" style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 4,
                     WebkitBoxOrient: 'vertical'
@@ -224,12 +224,12 @@ const Brands = () => {
       {/* Ostatné Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <h2 className={`text-2xl tablet:text-3xl font-light text-gray-400 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
+          <h2 className={`text-2xl tablet:text-3xl font-light text-gray-300 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
             OSTATNÉ
           </h2>
-          <p className={`text-lg text-gray-400 opacity-80 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
+          <p className={`text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`} style={{ transitionDelay: '200ms' }}>
             Ďalší producenti, ktorých vám vieme ponúknuť
@@ -273,12 +273,6 @@ const Brands = () => {
                     {brand.name}
                   </div>
                 </div>
-                {/* Website info for Tres */}
-                {brand.website && (
-                  <div className="mt-2 text-center">
-                    <p className="text-xs text-blue-300 opacity-80">{brand.website}</p>
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -289,10 +283,10 @@ const Brands = () => {
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8">
-            <h2 className="text-2xl font-light text-gray-400 mb-6">
+            <h2 className="text-2xl font-light text-gray-300 mb-6">
               Prečo si vybrať SMART SANIT?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-400/80">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-300/80">
               <div>
                 <h3 className="font-medium mb-2">Kvalita</h3>
                 <p className="text-sm">Všetky naše značky sú synonymom pre najvyššiu kvalitu a spoľahlivosť.</p>
@@ -316,10 +310,10 @@ const Brands = () => {
           <div className="bg-black rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-400">{selectedLogo.name}</h2>
+                <h2 className="text-2xl font-bold text-gray-300">{selectedLogo.name}</h2>
                 <button
                   onClick={closeLogoPreview}
-                  className="text-gray-400 hover:text-white text-2xl"
+                  className="text-gray-300 hover:text-white text-2xl"
                 >
                   ×
                 </button>
@@ -337,10 +331,10 @@ const Brands = () => {
               </div>
               
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-400 mb-2">
+                <h3 className="text-lg font-semibold text-gray-300 mb-2">
                   {selectedLogo.category}
                 </h3>
-                <p className="text-gray-400 leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                   {selectedLogo.description}
                 </p>
               </div>
@@ -392,15 +386,15 @@ const Brands = () => {
                   
                   {/* Brand Info */}
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-400 mb-2">{selectedBrandImages.name}</h2>
+                    <h2 className="text-2xl font-bold text-gray-300 mb-2">{selectedBrandImages.name}</h2>
                     <p className="text-blue-300 text-sm font-light tracking-wide mb-3">{selectedBrandImages.category}</p>
-                    <p className="text-gray-400 text-sm leading-relaxed">{selectedBrandImages.description}</p>
+                    <p className="text-gray-300 text-sm leading-relaxed">{selectedBrandImages.description}</p>
                   </div>
                 </div>
                 
                 <button
                   onClick={closeImageGallery}
-                  className="text-gray-400 hover:text-white text-3xl p-2 flex-shrink-0"
+                  className="text-gray-300 hover:text-white text-3xl p-2 flex-shrink-0"
                 >
                   ×
                 </button>
@@ -436,12 +430,12 @@ const Brands = () => {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="text-gray-400 mb-4">
+                  <div className="text-gray-300 mb-4">
                     <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <p className="text-gray-400 text-lg">Žiadne obrázky nie sú k dispozícii</p>
+                  <p className="text-gray-300 text-lg">Žiadne obrázky nie sú k dispozícii</p>
                 </div>
               )}
               
