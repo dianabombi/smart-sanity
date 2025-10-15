@@ -229,9 +229,9 @@ const WhoWeAre = () => {
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
                 <img 
                   key={logoKey}
-                  src={ebkLogo} 
+                  src="/elite_logoRGB-11.jpg" 
                   alt="Elite Bath + Kitchen (EB+K)"
-                  className="h-16 w-auto object-contain filter brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                  className="h-16 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextSibling.style.display = 'block';
