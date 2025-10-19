@@ -29,7 +29,7 @@ const Entrance = () => {
       
       {/* Services Cards Section */}
       <div className="pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 gap-6 md:gap-8">
             {[
               "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
@@ -49,7 +49,7 @@ const Entrance = () => {
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="space-y-3">
-                  <p className="text-gray-300 leading-relaxed text-lg">
+                  <p className="text-gray-300 leading-relaxed text-lg text-center">
                     {text}
                   </p>
                 </div>

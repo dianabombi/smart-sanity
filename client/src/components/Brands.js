@@ -227,7 +227,7 @@ const Brands = () => {
           <h2 className={`text-2xl tablet:text-3xl font-light text-gray-300 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
-            OSTATNÉ
+            Ostatné
           </h2>
           <p className={`text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'

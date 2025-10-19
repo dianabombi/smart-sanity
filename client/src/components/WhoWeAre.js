@@ -208,9 +208,28 @@ const WhoWeAre = () => {
   }
 
   const contentSection = (
-    <div className="w-full max-w-6xl mx-auto px-4 space-y-8">
-      {/* Partnership Section - Separate Card with Animation */}
-      <div className="flex justify-center">
+    <div className="w-full max-w-6xl mx-auto px-4">
+      {/* Side by Side Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        {/* Combined Main Content */}
+        <div className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
+          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+        style={{
+          transition: 'all 0.8s ease-out',
+          transitionDelay: '0.2s'
+        }}>
+          <div className="space-y-6">
+            {content?.mainContent?.map((text, index) => (
+              <p key={index} className="text-lg leading-relaxed text-gray-300">
+                {text}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {/* Partnership Section - Side by Side */}
+        <div className="flex justify-center lg:justify-start">
         <div className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 max-w-md ${
           visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}
@@ -253,6 +272,7 @@ const WhoWeAre = () => {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ const Footer = () => {
               href="https://www.instagram.com/smart_sanit_premium_bathrooms?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               aria-label="Instagram"
             >
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
@@ -31,7 +31,7 @@ const Footer = () => {
               href="https://www.facebook.com/profile.php?id=61556409956724" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               aria-label="Facebook"
             >
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
@@ -43,7 +43,7 @@ const Footer = () => {
               href="https://www.linkedin.com/in/du%C5%A1an-drinka-1a725a182/" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               aria-label="LinkedIn"
             >
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
@@ -53,13 +53,13 @@ const Footer = () => {
           </div>
           
           {/* Wavelyne Credit - Centered */}
-          <div className="text-center text-sm text-gray-500">
+          <div className="text-center text-sm text-gray-400">
             Created by{' '}
             <a 
               href="https://wavelynecode.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
             >
               &lt;Wavelyne&gt;
             </a>.
@@ -74,7 +74,7 @@ const Footer = () => {
               href="https://www.instagram.com/smart_sanit_premium_bathrooms?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               aria-label="Instagram"
             >
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@ const Footer = () => {
               href="https://www.facebook.com/profile.php?id=61556409956724" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               aria-label="Facebook"
             >
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@ const Footer = () => {
               href="https://www.linkedin.com/in/du%C5%A1an-drinka-1a725a182/" 
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               aria-label="LinkedIn"
             >
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
@@ -114,13 +114,13 @@ const Footer = () => {
           </div>
           
           {/* Wavelyne Credit - Right Corner */}
-          <div className="absolute bottom-0 right-4 text-sm text-gray-500">
+          <div className="absolute bottom-0 right-4 text-sm text-gray-400">
             Created by{' '}
             <a 
               href="https://wavelynecode.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-500 hover:text-gray-300 transition-colors duration-200"
+              className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
             >
               &lt;Wavelyne&gt;
             </a>.

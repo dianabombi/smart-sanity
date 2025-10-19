@@ -66,13 +66,13 @@ const NavBar = () => {
     <>
       {/* Logo - Separate positioned div */}
       <div 
-        className="fixed -top-8 left-2 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
+        className="fixed p-2 top-0 sm:-top-8 md:top-2 left-8 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
         onClick={() => handleNavClick('/')}
       >
         <img 
-          src="/logoBlack.webp" 
+          src="/logo vektory_bez pozadia.png" 
           alt="SMART SANITY" 
-          className="h-32 mobile:h-36 tablet:h-40 laptop:h-48 w-auto object-contain"
+          className="h-12 mobile:h-14 tablet:h-16 laptop:h-18 w-auto object-contain"
           style={{
             imageRendering: 'high-quality',
           }}
@@ -92,7 +92,7 @@ const NavBar = () => {
       {/* Navbar - Compact with large gray shadow (desktop only) */}
       <nav className="bg-black sticky top-0 z-[100] relative">
         <div className="hidden xl:block absolute inset-0 pointer-events-none" style={{ boxShadow: '0 10px 25px -3px rgba(156, 163, 175, 0.4), 0 4px 6px -2px rgba(156, 163, 175, 0.2), 0 20px 40px -10px rgba(156, 163, 175, 0.15)' }}></div>
-        <div className="flex items-end justify-end pl-1 pr-2 md:px-2 lg:px-2 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 pt-8 mobile:pt-10 tablet:pt-12 laptop:pt-16 pb-2 mobile:pb-3 tablet:pb-4 laptop:pb-5">
+        <div className="flex items-center justify-end pl-1 pr-2 md:px-2 lg:px-2 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 h-16 sm:h-20 md:h-24">
         
         {/* Navigation Links - show only when there's enough space (1200px+) */}
         <div className="hidden xl:flex items-baseline justify-end flex-wrap gap-x-6 mr-4">
