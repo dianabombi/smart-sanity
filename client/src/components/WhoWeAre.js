@@ -181,7 +181,7 @@ const WhoWeAre = () => {
     mainContent: [
       "Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní.",
       "Ako milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.",
-      "Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojím budúcim užívateľom prinášajú každodenný pocit komfortu, pohody a spoľahlivosti."
+      "Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojim budúcim užívateľom prinášajú každodenný pocit komfortu, pohodlia a spoľahlivosti."
     ],
     partnershipContent: "Partnersky spolupracujeme so štúdiom EB+K."
   });

@@ -71,12 +71,8 @@ const Home = () => {
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
         {/* Hero Banner - full width on mobile/tablet, 2/3 on laptop+ */}
-        <div className="relative w-full laptop:w-2/3 h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
-          {loading ? (
-            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-              <div className="text-gray-300 text-lg">Načítavam bannery...</div>
-            </div>
-          ) : (
+        {!loading && (
+          <div className="relative w-full laptop:w-2/3 h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
             <Carousel
               images={carouselImages}
               height="h-full"
@@ -88,8 +84,8 @@ const Home = () => {
               className="w-full h-full"
               transitionType="ken-burns"
             />
-          )}
-        </div>
+          </div>
+        )}
         
         {/* Right Section - full width on mobile/tablet, 1/3 on laptop+ */}
         <div className="w-full laptop:w-1/3 bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
@@ -112,12 +108,6 @@ const Home = () => {
               <p>a architektov</p>
             </div>
             
-            {/* Combined Company Description */}
-            <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-2xl">
-              <p className="text-sm tablet:text-base leading-relaxed text-gray-300 text-center">
-                Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní. Ako milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži. Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojím budúcim užívateľom prinášajú každodenný pocit komfortu, pohody a spoľahlivosti.
-              </p>
-            </div>
           </div>
           
           {/* Button Section */}

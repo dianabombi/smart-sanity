@@ -72,7 +72,7 @@ const NavBar = () => {
         <img 
           src="/logo vektory_bez pozadia.png" 
           alt="SMART SANITY" 
-          className="h-12 mobile:h-14 tablet:h-16 laptop:h-18 w-auto object-contain"
+          className="h-12 p-2 mobile:h-14 tablet:h-16 laptop:h-18 w-auto object-contain"
           style={{
             imageRendering: 'high-quality',
           }}

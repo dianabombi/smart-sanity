@@ -133,8 +133,19 @@ const Brands = () => {
       </div>
 
       {/* Main Brands Grid */}
-      <div className="pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+      <div className="pb-16 px-4 sm:px-6 lg:px-8 relative">
+        {/* Subtle tile background pattern */}
+        <div className="absolute inset-0 opacity-[0.05] -z-10" style={{
+          backgroundImage: `
+            linear-gradient(45deg, #ffffff 25%, transparent 25%),
+            linear-gradient(-45deg, #ffffff 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #ffffff 75%),
+            linear-gradient(-45deg, transparent 75%, #ffffff 75%)
+          `,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+        }}></div>
+        <div className="max-w-6xl mx-auto relative z-10">
           {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').length, 'Partnership brands:', brands.filter(brand => brand.category === 'Partnerstvo').length)}
           
 
@@ -222,9 +233,20 @@ const Brands = () => {
       </div>
 
       {/* Ostatné Section */}
-      <div className="pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className={`text-2xl tablet:text-3xl font-light text-gray-300 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
+      <div className="pb-16 px-4 sm:px-6 lg:px-8 relative">
+        {/* Subtle tile background pattern */}
+        <div className="absolute inset-0 opacity-[0.05] -z-10" style={{
+          backgroundImage: `
+            linear-gradient(45deg, #ffffff 25%, transparent 25%),
+            linear-gradient(-45deg, #ffffff 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #ffffff 75%),
+            linear-gradient(-45deg, transparent 75%, #ffffff 75%)
+          `,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+        }}></div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <h2 className={`text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
             showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
             Ostatné
