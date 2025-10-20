@@ -103,10 +103,11 @@ const Brands = () => {
 
   // REMOVED LOADING STATE FOR CLIENT MEETING - INSTANT DISPLAY
 
-  // Debug logging
-  console.log('🔍 BRANDS RENDER DEBUG:');
+  // Debug logging - DEPLOYMENT CHECK
+  console.log('🔍 DEPLOYMENT CHECK - BRANDS RENDER DEBUG:');
   console.log('- brands.length:', brands.length);
   console.log('- loading:', loading);
+  console.log('- timestamp:', new Date().toISOString());
   console.log('- brands data:', brands.slice(0, 2)); // First 2 brands
 
   return (
