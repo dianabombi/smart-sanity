@@ -7,10 +7,9 @@ import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Brands = () => {
   const [brands, setBrands] = useState([]);
-  const [visibleBrands, setVisibleBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedBrandImages, setSelectedBrandImages] = useState(null);
   const [selectedLogo, setSelectedLogo] = useState(null);
-  const [showOtherBrands, setShowOtherBrands] = useState(false);
   const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle } = useBackgroundSettings();
 
   const openLogoPreview = (brand) => {
@@ -48,36 +47,40 @@ const Brands = () => {
     setSelectedBrandImages(null);
   };
 
-  const loadBrands = useCallback(async () => {
-    console.log('🚨 EMERGENCY: Loading brands from localStorage (client meeting mode)...');
-    
+  const loadBrands = useCallback(async (forceRefresh = false) => {
     try {
-      // PRIORITY: Use EmergencyBrands service first (where admin changes are saved)
-      EmergencyBrands.initializeEmergencyBrands();
+      setLoading(true);
+      console.log(`🚨 DEEP DEBUG: Loading brands... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
+      
+      // DEEP DEBUG: Test both sources and compare
+      console.log('🔍 DEEP DEBUG: Testing EmergencyBrands first...');
       const emergencyResult = EmergencyBrands.getBrands();
+      console.log('🔍 EmergencyBrands result:', emergencyResult);
       
-      if (emergencyResult.success && emergencyResult.brands && emergencyResult.brands.length > 0) {
-        console.log(`✅ EMERGENCY: Loaded ${emergencyResult.brands.length} brands from localStorage`);
+      console.log('🔍 DEEP DEBUG: Testing Supabase...');
+      const supabaseResult = await ApiService.getBrands();
+      console.log('🔍 Supabase result:', supabaseResult);
+      
+      // Use the same logic as admin - prioritize EmergencyBrands
+      if (emergencyResult.success && emergencyResult.brands.length > 0) {
+        console.log(`✅ DEEP DEBUG: Using EmergencyBrands - ${emergencyResult.brands.length} brands`);
+        console.log('🔍 First EmergencyBrand:', emergencyResult.brands[0]);
         setBrands(emergencyResult.brands);
-        return; // Use emergency brands and exit
-      }
-      
-      // Fallback to Supabase only if emergency brands fail
-      console.log('⚠️ Emergency brands failed, trying Supabase...');
-      const result = await ApiService.getBrands();
-      
-      if (result.success && result.brands && result.brands.length > 0) {
-        console.log(`✅ Loaded ${result.brands.length} brands from Supabase database`);
-        setBrands(result.brands);
+      } else if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
+        console.log(`✅ DEEP DEBUG: Using Supabase - ${supabaseResult.brands.length} brands`);
+        console.log('🔍 First Supabase brand:', supabaseResult.brands[0]);
+        setBrands(supabaseResult.brands);
       } else {
-        // Show error message about database setup
-        const errorMsg = result.message || 'Failed to load brands from any source';
-        console.error('❌ All sources failed:', errorMsg);
-        setBrands([]); // Set empty array as final fallback
+        console.error('❌ DEEP DEBUG: Both sources failed');
+        console.log('EmergencyBrands:', emergencyResult);
+        console.log('Supabase:', supabaseResult);
+        setBrands([]);
       }
     } catch (error) {
-      console.error('❌ Critical error loading brands:', error);
-      setBrands([]); // Set empty array as final fallback
+      console.error('❌ DEEP DEBUG: Error in loadBrands:', error);
+      setBrands([]);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -96,30 +99,24 @@ const Brands = () => {
   // }, [loadBrands]);
 
 
-  // Animation for brands
-  useEffect(() => {
-    if (brands.length > 0) {
-      const timer = setTimeout(() => {
-        setVisibleBrands(brands.map((_, index) => index));
-      }, 400);
-      
-      const otherBrandsTimer = setTimeout(() => {
-        setShowOtherBrands(true);
-      }, 1200);
-
-      return () => {
-        clearTimeout(timer);
-        clearTimeout(otherBrandsTimer);
-      };
-    }
-  }, [brands]);
+  // REMOVED COMPLEX ANIMATIONS - Direct display for reliability
 
   // REMOVED LOADING STATE FOR CLIENT MEETING - INSTANT DISPLAY
+
+  // Debug logging
+  console.log('🔍 BRANDS RENDER DEBUG:');
+  console.log('- brands.length:', brands.length);
+  console.log('- loading:', loading);
+  console.log('- brands data:', brands.slice(0, 2)); // First 2 brands
 
   return (
     <Layout>
       <NavBar />
       
+      {/* DEBUG INFO */}
+      <div className="fixed top-4 right-4 bg-black bg-opacity-75 text-white p-2 text-xs z-50 rounded">
+        Brands: {brands.length} | Loading: {loading ? 'Yes' : 'No'}
+      </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
@@ -130,6 +127,7 @@ const Brands = () => {
           <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
           </p>
+          
           
         </div>
       </div>
@@ -149,16 +147,12 @@ const Brands = () => {
           {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').length, 'Partnership brands:', brands.filter(brand => brand.category === 'Partnerstvo').length)}
           
 
-          {/* Main Brands Section */}
+          {/* Main Brands Section - SIMPLIFIED */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').map((brand, index) => (
               <div
-                key={brand._id || index}
-                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform relative pb-16 ${
-                  visibleBrands.includes(index) 
-                    ? 'translate-y-0 opacity-100 scale-100' 
-                    : 'translate-y-8 opacity-0 scale-95'
-                } hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20`}
+                key={brand.id || brand._id || index}
+                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform relative pb-16 opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20"
                 style={{ transitionDelay: `${index * 100}ms` }}
                 onClick={() => {
                   if (brand.images && brand.images.length > 0) {
@@ -244,25 +238,17 @@ const Brands = () => {
           <div className="absolute inset-0 -z-10" style={getBackgroundStyle()}></div>
         )}
         <div className="max-w-6xl mx-auto relative z-10">
-          <h2 className={`text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide transform transition-all duration-1000 ${
-            showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`}>
+          <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide opacity-100 translate-y-0">
             Ostatné
           </h2>
-          <p className={`text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 transform transition-all duration-1000 ${
-            showOtherBrands ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`} style={{ transitionDelay: '200ms' }}>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {brands.filter(brand => brand.category === 'Ostatné').map((brand, index) => (
               <div
-                key={brand._id || index}
-                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform ${
-                  showOtherBrands 
-                    ? 'translate-y-0 opacity-100 scale-100' 
-                    : 'translate-y-8 opacity-0 scale-95'
-                } hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20`}
+                key={brand.id || brand._id || index}
+                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20"
                 style={{ transitionDelay: `${index * 80 + 200}ms` }}
                 onClick={() => {
                   if (brand.images && brand.images.length > 0) {

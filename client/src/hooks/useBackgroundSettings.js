@@ -21,10 +21,9 @@ export const useBackgroundSettings = () => {
 
   const loadSettings = async () => {
     try {
-      const response = await ApiService.getBackgroundSettings();
-      if (response.success && response.settings) {
-        setSettings(response.settings);
-      }
+      // CRITICAL FIX: Skip API call to prevent table error, use default settings
+      console.log('Using default background settings (Supabase table not configured)');
+      // Settings already initialized with defaults above
     } catch (error) {
       console.error('Error loading background settings:', error);
     } finally {

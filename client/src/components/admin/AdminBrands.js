@@ -32,25 +32,35 @@ const AdminBrands = ({ onLogout }) => {
     try {
       setLoading(true);
       
-      console.log('🚨 ADMIN EMERGENCY: Loading brands instantly...');
+      console.log('🚨 ADMIN: Loading brands (hybrid approach)...');
       
-      // Use emergency service for instant loading
-      const result = EmergencyBrands.getBrands();
+      // First, load from EmergencyBrands for immediate admin display
+      const emergencyResult = EmergencyBrands.getBrands();
       
-      if (result.success) {
-        console.log('✅ ADMIN EMERGENCY: Loaded', result.brands.length, 'brands');
-        setBrands(result.brands);
+      if (emergencyResult.success && emergencyResult.brands.length > 0) {
+        console.log('✅ ADMIN: Loaded', emergencyResult.brands.length, 'brands from EmergencyBrands');
+        setBrands(emergencyResult.brands);
+        setError('');
+        
+        // Also try to sync with Supabase in background (non-blocking)
+        try {
+          console.log('🔄 ADMIN: Also checking Supabase...');
+          const supabaseResult = await ApiService.getBrands();
+          if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
+            console.log('✅ ADMIN: Supabase also has', supabaseResult.brands.length, 'brands');
+          }
+        } catch (error) {
+          console.log('⚠️ ADMIN: Supabase check failed, but EmergencyBrands worked');
+        }
       } else {
-        console.log('⚠️ ADMIN EMERGENCY: Using fallback');
-        const fallbackBrands = ApiService.getFallbackBrands();
-        setBrands(fallbackBrands);
+        console.error('❌ ADMIN: Failed to load from EmergencyBrands');
+        setError('Failed to load brands');
+        setBrands([]);
       }
-      
     } catch (error) {
-      console.error('❌ ADMIN EMERGENCY: Error loading brands:', error);
-      setError('Chyba pri načítavaní značiek');
-      const fallbackBrands = ApiService.getFallbackBrands();
-      setBrands(fallbackBrands);
+      console.error('❌ ADMIN: Error loading brands:', error);
+      setError('Error loading brands: ' + error.message);
+      setBrands([]);
     } finally {
       setLoading(false);
     }
@@ -346,26 +356,41 @@ const AdminBrands = ({ onLogout }) => {
     try {
       setUploadingLogo(true);
       
-      console.log('🚨 ADMIN EMERGENCY: Uploading logo using emergency service...');
-      const result = await EmergencyBrands.updateBrandLogo(selectedBrand.id, file);
+      console.log('🚨 ADMIN: Uploading logo (hybrid approach)...');
       
-      if (result.success) {
-        console.log('✅ EMERGENCY: Logo upload successful!');
+      // First, save to EmergencyBrands for immediate admin panel update
+      const emergencyResult = await EmergencyBrands.updateBrandLogo(selectedBrand.id, file);
+      
+      if (emergencyResult.success) {
+        console.log('✅ ADMIN: Logo saved to EmergencyBrands');
         
-        // Update selectedBrand immediately with the new logo URL
-        const updatedBrand = { ...selectedBrand, logo: result.logoUrl };
+        // Update admin panel immediately
+        const updatedBrand = { ...selectedBrand, logo: emergencyResult.logoUrl };
         setSelectedBrand(updatedBrand);
         
-        // Reload brands to get updated data from emergency service
+        // Reload brands in admin panel
         const brandsResult = EmergencyBrands.getBrands();
         if (brandsResult.success) {
           setBrands(brandsResult.brands);
-          console.log('✅ EMERGENCY: Brands updated in admin');
+          console.log('✅ ADMIN: Admin panel updated');
+        }
+        
+        // Try to also save to Supabase for public page (non-blocking)
+        try {
+          console.log('🔄 ADMIN: Also trying to save to Supabase...');
+          const supabaseResult = await ApiService.uploadBrandLogo(selectedBrand.id, file);
+          if (supabaseResult.success) {
+            console.log('✅ ADMIN: Also saved to Supabase for public page');
+          } else {
+            console.log('⚠️ ADMIN: Supabase save failed, but EmergencyBrands worked');
+          }
+        } catch (error) {
+          console.log('⚠️ ADMIN: Supabase save failed, but EmergencyBrands worked:', error);
         }
         
         alert('Logo značky bol úspešne aktualizovaný!');
       } else {
-        alert('Chyba pri aktualizácii loga: ' + result.message);
+        alert('Chyba pri aktualizácii loga: ' + emergencyResult.message);
       }
     } catch (error) {
       console.error('Error uploading logo:', error);

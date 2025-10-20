@@ -263,17 +263,20 @@ class ApiService {
 
   // Brands
   async getBrands() {
+    console.log('🔍 DEEP DEBUG: getBrands called');
+    console.log('🔍 Supabase available?', this.isSupabaseAvailable());
+    
     if (!this.isSupabaseAvailable()) {
       console.log('🚫 Supabase not available, using fallback brands');
       return { success: true, brands: this.getFallbackBrands(), source: 'fallback-no-supabase' };
     }
 
     try {
-      console.log('Fetching brands from Supabase...');
+      console.log('🔍 DEEP DEBUG: Fetching brands from Supabase...');
       
       // Add timeout to prevent long waits
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased to 10 seconds
       
       const { data, error } = await supabase
         .from('brands')
@@ -283,14 +286,18 @@ class ApiService {
       
       clearTimeout(timeoutId);
       
+      console.log('🔍 DEEP DEBUG: Supabase response - error:', error);
+      console.log('🔍 DEEP DEBUG: Supabase response - data length:', data?.length);
+      console.log('🔍 DEEP DEBUG: Supabase response - first item:', data?.[0]);
+      
       if (error) {
-        console.log('🚫 Supabase error, using fallback:', error);
-        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-supabase-error' };
+        console.log('🚫 Supabase error:', error);
+        return { success: false, error: error, message: 'Supabase error: ' + error.message };
       }
       
       if (!data || data.length === 0) {
-        console.log('🚫 No brands in database, using fallback');
-        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-empty-db' };
+        console.log('🚫 No brands in database');
+        return { success: false, message: 'No brands found in database' };
       }
 
       // Process brands without any automatic cleanup
@@ -403,6 +410,39 @@ class ApiService {
       return { success: true, brand: data[0] };
     } catch (error) {
       return { success: false, message: 'Chyba pri aktualizácii značky' };
+    }
+  }
+
+  async uploadBrandLogo(brandId, file) {
+    console.log('Uploading brand logo to Supabase database...');
+
+    try {
+      // Convert file to data URL
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+
+      // Update brand logo in database
+      const { data, error } = await supabase
+        .from('brands')
+        .update({ logo: dataUrl })
+        .eq('id', brandId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Failed to update brand logo:', error);
+        throw new Error('Failed to update logo in database');
+      }
+
+      console.log('✅ Brand logo updated successfully in database');
+      return { success: true, logoUrl: dataUrl, brand: data };
+    } catch (error) {
+      console.error('Error uploading brand logo:', error);
+      return { success: false, message: error.message };
     }
   }
 
