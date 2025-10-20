@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
 import EmergencyBrands from '../../services/emergencyBrands';
+import { useBackgroundSettings } from '../../hooks/useBackgroundSettings';
 
 const AdminBrands = ({ onLogout }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -16,6 +17,11 @@ const AdminBrands = ({ onLogout }) => {
   const [tempCategory, setTempCategory] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const categoryInputRef = useRef(null);
+  
+  // Background settings
+  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
+  const [showBackgroundSettings, setShowBackgroundSettings] = useState(false);
+  const [backgroundMessage, setBackgroundMessage] = useState('');
 
   // Load brands from API
   useEffect(() => {
@@ -235,6 +241,89 @@ const AdminBrands = ({ onLogout }) => {
   const handleCategoryCancel = () => {
     setEditingCategory(false);
     setTempCategory('');
+  };
+
+  // Background management functions
+  const handleBackgroundImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setBackgroundMessage('Podporované sú len JPG, PNG a WebP súbory.');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setBackgroundMessage('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
+    try {
+      // Convert to base64 for storage
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const imageDataUrl = e.target.result;
+        
+        // Update background settings
+        const updatedSettings = {
+          ...backgroundSettings,
+          brandsPageBackgroundImage: imageDataUrl
+        };
+        
+        const response = await ApiService.updateBackgroundSettings(updatedSettings);
+        if (response.success) {
+          setBackgroundMessage('Obrázok pozadia bol úspešne nahraný!');
+          refreshSettings();
+          setTimeout(() => setBackgroundMessage(''), 3000);
+        } else {
+          setBackgroundMessage('Chyba pri ukladaní obrázka pozadia.');
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading background image:', error);
+      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia.');
+    }
+  };
+
+  const removeBackgroundImage = async () => {
+    try {
+      const updatedSettings = {
+        ...backgroundSettings,
+        brandsPageBackgroundImage: null
+      };
+      
+      const response = await ApiService.updateBackgroundSettings(updatedSettings);
+      if (response.success) {
+        setBackgroundMessage('Obrázok pozadia bol odstránený.');
+        refreshSettings();
+        setTimeout(() => setBackgroundMessage(''), 3000);
+      } else {
+        setBackgroundMessage('Chyba pri odstraňovaní obrázka pozadia.');
+      }
+    } catch (error) {
+      console.error('Error removing background image:', error);
+      setBackgroundMessage('Chyba pri odstraňovaní obrázka pozadia.');
+    }
+  };
+
+  const updateBackgroundSetting = async (field, value) => {
+    try {
+      const updatedSettings = {
+        ...backgroundSettings,
+        [field]: value
+      };
+      
+      const response = await ApiService.updateBackgroundSettings(updatedSettings);
+      if (response.success) {
+        refreshSettings();
+      }
+    } catch (error) {
+      console.error('Error updating background setting:', error);
+    }
   };
 
   const handleLogoUpload = async (event) => {
@@ -847,6 +936,152 @@ const AdminBrands = ({ onLogout }) => {
               🔄 Inicializovať značky
             </button>
           </div>
+        </div>
+
+        {/* Background Settings */}
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-white">Nastavenia pozadia stránky značiek</h3>
+            <button
+              onClick={() => setShowBackgroundSettings(!showBackgroundSettings)}
+              className="text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              {showBackgroundSettings ? '🔼 Skryť' : '🔽 Zobraziť'}
+            </button>
+          </div>
+          
+          {backgroundMessage && (
+            <div className={`mb-4 p-3 rounded-lg text-sm ${
+              backgroundMessage.includes('úspešne') || backgroundMessage.includes('odstránený')
+                ? 'bg-green-900/50 border border-green-500 text-green-300'
+                : 'bg-red-900/50 border border-red-500 text-red-300'
+            }`}>
+              {backgroundMessage}
+            </div>
+          )}
+
+          {showBackgroundSettings && (
+            <div className="space-y-6">
+              {/* Background Image Upload */}
+              <div className="space-y-4">
+                <h4 className="text-md font-medium text-gray-300">Obrázok pozadia</h4>
+                
+                {!backgroundSettings.brandsPageBackgroundImage ? (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleBackgroundImageUpload}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Podporované formáty: JPG, PNG, WebP. Maximálna veľkosť: 5MB
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="relative inline-block">
+                      <img
+                        src={backgroundSettings.brandsPageBackgroundImage}
+                        alt="Background preview"
+                        className="w-32 h-20 object-cover rounded-lg"
+                      />
+                      <button
+                        onClick={removeBackgroundImage}
+                        className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white p-1 rounded-full transition-colors text-xs"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <label className="block text-sm text-gray-300 mb-1">
+                          Priehľadnosť: {backgroundSettings.backgroundImageOpacity}
+                        </label>
+                        <input
+                          type="range"
+                          min="0.1"
+                          max="1"
+                          step="0.1"
+                          value={backgroundSettings.backgroundImageOpacity}
+                          onChange={(e) => updateBackgroundSetting('backgroundImageOpacity', parseFloat(e.target.value))}
+                          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-gray-300 mb-1">
+                          Rozmazanie: {backgroundSettings.backgroundImageBlur}px
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="10"
+                          step="1"
+                          value={backgroundSettings.backgroundImageBlur}
+                          onChange={(e) => updateBackgroundSetting('backgroundImageBlur', parseInt(e.target.value))}
+                          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Pattern Settings */}
+              <div className="space-y-4 border-t border-gray-700 pt-4">
+                <h4 className="text-md font-medium text-gray-300">Vzor pozadia</h4>
+                
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="enablePattern"
+                    checked={backgroundSettings.brandsPagePattern}
+                    onChange={(e) => updateBackgroundSetting('brandsPagePattern', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="enablePattern" className="text-gray-300">
+                    Zobraziť vzor pozadia
+                  </label>
+                </div>
+
+                {backgroundSettings.brandsPagePattern && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">Typ vzoru</label>
+                      <select
+                        value={backgroundSettings.patternType}
+                        onChange={(e) => updateBackgroundSetting('patternType', e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="tiles">Dlaždice</option>
+                        <option value="dots">Bodky</option>
+                        <option value="lines">Čiary</option>
+                        <option value="grid">Mriežka</option>
+                        <option value="none">Žiadny</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">
+                        Priehľadnosť: {backgroundSettings.patternOpacity}
+                      </label>
+                      <input
+                        type="range"
+                        min="0.01"
+                        max="0.2"
+                        step="0.01"
+                        value={backgroundSettings.patternOpacity}
+                        onChange={(e) => updateBackgroundSetting('patternOpacity', parseFloat(e.target.value))}
+                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Brands Grid */}

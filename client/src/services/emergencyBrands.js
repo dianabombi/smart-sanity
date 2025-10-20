@@ -334,8 +334,8 @@ class EmergencyBrandsService {
       },
       {
         id: 19,
-        name: 'Elite Bath + Kitchen (EB+K)',
-        description: 'Partnersky spolupracujeme so štúdiom Elite Bath + Kitchen',
+        name: 'Elite Bath + Kitchen',
+        description: '',
         category: 'Partnerstvo',
         logo: '/ebk-logo.svg', // Specific EB+K logo path
         website: 'https://www.elitebathkitchen.com',

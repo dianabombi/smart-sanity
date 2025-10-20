@@ -13,12 +13,16 @@ const Carousel = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [previousIndex, setPreviousIndex] = useState(null);
 
   // Auto-play functionality
   useEffect(() => {
     if (autoPlay && images.length > 1) {
       const interval = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setCurrentIndex((prevIndex) => {
+          setPreviousIndex(prevIndex);
+          return (prevIndex + 1) % images.length;
+        });
       }, autoPlayInterval);
 
       return () => clearInterval(interval);
@@ -28,6 +32,7 @@ const Carousel = ({
   const goToPrevious = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
+    setPreviousIndex(currentIndex);
     setCurrentIndex(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
     setTimeout(() => setIsTransitioning(false), 1000);
   };
@@ -35,6 +40,7 @@ const Carousel = ({
   const goToNext = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
+    setPreviousIndex(currentIndex);
     setCurrentIndex((currentIndex + 1) % images.length);
     setTimeout(() => setIsTransitioning(false), 1000);
   };
@@ -42,6 +48,7 @@ const Carousel = ({
   const goToSlide = (index) => {
     if (isTransitioning || index === currentIndex) return;
     setIsTransitioning(true);
+    setPreviousIndex(currentIndex);
     setCurrentIndex(index);
     setTimeout(() => setIsTransitioning(false), 1000);
   };
@@ -64,10 +71,12 @@ const Carousel = ({
         };
       
       case 'ken-burns':
+        const isPrevious = index === previousIndex;
         return {
           className: `${baseTransition} ${isActive ? 'opacity-100' : 'opacity-0'}`,
           style: {
-            animation: isActive ? 'smoothZoomIn 8s ease-out forwards' : 'none'
+            animation: isActive ? 'smoothZoomIn 8s ease-in-out forwards' : 'none',
+            transform: isPrevious ? 'scale(1.05)' : (isActive ? undefined : 'scale(1.0)')
           }
         };
       
@@ -93,7 +102,8 @@ const Carousel = ({
       <style jsx>{`
         @keyframes smoothZoomIn {
           0% { transform: scale(1.0); }
-          100% { transform: scale(1.15); }
+          85% { transform: scale(1.05); }
+          100% { transform: scale(1.05); }
         }
       `}</style>
 

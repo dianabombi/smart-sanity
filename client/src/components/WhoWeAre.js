@@ -97,7 +97,7 @@ const WhoWeAre = () => {
     try {
       setLoading(true);
       
-      // CRITICAL FIX: Get EB+K logo from Supabase database (not localStorage)
+    
       try {
         console.log('🚨 CRITICAL: Loading EB+K logo from Supabase database...');
         const brandsResult = await ApiService.getBrands();
@@ -183,7 +183,7 @@ const WhoWeAre = () => {
       "Ako milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.",
       "Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojim budúcim užívateľom prinášajú každodenný pocit komfortu, pohodlia a spoľahlivosti."
     ],
-    partnershipContent: "Partnersky spolupracujeme so štúdiom EB+K."
+    partnershipContent: ""
   });
 
   if (loading) {
@@ -249,7 +249,7 @@ const WhoWeAre = () => {
                 <img 
                   key={logoKey}
                   src="/elite_logoRGB-11.jpg" 
-                  alt="Elite Bath + Kitchen (EB+K)"
+                  alt="Elite Bath + Kitchen"
                   className="h-16 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
                   onError={(e) => {
                     e.target.style.display = 'none';
@@ -264,10 +264,10 @@ const WhoWeAre = () => {
               {/* Full Brand Name */}
               <div className="text-center">
                 <h3 className="text-xl font-semibold text-white mb-2">
-                  Elite Bath + Kitchen (EB+K)
+                  
                 </h3>
                 <p className="text-gray-300 text-sm">
-                  Dizajnové štúdio pre kúpeľne a kuchyne
+                  
                 </p>
               </div>
             </div>

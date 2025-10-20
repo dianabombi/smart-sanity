@@ -1629,7 +1629,7 @@ class ApiService {
       {
         id: 4,
         title: "Partnerstvo",
-        content: "Partnersky spolupracujeme so štúdiom EB+K.",
+        content: "",
         order: 4,
         size: "small"
       }
@@ -2058,6 +2058,98 @@ class ApiService {
           }
         ]
       };
+    }
+  }
+
+  // Background Settings API methods
+  async getBackgroundSettings() {
+    try {
+      if (!this.isSupabaseAvailable()) {
+        // Return default settings if Supabase not available
+        return {
+          success: true,
+          settings: {
+            brandsPagePattern: true,
+            patternOpacity: 0.05,
+            patternSize: 20,
+            patternType: 'tiles',
+            homePageBackground: 'default',
+            globalBackground: 'default',
+            brandsPageBackgroundImage: null,
+            backgroundImageOpacity: 0.3,
+            backgroundImageBlur: 0
+          }
+        };
+      }
+
+      const { data, error } = await supabase
+        .from('background_settings')
+        .select('*')
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        throw error;
+      }
+
+      return {
+        success: true,
+        settings: data || {
+          brandsPagePattern: true,
+          patternOpacity: 0.05,
+          patternSize: 20,
+          patternType: 'tiles',
+          homePageBackground: 'default',
+          globalBackground: 'default',
+          brandsPageBackgroundImage: null,
+          backgroundImageOpacity: 0.3,
+          backgroundImageBlur: 0
+        }
+      };
+    } catch (error) {
+      console.error('Error fetching background settings:', error);
+      return {
+        success: false,
+        error: error.message,
+        settings: {
+          brandsPagePattern: true,
+          patternOpacity: 0.05,
+          patternSize: 20,
+          patternType: 'tiles',
+          homePageBackground: 'default',
+          globalBackground: 'default',
+          brandsPageBackgroundImage: null,
+          backgroundImageOpacity: 0.3,
+          backgroundImageBlur: 0
+        }
+      };
+    }
+  }
+
+  async updateBackgroundSettings(settings) {
+    try {
+      if (!this.isSupabaseAvailable()) {
+        // Store in localStorage as fallback
+        localStorage.setItem('backgroundSettings', JSON.stringify(settings));
+        return { success: true };
+      }
+
+      const { data, error } = await supabase
+        .from('background_settings')
+        .upsert([{
+          id: 1,
+          ...settings,
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+
+      if (error) throw error;
+
+      return { success: true, settings: data[0] };
+    } catch (error) {
+      console.error('Error updating background settings:', error);
+      // Fallback to localStorage
+      localStorage.setItem('backgroundSettings', JSON.stringify(settings));
+      return { success: true };
     }
   }
 }

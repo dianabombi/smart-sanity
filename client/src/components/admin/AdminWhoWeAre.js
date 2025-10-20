@@ -125,7 +125,7 @@ const AdminWhoWeAre = ({ onLogout }) => {
     {
       id: 4,
       title: "Partnerstvo",
-      content: "Partnersky spolupracujeme so štúdiom Elite Bath + Kitchen (EB+K).",
+      content: "",
       order: 4,
       size: "small"
     }
