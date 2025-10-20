@@ -141,7 +141,7 @@ const Home = () => {
               {/* Smart Sanit Logo - positioned higher */}
               <div className="flex-shrink-0 pt-4 tablet:pt-6 laptop:pt-16 flex justify-center">
                 <img 
-                  src="/logo.png" 
+                  src="/logo vektory_bez pozadia.png" 
                   alt="Smart Sanit" 
                   className="shrink-0 h-14 tablet:h-16 laptop:h-18 w-auto object-contain"
                   style={{
