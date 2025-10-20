@@ -10,6 +10,7 @@ const Brands = () => {
   const [loading, setLoading] = useState(true);
   const [selectedBrandImages, setSelectedBrandImages] = useState(null);
   const [selectedLogo, setSelectedLogo] = useState(null);
+  const [pageDescription, setPageDescription] = useState('Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.');
   const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle } = useBackgroundSettings();
 
   const openLogoPreview = (brand) => {
@@ -47,37 +48,53 @@ const Brands = () => {
     setSelectedBrandImages(null);
   };
 
+
+  const loadPageContent = useCallback(async () => {
+    try {
+      const result = await ApiService.getPageContent('brands', 'header', 'description');
+      if (result.success && result.content) {
+        setPageDescription(result.content);
+      }
+    } catch (error) {
+      console.log('⚠️ PUBLIC: Failed to load page content, using fallback');
+    }
+  }, []);
+
   const loadBrands = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
-      console.log(`🚨 DEEP DEBUG: Loading brands... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
+      console.log(`🚨 PUBLIC: Loading brands from database... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
       
-      // DEEP DEBUG: Test both sources and compare
-      console.log('🔍 DEEP DEBUG: Testing EmergencyBrands first...');
+      // First, try to load from Supabase database
+      try {
+        console.log('🔄 PUBLIC: Loading from Supabase database...');
+        const supabaseResult = await ApiService.getBrands();
+        
+        if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
+          console.log(`✅ PUBLIC: Loaded ${supabaseResult.brands.length} brands from Supabase`);
+          console.log('🔍 First Supabase brand:', supabaseResult.brands[0]);
+          setBrands(supabaseResult.brands);
+          return; // Successfully loaded from database
+        } else {
+          console.log('⚠️ PUBLIC: Supabase returned no brands, trying fallback...');
+        }
+      } catch (error) {
+        console.log('⚠️ PUBLIC: Supabase failed, trying fallback...', error);
+      }
+      
+      // Fallback to EmergencyBrands if Supabase fails
+      console.log('🔍 PUBLIC: Using EmergencyBrands fallback...');
       const emergencyResult = EmergencyBrands.getBrands();
-      console.log('🔍 EmergencyBrands result:', emergencyResult);
       
-      console.log('🔍 DEEP DEBUG: Testing Supabase...');
-      const supabaseResult = await ApiService.getBrands();
-      console.log('🔍 Supabase result:', supabaseResult);
-      
-      // Use the same logic as admin - prioritize EmergencyBrands
       if (emergencyResult.success && emergencyResult.brands.length > 0) {
-        console.log(`✅ DEEP DEBUG: Using EmergencyBrands - ${emergencyResult.brands.length} brands`);
-        console.log('🔍 First EmergencyBrand:', emergencyResult.brands[0]);
+        console.log(`✅ PUBLIC: Loaded ${emergencyResult.brands.length} brands from EmergencyBrands (fallback)`);
         setBrands(emergencyResult.brands);
-      } else if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
-        console.log(`✅ DEEP DEBUG: Using Supabase - ${supabaseResult.brands.length} brands`);
-        console.log('🔍 First Supabase brand:', supabaseResult.brands[0]);
-        setBrands(supabaseResult.brands);
       } else {
-        console.error('❌ DEEP DEBUG: Both sources failed');
-        console.log('EmergencyBrands:', emergencyResult);
-        console.log('Supabase:', supabaseResult);
+        console.error('❌ PUBLIC: Both Supabase and EmergencyBrands failed');
         setBrands([]);
       }
     } catch (error) {
-      console.error('❌ DEEP DEBUG: Error in loadBrands:', error);
+      console.error('❌ PUBLIC: Error in loadBrands:', error);
       setBrands([]);
     } finally {
       setLoading(false);
@@ -86,7 +103,8 @@ const Brands = () => {
 
   useEffect(() => {
     loadBrands();
-  }, [loadBrands]);
+    loadPageContent();
+  }, [loadBrands, loadPageContent]);
 
   // EMERGENCY: Disable auto-refresh to prevent logo overwriting during client meeting
   // useEffect(() => {
@@ -123,10 +141,8 @@ const Brands = () => {
             Obchodované značky
           </h1>
           <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
-          Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.
+          {pageDescription}
           </p>
-          
-          
         </div>
       </div>
 
@@ -455,6 +471,7 @@ const Brands = () => {
           </div>
         </div>
       )}
+
     </Layout>
   );
 };

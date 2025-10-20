@@ -18,42 +18,79 @@ const AdminBrands = ({ onLogout }) => {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const categoryInputRef = useRef(null);
   
+  // Add Brand Modal State
+  const [showAddBrandModal, setShowAddBrandModal] = useState(false);
+  const [newBrand, setNewBrand] = useState({
+    name: '',
+    category: '',
+    description: '',
+    logo: null,
+    logoPreview: null
+  });
+  const [addingBrand, setAddingBrand] = useState(false);
+  
   // Background settings
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
   const [showBackgroundSettings, setShowBackgroundSettings] = useState(false);
   const [backgroundMessage, setBackgroundMessage] = useState('');
+  
+  // Page content editing
+  const [pageDescription, setPageDescription] = useState('');
+  const [editingPageDescription, setEditingPageDescription] = useState(false);
+  const [tempPageDescription, setTempPageDescription] = useState('');
 
-  // Load brands from API
+  // Load brands and page content from API
   useEffect(() => {
     loadBrands();
+    loadPageContent();
   }, []);
+
+  const loadPageContent = async () => {
+    try {
+      const result = await ApiService.getPageContent('brands', 'header', 'description');
+      if (result.success && result.content) {
+        setPageDescription(result.content);
+      }
+    } catch (error) {
+      console.log('⚠️ ADMIN: Failed to load page content');
+    }
+  };
 
   const loadBrands = async () => {
     try {
       setLoading(true);
       
-      console.log('🚨 ADMIN: Loading brands (hybrid approach)...');
+      console.log('🚨 ADMIN: Loading brands (database first approach)...');
       
-      // First, load from EmergencyBrands for immediate admin display
+      // First, try to load from Supabase database
+      try {
+        console.log('🔄 ADMIN: Loading from Supabase database...');
+        const supabaseResult = await ApiService.getBrands();
+        
+        if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
+          console.log('✅ ADMIN: Loaded', supabaseResult.brands.length, 'brands from Supabase');
+          console.log('🔍 ADMIN: First brand data:', supabaseResult.brands[0]);
+          console.log('🔍 ADMIN: All brands is_main values:', supabaseResult.brands.map(b => ({ name: b.name, is_main: b.is_main })));
+          setBrands(supabaseResult.brands);
+          setError('');
+          return; // Successfully loaded from database
+        } else {
+          console.log('⚠️ ADMIN: Supabase returned no brands, trying fallback...');
+          console.log('🔍 ADMIN: Supabase result:', supabaseResult);
+        }
+      } catch (error) {
+        console.log('⚠️ ADMIN: Supabase failed, trying fallback...', error);
+      }
+      
+      // Fallback to EmergencyBrands if Supabase fails
       const emergencyResult = EmergencyBrands.getBrands();
       
       if (emergencyResult.success && emergencyResult.brands.length > 0) {
-        console.log('✅ ADMIN: Loaded', emergencyResult.brands.length, 'brands from EmergencyBrands');
+        console.log('✅ ADMIN: Loaded', emergencyResult.brands.length, 'brands from EmergencyBrands (fallback)');
         setBrands(emergencyResult.brands);
         setError('');
-        
-        // Also try to sync with Supabase in background (non-blocking)
-        try {
-          console.log('🔄 ADMIN: Also checking Supabase...');
-          const supabaseResult = await ApiService.getBrands();
-          if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
-            console.log('✅ ADMIN: Supabase also has', supabaseResult.brands.length, 'brands');
-          }
-        } catch (error) {
-          console.log('⚠️ ADMIN: Supabase check failed, but EmergencyBrands worked');
-        }
       } else {
-        console.error('❌ ADMIN: Failed to load from EmergencyBrands');
+        console.error('❌ ADMIN: Both Supabase and EmergencyBrands failed');
         setError('Failed to load brands');
         setBrands([]);
       }
@@ -444,6 +481,179 @@ const AdminBrands = ({ onLogout }) => {
       alert('Chyba pri odstraňovaní loga');
     } finally {
       setUploadingLogo(false);
+    }
+  };
+
+  // Add Brand Functions
+  const handleAddBrandLogoUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Podporované sú iba obrázky (JPG, PNG, SVG, WebP)');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setNewBrand(prev => ({
+        ...prev,
+        logo: file,
+        logoPreview: e.target.result
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const resetAddBrandForm = () => {
+    setNewBrand({
+      name: '',
+      category: '',
+      description: '',
+      logo: null,
+      logoPreview: null
+    });
+  };
+
+  const handleAddBrand = async () => {
+    if (!newBrand.name.trim()) {
+      alert('Názov značky je povinný');
+      return;
+    }
+
+    if (!newBrand.category.trim()) {
+      alert('Kategória značky je povinná');
+      return;
+    }
+
+    try {
+      setAddingBrand(true);
+      
+      // Get the highest order number for proper ordering
+      const maxOrder = brands.length > 0 ? Math.max(...brands.map(b => b.order || 0)) : 0;
+      
+      // Prepare brand data
+      let logoUrl = '/logoWhite.svg'; // Default logo
+      
+      // Convert logo to data URL if provided
+      if (newBrand.logo) {
+        logoUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(newBrand.logo);
+        });
+      }
+      
+      const brandData = {
+        name: newBrand.name.trim(),
+        category: newBrand.category.trim(),
+        description: newBrand.description.trim(),
+        logo: logoUrl,
+        order: maxOrder + 1,
+        images: [],
+        is_main: true
+      };
+      
+      console.log('Creating new brand:', brandData);
+      
+      const result = await ApiService.createBrand(brandData);
+      
+      if (result.success) {
+        console.log('✅ Brand created successfully');
+        
+        // Reload brands to show the new one
+        await loadBrands();
+        
+        // Reset form and close modal
+        resetAddBrandForm();
+        setShowAddBrandModal(false);
+        
+        alert('Značka bola úspešne pridaná!');
+      } else {
+        alert('Chyba pri vytváraní značky: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error creating brand:', error);
+      alert('Chyba pri vytváraní značky');
+    } finally {
+      setAddingBrand(false);
+    }
+  };
+
+  const handleCancelAddBrand = () => {
+    resetAddBrandForm();
+    setShowAddBrandModal(false);
+  };
+
+  // Page Description Editing Functions
+  const handlePageDescriptionEdit = () => {
+    setTempPageDescription(pageDescription);
+    setEditingPageDescription(true);
+  };
+
+  const handlePageDescriptionSave = async () => {
+    try {
+      const result = await ApiService.updatePageContent('brands', 'header', 'description', tempPageDescription);
+      
+      if (result.success) {
+        setPageDescription(tempPageDescription);
+        setEditingPageDescription(false);
+        setTempPageDescription('');
+        alert('Popis stránky bol úspešne aktualizovaný!');
+      } else {
+        alert('Chyba pri aktualizácii popisu: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating page description:', error);
+      alert('Chyba pri aktualizácii popisu');
+    }
+  };
+
+  const handlePageDescriptionCancel = () => {
+    setEditingPageDescription(false);
+    setTempPageDescription('');
+  };
+
+  // Delete Brand Function
+  const handleDeleteBrand = async () => {
+    if (!selectedBrand) return;
+    
+    const confirmMessage = `Ste si istí, že chcete odstrániť značku "${selectedBrand.name}"? Táto akcia sa nedá vrátiť späť.`;
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      console.log('🗑️ Deleting brand:', selectedBrand.name);
+      
+      const result = await ApiService.deleteBrand(selectedBrand.id);
+      
+      if (result.success) {
+        console.log('✅ Brand deleted successfully');
+        
+        // Close the modal
+        setSelectedBrand(null);
+        
+        // Reload brands to refresh the list
+        await loadBrands();
+        
+        alert('Značka bola úspešne odstránená!');
+      } else {
+        alert('Chyba pri odstraňovaní značky: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error deleting brand:', error);
+      alert('Chyba pri odstraňovaní značky');
     }
   };
 
@@ -871,21 +1081,32 @@ const AdminBrands = ({ onLogout }) => {
 
           {/* Footer */}
           <div className="p-6 border-t border-gray-700 flex justify-between">
-            <button
-              onClick={async () => {
-                await loadBrands();
-                const updatedBrands = await ApiService.getBrands();
-                if (updatedBrands.success) {
-                  const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
-                  if (updatedBrand) {
-                    setSelectedBrand(updatedBrand);
+            <div className="flex space-x-3">
+              <button
+                onClick={async () => {
+                  await loadBrands();
+                  const updatedBrands = await ApiService.getBrands();
+                  if (updatedBrands.success) {
+                    const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
+                    if (updatedBrand) {
+                      setSelectedBrand(updatedBrand);
+                    }
                   }
-                }
-              }}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
-            >
-              🔄 Obnoviť
-            </button>
+                }}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
+              >
+                🔄 Obnoviť
+              </button>
+              <button
+                onClick={handleDeleteBrand}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm flex items-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>Odstrániť značku</span>
+              </button>
+            </div>
             <div className="space-x-3">
               <button
                 onClick={() => setSelectedBrand(null)}
@@ -951,16 +1172,67 @@ const AdminBrands = ({ onLogout }) => {
               </p>
             </div>
             <button
-              onClick={async () => {
-                const result = await ApiService.initializeBrands();
-                alert(result.success ? '✅ ' + result.message : '❌ ' + result.message);
-                if (result.success) await loadBrands();
-              }}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+              onClick={() => setShowAddBrandModal(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors font-medium flex items-center space-x-2"
             >
-              🔄 Inicializovať značky
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span>Pridať značku</span>
             </button>
           </div>
+        </div>
+
+        {/* Page Content Management */}
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-2">Popis stránky značiek</h3>
+              <p className="text-gray-300 text-sm">Text zobrazený pod nadpisom "Obchodované značky"</p>
+            </div>
+            {!editingPageDescription && (
+              <button
+                onClick={handlePageDescriptionEdit}
+                className="text-blue-400 hover:text-blue-300 text-sm flex items-center"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Upraviť
+              </button>
+            )}
+          </div>
+          
+          {editingPageDescription ? (
+            <div className="space-y-3">
+              <textarea
+                value={tempPageDescription}
+                onChange={(e) => setTempPageDescription(e.target.value)}
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows="4"
+                placeholder="Zadajte popis stránky značiek..."
+                maxLength={500}
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePageDescriptionSave}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Uložiť
+                </button>
+                <button
+                  onClick={handlePageDescriptionCancel}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Zrušiť
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg">
+              <p className="text-white leading-relaxed">{pageDescription || 'Žiadny popis nie je nastavený'}</p>
+            </div>
+          )}
         </div>
 
         {/* Background Settings */}
@@ -1109,20 +1381,67 @@ const AdminBrands = ({ onLogout }) => {
           )}
         </div>
 
-        {/* Brands Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {brands.map(brand => (
-            <BrandCard key={brand.id} brand={brand} />
-          ))}
+        {/* Main Brands Section */}
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">Hlavné značky</h3>
+              <p className="text-gray-300 text-sm">Značky zobrazené v hlavnej sekcii s popismi</p>
+            </div>
+            <div className="text-sm text-gray-400">
+              {brands.filter(brand => brand.is_main === true).length} značiek
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {brands.filter(brand => brand.is_main === true).map(brand => (
+              <BrandCard key={brand.id} brand={brand} />
+            ))}
+          </div>
+          {brands.filter(brand => brand.is_main === true).length === 0 && (
+            <div className="text-center py-8 text-gray-400">
+              <p>Žiadne hlavné značky zatiaľ neboli pridané</p>
+            </div>
+          )}
+        </div>
+
+        {/* Ostatné Brands Section */}
+        <div className="bg-gray-800 rounded-lg shadow p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-2">Ostatné značky</h3>
+              <p className="text-gray-300 text-sm">Značky zobrazené v sekcii "Ostatné" iba s logami</p>
+            </div>
+            <div className="text-sm text-gray-400">
+              {brands.filter(brand => brand.is_main === false).length} značiek
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            {brands.filter(brand => brand.is_main === false).map(brand => (
+              <BrandCard key={brand.id} brand={brand} />
+            ))}
+          </div>
+          {brands.filter(brand => brand.is_main === false).length === 0 && (
+            <div className="text-center py-8 text-gray-400">
+              <p>Žiadne ostatné značky zatiaľ neboli pridané</p>
+            </div>
+          )}
         </div>
 
         {/* Statistics */}
         <div className="bg-gray-800 rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Štatistiky</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-blue-600">{brands.length}</p>
               <p className="text-sm text-gray-300">Celkom značiek</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-indigo-400">{brands.filter(brand => brand.is_main === true).length}</p>
+              <p className="text-sm text-gray-300">Hlavné značky</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-cyan-400">{brands.filter(brand => brand.is_main === false).length}</p>
+              <p className="text-sm text-gray-300">Ostatné značky</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-green-400">
@@ -1148,6 +1467,167 @@ const AdminBrands = ({ onLogout }) => {
 
       {/* Image Upload Modal */}
       <ImageUploadModal />
+      
+      {/* Add Brand Modal */}
+      {showAddBrandModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-700">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-white">
+                Pridať novú značku
+              </h2>
+              <button
+                onClick={handleCancelAddBrand}
+                className="text-gray-400 hover:text-gray-200 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+              {/* Brand Name */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Názov značky *
+                </label>
+                <input
+                  type="text"
+                  value={newBrand.name}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, name: e.target.value }))}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Zadajte názov značky"
+                  maxLength={100}
+                />
+              </div>
+
+              {/* Brand Category */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Kategória značky *
+                </label>
+                <input
+                  type="text"
+                  value={newBrand.category}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Zadajte kategóriu (napr. Kúpeľňový nábytok)"
+                  maxLength={100}
+                />
+              </div>
+
+              {/* Brand Description */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Popis značky
+                </label>
+                <textarea
+                  value={newBrand.description}
+                  onChange={(e) => setNewBrand(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  rows="4"
+                  placeholder="Zadajte popis značky..."
+                  maxLength={500}
+                />
+              </div>
+
+              {/* Brand Logo */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Logo značky
+                </label>
+                
+                <div className="flex items-center space-x-4">
+                  {/* Logo Preview */}
+                  <div className="w-20 h-20 bg-gray-700 border border-gray-600 rounded-lg flex items-center justify-center">
+                    {newBrand.logoPreview ? (
+                      <img 
+                        src={newBrand.logoPreview} 
+                        alt="Logo preview"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    ) : (
+                      <div className="text-gray-400 text-xs text-center">
+                        Žiadne logo
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Logo Upload */}
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAddBrandLogoUpload}
+                      className="hidden"
+                      id="add-brand-logo-upload"
+                    />
+                    <label
+                      htmlFor="add-brand-logo-upload"
+                      className="inline-flex items-center px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent cursor-pointer transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      Vybrať logo
+                    </label>
+                    
+                    {newBrand.logo && (
+                      <button
+                        onClick={() => setNewBrand(prev => ({ ...prev, logo: null, logoPreview: null }))}
+                        className="ml-3 inline-flex items-center px-4 py-2 border border-red-600 rounded-lg text-sm font-medium text-red-400 bg-transparent hover:bg-red-600 hover:text-white transition-colors"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Odstrániť
+                      </button>
+                    )}
+                    
+                    <p className="text-xs text-gray-400 mt-2">
+                      Podporované formáty: JPG, PNG, SVG, WebP (max 5MB)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-gray-700 flex justify-end space-x-3">
+              <button
+                onClick={handleCancelAddBrand}
+                disabled={addingBrand}
+                className="px-4 py-2 text-gray-300 hover:text-white transition-colors disabled:opacity-50"
+              >
+                Zrušiť
+              </button>
+              <button
+                onClick={handleAddBrand}
+                disabled={addingBrand || !newBrand.name.trim() || !newBrand.category.trim()}
+                className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                {addingBrand ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Pridávam...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span>Pridať značku</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 };

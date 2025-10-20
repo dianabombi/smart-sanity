@@ -413,6 +413,94 @@ class ApiService {
     }
   }
 
+  async deleteBrand(id) {
+    try {
+      const { error } = await supabase
+        .from('brands')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        return { success: false, message: error.message };
+      }
+      
+      return { success: true, message: 'Značka bola úspešne odstránená' };
+    } catch (error) {
+      return { success: false, message: 'Chyba pri odstraňovaní značky' };
+    }
+  }
+
+  // Page Content Management
+  async getPageContent(page, section = null, contentKey = null) {
+    if (!this.isSupabaseAvailable()) {
+      // Return fallback content
+      const fallbackContent = {
+        'brands.header.description': 'Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.'
+      };
+      
+      const key = `${page}.${section}.${contentKey}`;
+      return { 
+        success: true, 
+        content: fallbackContent[key] || 'Obsah nie je k dispozícii' 
+      };
+    }
+
+    try {
+      let query = supabase.from('page_content').select('*').eq('page', page);
+      
+      if (section) {
+        query = query.eq('section', section);
+      }
+      
+      if (contentKey) {
+        query = query.eq('content_key', contentKey);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        return { success: false, message: error.message };
+      }
+      
+      if (contentKey && data.length > 0) {
+        return { success: true, content: data[0].content_text };
+      }
+      
+      return { success: true, content: data };
+    } catch (error) {
+      return { success: false, message: 'Chyba pri načítavaní obsahu' };
+    }
+  }
+
+  async updatePageContent(page, section, contentKey, contentText) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: false, message: 'Supabase nie je k dispozícii' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('page_content')
+        .upsert({
+          page,
+          section,
+          content_key: contentKey,
+          content_text: contentText,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'page,section,content_key'
+        })
+        .select();
+      
+      if (error) {
+        return { success: false, message: error.message };
+      }
+      
+      return { success: true, content: data[0] };
+    } catch (error) {
+      return { success: false, message: 'Chyba pri aktualizácii obsahu' };
+    }
+  }
+
   async uploadBrandLogo(brandId, file) {
     console.log('Uploading brand logo to Supabase database...');
 
