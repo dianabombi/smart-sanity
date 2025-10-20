@@ -7,7 +7,6 @@ import EmergencyBrands from '../services/emergencyBrands';
 const WhoWeAre = () => {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [visible, setVisible] = useState(false);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
   const [partnershipText, setPartnershipText] = useState('Partnersky spolupracujeme s interiérovým štúdiom');
@@ -144,10 +143,7 @@ const WhoWeAre = () => {
       setContent(fallbackContent);
       setLoading(false);
       
-      // Start animation after content is loaded
-      setTimeout(() => {
-        setVisible(true);
-      }, 400);
+      // Animation removed - content displays immediately
       
       // Try to load from API with timeout in background
       const timeoutPromise = new Promise((_, reject) => 
@@ -182,9 +178,6 @@ const WhoWeAre = () => {
       console.error('Error loading content:', error);
       setContent(getDefaultContent());
       setLoading(false);
-      setTimeout(() => {
-        setVisible(true);
-      }, 400);
     }
   };
 
