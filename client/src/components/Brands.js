@@ -115,10 +115,6 @@ const Brands = () => {
     <Layout>
       <NavBar />
       
-      {/* DEBUG INFO */}
-      <div className="fixed top-4 right-4 bg-black bg-opacity-75 text-white p-2 text-xs z-50 rounded">
-        Brands: {brands.length} | Loading: {loading ? 'Yes' : 'No'}
-      </div>
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
