@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import ApiService from '../services/api';
 
 export const useBackgroundSettings = () => {
-  const [settings, setSettings] = useState({
+  const [settings] = useState({
     brandsPagePattern: true,
     patternOpacity: 0.05,
     patternSize: 20,
