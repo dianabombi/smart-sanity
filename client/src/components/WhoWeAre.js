@@ -10,6 +10,7 @@ const WhoWeAre = () => {
   const [visible, setVisible] = useState(false);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
+  const [partnershipText, setPartnershipText] = useState('Partnersky spolupracujeme s interiérovým štúdiom');
 
   useEffect(() => {
     loadContent();
@@ -127,6 +128,16 @@ const WhoWeAre = () => {
           }
         }
       }
+
+      // Load partnership text from page content system
+      try {
+        const partnershipResult = await ApiService.getPageContent('who-we-are', 'partnership', 'text');
+        if (partnershipResult.success && partnershipResult.content) {
+          setPartnershipText(partnershipResult.content);
+        }
+      } catch (error) {
+        console.log('⚠️ Failed to load partnership text, using default');
+      }
       
       // Load fallback content immediately for fast display
       const fallbackContent = getDefaultContent();
@@ -199,7 +210,7 @@ const WhoWeAre = () => {
         </div>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2  mx-auto mb-4"></div>
             <p className="text-white">Načítavam obsah...</p>
           </div>
         </div>
@@ -210,36 +221,26 @@ const WhoWeAre = () => {
   const contentSection = (
     <div className="w-full max-w-6xl mx-auto px-4">
       {/* Side by Side Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center justify-center">
         {/* Combined Main Content */}
-        <div className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
-          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-        style={{
-          transition: 'all 0.8s ease-out',
-          transitionDelay: '0.2s'
-        }}>
-          <div className="space-y-6">
-            {content?.mainContent?.map((text, index) => (
-              <p key={index} className="text-lg leading-relaxed text-gray-300">
-                {text}
-              </p>
-            ))}
+        <div className="flex justify-center">
+          <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 opacity-100 w-full max-w-lg">
+            <div className="space-y-6">
+              {content?.mainContent?.map((text, index) => (
+                <p key={index} className="text-lg leading-relaxed text-gray-300">
+                  {text}
+                </p>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Partnership Section - Side by Side */}
-        <div className="flex justify-center lg:justify-start">
-        <div className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 max-w-md ${
-          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-        style={{
-          transition: 'all 0.8s ease-out',
-          transitionDelay: '0.2s'
-        }}>
+        <div className="flex justify-center">
+        <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 max-w-md opacity-100">
           <div className="flex flex-col items-center space-y-6">
             <p className="text-lg leading-relaxed text-gray-300 text-center">
-              {content?.partnershipContent}
+              {partnershipText}
             </p>
             
             {/* Elite Bath + Kitchen Partnership */}
@@ -291,7 +292,7 @@ const WhoWeAre = () => {
         </div>
       </div>
       
-      <div className="bg-black flex items-center justify-center py-8 min-h-[40vh]">
+      <div className="bg-black flex items-center justify-center py-8 min-h-[60vh]">
         {contentSection}
       </div>
     </Layout>

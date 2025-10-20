@@ -147,10 +147,6 @@ const Home = () => {
                   style={{
                   }}
                 />
-                {/* Version indicator - remove after deployment confirmed */}
-                <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded opacity-50">
-                  v2025.01.20.14:16
-                </div>
               </div>
               
               {/* Text Section */}

@@ -9,13 +9,13 @@ const AdminLayout = ({ children, onLogout }) => {
   const menuItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { label: 'Hero Bannery', path: '/admin/hero-banners', icon: '🖼️' },
-    { label: 'Obchodované značky', path: '/admin/brands', icon: '🏷️' },
-    { label: 'Kontaktné správy', path: '/admin/messages', icon: '📧' },
     { label: 'O nás', path: '/admin/who-we-are', icon: '👥' },
     { label: 'Čo ponúkame', path: '/admin/what-we-offer', icon: '💼' },
+    { label: 'Obchodované značky', path: '/admin/brands', icon: '🏷️' },
     { label: 'Inšpirácie', path: '/admin/inspirations', icon: '💡' },
     { label: 'Referencie', path: '/admin/references', icon: '📋' },
-    { label: 'Kontakt', path: '/admin/contact', icon: '📞' }
+    { label: 'Kontakt', path: '/admin/contact', icon: '📞' },
+    { label: 'Kontaktné správy', path: '/admin/messages', icon: '📧' }
   ];
 
   const handleLogout = () => {

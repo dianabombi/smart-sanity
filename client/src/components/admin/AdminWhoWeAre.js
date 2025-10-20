@@ -18,6 +18,9 @@ const AdminWhoWeAre = ({ onLogout }) => {
   });
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [partnershipText, setPartnershipText] = useState('Partnersky spolupracujeme s interiérovým štúdiom');
+  const [editingPartnershipText, setEditingPartnershipText] = useState(false);
+  const [tempPartnershipText, setTempPartnershipText] = useState('');
 
   useEffect(() => {
     loadSections();
@@ -58,36 +61,25 @@ const AdminWhoWeAre = ({ onLogout }) => {
       
       // EMERGENCY: Always load default sections first to ensure they exist
       const defaultSections = getDefaultSections();
-      console.log('🚨 ADMIN: Loading default sections:', defaultSections);
+      console.log('🚨 ADMIN: Loading simplified default sections:', defaultSections);
       
-      // Try to load from localStorage
-      const localSections = localStorage.getItem('adminWhoWeAreSections');
-      if (localSections) {
-        try {
-          const parsed = JSON.parse(localSections);
-          console.log('✅ ADMIN: Loaded sections from localStorage:', parsed);
-          setSections(parsed);
-        } catch (parseError) {
-          console.log('⚠️ ADMIN: localStorage corrupted, using defaults');
-          setSections(defaultSections);
-          localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
-        }
-      } else {
-        console.log('⚠️ ADMIN: No localStorage, using defaults');
-        setSections(defaultSections);
-        localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
-      }
+      // FORCE RESET: Clear everything and use new simplified sections
+      console.log('🔄 ADMIN: FORCE RESET - Clearing all cached data...');
+      localStorage.removeItem('adminWhoWeAreSections');
+      setSections(defaultSections);
+      localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
       
-      // Try API in background (optional)
+      // Skip API loading to prevent overriding the simplified structure
+      console.log('✅ ADMIN: Using simplified sections only (API skipped)');
+
+      // Load partnership text
       try {
-        const result = await ApiService.getWhoWeAreSections();
-        if (result.success && result.sections && result.sections.length > 0) {
-          console.log('✅ ADMIN: Also loaded from API:', result.sections);
-          setSections(result.sections);
-          localStorage.setItem('adminWhoWeAreSections', JSON.stringify(result.sections));
+        const partnershipResult = await ApiService.getPageContent('who-we-are', 'partnership', 'text');
+        if (partnershipResult.success && partnershipResult.content) {
+          setPartnershipText(partnershipResult.content);
         }
-      } catch (apiError) {
-        console.log('⚠️ ADMIN: API failed, keeping current sections');
+      } catch (error) {
+        console.log('⚠️ ADMIN: Failed to load partnership text, using default');
       }
       
     } catch (error) {
@@ -104,30 +96,9 @@ const AdminWhoWeAre = ({ onLogout }) => {
     {
       id: 1,
       title: "O spoločnosti",
-      content: "Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní.",
+      content: "Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní.\n\nAko milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.\n\nNašim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojím budúcim užívateľom prinášajú každodenný pocit komfortu, pohody a spoľahlivosti.",
       order: 1,
       size: "large"
-    },
-    {
-      id: 2,
-      title: "Naša vízia",
-      content: "Ako milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.",
-      order: 2,
-      size: "large"
-    },
-    {
-      id: 3,
-      title: "Pre našich klientov",
-      content: "Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojím budúcim užívateľom prinášajú každodenný pocit komfortu, pohody a spoľahlivosti.",
-      order: 3,
-      size: "large"
-    },
-    {
-      id: 4,
-      title: "Partnerstvo",
-      content: "",
-      order: 4,
-      size: "small"
     }
   ];
 
@@ -199,6 +170,37 @@ const AdminWhoWeAre = ({ onLogout }) => {
     
     // Clear file input
     event.target.value = '';
+  };
+
+  // Partnership Text Management Functions
+  const handlePartnershipTextEdit = () => {
+    setTempPartnershipText(partnershipText);
+    setEditingPartnershipText(true);
+  };
+
+  const handlePartnershipTextSave = async () => {
+    try {
+      // Save to page content system
+      const result = await ApiService.updatePageContent('who-we-are', 'partnership', 'text', tempPartnershipText);
+      
+      if (result.success) {
+        setPartnershipText(tempPartnershipText);
+        setEditingPartnershipText(false);
+        setTempPartnershipText('');
+        setSuccess('Text partnerstva bol úspešne aktualizovaný!');
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError('Chyba pri aktualizácii textu: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating partnership text:', error);
+      setError('Chyba pri aktualizácii textu partnerstva');
+    }
+  };
+
+  const handlePartnershipTextCancel = () => {
+    setEditingPartnershipText(false);
+    setTempPartnershipText('');
   };
 
   const handleSubmit = async (e) => {
@@ -306,6 +308,18 @@ const AdminWhoWeAre = ({ onLogout }) => {
     setShowAddModal(true);
   };
 
+  const handleForceReset = () => {
+    if (window.confirm('Naozaj chcete resetovať všetky sekcie na predvolené nastavenia? Táto akcia sa nedá vrátiť späť.')) {
+      console.log('🔄 ADMIN: Manual force reset triggered...');
+      localStorage.removeItem('adminWhoWeAreSections');
+      const defaultSections = getDefaultSections();
+      setSections(defaultSections);
+      localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
+      setSuccess('Sekcie boli resetované na predvolené nastavenia!');
+      setTimeout(() => setSuccess(''), 3000);
+    }
+  };
+
   if (loading) {
     return (
       <AdminLayout onLogout={onLogout}>
@@ -384,9 +398,66 @@ const AdminWhoWeAre = ({ onLogout }) => {
           </div>
         </div>
 
+        {/* Partnership Text Management */}
+        <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-2">Text partnerstva</h2>
+              <p className="text-gray-400 text-sm">Text zobrazený v sekcii partnerstva na stránke "O nás"</p>
+            </div>
+            {!editingPartnershipText && (
+              <button
+                onClick={handlePartnershipTextEdit}
+                className="text-blue-400 hover:text-blue-300 text-sm flex items-center"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Upraviť
+              </button>
+            )}
+          </div>
+          
+          {editingPartnershipText ? (
+            <div className="space-y-3">
+              <textarea
+                value={tempPartnershipText}
+                onChange={(e) => setTempPartnershipText(e.target.value)}
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows="3"
+                placeholder="Zadajte text partnerstva..."
+                maxLength={200}
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePartnershipTextSave}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Uložiť
+                </button>
+                <button
+                  onClick={handlePartnershipTextCancel}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Zrušiť
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg">
+              <p className="text-white leading-relaxed">{partnershipText || 'Žiadny text nie je nastavený'}</p>
+            </div>
+          )}
+        </div>
+
         {/* Add Section Button */}
         <div className="flex justify-between items-center mb-8">
-          <div></div>
+          <button
+            onClick={handleForceReset}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+          >
+            🔄 Resetovať sekcie
+          </button>
           <button
             onClick={handleAddNew}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"

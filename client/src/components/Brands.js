@@ -166,7 +166,7 @@ const Brands = () => {
             {brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').map((brand, index) => (
               <div
                 key={brand.id || brand._id || index}
-                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer transform relative pb-16 opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20"
+                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer transform relative pb-16 opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-xl"
                 style={{ transitionDelay: `${index * 100}ms` }}
                 onClick={() => {
                   if (brand.images && brand.images.length > 0) {
@@ -210,7 +210,7 @@ const Brands = () => {
 
                 {/* Brand Info */}
                 <div className="space-y-3">
-                  <h3 className="text-gray-300 font-medium text-lg group-hover:text-blue-300 transition-colors">
+                  <h3 className="text-gray-300 font-medium text-lg group-hover:text-white transition-colors">
                     {brand.name}
                   </h3>
                   
@@ -262,7 +262,7 @@ const Brands = () => {
             {brands.filter(brand => brand.category === 'Ostatné').map((brand, index) => (
               <div
                 key={brand.id || brand._id || index}
-                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 cursor-pointer transform opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20"
+                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 transition-all duration-500 cursor-pointer transform opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-lg"
                 style={{ transitionDelay: `${index * 80 + 200}ms` }}
                 onClick={() => {
                   if (brand.images && brand.images.length > 0) {
