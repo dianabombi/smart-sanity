@@ -9,24 +9,67 @@ const AdminWhatWeOffer = ({ onLogout }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Background settings state
+  const [backgroundSettings, setBackgroundSettings] = useState({
+    entrancePagePattern: true,
+    patternOpacity: 0.05,
+    patternSize: 20,
+    patternType: 'tiles',
+    entrancePageBackgroundImage: null,
+    backgroundImageOpacity: 0.3,
+    backgroundImageBlur: 0,
+    backgroundImageSize: 'cover',
+    backgroundImagePositionX: 'center',
+    backgroundImagePositionY: 'center'
+  });
+  const [backgroundLoading, setBackgroundLoading] = useState(false);
+  const [backgroundMessage, setBackgroundMessage] = useState('');
+
   useEffect(() => {
     loadContent();
+    loadBackgroundSettings();
   }, []);
 
   const loadContent = async () => {
     try {
       setLoading(true);
-      const result = await ApiService.getContent('what-we-offer');
-      if (result.success) {
-        setContent(result.content);
-      } else {
-        // Initialize content if not found
-        await ApiService.initializeContent();
-        const retryResult = await ApiService.getContent('what-we-offer');
-        if (retryResult.success) {
-          setContent(retryResult.content);
+      
+      // Try to load from page content system first
+      try {
+        const result = await ApiService.getPageContent('what-we-offer', 'main', 'content');
+        if (result.success && result.content) {
+          // Parse the content from the page content system
+          const lines = result.content.split('\n').filter(line => line.trim());
+          setContent({
+            title: 'Čo ponúkame',
+            content: result.content,
+            bulletPoints: lines
+          });
+          setLoading(false);
+          return;
         }
+      } catch (error) {
+        console.log('Page content system not available, using fallback');
       }
+      
+      // Fallback to default content from the existing webpage
+      const defaultBulletPoints = [
+        "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
+        "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
+        "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
+        "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
+        "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
+        "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
+      ];
+      
+      const defaultContent = defaultBulletPoints.map(point => `• ${point}`).join('\n');
+      
+      setContent({
+        title: 'Čo ponúkame',
+        content: defaultContent,
+        bulletPoints: defaultBulletPoints
+      });
+      
     } catch (error) {
       console.error('Error loading content:', error);
       setError('Chyba pri načítavaní obsahu');
@@ -41,13 +84,10 @@ const AdminWhatWeOffer = ({ onLogout }) => {
       setError('');
       setSuccess('');
 
-      const result = await ApiService.updateContent('what-we-offer', {
-        ...content,
-        modifiedBy: 'admin'
-      });
+      // Save to page content system
+      const result = await ApiService.updatePageContent('what-we-offer', 'main', 'content', content.content);
 
       if (result.success) {
-        setContent(result.content);
         setSuccess('Obsah bol úspešne uložený!');
         setTimeout(() => setSuccess(''), 3000);
       } else {
@@ -77,9 +117,7 @@ const AdminWhatWeOffer = ({ onLogout }) => {
 
   const setBulletPoints = (points) => {
     const bulletText = points.filter(point => point.trim()).map(point => `• ${point}`).join('\n');
-    const otherContent = content?.content?.split('\n').filter(line => !line.trim().startsWith('•')).join('\n') || '';
-    const newContent = otherContent.trim() + '\n\n' + bulletText;
-    handleContentChange('content', newContent.trim());
+    handleContentChange('content', bulletText);
   };
 
   const handleBulletPointChange = (index, value) => {
@@ -98,6 +136,92 @@ const AdminWhatWeOffer = ({ onLogout }) => {
     const points = getBulletPoints();
     points.splice(index, 1);
     setBulletPoints(points);
+  };
+
+  // Background settings functions
+  const loadBackgroundSettings = async () => {
+    try {
+      setBackgroundLoading(true);
+      console.log('🔄 Loading background settings...');
+      const response = await ApiService.getBackgroundSettings();
+      console.log('📊 Loaded settings response:', response);
+      
+      if (response.success && response.settings) {
+        console.log('🔍 Loaded position settings:', {
+          size: response.settings.backgroundImageSize,
+          positionX: response.settings.backgroundImagePositionX,
+          positionY: response.settings.backgroundImagePositionY,
+          opacity: response.settings.backgroundImageOpacity,
+          blur: response.settings.backgroundImageBlur
+        });
+        
+        setBackgroundSettings(prev => ({
+          ...prev,
+          ...response.settings
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading background settings:', error);
+    } finally {
+      setBackgroundLoading(false);
+    }
+  };
+
+  const saveBackgroundSettings = async () => {
+    try {
+      setBackgroundLoading(true);
+      console.log('🔄 Saving background settings:', backgroundSettings);
+      console.log('🔍 Position settings:', {
+        size: backgroundSettings.backgroundImageSize,
+        positionX: backgroundSettings.backgroundImagePositionX,
+        positionY: backgroundSettings.backgroundImagePositionY,
+        opacity: backgroundSettings.backgroundImageOpacity,
+        blur: backgroundSettings.backgroundImageBlur
+      });
+      
+      const response = await ApiService.updateBackgroundSettings(backgroundSettings);
+      console.log('📊 Save response:', response);
+      
+      if (response.success) {
+        console.log('✅ Background settings saved successfully');
+        setBackgroundMessage('Nastavenia pozadia boli úspešne uložené!');
+        setTimeout(() => setBackgroundMessage(''), 3000);
+      } else {
+        console.error('❌ Failed to save background settings:', response.message);
+        setBackgroundMessage('Chyba pri ukladaní nastavení pozadia: ' + (response.message || ''));
+      }
+    } catch (error) {
+      console.error('❌ Error saving background settings:', error);
+      setBackgroundMessage('Chyba pri ukladaní nastavení pozadia: ' + error.message);
+    } finally {
+      setBackgroundLoading(false);
+    }
+  };
+
+  const handleBackgroundImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setBackgroundLoading(true);
+      console.log('🔄 Uploading background image:', file.name, file.size);
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log('✅ Image converted to data URL, length:', e.target.result.length);
+        setBackgroundSettings(prev => ({
+          ...prev,
+          entrancePageBackgroundImage: e.target.result
+        }));
+        setBackgroundMessage('Obrázok bol nahraný! Nezabudnite kliknúť "Uložiť pozadie".');
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('❌ Error uploading background image:', error);
+      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia.');
+    } finally {
+      setBackgroundLoading(false);
+    }
   };
 
   if (loading) {
@@ -239,11 +363,278 @@ const AdminWhatWeOffer = ({ onLogout }) => {
           </div>
         </div>
 
+        {/* Background Settings */}
+        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-white">Nastavenia pozadia stránky</h2>
+            <button
+              onClick={saveBackgroundSettings}
+              disabled={backgroundLoading}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white px-4 py-2 rounded transition-colors"
+            >
+              {backgroundLoading ? 'Ukladám...' : '💾 Uložiť pozadie'}
+            </button>
+          </div>
+
+          {backgroundMessage && (
+            <div className={`mb-4 px-4 py-3 rounded ${
+              backgroundMessage.includes('úspešne') 
+                ? 'bg-green-900/50 border border-green-500 text-green-200'
+                : 'bg-red-900/50 border border-red-500 text-red-200'
+            }`}>
+              {backgroundMessage}
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {/* Background Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Obrázok pozadia
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleBackgroundImageUpload}
+                className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Podporované formáty: JPG, PNG, WebP. Maximálna veľkosť: 5MB
+              </p>
+            </div>
+
+            {/* Pattern Settings */}
+            <div>
+              <label className="flex items-center space-x-3 mb-4">
+                <input
+                  type="checkbox"
+                  checked={backgroundSettings.entrancePagePattern}
+                  onChange={(e) => setBackgroundSettings(prev => ({
+                    ...prev,
+                    entrancePagePattern: e.target.checked
+                  }))}
+                  className="rounded bg-gray-700 border-gray-600 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-gray-300">Zobraziť vzor pozadia (iba s obrázkom)</span>
+              </label>
+              <p className="text-xs text-gray-400 ml-6 -mt-3 mb-4">
+                Vzor sa zobrazí iba keď je nahraný obrázok pozadia
+              </p>
+            </div>
+
+            {/* Pattern Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Typ vzoru
+              </label>
+              <select
+                value={backgroundSettings.patternType}
+                onChange={(e) => setBackgroundSettings(prev => ({
+                  ...prev,
+                  patternType: e.target.value
+                }))}
+                className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+              >
+                <option value="tiles">Dlaždice</option>
+                <option value="dots">Bodky</option>
+                <option value="lines">Čiary</option>
+              </select>
+            </div>
+
+            {/* Opacity Slider */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Priehľadnosť: {backgroundSettings.patternOpacity}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={backgroundSettings.patternOpacity}
+                onChange={(e) => setBackgroundSettings(prev => ({
+                  ...prev,
+                  patternOpacity: parseFloat(e.target.value)
+                }))}
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+              />
+            </div>
+
+            {/* Background Image Controls - Only show if image is uploaded */}
+            {backgroundSettings.entrancePageBackgroundImage && (
+              <div className="border-t border-gray-600 pt-6 mt-6">
+                <h3 className="text-lg font-medium text-gray-300 mb-4">Nastavenia obrázka pozadia</h3>
+                
+                {/* Image Size */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Veľkosť obrázka
+                  </label>
+                  <select
+                    value={backgroundSettings.backgroundImageSize}
+                    onChange={(e) => setBackgroundSettings(prev => ({
+                      ...prev,
+                      backgroundImageSize: e.target.value
+                    }))}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="cover">Pokryť celú stránku (Cover)</option>
+                    <option value="contain">Zmestiť celý obrázok (Contain)</option>
+                    <option value="auto">Pôvodná veľkosť (Auto)</option>
+                    <option value="100% 100%">Roztiahnuť na celú stránku</option>
+                  </select>
+                </div>
+
+                {/* Horizontal Position */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Horizontálna pozícia
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionX: 'left'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionX === 'left'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ⬅️ Vľavo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionX: 'center'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionX === 'center'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ↔️ Stred
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionX: 'right'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionX === 'right'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ➡️ Vpravo
+                    </button>
+                  </div>
+                </div>
+
+                {/* Vertical Position */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Vertikálna pozícia
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionY: 'top'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionY === 'top'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ⬆️ Hore
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionY: 'center'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionY === 'center'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ↕️ Stred
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionY: 'bottom'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionY === 'bottom'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ⬇️ Dole
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Opacity */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Priehľadnosť obrázka: {backgroundSettings.backgroundImageOpacity}
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={backgroundSettings.backgroundImageOpacity}
+                    onChange={(e) => setBackgroundSettings(prev => ({
+                      ...prev,
+                      backgroundImageOpacity: parseFloat(e.target.value)
+                    }))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                </div>
+
+                {/* Image Blur */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Rozmazanie obrázka: {backgroundSettings.backgroundImageBlur}px
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    value={backgroundSettings.backgroundImageBlur}
+                    onChange={(e) => setBackgroundSettings(prev => ({
+                      ...prev,
+                      backgroundImageBlur: parseInt(e.target.value)
+                    }))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Instructions */}
         <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
           <h4 className="text-blue-400 font-medium mb-2">Informácie</h4>
           <p className="text-blue-300 text-sm">
             Tieto body sa zobrazia na stránke "Čo ponúkame" s animáciami. Každý bod sa zobrazí postupne s pekným efektom.
+            Nastavenia pozadia sa aplikujú na celú stránku "Čo ponúkame".
           </p>
         </div>
       </div>

@@ -538,11 +538,11 @@ class ApiService {
     console.log('EMERGENCY MODE: Bypassing Supabase Storage. Converting images to data URLs.');
 
     try {
-      // Validate file sizes (max 2MB per image to prevent issues)
-      const maxSize = 2 * 1024 * 1024; // 2MB
+      // Validate file sizes (max 32MB per image for high quality photos)
+      const maxSize = 32 * 1024 * 1024; // 32MB
       const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
       if (oversizedFiles.length > 0) {
-        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 2MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
+        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 32MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
       }
 
       // 1. Convert all files to base64 data URLs with compression
@@ -1601,8 +1601,8 @@ class ApiService {
   // Who We Are Sections
   async getWhoWeAreSections() {
     if (!this.isSupabaseAvailable()) {
-      console.log('🚫 Supabase not available, using fallback sections');
-      return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-no-supabase' };
+      console.log('🚫 Supabase not available');
+      return { success: false, sections: [], source: 'no-supabase', message: 'Database connection not available' };
     }
 
     try {
@@ -1613,20 +1613,20 @@ class ApiService {
         .order('order', { ascending: true });
       
       if (error) {
-        console.log('🚫 Supabase error, using fallback:', error);
-        return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-supabase-error' };
+        console.log('🚫 Supabase error:', error);
+        return { success: false, sections: [], source: 'supabase-error', message: error.message };
       }
       
       if (!data || data.length === 0) {
-        console.log('🚫 No sections in database, using fallback');
-        return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-empty-db' };
+        console.log('📭 No sections in database, returning empty result');
+        return { success: true, sections: [], source: 'empty-database' };
       }
 
       console.log('✅ Successfully loaded sections from Supabase database');
       return { success: true, sections: data, source: 'supabase-database' };
     } catch (error) {
-      console.log('Error fetching sections, using fallback:', error);
-      return { success: true, sections: this.getFallbackWhoWeAreSections(), source: 'fallback-error' };
+      console.log('Error fetching sections:', error);
+      return { success: false, sections: [], source: 'connection-error', message: error.message };
     }
   }
 
@@ -1645,7 +1645,7 @@ class ApiService {
           title: sectionData.title,
           content: sectionData.content,
           size: sectionData.size || 'large',
-          order: Date.now(), // Simple ordering
+          order: sectionData.order || 1, // Use provided order or default to 1
           created_at: new Date().toISOString()
         }])
         .select();
@@ -2278,6 +2278,118 @@ class ApiService {
       // Fallback to localStorage
       localStorage.setItem('backgroundSettings', JSON.stringify(settings));
       return { success: true };
+    }
+  }
+
+  // Why Choose Us Section API Methods
+  async getWhyChooseUs() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('🚫 Supabase not available');
+      return { success: false, data: null, source: 'no-supabase', message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Fetching why-choose-us from Supabase...');
+      const { data, error } = await supabase
+        .from('why_choose_us')
+        .select('*')
+        .eq('active', true)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (error) {
+        console.log('🚫 Supabase error:', error);
+        return { success: false, data: null, source: 'supabase-error', message: error.message };
+      }
+      
+      if (!data || data.length === 0) {
+        console.log('📭 No why-choose-us data in database');
+        return { success: true, data: null, source: 'empty-database' };
+      }
+
+      console.log('✅ Successfully loaded why-choose-us from Supabase database');
+      return { success: true, data: data[0], source: 'supabase-database' };
+    } catch (error) {
+      console.log('Error fetching why-choose-us:', error);
+      return { success: false, data: null, source: 'connection-error', message: error.message };
+    }
+  }
+
+  async updateWhyChooseUs(id, updateData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Updating why-choose-us in Supabase:', updateData);
+      
+      const { data, error } = await supabase
+        .from('why_choose_us')
+        .update({
+          title: updateData.title,
+          subtitle: updateData.subtitle || '',
+          items: updateData.items,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('Supabase error updating why-choose-us:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Why-choose-us updated successfully:', data[0]);
+      return { success: true, data: data[0] };
+    } catch (error) {
+      console.error('Exception updating why-choose-us:', error);
+      return { 
+        success: false, 
+        message: `Update failed: ${error.message}` 
+      };
+    }
+  }
+
+  async createWhyChooseUs(createData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Creating why-choose-us in Supabase:', createData);
+      
+      const { data, error } = await supabase
+        .from('why_choose_us')
+        .insert([{
+          title: createData.title,
+          subtitle: createData.subtitle || '',
+          items: createData.items,
+          active: true,
+          created_at: new Date().toISOString()
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase error creating why-choose-us:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Why-choose-us created successfully:', data[0]);
+      return { success: true, data: data[0] };
+    } catch (error) {
+      console.error('Exception creating why-choose-us:', error);
+      return { 
+        success: false, 
+        message: `Creation failed: ${error.message}` 
+      };
     }
   }
 }

@@ -181,9 +181,9 @@ const AdminReferences = ({ onLogout }) => {
           continue;
         }
 
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          alert(`${file.name} je príliš veľký (max 5MB)`);
+        // Validate file size (max 32MB)
+        if (file.size > 32 * 1024 * 1024) {
+          alert(`${file.name} je príliš veľký (max 32MB)`);
           continue;
         }
 

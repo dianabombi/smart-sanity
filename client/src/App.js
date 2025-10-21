@@ -10,12 +10,14 @@ import References from './components/References';
 import Inspirations from './components/Inspirations';
 import Admin from './components/Admin';
 import CookieConsent from './components/ui/CookieConsent';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   console.log('App component rendering...');
   
   return (
     <Router>
+      <ScrollToTop />
       <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />

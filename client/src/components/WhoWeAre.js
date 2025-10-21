@@ -10,15 +10,33 @@ const WhoWeAre = () => {
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
   const [partnershipText, setPartnershipText] = useState('Partnersky spolupracujeme s interiérovým štúdiom');
+  
+  // Background slideshow state
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const backgroundImages = [
+    '/photos/FRE218_1.jpg',
+    '/photos/FRE218_2.jpg'
+  ];
 
   useEffect(() => {
     loadContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Check for logo and content updates every 5 seconds
+  // Background slideshow rotation
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        (prevIndex + 1) % backgroundImages.length
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(slideInterval);
+  }, [backgroundImages.length]);
+
+  // Check for logo updates only (removed content polling)
   useEffect(() => {
     const interval = setInterval(async () => {
-      // CRITICAL FIX: Check for logo updates from Supabase database
+      // Check for logo updates from Supabase database
       try {
         const brandsResult = await ApiService.getBrands();
         if (brandsResult.success && brandsResult.brands) {
@@ -26,138 +44,59 @@ const WhoWeAre = () => {
             brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
           );
           if (ebkBrand && ebkBrand.logo && ebkBrand.logo !== ebkLogo) {
-            console.log('🔄 CRITICAL: EB+K logo updated in database, refreshing...');
+            console.log('🔄 EB+K logo updated in database, refreshing...');
             setEbkLogo(ebkBrand.logo);
             setLogoKey(Date.now()); // Force re-render
           }
         }
       } catch (error) {
-        console.log('⚠️ Logo update check failed, trying localStorage fallback');
-        // Fallback to localStorage check only if database fails
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          const ebkBrand = brandsResult.brands.find(brand => 
-            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-          );
-          if (ebkBrand && ebkBrand.logo && ebkBrand.logo !== ebkLogo) {
-            console.log('🔄 WhoWeAre: EB+K logo updated in localStorage, refreshing...');
-            setEbkLogo(ebkBrand.logo);
-            setLogoKey(Date.now()); // Force re-render
-          }
-        }
+        console.log('⚠️ Logo update check failed');
       }
-
-      // Check for content updates from localStorage (emergency system)
-      try {
-        const localSections = localStorage.getItem('adminWhoWeAreSections');
-        if (localSections) {
-          const sections = JSON.parse(localSections);
-          const mainSections = sections.filter(section => section.title !== 'Partnerstvo');
-          const partnershipSection = sections.find(section => section.title === 'Partnerstvo');
-          
-          const newContent = {
-            mainContent: mainSections.map(section => section.content),
-            partnershipContent: partnershipSection ? partnershipSection.content : content?.partnershipContent
-          };
-          
-          // Check if content has changed
-          const contentChanged = JSON.stringify(newContent) !== JSON.stringify(content);
-          if (contentChanged) {
-            console.log('🔄 WhoWeAre: Content updated from localStorage, refreshing...');
-            setContent(newContent);
-          }
-        } else {
-          // Fallback to API if localStorage is empty
-          const result = await ApiService.getWhoWeAreSections();
-          if (result.success && result.sections) {
-            const mainSections = result.sections.filter(section => section.title !== 'Partnerstvo');
-            const partnershipSection = result.sections.find(section => section.title === 'Partnerstvo');
-            
-            const newContent = {
-              mainContent: mainSections.map(section => section.content),
-              partnershipContent: partnershipSection ? partnershipSection.content : content?.partnershipContent
-            };
-            
-            const contentChanged = JSON.stringify(newContent) !== JSON.stringify(content);
-            if (contentChanged) {
-              console.log('🔄 WhoWeAre: Content updated from API, refreshing...');
-              setContent(newContent);
-            }
-          }
-        }
-      } catch (error) {
-        console.log('Content update check failed:', error);
-      }
-    }, 5000); // Check every 5 seconds
+    }, 30000); // Check every 30 seconds (less frequent)
 
     return () => clearInterval(interval);
-  }, [ebkLogo, content]);
+  }, [ebkLogo]);
 
   const loadContent = async () => {
     try {
-      setLoading(true);
-      
-    
+      // Load all data first, then set state once
+      let logoData = '/ebk-logo.svg';
+      let partnershipData = 'Partnersky spolupracujeme s interiérovým štúdiom';
+      let contentData = {
+        mainContent: ["Načítavam obsah..."],
+        partnershipContent: ""
+      };
+
+      // Load logo
       try {
-        console.log('🚨 CRITICAL: Loading EB+K logo from Supabase database...');
         const brandsResult = await ApiService.getBrands();
         if (brandsResult.success && brandsResult.brands) {
           const ebkBrand = brandsResult.brands.find(brand => 
             brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
           );
           if (ebkBrand && ebkBrand.logo) {
-            console.log('✅ CRITICAL: Found EB+K logo in database:', ebkBrand.logo.substring(0, 50) + '...');
-            setEbkLogo(ebkBrand.logo);
-          } else {
-            console.log('⚠️ CRITICAL: No EB+K logo found in database');
+            logoData = ebkBrand.logo;
           }
-        } else {
-          console.log('⚠️ CRITICAL: Failed to load brands from database');
         }
       } catch (error) {
-        console.error('🚨 CRITICAL: Database error loading EB+K logo:', error);
-        // Fallback to emergency brands only if database fails
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          const ebkBrand = brandsResult.brands.find(brand => 
-            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-          );
-          if (ebkBrand && ebkBrand.logo) {
-            setEbkLogo(ebkBrand.logo);
-          }
-        }
+        console.log('Logo loading failed, using default');
       }
 
-      // Load partnership text from page content system
+      // Load partnership text
       try {
         const partnershipResult = await ApiService.getPageContent('who-we-are', 'partnership', 'text');
         if (partnershipResult.success && partnershipResult.content) {
-          setPartnershipText(partnershipResult.content);
+          partnershipData = partnershipResult.content;
         }
       } catch (error) {
-        console.log('⚠️ Failed to load partnership text, using default');
+        console.log('Partnership text loading failed, using default');
       }
       
-      // Load fallback content immediately for fast display
-      const fallbackContent = getDefaultContent();
-      setContent(fallbackContent);
-      setLoading(false);
-      
-      // Animation removed - content displays immediately
-      
-      // Try to load from API with timeout in background
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('API timeout')), 2000)
-      );
-      
+      // Load main content
       try {
-        const result = await Promise.race([
-          ApiService.getWhoWeAreSections(),
-          timeoutPromise
-        ]);
+        const result = await ApiService.getWhoWeAreSections();
         
         if (result.success && result.sections && result.sections.length > 0) {
-          // Convert sections to content format
           const mainContent = result.sections
             .filter(section => section.size === 'large')
             .sort((a, b) => a.order - b.order)
@@ -165,32 +104,41 @@ const WhoWeAre = () => {
           
           const partnershipSection = result.sections.find(section => section.size === 'small');
           
-          setContent({
-            mainContent: mainContent.length > 0 ? mainContent : fallbackContent.mainContent,
-            partnershipContent: partnershipSection ? partnershipSection.content : fallbackContent.partnershipContent
-          });
+          contentData = {
+            mainContent: mainContent.length > 0 ? mainContent : [result.sections[0].content],
+            partnershipContent: partnershipSection ? partnershipSection.content : ""
+          };
+        } else {
+          contentData = {
+            mainContent: ["Obsah nie je k dispozícii. Prosím, nastavte obsah v admin paneli."],
+            partnershipContent: ""
+          };
         }
       } catch (apiError) {
-        console.log('API failed or timed out, keeping fallback content:', apiError.message);
+        console.log('Content loading failed:', apiError.message);
+        contentData = {
+          mainContent: ["Chyba pri načítavaní obsahu. Prosím, skontrolujte pripojenie."],
+          partnershipContent: ""
+        };
       }
+      
+      // Set all state at once to prevent flickering
+      setEbkLogo(logoData);
+      setPartnershipText(partnershipData);
+      setContent(contentData);
+      setLoading(false);
       
     } catch (error) {
       console.error('Error loading content:', error);
-      setContent(getDefaultContent());
+      setContent({
+        mainContent: ["Chyba pri načítavaní obsahu. Prosím, obnovte stránku."],
+        partnershipContent: ""
+      });
       setLoading(false);
     }
   };
 
-  const getDefaultContent = () => ({
-    mainContent: [
-      "Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní.",
-      "Ako milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.",
-      "Našim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojim budúcim užívateľom prinášajú každodenný pocit komfortu, pohodlia a spoľahlivosti."
-    ],
-    partnershipContent: ""
-  });
-
-  if (loading) {
+  if (loading || !content) {
     return (
       <Layout>
         <NavBar />
@@ -214,15 +162,17 @@ const WhoWeAre = () => {
   const contentSection = (
     <div className="w-full max-w-6xl mx-auto px-4">
       {/* Side by Side Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 opacity-100 w-full max-w-lg">
+          <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 opacity-100 w-full h-full flex flex-col justify-center">
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
-                <p key={index} className="text-lg leading-relaxed text-gray-300">
-                  {text}
-                </p>
+                <div 
+                  key={index} 
+                  className="text-lg leading-relaxed text-gray-300"
+                  dangerouslySetInnerHTML={{ __html: text }}
+                />
               ))}
             </div>
           </div>
@@ -230,7 +180,7 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 max-w-md opacity-100">
+        <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 w-full h-full opacity-100 flex flex-col justify-center">
           <div className="flex flex-col items-center space-y-6">
             <p className="text-lg leading-relaxed text-gray-300 text-center">
               {partnershipText}
@@ -274,10 +224,30 @@ const WhoWeAre = () => {
 
   return (
     <Layout>
+      {/* Background Slideshow */}
+      <div className="fixed inset-0 z-0">
+        {backgroundImages.map((image, index) => (
+          <div
+            key={image}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentImageIndex ? 'opacity-30' : 'opacity-0'
+            }`}
+            style={{
+              backgroundImage: `url(${image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          />
+        ))}
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
+
       <NavBar />
       
       {/* Header Section */}
-      <div className="pt-8 pb-4 px-4 sm:px-6 lg:px-8">
+      <div className="pt-8 pb-4 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Smart Sanit s.r.o.
@@ -285,7 +255,7 @@ const WhoWeAre = () => {
         </div>
       </div>
       
-      <div className="bg-black flex items-center justify-center py-8 min-h-[60vh]">
+      <div className="bg-black/20 flex items-center justify-center py-8 min-h-[60vh] relative z-10">
         {contentSection}
       </div>
     </Layout>

@@ -10,6 +10,7 @@ const AdminLayout = ({ children, onLogout }) => {
     { label: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { label: 'Hero Bannery', path: '/admin/hero-banners', icon: '🖼️' },
     { label: 'O nás', path: '/admin/who-we-are', icon: '👥' },
+    { label: 'Prečo si vybrať nás', path: '/admin/why-choose-us', icon: '⭐' },
     { label: 'Čo ponúkame', path: '/admin/what-we-offer', icon: '💼' },
     { label: 'Obchodované značky', path: '/admin/brands', icon: '🏷️' },
     { label: 'Inšpirácie', path: '/admin/inspirations', icon: '💡' },

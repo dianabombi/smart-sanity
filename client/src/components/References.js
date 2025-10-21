@@ -6,7 +6,6 @@ import ApiService from '../services/api';
 const References = () => {
   const [references, setReferences] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visible, setVisible] = useState(false);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
 
   useEffect(() => {
@@ -21,11 +20,6 @@ const References = () => {
       const fallbackReferences = ApiService.getFallbackReferences ? ApiService.getFallbackReferences() : [];
       setReferences(fallbackReferences);
       setLoading(false);
-      
-      // Start animation after content is loaded
-      setTimeout(() => {
-        setVisible(true);
-      }, 400);
       
       // Try to load from API with timeout in background
       const timeoutPromise = new Promise((_, reject) => 
@@ -85,22 +79,10 @@ const References = () => {
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
-            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-          style={{
-            transition: 'all 0.8s ease-out',
-            transitionDelay: '0.2s'
-          }}>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Referencie
           </h1>
-          <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
-            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-          style={{
-            transition: 'all 0.8s ease-out',
-            transitionDelay: '0.4s'
-          }}>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
             Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.
           </p>
         </div>
@@ -112,13 +94,7 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
-                  visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                }`}
-                style={{
-                  transition: 'all 0.8s ease-out',
-                  transitionDelay: `${0.6 + index * 0.1}s`
-                }}
+                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 opacity-0 animate-[fadeInUp_0.8s_ease-out_${1.0 + index * 0.1}s_forwards]`}
               >
                 <div className="mb-4">
                   <h3 className="text-xl font-semibold text-white mb-2">{reference.title}</h3>

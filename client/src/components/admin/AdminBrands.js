@@ -302,9 +302,9 @@ const AdminBrands = ({ onLogout }) => {
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setBackgroundMessage('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+    // Validate file size (max 32MB)
+    if (file.size > 32 * 1024 * 1024) {
+      setBackgroundMessage('Súbor je príliš veľký. Maximálna veľkosť je 32MB.');
       return;
     }
 
@@ -384,9 +384,9 @@ const AdminBrands = ({ onLogout }) => {
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+    // Validate file size (max 32MB)
+    if (file.size > 32 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna veľkosť je 32MB.');
       return;
     }
 
@@ -496,9 +496,9 @@ const AdminBrands = ({ onLogout }) => {
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+    // Validate file size (max 32MB)
+    if (file.size > 32 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna veľkosť je 32MB.');
       return;
     }
 

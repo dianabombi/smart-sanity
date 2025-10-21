@@ -6,10 +6,9 @@ import EmergencyBrands from '../../services/emergencyBrands';
 const AdminWhoWeAre = ({ onLogout }) => {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
   const [editingSection, setEditingSection] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -30,77 +29,61 @@ const AdminWhoWeAre = ({ onLogout }) => {
     try {
       setLoading(true);
       
-      // CRITICAL FIX: Load EB+K logo from Supabase database (not localStorage)
+      // Load EB+K logo from database
       try {
-        console.log('🚨 ADMIN: Loading EB+K logo from Supabase database...');
         const brandsResult = await ApiService.getBrands();
         if (brandsResult.success && brandsResult.brands) {
           const ebkBrand = brandsResult.brands.find(brand => 
             brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
           );
           if (ebkBrand && ebkBrand.logo) {
-            console.log('✅ ADMIN: Found EB+K logo in database:', ebkBrand.logo.substring(0, 50) + '...');
             setEbkLogo(ebkBrand.logo);
-          } else {
-            console.log('⚠️ ADMIN: No EB+K logo found in database');
           }
         }
       } catch (error) {
-        console.error('🚨 ADMIN: Database error loading EB+K logo:', error);
-        // Fallback to emergency brands only if database fails
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          const ebkBrand = brandsResult.brands.find(brand => 
-            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-          );
-          if (ebkBrand && ebkBrand.logo) {
-            setEbkLogo(ebkBrand.logo);
-          }
-        }
+        console.log('Failed to load EB+K logo from database');
       }
       
-      // EMERGENCY: Always load default sections first to ensure they exist
-      const defaultSections = getDefaultSections();
-      console.log('🚨 ADMIN: Loading simplified default sections:', defaultSections);
-      
-      // FORCE RESET: Clear everything and use new simplified sections
-      console.log('🔄 ADMIN: FORCE RESET - Clearing all cached data...');
-      localStorage.removeItem('adminWhoWeAreSections');
-      setSections(defaultSections);
-      localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
-      
-      // Skip API loading to prevent overriding the simplified structure
-      console.log('✅ ADMIN: Using simplified sections only (API skipped)');
+      // Load sections from database ONLY
+      try {
+        const result = await ApiService.getWhoWeAreSections();
+        if (result.success && result.sections && result.sections.length > 0) {
+          console.log('✅ ADMIN: Loaded sections from database:', result.sections);
+          setSections(result.sections);
+        } else {
+          // Database is empty - show empty state in admin
+          console.log('📭 ADMIN: No sections found in database');
+          setSections([]);
+        }
+      } catch (error) {
+        console.error('Failed to load sections from database:', error);
+        // Create minimal fallback section
+        setSections([{
+          id: 1,
+          title: "O spoločnosti",
+          content: "Obsah nie je k dispozícii. Prosím, nastavte obsah.",
+          size: "large",
+          order: 1
+        }]);
+      }
 
-      // Load partnership text
+      // Load partnership text from database
       try {
         const partnershipResult = await ApiService.getPageContent('who-we-are', 'partnership', 'text');
         if (partnershipResult.success && partnershipResult.content) {
           setPartnershipText(partnershipResult.content);
         }
       } catch (error) {
-        console.log('⚠️ ADMIN: Failed to load partnership text, using default');
+        console.log('Failed to load partnership text from database');
       }
-      
+
     } catch (error) {
-      console.error('🚨 ADMIN: Critical error loading sections:', error);
-      const defaultSections = getDefaultSections();
-      setSections(defaultSections);
-      localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
+      console.error('Critical error loading admin data:', error);
+      setError('Chyba pri načítavaní údajov z databázy');
     } finally {
       setLoading(false);
     }
   };
-
-  const getDefaultSections = () => [
-    {
-      id: 1,
-      title: "O spoločnosti",
-      content: "Spoločnosť Smart Sanit s.r.o. vznikla v roku 2024 ako obchodná spoločnosť, ktorej hlavnou náplňou je ponuka dizajnových produktov v oblasti obkladov, dlažieb a kompletného vybavenia kúpeľní.\n\nAko milovníci dizajnu sledujeme najnovšie trendy v danej oblasti. S nami sa dotknete krásy a pocítite emóciu dizajnu na vlastnej koži.\n\nNašim klientom ponúkame moderné, funkčné a na mieru šité riešenia, ktoré svojím budúcim užívateľom prinášajú každodenný pocit komfortu, pohody a spoľahlivosti.",
-      order: 1,
-      size: "large"
-    }
-  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -108,6 +91,96 @@ const AdminWhoWeAre = ({ onLogout }) => {
       ...prev,
       [name]: value
     }));
+  };
+
+  // Text formatting functions
+  const insertFormatting = (startTag, endTag = '') => {
+    const textarea = document.querySelector('textarea[name="content"]');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = formData.content.substring(start, end);
+    
+    const beforeText = formData.content.substring(0, start);
+    const afterText = formData.content.substring(end);
+    
+    const newText = beforeText + startTag + selectedText + endTag + afterText;
+    
+    setFormData(prev => ({
+      ...prev,
+      content: newText
+    }));
+
+    // Restore cursor position
+    setTimeout(() => {
+      const newCursorPos = start + startTag.length + selectedText.length + endTag.length;
+      textarea.focus();
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+    }, 0);
+  };
+
+  const formatBold = () => insertFormatting('**', '**');
+  const formatItalic = () => insertFormatting('*', '*');
+  const formatUnderline = () => insertFormatting('<u>', '</u>');
+  const formatStrikethrough = () => insertFormatting('<s>', '</s>');
+  const formatCenter = () => insertFormatting('<center>', '</center>');
+  const formatLeft = () => insertFormatting('<left>', '</left>');
+  const formatRight = () => insertFormatting('<right>', '</right>');
+  const formatH1 = () => insertFormatting('<h1>', '</h1>');
+  const formatH2 = () => insertFormatting('<h2>', '</h2>');
+  const formatH3 = () => insertFormatting('<h3>', '</h3>');
+  const insertParagraph = () => insertFormatting('\n\n');
+  const insertBulletPoint = () => insertFormatting('\n• ');
+  const insertNumberedPoint = () => {
+    const lines = formData.content.split('\n');
+    const currentNumber = lines.filter(line => /^\d+\./.test(line.trim())).length + 1;
+    insertFormatting(`\n${currentNumber}. `);
+  };
+
+  // Format content for display (convert markdown-style to HTML)
+  const formatContentForDisplay = (content) => {
+    if (!content) return '';
+    
+    return content
+      // Convert **bold** to <strong>
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Convert *italic* to <em>
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Handle HTML formatting tags
+      .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
+      .replace(/<s>(.*?)<\/s>/g, '<s>$1</s>')
+      .replace(/<center>(.*?)<\/center>/g, '<div class="text-center">$1</div>')
+      .replace(/<left>(.*?)<\/left>/g, '<div class="text-left">$1</div>')
+      .replace(/<right>(.*?)<\/right>/g, '<div class="text-right">$1</div>')
+      .replace(/<h1>(.*?)<\/h1>/g, '<h1 class="text-3xl font-bold mb-4">$1</h1>')
+      .replace(/<h2>(.*?)<\/h2>/g, '<h2 class="text-2xl font-semibold mb-3">$1</h2>')
+      .replace(/<h3>(.*?)<\/h3>/g, '<h3 class="text-xl font-medium mb-2">$1</h3>')
+      // Convert bullet points
+      .replace(/^• (.+)$/gm, '<li>$1</li>')
+      // Convert numbered lists
+      .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+      // Convert line breaks to <br>
+      .replace(/\n\n/g, '</p><p>')
+      // Wrap in paragraphs
+      .replace(/^(.+)$/gm, (match, p1) => {
+        if (p1.startsWith('<li>') || p1.startsWith('<div class="text-') || p1.startsWith('<h')) return p1;
+        return p1;
+      })
+      // Wrap bullet points in <ul>
+      .replace(/(<li>.*<\/li>)/gs, (match) => {
+        if (match.includes('</p>')) return match;
+        return `<ul class="list-disc list-inside space-y-1 my-2">${match}</ul>`;
+      })
+      // Wrap content in paragraphs
+      .split('\n\n')
+      .map(paragraph => {
+        if (paragraph.includes('<ul>') || paragraph.includes('<li>') || paragraph.includes('<div class="text-') || paragraph.includes('<h')) {
+          return paragraph;
+        }
+        return `<p class="mb-4">${paragraph}</p>`;
+      })
+      .join('');
   };
 
   const handleEbkLogoUpload = async (event) => {
@@ -203,72 +276,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
     setTempPartnershipText('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      console.log('🚨 ADMIN: Saving section to emergency localStorage...');
-      
-      // EMERGENCY: Save directly to localStorage for immediate updates
-      const localSections = JSON.parse(localStorage.getItem('adminWhoWeAreSections') || '[]');
-      
-      if (editingSection) {
-        // Update existing section
-        const updatedSections = localSections.map(section => 
-          section.id === editingSection.id ? { ...section, ...formData } : section
-        );
-        localStorage.setItem('adminWhoWeAreSections', JSON.stringify(updatedSections));
-        setSections(updatedSections);
-        console.log('✅ ADMIN: Section updated in localStorage');
-      } else {
-        // Add new section
-        const newSection = {
-          id: Date.now(),
-          ...formData,
-          order: localSections.length + 1,
-          created_at: new Date().toISOString()
-        };
-        const updatedSections = [...localSections, newSection];
-        localStorage.setItem('adminWhoWeAreSections', JSON.stringify(updatedSections));
-        setSections(updatedSections);
-        console.log('✅ ADMIN: New section added to localStorage');
-      }
-
-      resetForm();
-      setShowAddModal(false);
-      setEditingSection(null);
-      setSuccess('Sekcia bola úspešne uložená do emergency systému!');
-      setTimeout(() => setSuccess(''), 3000);
-
-      // Try API save in background (optional)
-      try {
-        let result;
-        if (editingSection) {
-          result = await ApiService.updateWhoWeAreSection(editingSection.id, formData);
-        } else {
-          result = await ApiService.createWhoWeAreSection(formData);
-        }
-        if (result.success) {
-          console.log('✅ ADMIN: Also saved to API successfully');
-        }
-      } catch (apiError) {
-        console.log('⚠️ ADMIN: API save failed, but localStorage save succeeded');
-      }
-
-    } catch (error) {
-      console.error('🚨 ADMIN: Critical save error:', error);
-      setError('Chyba pri ukladaní sekcie');
-    }
-  };
-
-  const handleEdit = (section) => {
-    setEditingSection(section);
-    setFormData({
-      title: section.title || '',
-      content: section.content || '',
-      size: section.size || 'large'
-    });
-    setShowAddModal(true);
-  };
 
   const handleDelete = async (id) => {
     if (window.confirm('Naozaj chcete vymazať túto sekciu?')) {
@@ -302,21 +309,81 @@ const AdminWhoWeAre = ({ onLogout }) => {
     });
   };
 
-  const handleAddNew = () => {
-    resetForm();
-    setEditingSection(null);
-    setShowAddModal(true);
+
+  const handleEdit = (section) => {
+    setEditingSection(section);
+    setFormData({
+      title: section.title,
+      content: section.content,
+      size: section.size
+    });
   };
 
-  const handleForceReset = () => {
-    if (window.confirm('Naozaj chcete resetovať všetky sekcie na predvolené nastavenia? Táto akcia sa nedá vrátiť späť.')) {
-      console.log('🔄 ADMIN: Manual force reset triggered...');
-      localStorage.removeItem('adminWhoWeAreSections');
-      const defaultSections = getDefaultSections();
-      setSections(defaultSections);
-      localStorage.setItem('adminWhoWeAreSections', JSON.stringify(defaultSections));
-      setSuccess('Sekcie boli resetované na predvolené nastavenia!');
-      setTimeout(() => setSuccess(''), 3000);
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      setError('');
+      setSuccess('');
+
+      // Save directly to database
+      const result = await ApiService.updateWhoWeAreSection(editingSection.id, formData);
+      
+      if (result.success) {
+        // Update local state with database result
+        const updatedSections = sections.map(section => 
+          section.id === editingSection.id 
+            ? { ...section, ...formData }
+            : section
+        );
+        setSections(updatedSections);
+        
+        setEditingSection(null);
+        setSuccess('Sekcia bola úspešne uložená do databázy!');
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError('Chyba pri ukladaní do databázy: ' + (result.message || 'Neznáma chyba'));
+      }
+    } catch (error) {
+      console.error('Database save error:', error);
+      setError('Chyba pri pripojení k databáze');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingSection(null);
+    resetForm();
+  };
+
+  const handleCreateNew = async () => {
+    try {
+      setSaving(true);
+      setError('');
+      setSuccess('');
+
+      const defaultSection = {
+        title: "O spoločnosti",
+        content: "Zadajte obsah sekcie...",
+        size: "large",
+        order: 1
+      };
+
+      const result = await ApiService.createWhoWeAreSection(defaultSection);
+      
+      if (result.success) {
+        // Reload sections from database
+        await loadSections();
+        setSuccess('Nová sekcia bola vytvorená!');
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError('Chyba pri vytváraní sekcie: ' + (result.message || 'Neznáma chyba'));
+      }
+    } catch (error) {
+      console.error('Error creating section:', error);
+      setError('Chyba pri vytváraní sekcie');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -450,21 +517,193 @@ const AdminWhoWeAre = ({ onLogout }) => {
           )}
         </div>
 
-        {/* Add Section Button */}
-        <div className="flex justify-between items-center mb-8">
-          <button
-            onClick={handleForceReset}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-          >
-            🔄 Resetovať sekcie
-          </button>
-          <button
-            onClick={handleAddNew}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
-          >
-            <span className="text-xl">+</span>
-            Pridať sekciu
-          </button>
+        {/* O spoločnosti Section - Direct Edit */}
+        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-white">O spoločnosti</h3>
+            {sections.length === 0 ? (
+              <button
+                onClick={handleCreateNew}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                ➕ Vytvoriť obsah
+              </button>
+            ) : editingSection?.id === sections[0]?.id ? (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSave}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                >
+                  Uložiť
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                >
+                  Zrušiť
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => handleEdit(sections[0])}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                ✏️ Upraviť
+              </button>
+            )}
+          </div>
+          
+          {sections.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-400 mb-4">Žiadny obsah nie je nastavený</p>
+              <p className="text-gray-500 text-sm">Kliknite na "Vytvoriť obsah" pre pridanie nového obsahu</p>
+            </div>
+          ) : editingSection?.id === sections[0]?.id ? (
+            <div className="space-y-4">
+              {/* Rich Text Formatting Toolbar */}
+              <div className="bg-gray-700 rounded-lg p-3 border border-gray-600">
+                <div className="flex flex-wrap items-center gap-1">
+                  {/* Headings Dropdown */}
+                  <div className="relative">
+                    <select 
+                      className="bg-gray-600 text-white text-sm px-2 py-1 rounded border border-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === 'h1') formatH1();
+                        else if (value === 'h2') formatH2();
+                        else if (value === 'h3') formatH3();
+                        e.target.value = '';
+                      }}
+                      defaultValue=""
+                    >
+                      <option value="">Normálny</option>
+                      <option value="h1">Nadpis 1</option>
+                      <option value="h2">Nadpis 2</option>
+                      <option value="h3">Nadpis 3</option>
+                    </select>
+                  </div>
+                  
+                  <div className="w-px bg-gray-500 mx-1 h-6"></div>
+                  
+                  {/* Text Formatting */}
+                  <button
+                    type="button"
+                    onClick={formatBold}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors font-bold"
+                    title="Tučné písmo"
+                  >
+                    B
+                  </button>
+                  <button
+                    type="button"
+                    onClick={formatItalic}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors italic"
+                    title="Kurzíva"
+                  >
+                    I
+                  </button>
+                  <button
+                    type="button"
+                    onClick={formatUnderline}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors underline"
+                    title="Podčiarknuté"
+                  >
+                    U
+                  </button>
+                  <button
+                    type="button"
+                    onClick={formatStrikethrough}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors line-through"
+                    title="Prečiarknuté"
+                  >
+                    S
+                  </button>
+                  
+                  <div className="w-px bg-gray-500 mx-1 h-6"></div>
+                  
+                  {/* Alignment */}
+                  <button
+                    type="button"
+                    onClick={formatLeft}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors"
+                    title="Zarovnať vľavo"
+                  >
+                    ≡
+                  </button>
+                  <button
+                    type="button"
+                    onClick={formatCenter}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors"
+                    title="Centrovať"
+                  >
+                    ≣
+                  </button>
+                  <button
+                    type="button"
+                    onClick={formatRight}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors"
+                    title="Zarovnať vpravo"
+                  >
+                    ≡
+                  </button>
+                  
+                  <div className="w-px bg-gray-500 mx-1 h-6"></div>
+                  
+                  {/* Lists */}
+                  <button
+                    type="button"
+                    onClick={insertBulletPoint}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors"
+                    title="Odrážka"
+                  >
+                    •
+                  </button>
+                  <button
+                    type="button"
+                    onClick={insertNumberedPoint}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors"
+                    title="Číslovaný zoznam"
+                  >
+                    1.
+                  </button>
+                  
+                  <div className="w-px bg-gray-500 mx-1 h-6"></div>
+                  
+                  {/* Paragraph */}
+                  <button
+                    type="button"
+                    onClick={insertParagraph}
+                    className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm transition-colors"
+                    title="Nový odstavec"
+                  >
+                    ¶
+                  </button>
+                </div>
+                <div className="text-xs text-gray-400 mt-2">
+                  Vyberte text a použite formátovanie, alebo kliknite pre vloženie
+                </div>
+              </div>
+              
+              {/* Textarea */}
+              <textarea
+                value={formData.content}
+                onChange={handleInputChange}
+                name="content"
+                rows={8}
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical font-mono"
+                placeholder="Zadajte obsah sekcie..."
+              />
+            </div>
+          ) : (
+            <div className="prose max-w-none">
+              <div 
+                className="text-gray-300 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: formatContentForDisplay(sections[0]?.content || 'Žiadny obsah nie je nastavený')
+                }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Success/Error Messages */}
@@ -477,150 +716,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
         {error && (
           <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 mb-6">
             <p className="text-red-400">{error}</p>
-          </div>
-        )}
-
-        {/* Sections Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sections.map((section) => (
-            <div key={section.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <div className="mb-4">
-                <h3 className="text-xl font-semibold text-white mb-2">{section.title}</h3>
-                <p className="text-gray-400 text-sm mb-2 line-clamp-3">{section.content}</p>
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    section.size === 'large' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'
-                  }`}>
-                    {section.size === 'large' ? 'Veľká' : 'Malá'}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(section)}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm transition-colors"
-                >
-                  Upraviť
-                </button>
-                <button
-                  onClick={() => handleDelete(section.id)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors"
-                >
-                  Vymazať
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {/* Empty State */}
-          {sections.length === 0 && (
-            <div className="col-span-full text-center py-12">
-              <div className="text-gray-500 mb-4">
-                <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-medium text-gray-400 mb-2">Žiadne sekcie</h3>
-              <p className="text-gray-500 mb-6">Začnite pridaním vašej prvej sekcie</p>
-              <button
-                onClick={handleAddNew}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg inline-flex items-center gap-2 transition-colors"
-              >
-                <span className="text-xl">+</span>
-                Pridať prvú sekciu
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Add/Edit Modal */}
-        {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">
-                  {editingSection ? 'Upraviť sekciu' : 'Pridať novú sekciu'}
-                </h2>
-                <button
-                  onClick={() => {
-                    setShowAddModal(false);
-                    setEditingSection(null);
-                    resetForm();
-                  }}
-                  className="text-gray-400 hover:text-white text-2xl"
-                >
-                  ×
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Nadpis sekcie *
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    placeholder="napr. O spoločnosti"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Obsah *
-                  </label>
-                  <textarea
-                    name="content"
-                    value={formData.content}
-                    onChange={handleInputChange}
-                    required
-                    rows={6}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                    placeholder="Zadajte obsah sekcie..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Veľkosť sekcie
-                  </label>
-                  <select
-                    name="size"
-                    value={formData.size}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="large">Veľká (široká)</option>
-                    <option value="small">Malá (úzka)</option>
-                  </select>
-                </div>
-
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowAddModal(false);
-                      setEditingSection(null);
-                      resetForm();
-                    }}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
-                  >
-                    Zrušiť
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
-                  >
-                    {editingSection ? 'Uložiť zmeny' : 'Pridať sekciu'}
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
         )}
       </div>

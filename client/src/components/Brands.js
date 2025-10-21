@@ -101,27 +101,13 @@ const Brands = () => {
     }
   }, []);
 
+
   useEffect(() => {
     loadBrands();
     loadPageContent();
   }, [loadBrands, loadPageContent]);
 
-  // EMERGENCY: Disable auto-refresh to prevent logo overwriting during client meeting
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     console.log('🚨 CRITICAL: Auto-refreshing brands...');
-  //     loadBrands();
-  //   }, 10000); // 10 seconds for critical updates
 
-  //   return () => clearInterval(interval);
-  // }, [loadBrands]);
-
-
-  // REMOVED COMPLEX ANIMATIONS - Direct display for reliability
-
-  // REMOVED LOADING STATE FOR CLIENT MEETING - INSTANT DISPLAY
-
-  // PRODUCTION VERSION - 2025-01-20-14:16
   console.log('🚀 PRODUCTION DEPLOYMENT - BRANDS LOADING:');
   console.log('- brands.length:', brands.length);
   console.log('- loading:', loading);
@@ -299,30 +285,6 @@ const Brands = () => {
         </div>
       </div>
 
-      {/* Additional Info Section */}
-      <div className="pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8">
-            <h2 className="text-2xl font-light text-gray-300 mb-6">
-              Prečo si vybrať SMART SANIT?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-300/80">
-              <div>
-                <h3 className="font-medium mb-2">Kvalita</h3>
-                <p className="text-sm">Všetky naše značky sú synonymom pre najvyššiu kvalitu a spoľahlivosť.</p>
-              </div>
-              <div>
-                <h3 className="font-medium mb-2">Inovácia</h3>
-                <p className="text-sm">Najnovšie technológie a dizajnové trendy v sanitárnej technike.</p>
-              </div>
-              <div>
-                <h3 className="font-medium mb-2">Servis</h3>
-                <p className="text-sm">Komplexný servis a poradenstvo pre všetky naše produkty.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Logo Preview Modal */}
       {selectedLogo && (

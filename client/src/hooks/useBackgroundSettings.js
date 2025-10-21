@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
+import ApiService from '../services/api';
 
 export const useBackgroundSettings = () => {
-  const [settings] = useState({
+  const [settings, setSettings] = useState({
     brandsPagePattern: true,
+    entrancePagePattern: true,
     patternOpacity: 0.05,
     patternSize: 20,
     patternType: 'tiles',
     homePageBackground: 'default',
     globalBackground: 'default',
     brandsPageBackgroundImage: null,
+    entrancePageBackgroundImage: null,
     backgroundImageOpacity: 0.3,
     backgroundImageBlur: 0
   });
@@ -20,11 +23,19 @@ export const useBackgroundSettings = () => {
 
   const loadSettings = async () => {
     try {
-      // CRITICAL FIX: Skip API call to prevent table error, use default settings
-      console.log('Using default background settings (Supabase table not configured)');
-      // Settings already initialized with defaults above
+      console.log('🔄 Loading background settings from API...');
+      const response = await ApiService.getBackgroundSettings();
+      if (response.success && response.settings) {
+        console.log('✅ Background settings loaded:', response.settings);
+        setSettings(prev => ({
+          ...prev,
+          ...response.settings
+        }));
+      } else {
+        console.log('⚠️ Using default background settings');
+      }
     } catch (error) {
-      console.error('Error loading background settings:', error);
+      console.error('❌ Error loading background settings:', error);
     } finally {
       setLoading(false);
     }
@@ -53,8 +64,12 @@ export const useBackgroundSettings = () => {
     }
   };
 
-  const getBackgroundStyle = () => {
-    if (!settings.brandsPagePattern || settings.patternType === 'none') {
+  const getBackgroundStyle = (page = 'brands') => {
+    const patternKey = page === 'entrance' ? 'entrancePagePattern' : 'brandsPagePattern';
+    const backgroundImageKey = page === 'entrance' ? 'entrancePageBackgroundImage' : 'brandsPageBackgroundImage';
+    
+    // Only show pattern if there's a background image AND pattern is enabled
+    if (!settings[patternKey] || settings.patternType === 'none' || !settings[backgroundImageKey]) {
       return {};
     }
 
@@ -66,19 +81,40 @@ export const useBackgroundSettings = () => {
     };
   };
 
-  const getBackgroundImageStyle = () => {
-    if (!settings.brandsPageBackgroundImage) {
+  const getBackgroundImageStyle = (imageUrl, page = 'brands') => {
+    // Use provided imageUrl or get from settings based on page
+    const backgroundImage = imageUrl || (page === 'entrance' ? settings.entrancePageBackgroundImage : settings.brandsPageBackgroundImage);
+    
+    if (!backgroundImage) {
       return {};
     }
 
-    return {
-      backgroundImage: `url(${settings.brandsPageBackgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
+    // Get positioning values with defaults
+    const positionX = settings.backgroundImagePositionX || 'center';
+    const positionY = settings.backgroundImagePositionY || 'center';
+    const size = settings.backgroundImageSize || 'cover';
+
+    console.log('🎨 Background Image Style Debug:', {
+      page,
+      positionX,
+      positionY,
+      size,
       opacity: settings.backgroundImageOpacity,
-      filter: `blur(${settings.backgroundImageBlur}px)`
+      blur: settings.backgroundImageBlur,
+      settings
+    });
+
+    const style = {
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: size,
+      backgroundPosition: `${positionX} ${positionY}`,
+      backgroundRepeat: 'no-repeat',
+      opacity: settings.backgroundImageOpacity || 0.3,
+      filter: `blur(${settings.backgroundImageBlur || 0}px)`
     };
+
+    console.log('🎨 Final background style:', style);
+    return style;
   };
 
   return {

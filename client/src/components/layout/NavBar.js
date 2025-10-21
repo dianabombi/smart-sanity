@@ -92,10 +92,10 @@ const NavBar = () => {
       {/* Navbar - Compact with large gray shadow (desktop only) */}
       <nav className="bg-black sticky top-0 z-[100] relative">
         <div className="hidden xl:block absolute inset-0 pointer-events-none" style={{ boxShadow: '0 10px 25px -3px rgba(156, 163, 175, 0.4), 0 4px 6px -2px rgba(156, 163, 175, 0.2), 0 20px 40px -10px rgba(156, 163, 175, 0.15)' }}></div>
-        <div className="flex items-center justify-end pl-1 pr-2 md:px-2 lg:px-2 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 h-16 sm:h-20 md:h-24">
+        <div className="flex items-center justify-end pl-1 pr-2 md:px-2 lg:px-3 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 h-16 sm:h-20 md:h-24">
         
         {/* Navigation Links - show only when there's enough space (1200px+) */}
-        <div className="hidden xl:flex items-baseline justify-end flex-wrap gap-x-6 mr-4">
+        <div className="hidden xl:flex items-baseline justify-end flex-wrap gap-x-6 mr-10 mt-4">
           {navItems.map((item) => (
             <button
               key={item.label}
@@ -159,7 +159,7 @@ const NavBar = () => {
         </button>
 
         {/* Drag indicator */}
-        <div className="flex justify-center pt-3 pb-2">
+        <div className="flex justify-center pt-4 pb-2">
           <div className="w-12 h-1 bg-gray-600 rounded-full"></div>
         </div>
 
