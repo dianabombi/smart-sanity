@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import ApiService from '../services/api';
-import EmergencyBrands from '../services/emergencyBrands';
 
 const WhoWeAre = () => {
   const [content, setContent] = useState(null);

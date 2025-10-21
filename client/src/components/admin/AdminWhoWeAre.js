@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
-import EmergencyBrands from '../../services/emergencyBrands';
 
 const AdminWhoWeAre = ({ onLogout }) => {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [editingSection, setEditingSection] = useState(null);
@@ -274,31 +272,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
   const handlePartnershipTextCancel = () => {
     setEditingPartnershipText(false);
     setTempPartnershipText('');
-  };
-
-
-  const handleDelete = async (id) => {
-    if (window.confirm('Naozaj chcete vymazať túto sekciu?')) {
-      try {
-        const result = await ApiService.deleteWhoWeAreSection(id);
-        if (result.success) {
-          await loadSections();
-          setSuccess('Sekcia bola vymazaná');
-          setTimeout(() => setSuccess(''), 3000);
-        } else {
-          // Try local delete
-          const localSections = JSON.parse(localStorage.getItem('adminWhoWeAreSections') || '[]');
-          const filteredSections = localSections.filter(sec => sec.id !== id);
-          localStorage.setItem('adminWhoWeAreSections', JSON.stringify(filteredSections));
-          setSections(filteredSections);
-          setSuccess('Sekcia vymazaná lokálne');
-          setTimeout(() => setSuccess(''), 3000);
-        }
-      } catch (error) {
-        console.error('Error deleting section:', error);
-        setError('Chyba pri mazaní sekcie');
-      }
-    }
   };
 
   const resetForm = () => {
