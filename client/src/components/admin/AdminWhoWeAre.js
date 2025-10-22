@@ -294,7 +294,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
   const handleSave = async () => {
     try {
-      setSaving(true);
       setError('');
       setSuccess('');
 
@@ -319,8 +318,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
     } catch (error) {
       console.error('Database save error:', error);
       setError('Chyba pri pripojení k databáze');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -331,7 +328,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
   const handleCreateNew = async () => {
     try {
-      setSaving(true);
       setError('');
       setSuccess('');
 
@@ -355,8 +351,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
     } catch (error) {
       console.error('Error creating section:', error);
       setError('Chyba pri vytváraní sekcie');
-    } finally {
-      setSaving(false);
     }
   };
 
