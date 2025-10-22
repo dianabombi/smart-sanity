@@ -12,14 +12,40 @@ const WhoWeAre = () => {
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const backgroundImages = [
+  const [backgroundImages, setBackgroundImages] = useState([
     '/photos/FRE218_1.jpg',
     '/photos/FRE218_2.jpg'
-  ];
+  ]); // Default fallback images
+  const [backgroundSettings, setBackgroundSettings] = useState(null);
 
   useEffect(() => {
     loadContent();
+    loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadBackgroundSettings = () => {
+    try {
+      const saved = localStorage.getItem('whoWeAreBackgroundSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        setBackgroundSettings(settings);
+        
+        // Update background images if admin has uploaded any
+        if (settings.whoWeAreBackgroundImages && settings.whoWeAreBackgroundImages.length > 0) {
+          const adminImages = settings.whoWeAreBackgroundImages
+            .sort((a, b) => a.order - b.order) // Sort by order
+            .map(img => img.dataUrl);
+          setBackgroundImages(adminImages);
+          console.log('✅ Loaded', adminImages.length, 'background images from admin settings');
+          console.log('🎯 Image order:', settings.whoWeAreBackgroundImages.map(img => `#${img.order}: ${img.name}`));
+        } else {
+          console.log('ℹ️ No admin background images found, using default images');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error loading WhoWeAre background settings:', error);
+    }
+  };
 
   // Background slideshow rotation
   useEffect(() => {
@@ -141,9 +167,9 @@ const WhoWeAre = () => {
     return (
       <Layout>
         <NavBar />
-        <div className="pt-8 pb-4 px-4 sm:px-6 lg:px-8">
+        <div className="pb-4 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Smart Sanit s.r.o.
             </h1>
           </div>
@@ -223,39 +249,43 @@ const WhoWeAre = () => {
 
   return (
     <Layout>
-      {/* Background Slideshow */}
-      <div className="fixed inset-0 z-0">
-        {backgroundImages.map((image, index) => (
-          <div
-            key={image}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentImageIndex ? 'opacity-30' : 'opacity-0'
-            }`}
-            style={{
-              backgroundImage: `url(${image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          />
-        ))}
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/50" />
-      </div>
-
-      <NavBar />
-      
-      {/* Header Section */}
-      <div className="pt-8 pb-4 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-            Smart Sanit s.r.o.
-          </h1>
+      <div className="relative min-h-[calc(100vh-200px)]">
+        {/* Background Slideshow */}
+        <div className="absolute inset-0 z-0">
+          {backgroundImages.map((image, index) => (
+            <div
+              key={image}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentImageIndex ? 'opacity-30' : 'opacity-0'
+              }`}
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: backgroundSettings?.backgroundImageSize || 'cover',
+                backgroundPosition: `${backgroundSettings?.backgroundImagePositionX || 'center'} ${backgroundSettings?.backgroundImagePositionY || 'center'}`,
+                backgroundRepeat: 'no-repeat',
+                filter: backgroundSettings?.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
+                opacity: index === currentImageIndex ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
+              }}
+            />
+          ))}
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/50" />
         </div>
-      </div>
-      
-      <div className="bg-black/20 flex items-center justify-center py-8 min-h-[60vh] relative z-10">
-        {contentSection}
+
+        <NavBar />
+        
+        {/* Header Section */}
+        <div className="pb-4 px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+              Smart Sanit s.r.o.
+            </h1>
+          </div>
+        </div>
+        
+        <div className="bg-black/20 flex items-center justify-center py-8 min-h-[60vh] relative z-10">
+          {contentSection}
+        </div>
       </div>
     </Layout>
   );

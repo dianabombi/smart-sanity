@@ -19,9 +19,41 @@ const AdminWhoWeAre = ({ onLogout }) => {
   const [editingPartnershipText, setEditingPartnershipText] = useState(false);
   const [tempPartnershipText, setTempPartnershipText] = useState('');
 
+  // Background settings state for WhoWeAre page
+  const [backgroundSettings, setBackgroundSettings] = useState({
+    whoWeArePattern: true,
+    patternOpacity: 0.05,
+    patternType: 'tiles',
+    whoWeAreBackgroundImages: [], // Array of images with order
+    backgroundImageOpacity: 1.0,
+    backgroundImageBlur: 0,
+    backgroundImageSize: 'cover',
+    backgroundImagePositionX: 'center',
+    backgroundImagePositionY: 'center'
+  });
+  const [backgroundLoading, setBackgroundLoading] = useState(false);
+  const [backgroundMessage, setBackgroundMessage] = useState('');
+
   useEffect(() => {
     loadSections();
+    loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadBackgroundSettings = () => {
+    try {
+      const saved = localStorage.getItem('whoWeAreBackgroundSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        setBackgroundSettings(prev => ({
+          ...prev,
+          ...settings
+        }));
+        console.log('✅ Loaded WhoWeAre background settings:', settings);
+      }
+    } catch (error) {
+      console.error('❌ Error loading WhoWeAre background settings:', error);
+    }
+  };
 
   const loadSections = async () => {
     try {
@@ -280,6 +312,102 @@ const AdminWhoWeAre = ({ onLogout }) => {
       content: '',
       size: 'large'
     });
+  };
+
+  // Background settings functions
+  const handleBackgroundImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      setBackgroundLoading(true);
+      console.log('🔄 Uploading WhoWeAre background image:', file.name, file.size);
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log('✅ WhoWeAre image converted to data URL, length:', e.target.result.length);
+        const newImage = {
+          id: Date.now(), // Simple ID based on timestamp
+          dataUrl: e.target.result,
+          name: file.name,
+          order: backgroundSettings.whoWeAreBackgroundImages.length + 1
+        };
+        
+        setBackgroundSettings(prev => ({
+          ...prev,
+          whoWeAreBackgroundImages: [...prev.whoWeAreBackgroundImages, newImage]
+        }));
+        setBackgroundMessage(`Obrázok "${file.name}" bol nahraný! Nezabudnite kliknúť "Uložiť pozadie".`);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('❌ Error uploading WhoWeAre background image:', error);
+      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia.');
+    } finally {
+      setBackgroundLoading(false);
+    }
+  };
+
+  // Move image up in order
+  const moveImageUp = (imageId) => {
+    setBackgroundSettings(prev => {
+      const images = [...prev.whoWeAreBackgroundImages];
+      const index = images.findIndex(img => img.id === imageId);
+      if (index > 0) {
+        [images[index], images[index - 1]] = [images[index - 1], images[index]];
+        // Update order numbers
+        images.forEach((img, idx) => {
+          img.order = idx + 1;
+        });
+      }
+      return { ...prev, whoWeAreBackgroundImages: images };
+    });
+  };
+
+  // Move image down in order
+  const moveImageDown = (imageId) => {
+    setBackgroundSettings(prev => {
+      const images = [...prev.whoWeAreBackgroundImages];
+      const index = images.findIndex(img => img.id === imageId);
+      if (index < images.length - 1) {
+        [images[index], images[index + 1]] = [images[index + 1], images[index]];
+        // Update order numbers
+        images.forEach((img, idx) => {
+          img.order = idx + 1;
+        });
+      }
+      return { ...prev, whoWeAreBackgroundImages: images };
+    });
+  };
+
+  // Delete image
+  const deleteImage = (imageId) => {
+    setBackgroundSettings(prev => {
+      const images = prev.whoWeAreBackgroundImages.filter(img => img.id !== imageId);
+      // Update order numbers
+      images.forEach((img, idx) => {
+        img.order = idx + 1;
+      });
+      return { ...prev, whoWeAreBackgroundImages: images };
+    });
+  };
+
+  const saveBackgroundSettings = async () => {
+    try {
+      setBackgroundLoading(true);
+      console.log('🔄 Saving WhoWeAre background settings:', backgroundSettings);
+      
+      // For now, save to localStorage (you can extend this to use Supabase later)
+      localStorage.setItem('whoWeAreBackgroundSettings', JSON.stringify(backgroundSettings));
+      
+      setBackgroundMessage('Nastavenia pozadia boli úspešne uložené!');
+      setTimeout(() => setBackgroundMessage(''), 3000);
+    } catch (error) {
+      console.error('❌ Error saving WhoWeAre background settings:', error);
+      setBackgroundMessage('Chyba pri ukladaní nastavení pozadia: ' + error.message);
+    } finally {
+      setBackgroundLoading(false);
+    }
   };
 
 
@@ -671,6 +799,327 @@ const AdminWhoWeAre = ({ onLogout }) => {
               />
             </div>
           )}
+        </div>
+
+        {/* Background Settings Section */}
+        <div className="bg-gray-800 rounded-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-white">Nastavenia pozadia stránky "O nás"</h2>
+            <button
+              onClick={saveBackgroundSettings}
+              disabled={backgroundLoading}
+              className="bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white px-4 py-2 rounded transition-colors"
+            >
+              {backgroundLoading ? 'Ukladám...' : '💾 Uložiť pozadie'}
+            </button>
+          </div>
+
+          {backgroundMessage && (
+            <div className={`mb-4 px-4 py-3 rounded ${
+              backgroundMessage.includes('úspešne') 
+                ? 'bg-green-900/50 border border-green-500 text-green-200'
+                : 'bg-red-900/50 border border-red-500 text-red-200'
+            }`}>
+              {backgroundMessage}
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {/* Background Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Obrázok pozadia
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleBackgroundImageUpload}
+                className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Podporované formáty: JPG, PNG, WebP. Maximálna veľkosť: 5MB
+              </p>
+            </div>
+
+            {/* Uploaded Images Preview */}
+            {backgroundSettings.whoWeAreBackgroundImages.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-gray-300 mb-4">Nahrané obrázky ({backgroundSettings.whoWeAreBackgroundImages.length})</h3>
+                <div className="space-y-3">
+                  {backgroundSettings.whoWeAreBackgroundImages.map((image, index) => (
+                    <div key={image.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                      <div className="flex items-center gap-4">
+                        {/* Image Preview */}
+                        <div className="flex-shrink-0">
+                          <img 
+                            src={image.dataUrl} 
+                            alt={image.name}
+                            className="w-20 h-20 object-cover rounded border border-gray-500"
+                          />
+                        </div>
+                        
+                        {/* Image Info */}
+                        <div className="flex-grow">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
+                              #{image.order}
+                            </span>
+                            <span className="text-gray-300 font-medium">{image.name}</span>
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {index === 0 ? 'Prvý obrázok (zobrazí sa ako prvý)' : 
+                             index === 1 ? 'Druhý obrázok (zobrazí sa ako druhý)' : 
+                             `${index + 1}. obrázok v poradí`}
+                          </div>
+                        </div>
+                        
+                        {/* Order Controls */}
+                        <div className="flex flex-col gap-1">
+                          <button
+                            type="button"
+                            onClick={() => moveImageUp(image.id)}
+                            disabled={index === 0}
+                            className="px-2 py-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded text-sm transition-colors"
+                            title="Posunúť vyššie"
+                          >
+                            ⬆️
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveImageDown(image.id)}
+                            disabled={index === backgroundSettings.whoWeAreBackgroundImages.length - 1}
+                            className="px-2 py-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded text-sm transition-colors"
+                            title="Posunúť nižšie"
+                          >
+                            ⬇️
+                          </button>
+                        </div>
+                        
+                        {/* Delete Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`Naozaj chcete vymazať obrázok "${image.name}"?`)) {
+                              deleteImage(image.id);
+                            }
+                          }}
+                          className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm transition-colors"
+                          title="Vymazať obrázok"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Debug info */}
+            <div className="text-xs text-gray-500 mb-4 p-3 bg-gray-800 rounded">
+              <div>Debug: Images count: {backgroundSettings.whoWeAreBackgroundImages.length}</div>
+              <div>Position X: {backgroundSettings.backgroundImagePositionX || 'undefined'}</div>
+              <div>Position Y: {backgroundSettings.backgroundImagePositionY || 'undefined'}</div>
+              <div>Size: {backgroundSettings.backgroundImageSize || 'undefined'}</div>
+              <div>Opacity: {backgroundSettings.backgroundImageOpacity || 'undefined'}</div>
+            </div>
+
+            {/* Background Image Controls - Only show if images are uploaded */}
+            {backgroundSettings.whoWeAreBackgroundImages.length > 0 && (
+              <div className="border-t border-gray-600 pt-6 mt-6">
+                <h3 className="text-lg font-medium text-gray-300 mb-4">Nastavenia obrázka pozadia</h3>
+                
+                {/* Test Button */}
+                <div className="mb-4 p-3 bg-red-900/20 border border-red-500 rounded">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log('🧪 TEST: Setting WhoWeAre test values');
+                      setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionX: 'left',
+                        backgroundImagePositionY: 'top',
+                        backgroundImageSize: 'contain',
+                        backgroundImageOpacity: 0.5
+                      }));
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
+                  >
+                    🧪 TEST: Set Test Values
+                  </button>
+                </div>
+                
+                {/* Image Size */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Veľkosť obrázka
+                  </label>
+                  <select
+                    value={backgroundSettings.backgroundImageSize}
+                    onChange={(e) => setBackgroundSettings(prev => ({
+                      ...prev,
+                      backgroundImageSize: e.target.value
+                    }))}
+                    className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="cover">Pokryť (Cover)</option>
+                    <option value="contain">Zmestiť (Contain)</option>
+                    <option value="auto">Pôvodná veľkosť (Auto)</option>
+                    <option value="100% 100%">Roztiahnuť (100% stretch)</option>
+                  </select>
+                </div>
+
+                {/* Horizontal Position */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Horizontálna pozícia
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log('🔄 Setting WhoWeAre position to LEFT');
+                        setBackgroundSettings(prev => ({
+                          ...prev,
+                          backgroundImagePositionX: 'left'
+                        }));
+                      }}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionX === 'left'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ⬅️ Vľavo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log('🔄 Setting WhoWeAre position to CENTER');
+                        setBackgroundSettings(prev => ({
+                          ...prev,
+                          backgroundImagePositionX: 'center'
+                        }));
+                      }}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionX === 'center'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ↔️ Stred
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log('🔄 Setting WhoWeAre position to RIGHT');
+                        setBackgroundSettings(prev => ({
+                          ...prev,
+                          backgroundImagePositionX: 'right'
+                        }));
+                      }}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionX === 'right'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ➡️ Vpravo
+                    </button>
+                  </div>
+                </div>
+
+                {/* Vertical Position */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Vertikálna pozícia
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionY: 'top'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionY === 'top'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ⬆️ Hore
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionY: 'center'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionY === 'center'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ↕️ Stred
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionY: 'bottom'
+                      }))}
+                      className={`px-3 py-2 rounded text-sm transition-colors ${
+                        backgroundSettings.backgroundImagePositionY === 'bottom'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      ⬇️ Dole
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Opacity */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Priehľadnosť obrázka: {backgroundSettings.backgroundImageOpacity}
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={backgroundSettings.backgroundImageOpacity}
+                    onChange={(e) => setBackgroundSettings(prev => ({
+                      ...prev,
+                      backgroundImageOpacity: parseFloat(e.target.value)
+                    }))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                </div>
+
+                {/* Image Blur */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Rozmazanie obrázka: {backgroundSettings.backgroundImageBlur}px
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="1"
+                    value={backgroundSettings.backgroundImageBlur}
+                    onChange={(e) => setBackgroundSettings(prev => ({
+                      ...prev,
+                      backgroundImageBlur: parseInt(e.target.value)
+                    }))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Success/Error Messages */}

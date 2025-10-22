@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from './layout/Layout';
 import Button from './ui/Button';
 import Carousel from './ui/Carousel';
 import apiService from '../services/api';
@@ -63,7 +62,7 @@ const Home = () => {
   // };
 
   return (
-    <Layout showFooter={false}>
+    <div className="min-h-screen bg-black flex flex-col">
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
         {/* Hero Banner - full width on mobile/tablet, 2/3 on laptop+ */}
@@ -131,7 +130,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

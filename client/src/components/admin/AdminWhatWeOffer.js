@@ -179,6 +179,15 @@ const AdminWhatWeOffer = ({ onLogout }) => {
         blur: backgroundSettings.backgroundImageBlur
       });
       
+      // Add validation
+      if (!backgroundSettings.backgroundImagePositionX) {
+        console.warn('⚠️ Missing backgroundImagePositionX, setting default');
+        setBackgroundSettings(prev => ({
+          ...prev,
+          backgroundImagePositionX: 'center'
+        }));
+      }
+      
       const response = await ApiService.updateBackgroundSettings(backgroundSettings);
       console.log('📊 Save response:', response);
       
@@ -460,10 +469,40 @@ const AdminWhatWeOffer = ({ onLogout }) => {
               />
             </div>
 
+            {/* Debug info */}
+            <div className="text-xs text-gray-500 mb-4 p-3 bg-gray-800 rounded">
+              <div>Debug: Image exists: {backgroundSettings.entrancePageBackgroundImage ? 'YES' : 'NO'}</div>
+              <div>Position X: {backgroundSettings.backgroundImagePositionX || 'undefined'}</div>
+              <div>Position Y: {backgroundSettings.backgroundImagePositionY || 'undefined'}</div>
+              <div>Size: {backgroundSettings.backgroundImageSize || 'undefined'}</div>
+              <div>Opacity: {backgroundSettings.backgroundImageOpacity || 'undefined'}</div>
+              {backgroundSettings.entrancePageBackgroundImage && <div>Image: {backgroundSettings.entrancePageBackgroundImage.substring(0, 50)}...</div>}
+            </div>
+
             {/* Background Image Controls - Only show if image is uploaded */}
             {backgroundSettings.entrancePageBackgroundImage && (
               <div className="border-t border-gray-600 pt-6 mt-6">
                 <h3 className="text-lg font-medium text-gray-300 mb-4">Nastavenia obrázka pozadia</h3>
+                
+                {/* Test Button */}
+                <div className="mb-4 p-3 bg-red-900/20 border border-red-500 rounded">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      console.log('🧪 TEST: Setting test values');
+                      setBackgroundSettings(prev => ({
+                        ...prev,
+                        backgroundImagePositionX: 'left',
+                        backgroundImagePositionY: 'top',
+                        backgroundImageSize: 'contain',
+                        backgroundImageOpacity: 0.5
+                      }));
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
+                  >
+                    🧪 TEST: Set Test Values
+                  </button>
+                </div>
                 
                 {/* Image Size */}
                 <div className="mb-4">
@@ -493,10 +532,13 @@ const AdminWhatWeOffer = ({ onLogout }) => {
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
-                      onClick={() => setBackgroundSettings(prev => ({
-                        ...prev,
-                        backgroundImagePositionX: 'left'
-                      }))}
+                      onClick={() => {
+                        console.log('🔄 Setting position to LEFT');
+                        setBackgroundSettings(prev => ({
+                          ...prev,
+                          backgroundImagePositionX: 'left'
+                        }));
+                      }}
                       className={`px-3 py-2 rounded text-sm transition-colors ${
                         backgroundSettings.backgroundImagePositionX === 'left'
                           ? 'bg-blue-600 text-white'
@@ -507,10 +549,13 @@ const AdminWhatWeOffer = ({ onLogout }) => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setBackgroundSettings(prev => ({
-                        ...prev,
-                        backgroundImagePositionX: 'center'
-                      }))}
+                      onClick={() => {
+                        console.log('🔄 Setting position to CENTER');
+                        setBackgroundSettings(prev => ({
+                          ...prev,
+                          backgroundImagePositionX: 'center'
+                        }));
+                      }}
                       className={`px-3 py-2 rounded text-sm transition-colors ${
                         backgroundSettings.backgroundImagePositionX === 'center'
                           ? 'bg-blue-600 text-white'
@@ -521,10 +566,13 @@ const AdminWhatWeOffer = ({ onLogout }) => {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setBackgroundSettings(prev => ({
-                        ...prev,
-                        backgroundImagePositionX: 'right'
-                      }))}
+                      onClick={() => {
+                        console.log('🔄 Setting position to RIGHT');
+                        setBackgroundSettings(prev => ({
+                          ...prev,
+                          backgroundImagePositionX: 'right'
+                        }));
+                      }}
                       className={`px-3 py-2 rounded text-sm transition-colors ${
                         backgroundSettings.backgroundImagePositionX === 'right'
                           ? 'bg-blue-600 text-white'
