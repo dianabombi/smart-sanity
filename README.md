@@ -50,66 +50,54 @@ sanitary-facilities/
    ```bash
    npm run install-client
    ```
-
-   Or install all at once:
-   ```bash
-   npm run install-all
-   ```
-
-## Running the Application
-
-1. **Development mode (runs both client and server):**
-   ```bash
-   npm run dev
-   ```
-
-2. **Run server only:**
-   ```bash
-   npm run server
-   ```
-
-3. **Run client only:**
-   ```bash
-   npm run client
-   ```
-
-## Environment Variables
-
-Create a `.env` file in the `server` directory with:
-
-```
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/sanitary-facilities
-NODE_ENV=development
 ```
 
-## Technology Stack
+## 📁 Project Structure
 
-- **Frontend**: React 18, React Router, Tailwind CSS
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB with Mongoose
-- **Development**: Concurrently for running multiple processes
+```
+smart-sanit/
+├── client/              # React frontend application
+│   ├── public/         # Static assets (images, fonts)
+│   ├── src/            # Source code
+│   │   ├── components/ # React components
+│   │   ├── services/   # API services
+│   │   └── hooks/      # Custom hooks
+│   └── build/          # Production build
+├── database/           # Database setup and migrations
+│   ├── setup/         # Initial database setup files
+│   └── fixes/         # Database fix scripts
+├── docs/              # Documentation and guides
+└── README.md          # This file
+```
 
-## Design Philosophy
+## 🛠️ Technology Stack
 
-The application follows a minimalistic design approach with:
-- Pure black (#000000) background
-- White (#ffffff) text and borders
-- Clean typography using Inter font
-- Subtle hover effects and transitions
-- Responsive design for all screen sizes
+- **Frontend**: React 18, React Router
+- **Styling**: Tailwind CSS
+- **Database**: Supabase
+- **Deployment**: Vercel
+- **State Management**: React Hooks
+- **Image Optimization**: Sharp (development)
 
-## Getting Started
+## 🔧 Features
 
-1. Make sure MongoDB is running on your system
-2. Install all dependencies using `npm run install-all`
-3. Start the development servers with `npm run dev`
-4. Open your browser to `http://localhost:3000`
+- **Responsive Design**: Optimized for all devices
+- **Modern UI**: Smooth animations and glass effects
+- **Brand Showcase**: Interactive galleries with image uploads
+- **Contact System**: Form with database integration
+- **Admin Panel**: Content management system
+- **Background Management**: Dynamic background images
+- **Image Compression**: Optimized loading performance
 
-The home page features two main navigation buttons:
-- **ENTRANCE**: Access to the main application features
-- **WHO WE ARE**: Information about the service
+## 📱 Pages
 
+- **Úvodná stránka**: Hero carousel and company introduction
+- **O nás**: Company information and partnerships  
+- **Čo ponúkame**: Services and offerings
+- **Obchodované značky**: Partner brands showcase
+- **Inšpirácie**: Bathroom design gallery
+- **Referencie**: Completed projects
+- **Kontakt**: Contact form and information
 ## Development
 
 - Frontend runs on `http://localhost:3000`

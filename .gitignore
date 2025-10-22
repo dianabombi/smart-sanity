@@ -100,3 +100,14 @@ data/
 # Build output
 build/
 dist/
+
+# Temporary files and scripts
+*.tmp
+compress-images.js
+EMERGENCY_*.js
+FIX_*.md
+URGENT_*.md
+
+# Development files that shouldn't be in production
+public/
+node_modules/
