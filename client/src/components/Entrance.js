@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
@@ -68,29 +67,34 @@ const Entrance = () => {
   console.log('🎨 ENTRANCE: Has background image:', !!backgroundSettings.entrancePageBackgroundImage);
 
   return (
-    <Layout>
-      <div className="relative min-h-[calc(100vh-200px)]">
-        {/* Background Pattern */}
+    <div className="min-h-screen bg-black relative">
+      {/* Background Image - covers entire viewport */}
+      {backgroundSettings.entrancePageBackgroundImage ? (
         <div 
-          className="absolute inset-0 z-0"
+          className="fixed inset-0 z-0"
+          style={{
+            backgroundImage: `url(${backgroundSettings.entrancePageBackgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.8
+          }}
+        />
+      ) : (
+        <div 
+          className="fixed inset-0 z-0"
           style={getBackgroundStyle('entrance')}
         />
-        
-        {/* Background Image */}
-        {backgroundSettings.entrancePageBackgroundImage && (
-          <div 
-            className="absolute inset-0 z-0"
-            style={getBackgroundImageStyle(backgroundSettings.entrancePageBackgroundImage, 'entrance')}
-          />
-        )}
-        
+      )}
+      
+      <div className="relative min-h-screen">
         <NavBar />
         
         {/* Header Section */}
         <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-              Čo ponúkame
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-shadow-lg">
+              <div className="mt-32">  Čo ponúkame</div>
             </h1>
           </div>
         </div>
@@ -103,12 +107,12 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 transform ${
+                  className={`group rounded-lg p-6 transition-all duration-500 transform ${
                     visibleItems.includes(index) 
                       ? 'translate-y-0 opacity-100 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
                   }`}
-                  style={{ transitionDelay: `${index * 100}ms` }}
+                  style={{ transitionDelay: `${index * 100}ms`, backgroundColor: '#1a1a1a', border: '1px solid #262626' }}
                 >
                   <div className="space-y-3">
                     <p className="text-gray-300 leading-relaxed text-lg text-center">
@@ -122,13 +126,13 @@ const Entrance = () => {
         </div>
 
         {/* Categories Grid - Empty space for now */}
-        <div className="pb-24 px-8 sm:px-12 lg:px-16 py-8">
+        <div className="pb-8 px-8 sm:px-12 lg:px-16 py-4">
           <div className="max-w-6xl mx-auto">
             {/* Category tiles removed - empty space ready for new content */}
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

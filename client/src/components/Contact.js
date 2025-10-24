@@ -139,11 +139,11 @@ const Contact = () => {
     <Layout>
       <NavBar />
       
-      <div className="min-h-screen bg-black py-16">
+      <div className="min-h-screen bg-black py-8">
         <div className="w-full max-w-6xl mx-auto px-4">
           {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-8 ${
+          <div className="text-center mb-12">
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-2 ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{

@@ -538,11 +538,11 @@ class ApiService {
     console.log('EMERGENCY MODE: Bypassing Supabase Storage. Converting images to data URLs.');
 
     try {
-      // Validate file sizes (max 32MB per image for high quality photos)
-      const maxSize = 32 * 1024 * 1024; // 32MB
+      // Validate file sizes (max 50MB per image for high quality photos)
+      const maxSize = 50 * 1024 * 1024; // 50MB
       const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
       if (oversizedFiles.length > 0) {
-        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 32MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
+        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 50MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
       }
 
       // 1. Convert all files to base64 data URLs with compression

@@ -9,8 +9,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="text-center space-y-2">
             <h3 className="text-lg font-semibold text-gray-400">Smart Sanit s.r.o.</h3>
-            <p className="text-sm text-gray-400">Premium Design</p>
-            <p className="text-sm text-gray-400">Smart Solutions</p>
+            <p className="text-sm text-gray-400">Premium Design • Smart Solutions</p>
           </div>
           
           {/* Social Media Icons - Centered */}
@@ -61,7 +60,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
             >
-              &lt;Wavelyne&gt;
+            Wavelyne
             </a>.
           </div>
         </div>
@@ -109,8 +108,7 @@ const Footer = () => {
           
           <div className="text-center space-y-2">
             <h3 className="text-lg font-semibold text-gray-400">Smart Sanit s.r.o.</h3>
-            <p className="text-sm text-gray-400">Premium Design</p>
-            <p className="text-sm text-gray-400">Smart Solutions</p>
+            <p className="text-sm text-gray-400">Premium Design • Smart Solutions</p>
           </div>
           
           {/* Wavelyne Credit - Right Corner */}
@@ -122,7 +120,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
             >
-              &lt;Wavelyne&gt;
+              Wavelyne
             </a>.
           </div>
         </div>

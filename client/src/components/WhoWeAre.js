@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import ApiService from '../services/api';
 
@@ -165,22 +164,22 @@ const WhoWeAre = () => {
 
   if (loading || !content) {
     return (
-      <Layout>
+      <div className="min-h-screen bg-black">
         <NavBar />
         <div className="pb-4 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Smart Sanit s.r.o.
             </h1>
           </div>
         </div>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2  mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p className="text-white">Načítavam obsah...</p>
           </div>
         </div>
-      </Layout>
+      </div>
     );
   }
 
@@ -190,7 +189,7 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 opacity-100 w-full h-full flex flex-col justify-center">
+          <div className="group rounded-lg p-8 transition-all duration-500 opacity-100 w-full h-full flex flex-col justify-center" style={{ backgroundColor: '#1a1a1a', border: '1px solid #262626' }}>
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
                 <div 
@@ -205,39 +204,31 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 w-full h-full opacity-100 flex flex-col justify-center">
-          <div className="flex flex-col items-center space-y-6">
-            <p className="text-lg leading-relaxed text-gray-300 text-center">
-              {partnershipText}
-            </p>
-            
-            {/* Elite Bath + Kitchen Partnership */}
-            <div className="flex flex-col items-center space-y-4">
-              {/* Logo Container */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <img 
-                  key={logoKey}
-                  src="/elite_logoRGB-11.jpg" 
-                  alt="Elite Bath + Kitchen"
-                  className="h-16 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
-                  }}
-                />
-                <div className="text-white font-semibold text-center hidden">
-                  Elite Bath + Kitchen
-                </div>
-              </div>
+        <div className="group rounded-lg p-8 transition-all duration-500 w-full h-full opacity-100 flex flex-col justify-start" style={{ backgroundColor: '#1a1a1a', border: '1px solid #262626' }}>
+          <div className="space-y-6">
+            {/* Partnership text above logo */}
+            <div className="space-y-20">
+              <p className="text-lg leading-relaxed text-gray-300">
+                {partnershipText}
+              </p>
               
-              {/* Full Brand Name */}
-              <div className="text-center">
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  
-                </h3>
-                <p className="text-gray-300 text-sm">
-                  
-                </p>
+              {/* Logo Container */}
+              <div className="flex justify-center">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20 hover:bg-white/20 transition-all duration-300 w-fit">
+                  <img 
+                    key={logoKey}
+                    src="/elite_logoRGB-11.jpg" 
+                    alt="Elite Bath + Kitchen"
+                    className="h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                  <div className="text-white font-semibold text-center hidden">
+                    Elite Bath + Kitchen
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -248,10 +239,9 @@ const WhoWeAre = () => {
   );
 
   return (
-    <Layout>
-      <div className="relative min-h-[calc(100vh-200px)]">
-        {/* Background Slideshow */}
-        <div className="absolute inset-0 z-0">
+    <div className="min-h-screen bg-black relative">
+      {/* Background Slideshow - covers entire viewport */}
+      <div className="fixed inset-0 z-0">
           {backgroundImages.map((image, index) => (
             <div
               key={image}
@@ -268,26 +258,27 @@ const WhoWeAre = () => {
               }}
             />
           ))}
-          {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/50" />
+      </div>
+      
+      <div className="relative min-h-screen">
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-4 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="pb-8 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-36 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Smart Sanit s.r.o.
             </h1>
           </div>
         </div>
         
-        <div className="bg-black/20 flex items-center justify-center py-8 min-h-[60vh] relative z-10">
+        <div className="bg-black/20 flex items-center justify-center py-8 min-h-[60vh] relative z-10 mt-4">
           {contentSection}
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

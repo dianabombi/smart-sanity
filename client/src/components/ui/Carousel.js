@@ -46,11 +46,11 @@ const Carousel = ({
   };
 
   const goToSlide = (index) => {
-    if (isTransitioning || index === currentIndex) return;
+    if (index === currentIndex) return;
     setIsTransitioning(true);
     setPreviousIndex(currentIndex);
     setCurrentIndex(index);
-    setTimeout(() => setIsTransitioning(false), 1000);
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   // Get transition styles based on type
@@ -138,21 +138,21 @@ const Carousel = ({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 z-20"
+            className="absolute left-6 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 hover:scale-110 transition-all duration-300 focus:outline-none z-20"
             aria-label="Previous image"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg className="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 z-20"
+            className="absolute right-6 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 hover:scale-110 transition-all duration-300 focus:outline-none z-20"
             aria-label="Next image"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg className="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </>
@@ -164,8 +164,13 @@ const Carousel = ({
           {images.map((_, index) => (
             <button
               key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-12 h-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 ${
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Dot clicked:', index, 'Current:', currentIndex);
+                goToSlide(index);
+              }}
+              className={`w-12 h-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 cursor-pointer ${
                 index === currentIndex 
                   ? 'bg-white shadow-lg' 
                   : 'bg-white bg-opacity-40 hover:bg-opacity-70'

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
+import ActionButton from './ui/ActionButton';
 import ApiService from '../services/api';
 import EmergencyBrands from '../services/emergencyBrands';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Brands = () => {
+  const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedBrandImages, setSelectedBrandImages] = useState(null);
@@ -105,6 +108,14 @@ const Brands = () => {
   useEffect(() => {
     loadBrands();
     loadPageContent();
+    
+    // Auto-refresh brands every 30 seconds to catch admin changes
+    const interval = setInterval(() => {
+      console.log('🔄 PUBLIC: Auto-refreshing brands to catch admin changes...');
+      loadBrands(true);
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
   }, [loadBrands, loadPageContent]);
 
 
@@ -285,6 +296,19 @@ const Brands = () => {
         </div>
       </div>
 
+      {/* Call to Action Button Section */}
+      <div className="pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <ActionButton
+            size="xl"
+            variant="secondary"
+            onClick={() => navigate('/contact')}
+            className="min-w-[200px]"
+          >
+            Kontaktujte nás
+          </ActionButton>
+        </div>
+      </div>
 
       {/* Logo Preview Modal */}
       {selectedLogo && (

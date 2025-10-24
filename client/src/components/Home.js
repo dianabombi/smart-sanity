@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from './ui/Button';
+import ActionButton from './ui/ActionButton';
 import Carousel from './ui/Carousel';
 import apiService from '../services/api';
 
@@ -73,7 +73,7 @@ const Home = () => {
             autoPlay={true}
             autoPlayInterval={8000}
             showDots={true}
-            showArrows={false}
+            showArrows={true}
             showCounter={false}
             className="w-full h-full"
             transitionType="ken-burns"
@@ -83,7 +83,7 @@ const Home = () => {
         {/* Right Section - full width on mobile/tablet, 1/3 on laptop+ */}
         <div className="w-full laptop:w-1/3 bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
           {/* Smart Sanit Logo - positioned higher */}
-          <div className="flex-shrink-0 pt-4 tablet:pt-6 laptop:pt-16 flex justify-center">
+          <div className="flex-shrink-0 pt-2 tablet:pt-4 laptop:pt-12 flex justify-center">
             <img 
               src="/logo vektory_bez pozadia.png" 
               alt="Smart Sanit" 
@@ -95,7 +95,7 @@ const Home = () => {
           
           {/* Text Section */}
           <div className="flex flex-col items-center justify-center pt-6 pb-6 tablet:pt-2 tablet:pb-2 laptop:pt-8 laptop:pb-8">
-            <div className="text-xl tablet:text-2xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] max-w-3xl mx-auto leading-relaxed text-center mb-6">
+            <div className="text-xl tablet:text-2xl text-gray-300 opacity-0 animate-[fadeInUp_2.5s_ease-out_0.8s_forwards] max-w-3xl mx-auto leading-relaxed text-center mb-6">
               <p>Profesionálne riešenia</p>
               <p>pre interiérových dizajnérov</p>
               <p>a architektov</p>
@@ -105,28 +105,14 @@ const Home = () => {
           
           {/* Button Section */}
           <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
-            <Button
-              size="small"
+            <ActionButton
+              size="xl"
               variant="primary"
               onClick={() => navigate('/brands')}
-              className="w-full max-w-[130px] tablet:max-w-[160px]"
-              style={{
-                color: '#9ca3af',
-                borderColor: '#9ca3af',
-                backgroundColor: 'transparent',
-                textTransform: 'none'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.color = 'white';
-                e.target.style.borderColor = 'white';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.color = '#9ca3af';
-                e.target.style.borderColor = '#9ca3af';
-              }}
+              className="min-w-[140px] tablet:min-w-[160px]"
             >
-            Vstúpte
-            </Button>
+              Vstúpte
+            </ActionButton>
           </div>
         </div>
       </div>
