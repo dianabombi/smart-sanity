@@ -5,7 +5,7 @@ import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Entrance = () => {
   const [visibleItems, setVisibleItems] = useState([]);
-  const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle, refreshSettings } = useBackgroundSettings();
+  const { settings: backgroundSettings, getBackgroundStyle, refreshSettings } = useBackgroundSettings();
   const [bulletPoints, setBulletPoints] = useState([
     "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
     "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
