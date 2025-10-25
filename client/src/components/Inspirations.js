@@ -1,11 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
+import ApiService from '../services/api';
 
 const Inspirations = () => {
   const [selectedCategory] = useState('all');
+  const [inspirations, setInspirations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const inspirations = [
+  const loadInspirations = useCallback(async (forceRefresh = false) => {
+    try {
+      setLoading(true);
+      console.log(`🚨 PUBLIC: Loading inspirations from database... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
+      
+      const result = await ApiService.getInspirations();
+      
+      if (result.success && result.inspirations && result.inspirations.length > 0) {
+        console.log(`✅ PUBLIC: Loaded ${result.inspirations.length} inspirations from database`);
+        setInspirations(result.inspirations);
+      } else {
+        console.log('⚠️ PUBLIC: No inspirations found, using fallback data');
+        setInspirations(getDefaultInspirations());
+      }
+    } catch (error) {
+      console.error('❌ PUBLIC: Error loading inspirations:', error);
+      setInspirations(getDefaultInspirations());
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getDefaultInspirations = () => [
     {
       id: 2,
       title: 'Luxusný priestor',
@@ -80,6 +105,18 @@ const Inspirations = () => {
     }
   ];
 
+  useEffect(() => {
+    loadInspirations();
+    
+    // Auto-refresh inspirations every 30 seconds to catch admin changes
+    const interval = setInterval(() => {
+      console.log('🔄 PUBLIC: Auto-refreshing inspirations to catch admin changes...');
+      loadInspirations(true);
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [loadInspirations]);
+
   // const categories = [
   //   { id: 'all', name: 'Všetky inšpirácie', icon: '🏠' },
   //   { id: 'modern', name: 'Moderné', icon: '✨' },
@@ -136,6 +173,11 @@ const Inspirations = () => {
 
 
         {/* Photos Only Gallery */}
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="text-gray-400 text-lg">Načítavam inšpirácie...</div>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredInspirations.map((inspiration) => (
             <div key={inspiration.id} className="group">
@@ -179,7 +221,7 @@ const Inspirations = () => {
             </div>
           ))}
         </div>
-
+        )}
 
         {/* Call to Action */}
         <div className="text-center bg-gray-900 border border-gray-700 text-white p-12 rounded-lg">
