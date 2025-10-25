@@ -47,18 +47,6 @@ const AdminInspirations = ({ onLogout }) => {
     }
   };
 
-  const getDefaultInspirations = () => [
-    {
-      id: 1,
-      title: 'Moderná kúpeľňa',
-      description: 'Elegantný dizajn s čistými líniami.',
-      category: 'modern',
-      image: '/photos/ATX_AG0088.jpg',
-      features: ['Moderný dizajn', 'Kvalitné materiály', 'Funkčnosť'],
-      brands: ['Agape', 'Fantini', 'Cielo']
-    }
-  ];
-
   const handleImageUpload = async (file) => {
     try {
       setUploadingImage(true);
