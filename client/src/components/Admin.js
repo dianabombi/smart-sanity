@@ -4,7 +4,6 @@ import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import AdminBrands from './admin/AdminBrands';
 import AdminWhoWeAre from './admin/AdminWhoWeAre';
-import AdminWhyChooseUs from './admin/AdminWhyChooseUs';
 import AdminWhatWeOffer from './admin/AdminWhatWeOffer';
 import AdminMessages from './admin/AdminMessages';
 import AdminHeroBanners from './admin/AdminHeroBanners';
@@ -51,7 +50,6 @@ const Admin = () => {
       <Route path="/dashboard" element={<AdminDashboard onLogout={handleLogout} />} />
       <Route path="/brands" element={<AdminBrands onLogout={handleLogout} />} />
       <Route path="/who-we-are" element={<AdminWhoWeAre onLogout={handleLogout} />} />
-      <Route path="/why-choose-us" element={<AdminWhyChooseUs onLogout={handleLogout} />} />
       <Route path="/what-we-offer" element={<AdminWhatWeOffer onLogout={handleLogout} />} />
       <Route path="/messages" element={<AdminMessages onLogout={handleLogout} />} />
       <Route path="/hero-banners" element={<AdminHeroBanners onLogout={handleLogout} />} />

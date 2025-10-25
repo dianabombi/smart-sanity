@@ -22,24 +22,47 @@ const WhoWeAre = () => {
     loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadBackgroundSettings = () => {
+  const loadBackgroundSettings = async () => {
     try {
+      console.log('🔄 Loading WhoWeAre background settings...');
+      
+      // Try to load from database first
+      try {
+        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
+        if (result.success && result.content) {
+          const dbSettings = JSON.parse(result.content);
+          console.log('✅ Loaded background settings from database');
+          setBackgroundSettings(dbSettings);
+          
+          // Update background images if available
+          if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
+            const imageUrls = dbSettings.whoWeAreBackgroundImages
+              .sort((a, b) => a.order - b.order)
+              .map(img => img.dataUrl);
+            setBackgroundImages(imageUrls);
+          }
+          return;
+        }
+      } catch (dbError) {
+        console.log('⚠️ Database load failed, trying localStorage:', dbError);
+      }
+      
+      // Fallback to localStorage
       const saved = localStorage.getItem('whoWeAreBackgroundSettings');
       if (saved) {
         const settings = JSON.parse(saved);
+        console.log('✅ Loaded background settings from localStorage');
         setBackgroundSettings(settings);
         
-        // Update background images if admin has uploaded any
+        // Update background images if available
         if (settings.whoWeAreBackgroundImages && settings.whoWeAreBackgroundImages.length > 0) {
-          const adminImages = settings.whoWeAreBackgroundImages
-            .sort((a, b) => a.order - b.order) // Sort by order
+          const imageUrls = settings.whoWeAreBackgroundImages
+            .sort((a, b) => a.order - b.order)
             .map(img => img.dataUrl);
-          setBackgroundImages(adminImages);
-          console.log('✅ Loaded', adminImages.length, 'background images from admin settings');
-          console.log('🎯 Image order:', settings.whoWeAreBackgroundImages.map(img => `#${img.order}: ${img.name}`));
-        } else {
-          console.log('ℹ️ No admin background images found, using default images');
+          setBackgroundImages(imageUrls);
         }
+      } else {
+        console.log('ℹ️ No background settings found, using defaults');
       }
     } catch (error) {
       console.error('❌ Error loading WhoWeAre background settings:', error);
@@ -258,8 +281,7 @@ const WhoWeAre = () => {
               }}
             />
           ))}
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/50" />
+        {/* Dark overlay removed per user request */}
       </div>
       
       <div className="relative min-h-screen">
@@ -274,7 +296,7 @@ const WhoWeAre = () => {
           </div>
         </div>
         
-        <div className="bg-black/20 flex items-center justify-center py-8 min-h-[60vh] relative z-10 mt-4">
+        <div className="flex items-center justify-center py-8 min-h-[60vh] relative z-10 mt-4">
           {contentSection}
         </div>
       </div>

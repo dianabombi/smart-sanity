@@ -39,19 +39,40 @@ const AdminWhoWeAre = ({ onLogout }) => {
     loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadBackgroundSettings = () => {
+  const loadBackgroundSettings = async () => {
     try {
+      console.log('🔄 Loading WhoWeAre background settings...');
+      
+      // Try to load from database first
+      try {
+        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
+        if (result.success && result.content) {
+          const dbSettings = JSON.parse(result.content);
+          console.log('✅ Loaded background settings from database');
+          setBackgroundSettings(prev => ({
+            ...prev,
+            ...dbSettings
+          }));
+          return;
+        }
+      } catch (dbError) {
+        console.log('⚠️ Database load failed, trying localStorage:', dbError);
+      }
+      
+      // Fallback to localStorage
       const saved = localStorage.getItem('whoWeAreBackgroundSettings');
       if (saved) {
         const settings = JSON.parse(saved);
+        console.log('✅ Loaded background settings from localStorage');
         setBackgroundSettings(prev => ({
           ...prev,
           ...settings
         }));
-        console.log('✅ Loaded WhoWeAre background settings:', settings);
+      } else {
+        console.log('ℹ️ No background settings found, using defaults');
       }
     } catch (error) {
-      console.error('❌ Error loading WhoWeAre background settings:', error);
+      console.error('❌ Error loading background settings:', error);
     }
   };
 
@@ -319,31 +340,67 @@ const AdminWhoWeAre = ({ onLogout }) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      setBackgroundMessage('Neplatný typ súboru. Podporované formáty: JPG, PNG, WebP, SVG');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setBackgroundMessage('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
     try {
       setBackgroundLoading(true);
-      console.log('🔄 Uploading WhoWeAre background image:', file.name, file.size);
+      setBackgroundMessage('Nahrávam obrázok...');
+      console.log('🔄 Uploading WhoWeAre background image:', file.name, file.size, file.type);
       
       const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('✅ WhoWeAre image converted to data URL, length:', e.target.result.length);
-        const newImage = {
-          id: Date.now(), // Simple ID based on timestamp
-          dataUrl: e.target.result,
-          name: file.name,
-          order: backgroundSettings.whoWeAreBackgroundImages.length + 1
-        };
-        
-        setBackgroundSettings(prev => ({
-          ...prev,
-          whoWeAreBackgroundImages: [...prev.whoWeAreBackgroundImages, newImage]
-        }));
-        setBackgroundMessage(`Obrázok "${file.name}" bol nahraný! Nezabudnite kliknúť "Uložiť pozadie".`);
+      
+      reader.onerror = () => {
+        console.error('❌ FileReader error');
+        setBackgroundMessage('Chyba pri čítaní súboru.');
+        setBackgroundLoading(false);
       };
+      
+      reader.onload = (e) => {
+        try {
+          console.log('✅ WhoWeAre image converted to data URL, length:', e.target.result.length);
+          
+          const newImage = {
+            id: Date.now(), // Simple ID based on timestamp
+            dataUrl: e.target.result,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            order: backgroundSettings.whoWeAreBackgroundImages.length + 1
+          };
+          
+          setBackgroundSettings(prev => ({
+            ...prev,
+            whoWeAreBackgroundImages: [...prev.whoWeAreBackgroundImages, newImage]
+          }));
+          
+          setBackgroundMessage(`✅ Obrázok "${file.name}" bol úspešne nahraný! Nezabudnite kliknúť "Uložiť pozadie".`);
+          
+          // Clear the file input
+          event.target.value = '';
+        } catch (processError) {
+          console.error('❌ Error processing image:', processError);
+          setBackgroundMessage('Chyba pri spracovaní obrázka.');
+        } finally {
+          setBackgroundLoading(false);
+        }
+      };
+      
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('❌ Error uploading WhoWeAre background image:', error);
-      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia.');
-    } finally {
+      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia: ' + error.message);
       setBackgroundLoading(false);
     }
   };
@@ -397,10 +454,24 @@ const AdminWhoWeAre = ({ onLogout }) => {
       setBackgroundLoading(true);
       console.log('🔄 Saving WhoWeAre background settings:', backgroundSettings);
       
-      // For now, save to localStorage (you can extend this to use Supabase later)
+      // Save to localStorage for immediate use
       localStorage.setItem('whoWeAreBackgroundSettings', JSON.stringify(backgroundSettings));
       
-      setBackgroundMessage('Nastavenia pozadia boli úspešne uložené!');
+      // Also try to save to database for persistence
+      try {
+        const result = await ApiService.updatePageContent('who-we-are', 'background', 'settings', JSON.stringify(backgroundSettings));
+        if (result.success) {
+          console.log('✅ Background settings saved to database');
+          setBackgroundMessage('Nastavenia pozadia boli úspešne uložené do databázy!');
+        } else {
+          console.log('⚠️ Database save failed, using localStorage only');
+          setBackgroundMessage('Nastavenia pozadia boli uložené lokálne (databáza nedostupná).');
+        }
+      } catch (dbError) {
+        console.log('⚠️ Database save failed, using localStorage only:', dbError);
+        setBackgroundMessage('Nastavenia pozadia boli uložené lokálne (databáza nedostupná).');
+      }
+      
       setTimeout(() => setBackgroundMessage(''), 3000);
     } catch (error) {
       console.error('❌ Error saving WhoWeAre background settings:', error);
@@ -816,8 +887,10 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
           {backgroundMessage && (
             <div className={`mb-4 px-4 py-3 rounded ${
-              backgroundMessage.includes('úspešne') 
-                ? 'bg-green-900/50 border border-green-500 text-green-200'
+              backgroundMessage.includes('úspešne') || backgroundMessage.includes('nahraný') || backgroundMessage.includes('✅')
+                ? 'bg-yellow-900/50 border border-yellow-500 text-yellow-200'
+                : backgroundMessage.includes('Nahrávam')
+                ? 'bg-blue-900/50 border border-blue-500 text-blue-200'
                 : 'bg-red-900/50 border border-red-500 text-red-200'
             }`}>
               {backgroundMessage}
@@ -917,11 +990,16 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
             {/* Debug info */}
             <div className="text-xs text-gray-500 mb-4 p-3 bg-gray-800 rounded">
-              <div>Debug: Images count: {backgroundSettings.whoWeAreBackgroundImages.length}</div>
-              <div>Position X: {backgroundSettings.backgroundImagePositionX || 'undefined'}</div>
-              <div>Position Y: {backgroundSettings.backgroundImagePositionY || 'undefined'}</div>
-              <div>Size: {backgroundSettings.backgroundImageSize || 'undefined'}</div>
-              <div>Opacity: {backgroundSettings.backgroundImageOpacity || 'undefined'}</div>
+              <div>🔍 Debug Info:</div>
+              <div>• Images count: {backgroundSettings.whoWeAreBackgroundImages?.length || 0}</div>
+              <div>• Position X: {backgroundSettings.backgroundImagePositionX || 'center'}</div>
+              <div>• Position Y: {backgroundSettings.backgroundImagePositionY || 'center'}</div>
+              <div>• Size: {backgroundSettings.backgroundImageSize || 'cover'}</div>
+              <div>• Opacity: {backgroundSettings.backgroundImageOpacity || 1.0}</div>
+              <div>• Loading: {backgroundLoading ? 'Yes' : 'No'}</div>
+              {backgroundSettings.whoWeAreBackgroundImages?.length > 0 && (
+                <div>• Last image: {backgroundSettings.whoWeAreBackgroundImages[backgroundSettings.whoWeAreBackgroundImages.length - 1]?.name}</div>
+              )}
             </div>
 
             {/* Background Image Controls - Only show if images are uploaded */}

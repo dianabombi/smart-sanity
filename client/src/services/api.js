@@ -379,76 +379,6 @@ class ApiService {
   }
 
 
-  // Page Content Management
-  async getPageContent(page, section = null, contentKey = null) {
-    if (!this.isSupabaseAvailable()) {
-      // Return fallback content
-      const fallbackContent = {
-        'brands.header.description': 'Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.'
-      };
-      
-      const key = `${page}.${section}.${contentKey}`;
-      return { 
-        success: true, 
-        content: fallbackContent[key] || 'Obsah nie je k dispozícii' 
-      };
-    }
-
-    try {
-      let query = supabase.from('page_content').select('*').eq('page', page);
-      
-      if (section) {
-        query = query.eq('section', section);
-      }
-      
-      if (contentKey) {
-        query = query.eq('content_key', contentKey);
-      }
-      
-      const { data, error } = await query;
-      
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      
-      if (contentKey && data.length > 0) {
-        return { success: true, content: data[0].content_text };
-      }
-      
-      return { success: true, content: data };
-    } catch (error) {
-      return { success: false, message: 'Chyba pri načítavaní obsahu' };
-    }
-  }
-
-  async updatePageContent(page, section, contentKey, contentText) {
-    if (!this.isSupabaseAvailable()) {
-      return { success: false, message: 'Supabase nie je k dispozícii' };
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('page_content')
-        .upsert({
-          page,
-          section,
-          content_key: contentKey,
-          content_text: contentText,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'page,section,content_key'
-        })
-        .select();
-      
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      
-      return { success: true, content: data[0] };
-    } catch (error) {
-      return { success: false, message: 'Chyba pri aktualizácii obsahu' };
-    }
-  }
 
 
   async uploadBrandImages(brandId, files) {
@@ -2726,6 +2656,111 @@ class ApiService {
       return { 
         success: false, 
         message: `Deletion failed: ${error.message}` 
+      };
+    }
+  }
+
+  // =====================================================
+  // PAGE CONTENT MANAGEMENT
+  // =====================================================
+
+  async getPageContent(page, section, key) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log(`🔄 Loading page content: ${page}.${section}.${key}`);
+      
+      const { data, error } = await supabase
+        .from('page_content')
+        .select('*')
+        .eq('page', page)
+        .eq('section', section)
+        .eq('key', key)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No rows found
+          console.log(`ℹ️ No content found for ${page}.${section}.${key}`);
+          return { success: false, message: 'Content not found' };
+        }
+        console.error('Supabase error loading page content:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log(`✅ Loaded page content for ${page}.${section}.${key}`);
+      return { success: true, content: data.content };
+    } catch (error) {
+      console.error('Exception loading page content:', error);
+      return { 
+        success: false, 
+        message: `Loading failed: ${error.message}` 
+      };
+    }
+  }
+
+  async updatePageContent(page, section, key, content) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log(`🔄 Updating page content: ${page}.${section}.${key}`);
+      
+      // Try to update first
+      const { data: updateData, error: updateError } = await supabase
+        .from('page_content')
+        .update({
+          content: content,
+          updated_at: new Date().toISOString()
+        })
+        .eq('page', page)
+        .eq('section', section)
+        .eq('key', key)
+        .select();
+
+      if (updateError) {
+        console.log('Update failed, trying insert:', updateError);
+        
+        // If update fails, try insert (upsert behavior)
+        const { data: insertData, error: insertError } = await supabase
+          .from('page_content')
+          .insert([{
+            page: page,
+            section: section,
+            key: key,
+            content: content,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }])
+          .select();
+
+        if (insertError) {
+          console.error('Supabase error inserting page content:', insertError);
+          return { 
+            success: false, 
+            message: `Database error: ${insertError.message}` 
+          };
+        }
+
+        console.log(`✅ Inserted page content for ${page}.${section}.${key}`);
+        return { success: true, content: insertData[0] };
+      }
+
+      console.log(`✅ Updated page content for ${page}.${section}.${key}`);
+      return { success: true, content: updateData[0] };
+    } catch (error) {
+      console.error('Exception updating page content:', error);
+      return { 
+        success: false, 
+        message: `Update failed: ${error.message}` 
       };
     }
   }
