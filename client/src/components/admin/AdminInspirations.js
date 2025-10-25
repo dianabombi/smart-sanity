@@ -26,24 +26,22 @@ const AdminInspirations = ({ onLogout }) => {
   const loadInspirations = async () => {
     try {
       setLoading(true);
+      console.log('🔄 ADMIN: Loading inspirations from database...');
       
-      // Load from localStorage first
-      const localInspirations = localStorage.getItem('adminInspirations');
-      if (localInspirations) {
-        const parsed = JSON.parse(localInspirations);
-        setInspirations(parsed);
-      } else {
-        setInspirations(getDefaultInspirations());
-      }
-      
-      // Try to load from API
       const result = await ApiService.getInspirations();
+      
       if (result.success) {
+        console.log(`✅ ADMIN: Loaded ${result.inspirations.length} inspirations from database`);
         setInspirations(result.inspirations);
+      } else {
+        console.error('❌ ADMIN: Failed to load inspirations:', result.message);
+        setError('Failed to load inspirations: ' + result.message);
+        setInspirations([]);
       }
     } catch (error) {
-      console.error('Error loading inspirations:', error);
-      setInspirations(getDefaultInspirations());
+      console.error('❌ ADMIN: Error loading inspirations:', error);
+      setError('Error loading inspirations');
+      setInspirations([]);
     } finally {
       setLoading(false);
     }
@@ -84,40 +82,30 @@ const AdminInspirations = ({ onLogout }) => {
     e.preventDefault();
     try {
       setError('');
+      console.log('🔄 ADMIN: Saving inspiration to database...', formData);
       
-      const inspirationData = {
-        ...formData,
-        id: editingInspiration ? editingInspiration.id : Date.now()
-      };
+      const inspirationData = { ...formData };
       
-      let updatedInspirations;
+      let result;
       if (editingInspiration) {
-        updatedInspirations = inspirations.map(insp => 
-          insp.id === editingInspiration.id ? inspirationData : insp
-        );
+        result = await ApiService.updateInspiration(editingInspiration.id, inspirationData);
       } else {
-        updatedInspirations = [...inspirations, inspirationData];
+        result = await ApiService.createInspiration(inspirationData);
       }
       
-      // Save to localStorage
-      localStorage.setItem('adminInspirations', JSON.stringify(updatedInspirations));
-      setInspirations(updatedInspirations);
-      
-      // Try to save to API
-      try {
-        if (editingInspiration) {
-          await ApiService.updateInspiration(editingInspiration.id, inspirationData);
-        } else {
-          await ApiService.createInspiration(inspirationData);
-        }
-      } catch (apiError) {
-        console.log('API save failed, using localStorage');
+      if (result.success) {
+        console.log('✅ ADMIN: Inspiration saved successfully');
+        setSuccess(editingInspiration ? 'Inšpirácia aktualizovaná!' : 'Inšpirácia vytvorená!');
+        resetForm();
+        await loadInspirations(); // Reload from database
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        console.error('❌ ADMIN: Failed to save inspiration:', result.message);
+        setError('Chyba pri ukladaní: ' + result.message);
+        setTimeout(() => setError(''), 5000);
       }
-      
-      setSuccess(editingInspiration ? 'Inšpirácia aktualizovaná!' : 'Inšpirácia vytvorená!');
-      resetForm();
-      setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
+      console.error('❌ ADMIN: Exception saving inspiration:', error);
       setError('Chyba pri ukladaní inšpirácie');
       setTimeout(() => setError(''), 3000);
     }
@@ -127,19 +115,22 @@ const AdminInspirations = ({ onLogout }) => {
     if (!window.confirm('Naozaj chcete odstrániť túto inšpiráciu?')) return;
     
     try {
-      const updatedInspirations = inspirations.filter(insp => insp.id !== id);
-      localStorage.setItem('adminInspirations', JSON.stringify(updatedInspirations));
-      setInspirations(updatedInspirations);
+      console.log('🔄 ADMIN: Deleting inspiration from database...', id);
       
-      try {
-        await ApiService.deleteInspiration(id);
-      } catch (apiError) {
-        console.log('API delete failed, using localStorage');
+      const result = await ApiService.deleteInspiration(id);
+      
+      if (result.success) {
+        console.log('✅ ADMIN: Inspiration deleted successfully');
+        setSuccess('Inšpirácia odstránená!');
+        await loadInspirations(); // Reload from database
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        console.error('❌ ADMIN: Failed to delete inspiration:', result.message);
+        setError('Chyba pri odstraňovaní: ' + result.message);
+        setTimeout(() => setError(''), 3000);
       }
-      
-      setSuccess('Inšpirácia odstránená!');
-      setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
+      console.error('❌ ADMIN: Exception deleting inspiration:', error);
       setError('Chyba pri odstraňovaní inšpirácie');
       setTimeout(() => setError(''), 3000);
     }

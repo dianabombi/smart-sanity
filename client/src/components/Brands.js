@@ -4,7 +4,6 @@ import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import ActionButton from './ui/ActionButton';
 import ApiService from '../services/api';
-import EmergencyBrands from '../services/emergencyBrands';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Brands = () => {
@@ -66,38 +65,19 @@ const Brands = () => {
   const loadBrands = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
-      console.log(`🚨 PUBLIC: Loading brands from database... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
+      console.log(`🔄 PUBLIC: Loading brands from database... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
       
-      // First, try to load from Supabase database
-      try {
-        console.log('🔄 PUBLIC: Loading from Supabase database...');
-        const supabaseResult = await ApiService.getBrands();
-        
-        if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
-          console.log(`✅ PUBLIC: Loaded ${supabaseResult.brands.length} brands from Supabase`);
-          console.log('🔍 First Supabase brand:', supabaseResult.brands[0]);
-          setBrands(supabaseResult.brands);
-          return; // Successfully loaded from database
-        } else {
-          console.log('⚠️ PUBLIC: Supabase returned no brands, trying fallback...');
-        }
-      } catch (error) {
-        console.log('⚠️ PUBLIC: Supabase failed, trying fallback...', error);
-      }
+      const result = await ApiService.getBrands();
       
-      // Fallback to EmergencyBrands if Supabase fails
-      console.log('🔍 PUBLIC: Using EmergencyBrands fallback...');
-      const emergencyResult = EmergencyBrands.getBrands();
-      
-      if (emergencyResult.success && emergencyResult.brands.length > 0) {
-        console.log(`✅ PUBLIC: Loaded ${emergencyResult.brands.length} brands from EmergencyBrands (fallback)`);
-        setBrands(emergencyResult.brands);
+      if (result.success && result.brands) {
+        console.log(`✅ PUBLIC: Loaded ${result.brands.length} brands from database`);
+        setBrands(result.brands);
       } else {
-        console.error('❌ PUBLIC: Both Supabase and EmergencyBrands failed');
+        console.error('❌ PUBLIC: Failed to load brands:', result.message);
         setBrands([]);
       }
     } catch (error) {
-      console.error('❌ PUBLIC: Error in loadBrands:', error);
+      console.error('❌ PUBLIC: Error loading brands:', error);
       setBrands([]);
     } finally {
       setLoading(false);
@@ -155,12 +135,12 @@ const Brands = () => {
           <div className="absolute inset-0 -z-10" style={getBackgroundStyle()}></div>
         )}
         <div className="max-w-6xl mx-auto relative z-10">
-          {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').length, 'Partnership brands:', brands.filter(brand => brand.category === 'Partnerstvo').length)}
+          {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.is_main !== false).length, 'Other brands:', brands.filter(brand => brand.is_main === false).length)}
           
 
           {/* Main Brands Section - SIMPLIFIED */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {brands.filter(brand => brand.category !== 'Ostatné' && brand.category !== 'Partnerstvo').map((brand, index) => (
+            {brands.filter(brand => brand.is_main !== false).map((brand, index) => (
               <div
                 key={brand.id || brand._id || index}
                 className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer transform relative pb-16 opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-xl"
@@ -256,7 +236,7 @@ const Brands = () => {
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {brands.filter(brand => brand.category === 'Ostatné').map((brand, index) => (
+            {brands.filter(brand => brand.is_main === false || brand.category === 'Ostatné').map((brand, index) => (
               <div
                 key={brand.id || brand._id || index}
                 className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 transition-all duration-500 cursor-pointer transform opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-lg"

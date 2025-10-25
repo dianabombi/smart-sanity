@@ -120,6 +120,84 @@ class EmergencyBrandsService {
     }
   }
 
+  // Create new brand
+  createBrand(brandData) {
+    try {
+      // Get current brands
+      const current = localStorage.getItem(this.storageKey);
+      let brands = current ? JSON.parse(current) : this.getFallbackBrands();
+      
+      // Generate new ID
+      const maxId = brands.length > 0 ? Math.max(...brands.map(b => b.id || 0)) : 0;
+      const newId = maxId + 1;
+      
+      // Create new brand with ID and timestamp
+      const newBrand = {
+        ...brandData,
+        id: newId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      // Add to brands array
+      brands.push(newBrand);
+      
+      // Save to localStorage
+      localStorage.setItem(this.storageKey, JSON.stringify(brands));
+      
+      console.log('✅ EMERGENCY: Created new brand with ID:', newId);
+      return {
+        success: true,
+        brand: newBrand,
+        message: 'Značka bola úspešne vytvorená'
+      };
+    } catch (error) {
+      console.error('❌ EMERGENCY: Create brand error:', error);
+      return {
+        success: false,
+        message: 'Chyba pri vytváraní značky'
+      };
+    }
+  }
+
+  // Delete brand
+  deleteBrand(brandId) {
+    try {
+      // Get current brands
+      const current = localStorage.getItem(this.storageKey);
+      let brands = current ? JSON.parse(current) : this.getFallbackBrands();
+      
+      // Find brand to delete
+      const brandIndex = brands.findIndex(b => b.id === parseInt(brandId));
+      if (brandIndex === -1) {
+        return {
+          success: false,
+          message: 'Značka nebola nájdená'
+        };
+      }
+      
+      const brandName = brands[brandIndex].name;
+      
+      // Remove brand from array
+      brands.splice(brandIndex, 1);
+      
+      // Save to localStorage
+      localStorage.setItem(this.storageKey, JSON.stringify(brands));
+      
+      console.log('✅ EMERGENCY: Deleted brand:', brandName);
+      return {
+        success: true,
+        message: 'Značka bola úspešne vymazaná'
+      };
+    } catch (error) {
+      console.error('❌ EMERGENCY: Delete brand error:', error);
+      return {
+        success: false,
+        message: 'Chyba pri mazaní značky'
+      };
+    }
+  }
+
   // Get fallback brands - ALL 18 BRANDS
   getFallbackBrands() {
     return [

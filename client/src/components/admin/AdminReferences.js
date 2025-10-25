@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import EmergencyReferences from '../../utils/EmergencyReferences';
 
 const AdminReferences = ({ onLogout }) => {
   const [references, setReferences] = useState([]);
@@ -142,15 +143,48 @@ const AdminReferences = ({ onLogout }) => {
   const handleDelete = async (id) => {
     if (window.confirm('Naozaj chcete vymazať túto referenciu?')) {
       try {
+        console.log('Deleting reference with ID:', id);
+        
         const result = await ApiService.deleteReference(id);
+        
         if (result.success) {
+          console.log('Reference deleted successfully from database');
           await loadReferences();
+          alert('Referencia bola úspešne vymazaná!');
         } else {
-          alert('Chyba pri mazaní referencie');
+          console.error('API delete failed:', result.message);
+          
+          // Try to delete using EmergencyReferences as fallback
+          console.log('Attempting to delete using EmergencyReferences fallback...');
+          try {
+            const deleteResult = EmergencyReferences.deleteReference(id);
+            if (deleteResult.success) {
+              await loadReferences();
+              alert('Referencia vymazaná lokálne (databáza nedostupná)');
+            } else {
+              alert('Chyba pri mazaní referencie');
+            }
+          } catch (localError) {
+            console.error('EmergencyReferences delete failed:', localError);
+            alert('Chyba pri mazaní referencie');
+          }
         }
       } catch (error) {
         console.error('Error deleting reference:', error);
-        alert('Chyba pri mazaní referencie');
+        
+        // Try EmergencyReferences as final fallback
+        try {
+          const deleteResult = EmergencyReferences.deleteReference(id);
+          if (deleteResult.success) {
+            await loadReferences();
+            alert('Referencia vymazaná lokálne (databáza nedostupná)');
+          } else {
+            alert('Chyba pri mazaní referencie');
+          }
+        } catch (localError) {
+          console.error('Final fallback failed:', localError);
+          alert('Chyba pri mazaní referencie');
+        }
       }
     }
   };

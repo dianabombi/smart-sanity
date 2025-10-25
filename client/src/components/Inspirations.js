@@ -11,99 +11,28 @@ const Inspirations = () => {
   const loadInspirations = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
-      console.log(`🚨 PUBLIC: Loading inspirations from database... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
+      console.log(`🔄 INSPIRATIONS: Loading inspirations... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
       
       const result = await ApiService.getInspirations();
       
-      if (result.success && result.inspirations && result.inspirations.length > 0) {
-        console.log(`✅ PUBLIC: Loaded ${result.inspirations.length} inspirations from database`);
+      console.log('🔍 INSPIRATIONS: API result:', result);
+      
+      if (result.success && result.inspirations) {
+        console.log(`✅ INSPIRATIONS: Loaded ${result.inspirations.length} inspirations from database`);
+        console.log('🔍 INSPIRATIONS: First inspiration:', result.inspirations[0]);
         setInspirations(result.inspirations);
       } else {
-        console.log('⚠️ PUBLIC: No inspirations found, using fallback data');
-        setInspirations(getDefaultInspirations());
+        console.error('❌ INSPIRATIONS: Failed to load inspirations:', result.message);
+        setInspirations([]);
       }
     } catch (error) {
-      console.error('❌ PUBLIC: Error loading inspirations:', error);
-      setInspirations(getDefaultInspirations());
+      console.error('❌ INSPIRATIONS: Error in loadInspirations:', error);
+      setInspirations([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const getDefaultInspirations = () => [
-    {
-      id: 2,
-      title: 'Luxusný priestor',
-      description: 'Prémiové materiály a sofistikované riešenia.',
-      category: 'luxury',
-      image: '/photos/compressed/ATX_AG0065.jpg',
-      features: ['Luxusné materiály', 'Prémiové vybavenie', 'Elegantný dizajn'],
-      brands: ['AXOR', 'Fantini', 'Cielo']
-    },
-    {
-      id: 3,
-      title: 'Štýlová kúpeľňa',
-      description: 'Kombinácia funkčnosti a estetiky.',
-      category: 'modern',
-      image: '/photos/compressed/ATX_AG0088.jpg',
-      features: ['Štýlový dizajn', 'Praktické riešenia', 'Kvalitné materiály'],
-      brands: ['CEA Design', 'Azzurra', 'Hansgrohe']
-    },
-    {
-      id: 4,
-      title: 'Minimalistický štýl',
-      description: 'Čisté línie a jednoduché riešenia.',
-      category: 'modern',
-      image: '/photos/compressed/ATX_AG0102.jpg',
-      features: ['Minimalizmus', 'Čisté línie', 'Funkčnosť'],
-      brands: ['Agape', 'Kaldewei', 'Hansgrohe']
-    },
-    {
-      id: 5,
-      title: 'Elegantná kúpeľňa',
-      description: 'Sofistikované riešenie s dôrazom na detail.',
-      category: 'luxury',
-      image: '/photos/compressed/ATX_AG0114.jpg',
-      features: ['Elegancia', 'Detailné riešenia', 'Kvalita'],
-      brands: ['Fantini', 'AXOR', 'Cielo']
-    },
-    {
-      id: 6,
-      title: 'Klasický štýl',
-      description: 'Nadčasový dizajn s tradičnými prvkami.',
-      category: 'classic',
-      image: '/photos/compressed/ATX_AG0120.jpg',
-      features: ['Klasický dizajn', 'Tradičné prvky', 'Nadčasovosť'],
-      brands: ['Azzurra', 'Hansgrohe', 'Kaldewei']
-    },
-    {
-      id: 7,
-      title: 'Moderný komfort',
-      description: 'Pohodlné a praktické riešenia.',
-      category: 'modern',
-      image: '/photos/compressed/ATX_AG0129.jpg',
-      features: ['Komfort', 'Praktickosť', 'Modernosť'],
-      brands: ['CEA Design', 'Agape', 'Fantini']
-    },
-    {
-      id: 8,
-      title: 'Dizajnová kúpeľňa',
-      description: 'Jedinečný dizajn s dôrazom na estetiku.',
-      category: 'luxury',
-      image: '/photos/compressed/ATX_AG0134.jpg',
-      features: ['Jedinečný dizajn', 'Estetika', 'Originalita'],
-      brands: ['AXOR', 'Cielo', 'Hansgrohe']
-    },
-    {
-      id: 9,
-      title: 'Štýlový priestor',
-      description: 'Harmonické spojenie funkčnosti a krásy.',
-      category: 'modern',
-      image: '/photos/compressed/ATX_AG0142.jpg',
-      features: ['Harmónia', 'Funkčnosť', 'Krása'],
-      brands: ['Kaldewei', 'Azzurra', 'CEA Design']
-    }
-  ];
 
   useEffect(() => {
     loadInspirations();
@@ -154,6 +83,7 @@ const Inspirations = () => {
   //   }
   // ];
 
+
   return (
     <div className="min-h-screen bg-black">
       <NavBar />
@@ -180,7 +110,7 @@ const Inspirations = () => {
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredInspirations.map((inspiration) => (
-            <div key={inspiration.id} className="group">
+            <div key={inspiration.id} className="group" style={{ opacity: 1 }}>
               <div className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg">
                 {/* Loading skeleton */}
                 <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse">

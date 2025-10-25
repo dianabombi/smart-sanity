@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
@@ -8,44 +8,37 @@ const References = () => {
   const [loading, setLoading] = useState(true);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
 
-  useEffect(() => {
-    loadReferences();
-  }, []);
-
-  const loadReferences = async () => {
+  const loadReferences = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
+      const result = await ApiService.getReferences();
       
-      // Load fallback references immediately for fast display
-      const fallbackReferences = ApiService.getFallbackReferences ? ApiService.getFallbackReferences() : [];
-      setReferences(fallbackReferences);
-      setLoading(false);
-      
-      // Try to load from API with timeout in background
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('API timeout')), 2000)
-      );
-      
-      try {
-        const result = await Promise.race([
-          ApiService.getReferences(),
-          timeoutPromise
-        ]);
-        
-        if (result.success && result.references.length > 0) {
-          setReferences(result.references);
-        }
-      } catch (apiError) {
-        console.log('API failed or timed out, keeping fallback references:', apiError.message);
+      if (result.success && result.references) {
+        console.log(`✅ PUBLIC: Loaded ${result.references.length} references from database`);
+        setReferences(result.references);
+      } else {
+        console.error('❌ PUBLIC: Failed to load references:', result.message);
+        setReferences([]);
       }
-      
     } catch (error) {
-      console.error('Error loading references:', error);
-      const fallbackReferences = ApiService.getFallbackReferences ? ApiService.getFallbackReferences() : [];
-      setReferences(fallbackReferences);
+      console.error('❌ PUBLIC: Error in loadReferences:', error);
+      setReferences([]);
+    } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadReferences();
+    
+    // Auto-refresh references every 30 seconds to catch admin changes
+    const interval = setInterval(() => {
+      console.log('🔄 PUBLIC: Auto-refreshing references to catch admin changes...');
+      loadReferences(true);
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [loadReferences]);
 
   const openImageGallery = (reference) => {
     if (reference.images && reference.images.length > 0) {
@@ -72,6 +65,7 @@ const References = () => {
     );
   }
 
+
   return (
     <div className="min-h-screen bg-black">
       <NavBar />
@@ -94,7 +88,8 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className={`group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 opacity-0 animate-[fadeInUp_0.8s_ease-out_${1.0 + index * 0.1}s_forwards]`}
+                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105"
+                style={{ opacity: 1 }}
               >
                 <div className="mb-4">
                   <h3 className="text-xl font-semibold text-white mb-2">{reference.title}</h3>

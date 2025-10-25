@@ -378,57 +378,6 @@ class ApiService {
     }
   }
 
-  async createBrand(brandData) {
-    try {
-      const { data, error } = await supabase
-        .from('brands')
-        .insert([brandData])
-        .select();
-      
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      
-      return { success: true, brand: data[0] };
-    } catch (error) {
-      return { success: false, message: 'Chyba pri vytváraní značky' };
-    }
-  }
-
-  async updateBrand(id, brandData) {
-    try {
-      const { data, error } = await supabase
-        .from('brands')
-        .update(brandData)
-        .eq('id', id)
-        .select();
-      
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      
-      return { success: true, brand: data[0] };
-    } catch (error) {
-      return { success: false, message: 'Chyba pri aktualizácii značky' };
-    }
-  }
-
-  async deleteBrand(id) {
-    try {
-      const { error } = await supabase
-        .from('brands')
-        .delete()
-        .eq('id', id);
-      
-      if (error) {
-        return { success: false, message: error.message };
-      }
-      
-      return { success: true, message: 'Značka bola úspešne odstránená' };
-    } catch (error) {
-      return { success: false, message: 'Chyba pri odstraňovaní značky' };
-    }
-  }
 
   // Page Content Management
   async getPageContent(page, section = null, contentKey = null) {
@@ -501,38 +450,6 @@ class ApiService {
     }
   }
 
-  async uploadBrandLogo(brandId, file) {
-    console.log('Uploading brand logo to Supabase database...');
-
-    try {
-      // Convert file to data URL
-      const dataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = () => reject(new Error('Failed to read file'));
-        reader.readAsDataURL(file);
-      });
-
-      // Update brand logo in database
-      const { data, error } = await supabase
-        .from('brands')
-        .update({ logo: dataUrl })
-        .eq('id', brandId)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Failed to update brand logo:', error);
-        throw new Error('Failed to update logo in database');
-      }
-
-      console.log('✅ Brand logo updated successfully in database');
-      return { success: true, logoUrl: dataUrl, brand: data };
-    } catch (error) {
-      console.error('Error uploading brand logo:', error);
-      return { success: false, message: error.message };
-    }
-  }
 
   async uploadBrandImages(brandId, files) {
     console.log('EMERGENCY MODE: Bypassing Supabase Storage. Converting images to data URLs.');
@@ -1430,32 +1347,27 @@ class ApiService {
   // References
   async getReferences() {
     if (!this.isSupabaseAvailable()) {
-      console.log('🚫 Supabase not available, using fallback references');
-      return { success: true, references: this.getFallbackReferences(), source: 'fallback-no-supabase' };
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
     }
 
     try {
-      console.log('Fetching references from Supabase...');
+      console.log('🔄 Loading references from database...');
       const { data, error } = await supabase
         .from('references')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.log('🚫 Supabase error, using fallback:', error);
-        return { success: true, references: this.getFallbackReferences(), source: 'fallback-supabase-error' };
+        console.error('❌ Supabase error loading references:', error);
+        return { success: false, message: `Database error: ${error.message}` };
       }
       
-      if (!data || data.length === 0) {
-        console.log('🚫 No references in database, using fallback');
-        return { success: true, references: this.getFallbackReferences(), source: 'fallback-empty-db' };
-      }
-
-      console.log('✅ Successfully loaded references from Supabase database');
-      return { success: true, references: data, source: 'supabase-database' };
+      console.log(`✅ Loaded ${data?.length || 0} references from database`);
+      return { success: true, references: data || [] };
     } catch (error) {
-      console.log('Error fetching references, using fallback:', error);
-      return { success: true, references: this.getFallbackReferences(), source: 'fallback-error' };
+      console.error('❌ Error fetching references:', error);
+      return { success: false, message: `Error loading references: ${error.message}` };
     }
   }
 
@@ -1848,30 +1760,27 @@ class ApiService {
   // Inspirations Management
   async getInspirations() {
     if (!this.isSupabaseAvailable()) {
-      console.log('Supabase not available, using fallback inspirations');
-      return { success: true, inspirations: this.getFallbackInspirations() };
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
     }
 
     try {
-      const { data, error } = await this.supabase
+      console.log('🔄 Loading inspirations from database...');
+      const { data, error } = await supabase
         .from('inspirations')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.log('Supabase error, using fallback inspirations:', error);
-        return { success: true, inspirations: this.getFallbackInspirations() };
+        console.error('❌ Supabase error loading inspirations:', error);
+        return { success: false, message: `Database error: ${error.message}` };
       }
       
-      if (!data || data.length === 0) {
-        console.log('No inspirations in database, using fallback');
-        return { success: true, inspirations: this.getFallbackInspirations() };
-      }
-
-      return { success: true, inspirations: data };
+      console.log(`✅ Loaded ${data?.length || 0} inspirations from database`);
+      return { success: true, inspirations: data || [] };
     } catch (error) {
-      console.log('Error fetching inspirations, using fallback:', error);
-      return { success: true, inspirations: this.getFallbackInspirations() };
+      console.error('❌ Error fetching inspirations:', error);
+      return { success: false, message: `Error loading inspirations: ${error.message}` };
     }
   }
 
@@ -2389,6 +2298,434 @@ class ApiService {
       return { 
         success: false, 
         message: `Creation failed: ${error.message}` 
+      };
+    }
+  }
+
+  // =====================================================
+  // BRANDS CRUD OPERATIONS
+  // =====================================================
+
+  async createBrand(brandData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Creating brand in Supabase:', brandData);
+      
+      const { data, error } = await supabase
+        .from('brands')
+        .insert([{
+          name: brandData.name,
+          category: brandData.category,
+          description: brandData.description,
+          logo: brandData.logo,
+          logo_size: brandData.logoSize || 'max-h-16',
+          logo_filter: brandData.logoFilter || 'none',
+          images: brandData.images || [],
+          is_main: brandData.is_main !== false,
+          order: brandData.order || 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase error creating brand:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Brand created successfully:', data[0]);
+      return { success: true, brand: data[0] };
+    } catch (error) {
+      console.error('Exception creating brand:', error);
+      return { 
+        success: false, 
+        message: `Creation failed: ${error.message}` 
+      };
+    }
+  }
+
+  async updateBrand(brandId, updateData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Updating brand in Supabase:', brandId, updateData);
+      
+      const updatePayload = {
+        ...updateData,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('brands')
+        .update(updatePayload)
+        .eq('id', brandId)
+        .select();
+
+      if (error) {
+        console.error('Supabase error updating brand:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Brand updated successfully:', data[0]);
+      return { success: true, brand: data[0] };
+    } catch (error) {
+      console.error('Exception updating brand:', error);
+      return { 
+        success: false, 
+        message: `Update failed: ${error.message}` 
+      };
+    }
+  }
+
+  async deleteBrand(brandId) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Deleting brand from Supabase:', brandId);
+      
+      const { error } = await supabase
+        .from('brands')
+        .delete()
+        .eq('id', brandId);
+
+      if (error) {
+        console.error('Supabase error deleting brand:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Brand deleted successfully');
+      return { success: true };
+    } catch (error) {
+      console.error('Exception deleting brand:', error);
+      return { 
+        success: false, 
+        message: `Deletion failed: ${error.message}` 
+      };
+    }
+  }
+
+  async uploadBrandLogo(brandId, logoFile) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Uploading brand logo to Supabase:', brandId);
+      
+      // Convert file to data URL
+      const logoDataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(logoFile);
+      });
+
+      // Update brand with new logo
+      const { data, error } = await supabase
+        .from('brands')
+        .update({
+          logo: logoDataUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', brandId)
+        .select();
+
+      if (error) {
+        console.error('Supabase error uploading logo:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Logo uploaded successfully');
+      return { success: true, logoUrl: logoDataUrl, brand: data[0] };
+    } catch (error) {
+      console.error('Exception uploading logo:', error);
+      return { 
+        success: false, 
+        message: `Upload failed: ${error.message}` 
+      };
+    }
+  }
+
+  // =====================================================
+  // INSPIRATIONS CRUD OPERATIONS
+  // =====================================================
+
+  async createInspiration(inspirationData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Creating inspiration in Supabase:', inspirationData);
+      
+      // Validate required fields
+      if (!inspirationData.title || inspirationData.title.trim() === '') {
+        return { success: false, message: 'Title is required' };
+      }
+      
+      // Validate title length
+      if (inspirationData.title.length > 255) {
+        return { success: false, message: 'Title is too long (max 255 characters)' };
+      }
+      
+      const insertData = {
+        title: inspirationData.title.trim(),
+        description: inspirationData.description?.trim() || '',
+        category: inspirationData.category || 'modern',
+        image: inspirationData.image || null,
+        features: Array.isArray(inspirationData.features) ? inspirationData.features : [],
+        brands: Array.isArray(inspirationData.brands) ? inspirationData.brands : [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log('📝 Inserting inspiration data:', insertData);
+      
+      const { data, error } = await supabase
+        .from('inspirations')
+        .insert([insertData])
+        .select();
+
+      if (error) {
+        console.error('❌ Supabase error creating inspiration:', error);
+        
+        // Provide more specific error messages
+        if (error.code === '23505') {
+          return { success: false, message: 'Inspiration with this title already exists' };
+        }
+        if (error.code === '23502') {
+          return { success: false, message: 'Missing required field' };
+        }
+        if (error.message.includes('value too long')) {
+          return { success: false, message: 'One of the fields is too long' };
+        }
+        
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('✅ Inspiration created successfully:', data[0]);
+      return { success: true, inspiration: data[0] };
+    } catch (error) {
+      console.error('❌ Exception creating inspiration:', error);
+      return { 
+        success: false, 
+        message: `Creation failed: ${error.message}` 
+      };
+    }
+  }
+
+  async updateInspiration(inspirationId, updateData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Updating inspiration in Supabase:', inspirationId, updateData);
+      
+      const updatePayload = {
+        ...updateData,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('inspirations')
+        .update(updatePayload)
+        .eq('id', inspirationId)
+        .select();
+
+      if (error) {
+        console.error('Supabase error updating inspiration:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Inspiration updated successfully:', data[0]);
+      return { success: true, inspiration: data[0] };
+    } catch (error) {
+      console.error('Exception updating inspiration:', error);
+      return { 
+        success: false, 
+        message: `Update failed: ${error.message}` 
+      };
+    }
+  }
+
+  async deleteInspiration(inspirationId) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Deleting inspiration from Supabase:', inspirationId);
+      
+      const { error } = await supabase
+        .from('inspirations')
+        .delete()
+        .eq('id', inspirationId);
+
+      if (error) {
+        console.error('Supabase error deleting inspiration:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Inspiration deleted successfully');
+      return { success: true };
+    } catch (error) {
+      console.error('Exception deleting inspiration:', error);
+      return { 
+        success: false, 
+        message: `Deletion failed: ${error.message}` 
+      };
+    }
+  }
+
+  // =====================================================
+  // REFERENCES CRUD OPERATIONS
+  // =====================================================
+
+  async createReference(referenceData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Creating reference in Supabase:', referenceData);
+      
+      const { data, error } = await supabase
+        .from('references')
+        .insert([{
+          title: referenceData.title,
+          description: referenceData.description,
+          year: referenceData.year,
+          location: referenceData.location,
+          client: referenceData.client,
+          images: referenceData.images || [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase error creating reference:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Reference created successfully:', data[0]);
+      return { success: true, reference: data[0] };
+    } catch (error) {
+      console.error('Exception creating reference:', error);
+      return { 
+        success: false, 
+        message: `Creation failed: ${error.message}` 
+      };
+    }
+  }
+
+  async updateReference(referenceId, updateData) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Updating reference in Supabase:', referenceId, updateData);
+      
+      const updatePayload = {
+        ...updateData,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('references')
+        .update(updatePayload)
+        .eq('id', referenceId)
+        .select();
+
+      if (error) {
+        console.error('Supabase error updating reference:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Reference updated successfully:', data[0]);
+      return { success: true, reference: data[0] };
+    } catch (error) {
+      console.error('Exception updating reference:', error);
+      return { 
+        success: false, 
+        message: `Update failed: ${error.message}` 
+      };
+    }
+  }
+
+  async deleteReference(referenceId) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('Supabase not available');
+      return { success: false, message: 'Database connection not available' };
+    }
+
+    try {
+      console.log('Deleting reference from Supabase:', referenceId);
+      
+      const { error } = await supabase
+        .from('references')
+        .delete()
+        .eq('id', referenceId);
+
+      if (error) {
+        console.error('Supabase error deleting reference:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
+      }
+
+      console.log('Reference deleted successfully');
+      return { success: true };
+    } catch (error) {
+      console.error('Exception deleting reference:', error);
+      return { 
+        success: false, 
+        message: `Deletion failed: ${error.message}` 
       };
     }
   }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
-import EmergencyBrands from '../../services/emergencyBrands';
 import { useBackgroundSettings } from '../../hooks/useBackgroundSettings';
 
 const AdminBrands = ({ onLogout }) => {
@@ -25,7 +24,8 @@ const AdminBrands = ({ onLogout }) => {
     category: '',
     description: '',
     logo: null,
-    logoPreview: null
+    logoPreview: null,
+    is_main: true
   });
   const [addingBrand, setAddingBrand] = useState(false);
   
@@ -59,39 +59,19 @@ const AdminBrands = ({ onLogout }) => {
   const loadBrands = async () => {
     try {
       setLoading(true);
+      setError('');
       
-      console.log('🚨 ADMIN: Loading brands (database first approach)...');
+      console.log('🔄 ADMIN: Loading brands from database...');
       
-      // First, try to load from Supabase database
-      try {
-        console.log('🔄 ADMIN: Loading from Supabase database...');
-        const supabaseResult = await ApiService.getBrands();
-        
-        if (supabaseResult.success && supabaseResult.brands && supabaseResult.brands.length > 0) {
-          console.log('✅ ADMIN: Loaded', supabaseResult.brands.length, 'brands from Supabase');
-          console.log('🔍 ADMIN: First brand data:', supabaseResult.brands[0]);
-          console.log('🔍 ADMIN: All brands is_main values:', supabaseResult.brands.map(b => ({ name: b.name, is_main: b.is_main })));
-          setBrands(supabaseResult.brands);
-          setError('');
-          return; // Successfully loaded from database
-        } else {
-          console.log('⚠️ ADMIN: Supabase returned no brands, trying fallback...');
-          console.log('🔍 ADMIN: Supabase result:', supabaseResult);
-        }
-      } catch (error) {
-        console.log('⚠️ ADMIN: Supabase failed, trying fallback...', error);
-      }
+      const result = await ApiService.getBrands();
       
-      // Fallback to EmergencyBrands if Supabase fails
-      const emergencyResult = EmergencyBrands.getBrands();
-      
-      if (emergencyResult.success && emergencyResult.brands.length > 0) {
-        console.log('✅ ADMIN: Loaded', emergencyResult.brands.length, 'brands from EmergencyBrands (fallback)');
-        setBrands(emergencyResult.brands);
+      if (result.success && result.brands) {
+        console.log('✅ ADMIN: Loaded', result.brands.length, 'brands from database');
+        setBrands(result.brands);
         setError('');
       } else {
-        console.error('❌ ADMIN: Both Supabase and EmergencyBrands failed');
-        setError('Failed to load brands');
+        console.error('❌ ADMIN: Failed to load brands:', result.message);
+        setError('Failed to load brands: ' + result.message);
         setBrands([]);
       }
     } catch (error) {
@@ -163,22 +143,18 @@ const AdminBrands = ({ onLogout }) => {
 
   const handleDescriptionSave = async () => {
     try {
-      console.log('🚨 ADMIN EMERGENCY: Updating description using emergency service...');
-      const result = EmergencyBrands.updateBrand(selectedBrand.id, { description: tempDescription });
+      console.log('🔄 ADMIN: Updating description...');
+      const result = await ApiService.updateBrand(selectedBrand.id, { description: tempDescription });
       
       if (result.success) {
-        console.log('✅ EMERGENCY: Description update successful!');
+        console.log('✅ Description update successful!');
         
         // Update selectedBrand immediately with the new description
         const updatedBrand = { ...selectedBrand, description: tempDescription };
         setSelectedBrand(updatedBrand);
         
-        // Reload brands to get updated data from emergency service
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          setBrands(brandsResult.brands);
-          console.log('✅ EMERGENCY: Brands updated in admin');
-        }
+        // Reload brands to get updated data
+        await loadBrands();
         
         setEditingDescription(false);
         alert('Popis značky bol úspešne aktualizovaný!');
@@ -204,22 +180,18 @@ const AdminBrands = ({ onLogout }) => {
 
   const handleNameSave = async () => {
     try {
-      console.log('🚨 ADMIN EMERGENCY: Updating name using emergency service...');
-      const result = EmergencyBrands.updateBrand(selectedBrand.id, { name: tempName });
+      console.log('🔄 ADMIN: Updating name...');
+      const result = await ApiService.updateBrand(selectedBrand.id, { name: tempName });
       
       if (result.success) {
-        console.log('✅ EMERGENCY: Name update successful!');
+        console.log('✅ Name update successful!');
         
         // Update selectedBrand immediately with the new name
         const updatedBrand = { ...selectedBrand, name: tempName };
         setSelectedBrand(updatedBrand);
         
-        // Reload brands to get updated data from emergency service
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          setBrands(brandsResult.brands);
-          console.log('✅ EMERGENCY: Brands updated in admin');
-        }
+        // Reload brands to get updated data
+        await loadBrands();
         
         setEditingName(false);
         alert('Názov značky bol úspešne aktualizovaný!');
@@ -257,21 +229,17 @@ const AdminBrands = ({ onLogout }) => {
       const newCategory = categoryInputRef.current ? categoryInputRef.current.value : tempCategory;
       console.log('Category value from input:', newCategory);
       
-      const result = EmergencyBrands.updateBrand(selectedBrand.id, { category: newCategory });
+      const result = await ApiService.updateBrand(selectedBrand.id, { category: newCategory });
       
       if (result.success) {
-        console.log('✅ EMERGENCY: Category update successful!');
+        console.log('✅ Category update successful!');
         
         // Update selectedBrand immediately with the new category
         const updatedBrand = { ...selectedBrand, category: newCategory };
         setSelectedBrand(updatedBrand);
         
-        // Reload brands to get updated data from emergency service
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          setBrands(brandsResult.brands);
-          console.log('✅ EMERGENCY: Brands updated in admin');
-        }
+        // Reload brands to get updated data
+        await loadBrands();
         
         setEditingCategory(false);
         setTempCategory('');
@@ -393,41 +361,23 @@ const AdminBrands = ({ onLogout }) => {
     try {
       setUploadingLogo(true);
       
-      console.log('🚨 ADMIN: Uploading logo (hybrid approach)...');
+      console.log('🔄 ADMIN: Uploading logo to database...');
       
-      // First, save to EmergencyBrands for immediate admin panel update
-      const emergencyResult = await EmergencyBrands.updateBrandLogo(selectedBrand.id, file);
+      const result = await ApiService.uploadBrandLogo(selectedBrand.id, file);
       
-      if (emergencyResult.success) {
-        console.log('✅ ADMIN: Logo saved to EmergencyBrands');
+      if (result.success) {
+        console.log('✅ ADMIN: Logo uploaded successfully');
         
         // Update admin panel immediately
-        const updatedBrand = { ...selectedBrand, logo: emergencyResult.logoUrl };
+        const updatedBrand = { ...selectedBrand, logo: result.logoUrl };
         setSelectedBrand(updatedBrand);
         
-        // Reload brands in admin panel
-        const brandsResult = EmergencyBrands.getBrands();
-        if (brandsResult.success) {
-          setBrands(brandsResult.brands);
-          console.log('✅ ADMIN: Admin panel updated');
-        }
-        
-        // Try to also save to Supabase for public page (non-blocking)
-        try {
-          console.log('🔄 ADMIN: Also trying to save to Supabase...');
-          const supabaseResult = await ApiService.uploadBrandLogo(selectedBrand.id, file);
-          if (supabaseResult.success) {
-            console.log('✅ ADMIN: Also saved to Supabase for public page');
-          } else {
-            console.log('⚠️ ADMIN: Supabase save failed, but EmergencyBrands worked');
-          }
-        } catch (error) {
-          console.log('⚠️ ADMIN: Supabase save failed, but EmergencyBrands worked:', error);
-        }
+        // Reload brands to get updated data
+        await loadBrands();
         
         alert('Logo značky bol úspešne aktualizovaný!');
       } else {
-        alert('Chyba pri aktualizácii loga: ' + emergencyResult.message);
+        alert('Chyba pri aktualizácii loga: ' + result.message);
       }
     } catch (error) {
       console.error('Error uploading logo:', error);
@@ -560,7 +510,7 @@ const AdminBrands = ({ onLogout }) => {
         logo: logoUrl,
         order: maxOrder + 1,
         images: [],
-        is_main: true
+        is_main: newBrand.is_main
       };
       
       console.log('Creating new brand:', brandData);
@@ -569,14 +519,9 @@ const AdminBrands = ({ onLogout }) => {
       
       if (result.success) {
         console.log('✅ Brand created successfully');
-        
-        // Reload brands to show the new one
         await loadBrands();
-        
-        // Reset form and close modal
         resetAddBrandForm();
         setShowAddBrandModal(false);
-        
         alert('Značka bola úspešne pridaná!');
       } else {
         alert('Chyba pri vytváraní značky: ' + result.message);
@@ -593,6 +538,7 @@ const AdminBrands = ({ onLogout }) => {
     resetAddBrandForm();
     setShowAddBrandModal(false);
   };
+
 
   // Page Description Editing Functions
   const handlePageDescriptionEdit = () => {
@@ -640,13 +586,8 @@ const AdminBrands = ({ onLogout }) => {
       
       if (result.success) {
         console.log('✅ Brand deleted successfully');
-        
-        // Close the modal
         setSelectedBrand(null);
-        
-        // Reload brands to refresh the list
         await loadBrands();
-        
         alert('Značka bola úspešne odstránená!');
       } else {
         alert('Chyba pri odstraňovaní značky: ' + result.message);
@@ -805,20 +746,26 @@ const AdminBrands = ({ onLogout }) => {
               
               {editingCategory ? (
                 <div className="space-y-3">
-                  <input
+                  <select
                     ref={categoryInputRef}
-                    type="text"
                     defaultValue={selectedBrand.category || ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      console.log('Category input changed to:', value);
-                      console.log('Input length:', value.length);
-                      console.log('Last character:', value.charAt(value.length - 1));
+                      console.log('Category selected:', value);
                     }}
-                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Zadajte kategóriu značky (napr. Kúpeľňový nábytok)"
-                    maxLength={100}
-                  />
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Vyberte kategóriu</option>
+                    <option value="Kúpeľňový nábytok">Kúpeľňový nábytok</option>
+                    <option value="Batérie a sprchy">Batérie a sprchy</option>
+                    <option value="Sanitárna keramika">Sanitárna keramika</option>
+                    <option value="Radiátory">Radiátory</option>
+                    <option value="Obklady a dlažby">Obklady a dlažby</option>
+                    <option value="Ostatné">Ostatné (zobrazí sa v sekcii "Ostatné")</option>
+                  </select>
+                  <p className="text-xs text-gray-400">
+                    💡 Tip: Značky s kategóriou "Ostatné" sa zobrazia v spodnej sekcii stránky
+                  </p>
                   <div className="flex gap-2">
                     <button
                       onClick={handleCategorySave}
@@ -1411,8 +1358,29 @@ const AdminBrands = ({ onLogout }) => {
               <h3 className="text-xl font-semibold text-white mb-2">Ostatné značky</h3>
               <p className="text-gray-300 text-sm">Značky zobrazené v sekcii "Ostatné" iba s logami</p>
             </div>
-            <div className="text-sm text-gray-400">
-              {brands.filter(brand => brand.is_main === false).length} značiek
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-gray-400">
+                {brands.filter(brand => brand.is_main === false).length} značiek
+              </div>
+              <button
+                onClick={() => {
+                  setNewBrand({
+                    name: '',
+                    category: '',
+                    description: '',
+                    logo: null,
+                    logoPreview: null,
+                    is_main: false  // Pre-select "Ostatná značka"
+                  });
+                  setShowAddBrandModal(true);
+                }}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span>Pridať značku do "Ostatné"</span>
+              </button>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -1507,14 +1475,53 @@ const AdminBrands = ({ onLogout }) => {
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Kategória značky *
                 </label>
-                <input
-                  type="text"
+                <select
                   value={newBrand.category}
                   onChange={(e) => setNewBrand(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Zadajte kategóriu (napr. Kúpeľňový nábytok)"
-                  maxLength={100}
-                />
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">Vyberte kategóriu</option>
+                  <option value="Kúpeľňový nábytok">Kúpeľňový nábytok</option>
+                  <option value="Batérie a sprchy">Batérie a sprchy</option>
+                  <option value="Sanitárna keramika">Sanitárna keramika</option>
+                  <option value="Radiátory">Radiátory</option>
+                  <option value="Obklady a dlažby">Obklady a dlažby</option>
+                  <option value="Ostatné">Ostatné</option>
+                </select>
+              </div>
+
+              {/* Brand Type */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Typ značky
+                </label>
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="brandType"
+                      value="main"
+                      checked={newBrand.is_main !== false}
+                      onChange={(e) => setNewBrand(prev => ({ ...prev, is_main: true }))}
+                      className="mr-2 text-green-500 focus:ring-green-500"
+                    />
+                    <span className="text-white">Hlavná značka (s popisom)</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="brandType"
+                      value="other"
+                      checked={newBrand.is_main === false}
+                      onChange={(e) => setNewBrand(prev => ({ ...prev, is_main: false }))}
+                      className="mr-2 text-green-500 focus:ring-green-500"
+                    />
+                    <span className="text-white">Ostatná značka (iba logo)</span>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                  💡 Hlavné značky sa zobrazia v hornej sekcii s popisom, ostatné v sekcii "Ostatné"
+                </p>
               </div>
 
               {/* Brand Description */}
