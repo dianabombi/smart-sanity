@@ -15,6 +15,7 @@ const Brands = () => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [modalType, setModalType] = useState('gallery'); // 'gallery' or 'logo'
   const [pageDescription, setPageDescription] = useState('Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.');
+  const [skeletonCount, setSkeletonCount] = useState(8); // Default skeleton count for brands
   const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle } = useBackgroundSettings();
 
   const handleBrandClick = (brand, type) => {
@@ -67,9 +68,12 @@ const Brands = () => {
       
       if (result.success && result.brands) {
         console.log(`✅ PUBLIC: Loaded ${result.brands.length} brands from database`);
+        // Set skeleton count based on actual data
+        setSkeletonCount(result.brands.length || 8);
         setBrands(result.brands);
       } else {
         console.error('❌ PUBLIC: Failed to load brands:', result.message);
+        setSkeletonCount(0); // No skeletons if no data
         setBrands([]);
       }
     } catch (error) {
@@ -102,6 +106,87 @@ const Brands = () => {
   console.log('- production_version: 2025-01-20-14:16-FINAL');
   console.log('- brands data:', brands.slice(0, 2)); // First 2 brands
 
+  if (loading) {
+    return (
+      <Layout>
+        {/* Custom CSS for shimmer animation */}
+        <style jsx>{`
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          .animate-shimmer {
+            animation: shimmer 2s infinite;
+          }
+        `}</style>
+        <NavBar />
+        
+        {/* Header Section */}
+        <div className="pb-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-400 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+              Obchodované značky
+            </h1>
+            <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+              {pageDescription}
+            </p>
+          </div>
+        </div>
+
+        {/* Skeleton Grid */}
+        <div className="pb-16 px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+              {Array.from({ length: skeletonCount }, (_, index) => (
+                <div key={index} className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300 relative pb-16" style={{ opacity: 1 }}>
+                  {/* Logo Container Skeleton */}
+                  <div className="p-4 mb-4 h-24 flex items-center justify-center">
+                    <div className="h-16 w-32 bg-gray-700 rounded animate-pulse relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                    </div>
+                  </div>
+
+                  {/* Brand Info Skeleton */}
+                  <div className="space-y-3">
+                    {/* Brand name skeleton */}
+                    <div className="h-5 bg-gray-700 rounded w-3/4 animate-pulse relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                    </div>
+                    
+                    {/* Category skeleton */}
+                    <div className="h-4 bg-gray-700 rounded w-1/2 animate-pulse relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                    </div>
+                    
+                    {/* Description skeleton */}
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-700 rounded w-full animate-pulse relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                      </div>
+                      <div className="h-3 bg-gray-700 rounded w-5/6 animate-pulse relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                      </div>
+                      <div className="h-3 bg-gray-700 rounded w-2/3 animate-pulse relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                      </div>
+                    </div>
+
+                    {/* Button skeleton - Fixed Position */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="h-8 bg-gray-700 rounded-lg animate-pulse relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <NavBar />
@@ -110,10 +195,10 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-400 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Obchodované značky
           </h1>
-          <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           {pageDescription}
           </p>
         </div>
@@ -185,7 +270,7 @@ const Brands = () => {
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
           <ActionButton
-            size="xl"
+            size="large"
             variant="secondary"
             onClick={() => navigate('/contact')}
             className="min-w-[200px]"

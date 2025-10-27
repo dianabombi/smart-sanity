@@ -93,7 +93,7 @@ const Entrance = () => {
         {/* Header Section */}
         <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-shadow-lg">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               <div className="mt-32">  Čo ponúkame</div>
             </h1>
           </div>
@@ -107,15 +107,15 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className={`group rounded-lg p-6 transition-all duration-500 transform ${
+                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/80 border-gray-600 ${
                     visibleItems.includes(index) 
                       ? 'translate-y-0 opacity-100 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
                   }`}
-                  style={{ transitionDelay: `${index * 100}ms`, backgroundColor: '#1a1a1a', border: '1px solid #262626' }}
+                  style={{ transitionDelay: `${index * 100}ms`, borderWidth: '0.5px' }}
                 >
                   <div className="space-y-3">
-                    <p className="text-gray-300 leading-relaxed text-lg text-center">
+                    <p className="text-gray-400 leading-relaxed text-lg text-center">
                       {text}
                     </p>
                   </div>

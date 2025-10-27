@@ -19,7 +19,7 @@ const ActionButton = ({
 
   const variantStyles = {
     primary: 'text-gray-400 border-2 border-gray-400 bg-transparent hover:text-white hover:border-white',
-    secondary: 'text-white border-2 border-white bg-transparent hover:bg-white hover:text-black'
+    secondary: 'text-white border-2 border-white bg-transparent'
   };
 
   return (

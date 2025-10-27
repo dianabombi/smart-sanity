@@ -7,6 +7,8 @@ const References = () => {
   const [references, setReferences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
+  const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
+  const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
 
   const loadReferences = useCallback(async (forceRefresh = false) => {
     try {
@@ -15,9 +17,12 @@ const References = () => {
       
       if (result.success && result.references) {
         console.log(`✅ PUBLIC: Loaded ${result.references.length} references from database`);
+        // Set skeleton count based on actual data
+        setSkeletonCount(result.references.length || 6);
         setReferences(result.references);
       } else {
         console.error('❌ PUBLIC: Failed to load references:', result.message);
+        setSkeletonCount(0); // No skeletons if no data
         setReferences([]);
       }
     } catch (error) {
@@ -30,15 +35,20 @@ const References = () => {
 
   useEffect(() => {
     loadReferences();
-    
-    // Auto-refresh references every 30 seconds to catch admin changes
-    const interval = setInterval(() => {
-      console.log('🔄 PUBLIC: Auto-refreshing references to catch admin changes...');
-      loadReferences(true);
-    }, 30000); // 30 seconds
-    
-    return () => clearInterval(interval);
+    loadPageDescription();
+    // Removed auto-refresh to prevent screen flickering
   }, [loadReferences]);
+
+  const loadPageDescription = async () => {
+    try {
+      const result = await ApiService.getPageContent('references', 'main', 'description');
+      if (result.success && result.content) {
+        setPageDescription(result.content);
+      }
+    } catch (error) {
+      console.error('Error loading page description:', error);
+    }
+  };
 
   const openImageGallery = (reference) => {
     if (reference.images && reference.images.length > 0) {
@@ -53,13 +63,63 @@ const References = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-black">
+        {/* Custom CSS for shimmer animation */}
+        <style jsx>{`
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          .animate-shimmer {
+            animation: shimmer 2s infinite;
+          }
+        `}</style>
         <NavBar />
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-white">Načítavam referencie...</p>
+        
+        {/* Header Section */}
+        <div className="pt-24 sm:pt-28 md:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+              Referencie
+            </h1>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
+              {pageDescription}
+            </p>
           </div>
         </div>
+        
+        {/* Skeleton Grid */}
+        <div className="container mx-auto px-4 py-8 pb-16 min-h-[60vh]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {Array.from({ length: skeletonCount }, (_, index) => (
+              <div key={index} className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
+                <div className="mb-4">
+                  {/* Title skeleton */}
+                  <div className="h-6 bg-gray-700 rounded mb-2 animate-pulse">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                  </div>
+                  
+                  {/* Description skeleton */}
+                  <div className="h-4 bg-gray-700 rounded mb-3 w-3/4 animate-pulse">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                  </div>
+                  
+                  {/* Year and location skeleton */}
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="h-3 bg-gray-700 rounded w-16 animate-pulse"></div>
+                    <div className="h-3 bg-gray-700 rounded w-20 animate-pulse"></div>
+                  </div>
+                  
+                  {/* Client skeleton */}
+                  <div className="h-3 bg-gray-700 rounded w-24 mb-4 animate-pulse"></div>
+                  
+                  {/* Button skeleton */}
+                  <div className="h-8 bg-gray-700 rounded animate-pulse"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
         <Footer />
       </div>
     );
@@ -71,18 +131,18 @@ const References = () => {
       <NavBar />
       
       {/* Header Section */}
-      <div className="pt-16 sm:pt-20 md:pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="pt-24 sm:pt-28 md:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Referencie
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
-            Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
+            {pageDescription}
           </p>
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-8 pb-32 min-h-[60vh]">
+      <div className="container mx-auto px-4 py-8 pb-16 min-h-[60vh]">
         {references.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {references.map((reference, index) => (
@@ -108,12 +168,9 @@ const References = () => {
                     <div className="mt-4">
                       <button
                         onClick={() => openImageGallery(reference)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-2"
+                        className="w-full py-2 px-4 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        Zobraziť obrázky ({reference.images.length})
+                        Galéria
                       </button>
                     </div>
                   )}
@@ -137,9 +194,9 @@ const References = () => {
       {/* Image Gallery Modal */}
       {selectedReferenceImages && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-gray-800 rounded-lg max-w-6xl w-full max-h-[85vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 flex justify-between items-center">
+            <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedReferenceImages.title}</h2>
                 <p className="text-gray-300">{selectedReferenceImages.description}</p>
@@ -159,33 +216,59 @@ const References = () => {
 
             {/* Images Grid */}
             <div className="p-6">
+              {console.log('🖼️ DEBUG: Selected reference images:', selectedReferenceImages)}
+              {console.log('🖼️ DEBUG: Images array:', selectedReferenceImages.images)}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {selectedReferenceImages.images.map((image, index) => (
-                  <div key={index} className="aspect-square bg-gray-900 rounded-lg overflow-hidden">
-                    <img
-                      src={image.url || image.dataUrl || image.src}
-                      alt={image.originalName || `Reference image ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div className="w-full h-full bg-gray-700 flex items-center justify-center text-gray-300" style={{ display: 'none' }}>
-                      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                {selectedReferenceImages.images.map((image, index) => {
+                  // Handle both string paths and object formats
+                  let imageUrl;
+                  if (typeof image === 'string') {
+                    // Image is stored as a simple string path
+                    imageUrl = image;
+                  } else {
+                    // Image is stored as an object with properties
+                    imageUrl = image.url || image.dataUrl || image.src || image.path || image.filename;
+                  }
+                  
+                  console.log(`🖼️ DEBUG: Image ${index}:`, image);
+                  console.log(`🖼️ DEBUG: Image ${index} type:`, typeof image);
+                  console.log(`🖼️ DEBUG: Image ${index} URL:`, imageUrl);
+                  
+                  return (
+                    <div key={index} className="aspect-square bg-gray-900 rounded-lg overflow-hidden">
+                      <img
+                        src={imageUrl}
+                        alt={typeof image === 'object' ? (image.originalName || `Reference image ${index + 1}`) : `Reference image ${index + 1}`}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        onLoad={() => {
+                          console.log(`✅ Image ${index} loaded successfully`);
+                        }}
+                        onError={(e) => {
+                          console.error(`❌ Image ${index} failed to load:`, imageUrl);
+                          console.error(`❌ Image ${index} error details:`, e);
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <div className="w-full h-full bg-gray-700 flex items-center justify-center text-gray-300" style={{ display: 'none' }}>
+                        <div className="text-center">
+                          <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <p className="text-xs">Obrázok sa nepodarilo načítať</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
             {/* Close Button */}
-            <div className="sticky bottom-0 bg-gray-800 border-t border-gray-700 p-6 text-center">
+            <div className="sticky bottom-0 bg-gray-800 border-t border-gray-700 p-3 text-center">
               <button
                 onClick={closeImageGallery}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors"
               >
                 Zavrieť galériu
               </button>

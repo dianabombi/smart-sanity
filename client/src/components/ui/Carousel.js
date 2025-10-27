@@ -138,21 +138,21 @@ const Carousel = ({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 hover:scale-110 transition-all duration-300 focus:outline-none z-20"
+            className="absolute left-6 top-1/3 transform -translate-y-1/2 text-gray-400 hover:text-white hover:scale-110 transition-all duration-300 focus:outline-none z-20"
             aria-label="Previous image"
           >
             <svg className="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18 18l-6-6 6-6" />
             </svg>
           </button>
           
           <button
             onClick={goToNext}
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-200 hover:scale-110 transition-all duration-300 focus:outline-none z-20"
+            className="absolute right-6 top-1/3 transform -translate-y-1/2 text-gray-400 hover:text-white hover:scale-110 transition-all duration-300 focus:outline-none z-20"
             aria-label="Next image"
           >
             <svg className="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l6 6-6 6" />
             </svg>
           </button>
         </>

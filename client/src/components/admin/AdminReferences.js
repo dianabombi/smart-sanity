@@ -26,32 +26,45 @@ const AdminReferences = ({ onLogout }) => {
     try {
       setLoading(true);
       
-      // Try to load from localStorage first (for offline functionality)
-      const localReferences = localStorage.getItem('adminReferences');
-      if (localReferences) {
-        const parsed = JSON.parse(localReferences);
-        setReferences(parsed);
-        console.log('Loaded references from localStorage:', parsed);
-      }
+      // 🔍 DEBUGGING: Clear localStorage to force database fetch
+      console.log('🔍 DEBUG: Clearing localStorage to test database connection...');
+      localStorage.removeItem('adminReferences');
       
-      // Then try to load from API
+      // Try to load from API (database)
+      console.log('🔍 DEBUG: Attempting to load references from database...');
       const result = await ApiService.getReferences();
+      
       if (result.success) {
+        console.log(`✅ SUCCESS: Loaded ${result.references.length} references from database:`, result.references);
         setReferences(result.references);
-        console.log('Loaded references from API:', result.references);
+        
+        // Save to localStorage as backup
+        localStorage.setItem('adminReferences', JSON.stringify(result.references));
       } else {
-        console.log('API failed, using localStorage or fallback');
-        if (!localReferences) {
+        console.error('❌ DATABASE FAILED:', result.message);
+        console.log('🔍 DEBUG: Checking if localStorage has backup data...');
+        
+        const localReferences = localStorage.getItem('adminReferences');
+        if (localReferences) {
+          const parsed = JSON.parse(localReferences);
+          console.log(`📦 FALLBACK: Using ${parsed.length} references from localStorage:`, parsed);
+          setReferences(parsed);
+        } else {
+          console.log('📭 EMPTY: No references found anywhere');
           setReferences([]);
         }
       }
     } catch (error) {
-      console.error('Error loading references:', error);
-      // Try localStorage as fallback
+      console.error('💥 EXCEPTION in loadReferences:', error);
+      
+      // Try localStorage as final fallback
       const localReferences = localStorage.getItem('adminReferences');
       if (localReferences) {
-        setReferences(JSON.parse(localReferences));
+        const parsed = JSON.parse(localReferences);
+        console.log(`🆘 EMERGENCY FALLBACK: Using ${parsed.length} references from localStorage`);
+        setReferences(parsed);
       } else {
+        console.log('🚨 TOTAL FAILURE: No references available');
         setReferences([]);
       }
     } finally {
@@ -283,14 +296,28 @@ const AdminReferences = ({ onLogout }) => {
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Správa referencií</h1>
           <p className="text-gray-400">Spravujte vaše referencie a projekty</p>
+          <p className="text-sm text-blue-400 mt-1">
+            📊 Aktuálne zobrazených: {references.length} referencií
+          </p>
         </div>
-        <button
-          onClick={handleAddNew}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <span className="text-xl">+</span>
-          Pridať referenciu
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              console.log('🔄 Manual refresh triggered');
+              loadReferences();
+            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            🔄 Obnoviť
+          </button>
+          <button
+            onClick={handleAddNew}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <span className="text-xl">+</span>
+            Pridať referenciu
+          </button>
+        </div>
       </div>
 
       {/* References Grid */}

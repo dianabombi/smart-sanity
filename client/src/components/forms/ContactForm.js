@@ -100,7 +100,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
           name="subject"
           value={formData.subject}
           onChange={handleInputChange}
-          placeholder="Vyberte predmet"
+          placeholder="-- vyberte druh požiadavky --"
           options={subjectOptions}
           required
         />
@@ -112,7 +112,6 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
           value={formData.message}
           onChange={handleInputChange}
           rows={6}
-          placeholder="Zadajte vašu správu..."
           required
         />
 
@@ -131,7 +130,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full text-gray-400 border-2 border-gray-400 bg-transparent hover:text-white hover:border-white px-8 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Odosielam...' : 'Odoslať správu'}
         </button>

@@ -13,7 +13,9 @@ const AdminLayout = ({ children, onLogout }) => {
     { label: 'Čo ponúkame', path: '/admin/what-we-offer', icon: '💼' },
     { label: 'Obchodované značky', path: '/admin/brands', icon: '🏷️' },
     { label: 'Inšpirácie', path: '/admin/inspirations', icon: '💡' },
+    { label: 'Inšpirácie - Text', path: '/admin/inspirations-content', icon: '📝' },
     { label: 'Referencie', path: '/admin/references', icon: '📋' },
+    { label: 'Referencie - Text', path: '/admin/references-content', icon: '📝' },
     { label: 'Kontakt', path: '/admin/contact', icon: '📞' },
     { label: 'Kontaktné správy', path: '/admin/messages', icon: '📧' }
   ];

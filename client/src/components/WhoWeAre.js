@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from './layout/NavBar';
+import Footer from './layout/Footer';
 import ApiService from '../services/api';
 
 const WhoWeAre = () => {
@@ -212,7 +213,7 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg p-8 transition-all duration-500 opacity-100 w-full h-full flex flex-col justify-center" style={{ backgroundColor: '#1a1a1a', border: '1px solid #262626' }}>
+          <div className="group rounded-lg p-8 transition-all duration-500 opacity-100 w-full h-full flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
                 <div 
@@ -227,7 +228,7 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group rounded-lg p-8 transition-all duration-500 w-full h-full opacity-100 flex flex-col justify-start" style={{ backgroundColor: '#1a1a1a', border: '1px solid #262626' }}>
+        <div className="group rounded-lg p-8 transition-all duration-500 w-full h-full opacity-100 flex flex-col justify-start bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
           <div className="space-y-6">
             {/* Partnership text above logo */}
             <div className="space-y-20">
@@ -262,7 +263,7 @@ const WhoWeAre = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black relative">
+    <div className="min-h-screen bg-black relative flex flex-col">
       {/* Background Slideshow - covers entire viewport */}
       <div className="fixed inset-0 z-0">
           {backgroundImages.map((image, index) => (
@@ -284,7 +285,8 @@ const WhoWeAre = () => {
         {/* Dark overlay removed per user request */}
       </div>
       
-      <div className="relative min-h-screen">
+      {/* Main content area */}
+      <div className="relative flex-1 flex flex-col">
         <NavBar />
         
         {/* Header Section */}
@@ -296,9 +298,14 @@ const WhoWeAre = () => {
           </div>
         </div>
         
-        <div className="flex items-center justify-center py-8 min-h-[60vh] relative z-10 mt-4">
+        <div className="flex items-center justify-center py-8 flex-1 relative z-10 mt-4">
           {contentSection}
         </div>
+      </div>
+      
+      {/* Footer at bottom */}
+      <div className="relative z-10 mt-auto">
+        <Footer />
       </div>
     </div>
   );

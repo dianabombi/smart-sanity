@@ -1277,26 +1277,45 @@ class ApiService {
   // References
   async getReferences() {
     if (!this.isSupabaseAvailable()) {
-      console.log('Supabase not available');
+      console.log('🚫 Supabase not available - client not initialized');
       return { success: false, message: 'Database connection not available' };
     }
 
     try {
-      console.log('🔄 Loading references from database...');
+      console.log('🔄 Loading references from Supabase database...');
+      console.log('🔍 DEBUG: Supabase URL:', supabase.supabaseUrl);
+      console.log('🔍 DEBUG: Query details - Table: references, Select: *, Order: created_at DESC');
+      
       const { data, error } = await supabase
         .from('references')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('❌ Supabase error loading references:', error);
+        console.error('❌ Supabase query error:', error);
+        console.error('❌ Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         return { success: false, message: `Database error: ${error.message}` };
       }
       
-      console.log(`✅ Loaded ${data?.length || 0} references from database`);
+      console.log(`✅ Supabase query successful - Retrieved ${data?.length || 0} references`);
+      console.log('📊 Raw data from Supabase:', data);
+      
+      // Additional debugging - check if data is being filtered somehow
+      if (data && data.length > 0) {
+        console.log('🔍 First reference:', data[0]);
+        console.log('🔍 Last reference:', data[data.length - 1]);
+        console.log('🔍 All reference IDs:', data.map(ref => ref.id));
+      }
+      
       return { success: true, references: data || [] };
     } catch (error) {
-      console.error('❌ Error fetching references:', error);
+      console.error('💥 Exception in getReferences:', error);
+      console.error('💥 Exception stack:', error.stack);
       return { success: false, message: `Error loading references: ${error.message}` };
     }
   }
