@@ -61,7 +61,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
 
   return (
     <div className={className}>
-      <h2 className="text-2xl font-semibold text-gray-300 mb-6">
+      <h2 className="text-2xl font-semibold text-gray-400 mb-6">
         {title}
       </h2>
       
@@ -126,6 +126,9 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
             Nastala chyba pri odosielaní správy. Skúste to prosím znovu.
           </div>
         )}
+
+        {/* Spacer to push button to align with "Technická podpora" */}
+        <div className="h-6"></div>
 
         <button
           type="submit"

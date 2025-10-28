@@ -3,8 +3,39 @@ import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
 
+// Fallback references data
+const fallbackReferences = [
+    {
+      id: 1,
+      title: "Apartmán Sky Park",
+      description: "Kompletný návrh a realizácia kúpeľne a WC v modernom industriálnom štýle. Design by Dušan Drinka. Spolupráca s Elite Bath+Kitchen.",
+      year: "2021",
+      location: "Bratislava",
+      client: "Dušan Drinka, Juraj Stodolovský",
+      images: []
+    },
+    {
+      id: 2,
+      title: "Apartmán Tatranská Lomnica",
+      description: "Kompletný návrh a realizácia kúpeľne s WC. Design by Dušan Drinka & Juraj Stodolovský.",
+      year: "2025",
+      location: "Tatranská Lomnica",
+      client: "súkromný investor",
+      images: []
+    },
+    {
+      id: 3,
+      title: "Rodinný dom Senec",
+      description: "Realizácia hlavnej kúpeľne a hosťovskej toalety v rodinnom dome.",
+      year: "2024",
+      location: "Senec",
+      client: "súkromný investor",
+      images: []
+    }
+  ];
+
 const References = () => {
-  const [references, setReferences] = useState([]);
+  const [references, setReferences] = useState(fallbackReferences);
   const [loading, setLoading] = useState(true);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
   const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
@@ -15,19 +46,20 @@ const References = () => {
       setLoading(true);
       const result = await ApiService.getReferences();
       
-      if (result.success && result.references) {
+      if (result.success && result.references && result.references.length > 0) {
         console.log(`✅ PUBLIC: Loaded ${result.references.length} references from database`);
         // Set skeleton count based on actual data
         setSkeletonCount(result.references.length || 6);
         setReferences(result.references);
       } else {
-        console.error('❌ PUBLIC: Failed to load references:', result.message);
-        setSkeletonCount(0); // No skeletons if no data
-        setReferences([]);
+        console.log('📋 PUBLIC: No references in database, using fallback data');
+        setSkeletonCount(fallbackReferences.length);
+        setReferences(fallbackReferences);
       }
     } catch (error) {
       console.error('❌ PUBLIC: Error in loadReferences:', error);
-      setReferences([]);
+      console.log('📋 PUBLIC: Using fallback references due to error');
+      setReferences(fallbackReferences);
     } finally {
       setLoading(false);
     }
@@ -76,9 +108,9 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pt-24 sm:pt-28 md:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 mt-52 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Referencie
             </h1>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
@@ -131,9 +163,9 @@ const References = () => {
       <NavBar />
       
       {/* Header Section */}
-      <div className="pt-24 sm:pt-28 md:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-28">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Referencie
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
@@ -148,45 +180,45 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105"
+                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105 h-80 flex flex-col"
                 style={{ opacity: 1 }}
               >
-                <div className="mb-4">
+                <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-white mb-2">{reference.title}</h3>
-                  <p className="text-gray-300 text-sm mb-3">{reference.description}</p>
+                  <p className="text-gray-400 text-sm mb-3 flex-1">{reference.description}</p>
                   
-                  <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+                  <div className="flex justify-between items-center text-sm text-gray-400 mb-2">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
                   
                   {reference.client && (
-                    <p className="text-sm text-gray-500">Klient: {reference.client}</p>
-                  )}
-                  
-                  {reference.images && reference.images.length > 0 && (
-                    <div className="mt-4">
-                      <button
-                        onClick={() => openImageGallery(reference)}
-                        className="w-full py-2 px-4 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
-                      >
-                        Galéria
-                      </button>
-                    </div>
+                    <p className="text-sm text-gray-400 mb-4">Klient: {reference.client}</p>
                   )}
                 </div>
+                
+                {reference.images && reference.images.length > 0 && (
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => openImageGallery(reference)}
+                      className="w-full py-2 px-4 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+                    >
+                      Galéria
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-32 min-h-[40vh] flex flex-col justify-center">
-            <div className="text-gray-500 mb-4">
+            <div className="text-gray-400 mb-4">
               <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-xl font-medium text-gray-300 mb-2">Žiadne referencie</h3>
-            <p className="text-gray-500">Referencie sa načítavaju...</p>
+            <h3 className="text-xl font-medium text-gray-400 mb-2">Žiadne referencie</h3>
+            <p className="text-gray-400">Referencie sa načítavaju...</p>
           </div>
         )}
       </div>

@@ -57,11 +57,11 @@ const FormField = ({
             onChange={onChange}
             required={required}
             disabled={disabled}
-            className={inputClasses}
+            className={`${inputClasses} text-center`}
           >
-            {placeholder && <option value="">{placeholder}</option>}
+            {placeholder && <option value="" className="text-center">{placeholder}</option>}
             {options.map((option, index) => (
-              <option key={index} value={option.value || option}>
+              <option key={index} value={option.value || option} className="text-left">
                 {option.label || option}
               </option>
             ))}
@@ -100,7 +100,7 @@ const FormField = ({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-400 mb-2">
           {label}
           {required && <span className="text-red-400 ml-1">*</span>}
         </label>

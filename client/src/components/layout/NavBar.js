@@ -100,7 +100,7 @@ const NavBar = () => {
             <button
               key={item.label}
               onClick={() => handleNavClick(item.path)}
-              className="text-gray-300 hover:text-white transition-colors text-lg xl:text-xl"
+              className="text-gray-400 hover:text-white transition-colors text-lg xl:text-xl"
             >
               {item.label}
             </button>
@@ -170,7 +170,7 @@ const NavBar = () => {
               <button
                 key={item.label}
                 onClick={() => handleNavClick(item.path)}
-                className="block w-full text-left px-4 py-4 text-white text-xl font-light hover:bg-gray-800 rounded-lg transition-colors"
+                className="block w-full text-left px-4 py-4 text-gray-400 text-xl font-light hover:bg-gray-800 rounded-lg transition-colors"
               >
                 {item.label}
               </button>
@@ -184,8 +184,8 @@ const NavBar = () => {
           <div className="px-6">
             <span className="text-gray-400 text-sm">Jazyk</span>
             <div className="flex gap-3 mt-1">
-              <button className="text-white text-lg font-medium">SK</button>
-              <button className="text-gray-500 text-lg">EN</button>
+              <button className="text-gray-400 text-lg font-medium">SK</button>
+              <button className="text-gray-400 text-lg">EN</button>
             </div>
           </div>
         </div>

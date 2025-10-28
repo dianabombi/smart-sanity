@@ -26,6 +26,7 @@ const AdminInspirations = ({ onLogout }) => {
   const loadInspirations = async () => {
     try {
       setLoading(true);
+      setError(''); // Clear previous errors
       console.log('🔄 ADMIN: Loading inspirations from database...');
       
       const result = await ApiService.getInspirations();
@@ -35,13 +36,26 @@ const AdminInspirations = ({ onLogout }) => {
         setInspirations(result.inspirations);
       } else {
         console.error('❌ ADMIN: Failed to load inspirations:', result.message);
-        setError('Failed to load inspirations: ' + result.message);
-        setInspirations([]);
+        
+        // Check if it's a database table issue and provide fallback
+        if (result.message.includes('does not exist') || result.message.includes('timeout')) {
+          console.log('📦 ADMIN: Using fallback inspirations due to database issue');
+          const fallbackInspirations = ApiService.getFallbackInspirations();
+          setInspirations(fallbackInspirations);
+          setError('Databáza nie je dostupná. Zobrazujú sa predvolené inšpirácie. Kontaktujte administrátora pre nastavenie databázy.');
+        } else {
+          setError('Chyba pri načítavaní inšpirácií: ' + result.message);
+          setInspirations([]);
+        }
       }
     } catch (error) {
       console.error('❌ ADMIN: Error loading inspirations:', error);
-      setError('Error loading inspirations');
-      setInspirations([]);
+      
+      // Provide fallback inspirations on error
+      console.log('📦 ADMIN: Using fallback inspirations due to error');
+      const fallbackInspirations = ApiService.getFallbackInspirations();
+      setInspirations(fallbackInspirations);
+      setError('Chyba pripojenia k databáze. Zobrazujú sa predvolené inšpirácie.');
     } finally {
       setLoading(false);
     }

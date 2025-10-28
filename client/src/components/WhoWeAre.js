@@ -213,12 +213,12 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg p-8 transition-all duration-500 opacity-100 w-full h-full flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
+          <div className="group rounded-lg p-8 transition-all duration-500 opacity-70 w-full h-full flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
                 <div 
                   key={index} 
-                  className="text-lg leading-relaxed text-gray-300"
+                  className="text-lg leading-relaxed text-gray-400 text-justify"
                   dangerouslySetInnerHTML={{ __html: text }}
                 />
               ))}
@@ -228,11 +228,11 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group rounded-lg p-8 transition-all duration-500 w-full h-full opacity-100 flex flex-col justify-start bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
+        <div className="group rounded-lg p-8 transition-all duration-500 w-full h-full opacity-70 flex flex-col justify-start bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
           <div className="space-y-6">
             {/* Partnership text above logo */}
             <div className="space-y-20">
-              <p className="text-lg leading-relaxed text-gray-300">
+              <p className="text-lg leading-relaxed text-gray-400 text-justify">
                 {partnershipText}
               </p>
               
@@ -243,7 +243,7 @@ const WhoWeAre = () => {
                     key={logoKey}
                     src="/elite_logoRGB-11.jpg" 
                     alt="Elite Bath + Kitchen"
-                    className="h-12 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
+                    className="h-20 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity"
                     onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'block';
@@ -292,7 +292,7 @@ const WhoWeAre = () => {
         {/* Header Section */}
         <div className="pb-8 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-36 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-2 mt-28 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Smart Sanit s.r.o.
             </h1>
           </div>

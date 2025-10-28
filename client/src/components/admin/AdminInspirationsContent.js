@@ -39,11 +39,16 @@ const AdminInspirationsContent = ({ onLogout }) => {
         setIsEditing(false);
         alert('Text bol úspešne uložený!');
       } else {
-        alert('Chyba pri ukladaní: ' + result.message);
+        console.error('Save failed:', result);
+        if (result.message && result.message.includes('does not exist')) {
+          alert('DATABÁZA CHYBA: Tabuľka "page_content" neexistuje v Supabase databáze.\n\nPre opravu:\n1. Otvorte Supabase Dashboard\n2. Prejdite do SQL Editor\n3. Spustite skript z /database/setup/create_page_content_table.sql');
+        } else {
+          alert('Chyba pri ukladaní: ' + result.message);
+        }
       }
     } catch (error) {
       console.error('Error saving content:', error);
-      alert('Chyba pri ukladaní textu');
+      alert('Chyba pri ukladaní textu: ' + error.message);
     } finally {
       setSaving(false);
     }

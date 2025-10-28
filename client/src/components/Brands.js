@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
-import ActionButton from './ui/ActionButton';
 import BrandCard from './brands/BrandCard';
 import BrandModal from './brands/BrandModal';
 import ApiService from '../services/api';
@@ -246,10 +245,10 @@ const Brands = () => {
           <div className="absolute inset-0 -z-10" style={getBackgroundStyle()}></div>
         )}
         <div className="max-w-6xl mx-auto relative z-10">
-          <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide opacity-100 translate-y-0">
+          <h2 className="text-2xl tablet:text-3xl font-bold text-gray-400 mb-4 text-center tracking-wide opacity-100 translate-y-0">
             Ostatné
           </h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
@@ -269,14 +268,12 @@ const Brands = () => {
       {/* Call to Action Button Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <ActionButton
-            size="large"
-            variant="secondary"
+          <button 
             onClick={() => navigate('/contact')}
-            className="min-w-[200px]"
+            className="py-2 px-4 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
           >
             Kontaktujte nás
-          </ActionButton>
+          </button>
         </div>
       </div>
 

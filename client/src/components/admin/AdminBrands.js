@@ -746,25 +746,19 @@ const AdminBrands = ({ onLogout }) => {
               
               {editingCategory ? (
                 <div className="space-y-3">
-                  <select
+                  <input
                     ref={categoryInputRef}
+                    type="text"
                     defaultValue={selectedBrand.category || ''}
                     onChange={(e) => {
                       const value = e.target.value;
-                      console.log('Category selected:', value);
+                      console.log('Category entered:', value);
                     }}
+                    placeholder="Zadajte kategóriu značky"
                     className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Vyberte kategóriu</option>
-                    <option value="Kúpeľňový nábytok">Kúpeľňový nábytok</option>
-                    <option value="Batérie a sprchy">Batérie a sprchy</option>
-                    <option value="Sanitárna keramika">Sanitárna keramika</option>
-                    <option value="Radiátory">Radiátory</option>
-                    <option value="Obklady a dlažby">Obklady a dlažby</option>
-                    <option value="Ostatné">Ostatné (zobrazí sa v sekcii "Ostatné")</option>
-                  </select>
+                  />
                   <p className="text-xs text-gray-400">
-                    💡 Tip: Značky s kategóriou "Ostatné" sa zobrazia v spodnej sekcii stránky
+                    💡 Tip: Zadajte kategóriu ako napr. "Kúpeľňový nábytok", "Batérie a sprchy", "Sanitárna keramika" atď.
                   </p>
                   <div className="flex gap-2">
                     <button
@@ -1475,19 +1469,13 @@ const AdminBrands = ({ onLogout }) => {
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Kategória značky *
                 </label>
-                <select
+                <input
+                  type="text"
                   value={newBrand.category}
                   onChange={(e) => setNewBrand(prev => ({ ...prev, category: e.target.value }))}
+                  placeholder="Zadajte kategóriu značky"
                   className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Vyberte kategóriu</option>
-                  <option value="Kúpeľňový nábytok">Kúpeľňový nábytok</option>
-                  <option value="Batérie a sprchy">Batérie a sprchy</option>
-                  <option value="Sanitárna keramika">Sanitárna keramika</option>
-                  <option value="Radiátory">Radiátory</option>
-                  <option value="Obklady a dlažby">Obklady a dlažby</option>
-                  <option value="Ostatné">Ostatné</option>
-                </select>
+                />
               </div>
 
               {/* Brand Type */}

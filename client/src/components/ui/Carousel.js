@@ -138,21 +138,21 @@ const Carousel = ({
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-6 top-1/3 transform -translate-y-1/2 text-gray-400 hover:text-white hover:scale-110 transition-all duration-300 focus:outline-none z-20"
+            className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white hover:scale-110 transition-all duration-300 focus:outline-none z-20"
             aria-label="Previous image"
           >
-            <svg className="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M18 18l-6-6 6-6" />
+            <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 20l-8-8 8-8" />
             </svg>
           </button>
           
           <button
             onClick={goToNext}
-            className="absolute right-6 top-1/3 transform -translate-y-1/2 text-gray-400 hover:text-white hover:scale-110 transition-all duration-300 focus:outline-none z-20"
+            className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white hover:scale-110 transition-all duration-300 focus:outline-none z-20"
             aria-label="Next image"
           >
-            <svg className="w-8 h-8 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l6 6-6 6" />
+            <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4l8 8-8 8" />
             </svg>
           </button>
         </>
@@ -170,10 +170,10 @@ const Carousel = ({
                 console.log('Dot clicked:', index, 'Current:', currentIndex);
                 goToSlide(index);
               }}
-              className={`w-12 h-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 cursor-pointer ${
+              className={`w-12 h-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 cursor-pointer ${
                 index === currentIndex 
-                  ? 'bg-white shadow-lg' 
-                  : 'bg-white bg-opacity-40 hover:bg-opacity-70'
+                  ? 'bg-white' 
+                  : 'bg-white bg-opacity-30 hover:bg-opacity-60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

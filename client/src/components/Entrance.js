@@ -91,16 +91,16 @@ const Entrance = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="pt-32 pb-1 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-              <div className="mt-32">  Čo ponúkame</div>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-0 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+              Čo ponúkame
             </h1>
           </div>
         </div>
         
         {/* Services Cards Section */}
-        <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10 mt-8">
           <div className="max-w-4xl mx-auto">
             {console.log('🔍 Rendering bullet points:', bulletPoints.length, bulletPoints)}
             <div className="grid grid-cols-1 gap-6 md:gap-8">
@@ -109,7 +109,7 @@ const Entrance = () => {
                   key={index}
                   className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/80 border-gray-600 ${
                     visibleItems.includes(index) 
-                      ? 'translate-y-0 opacity-100 scale-100' 
+                      ? 'translate-y-0 opacity-70 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
                   }`}
                   style={{ transitionDelay: `${index * 100}ms`, borderWidth: '0.5px' }}
