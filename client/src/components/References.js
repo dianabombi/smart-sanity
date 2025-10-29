@@ -37,6 +37,7 @@ const fallbackReferences = [
 const References = () => {
   const [references, setReferences] = useState(fallbackReferences);
   const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
   const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
   const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
@@ -62,6 +63,10 @@ const References = () => {
       setReferences(fallbackReferences);
     } finally {
       setLoading(false);
+      // Start animation after content is loaded
+      setTimeout(() => {
+        setVisible(true);
+      }, 400);
     }
   }, []);
 
@@ -108,12 +113,24 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-32">
+        <div className="pb-6 px-4 sm:px-6 lg:px-8 pt-32">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide">
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.2s'
+            }}>
               Referencie
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.4s'
+            }}>
               {pageDescription}
             </p>
           </div>
@@ -163,12 +180,24 @@ const References = () => {
       <NavBar />
       
       {/* Header Section */}
-      <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-32">
+      <div className="pb-6 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide">
+          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.2s'
+          }}>
             Referencie
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.4s'
+          }}>
             {pageDescription}
           </p>
         </div>

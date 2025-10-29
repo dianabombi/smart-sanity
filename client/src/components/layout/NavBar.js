@@ -66,7 +66,7 @@ const NavBar = () => {
     <>
       {/* Logo - Separate positioned div */}
       <div 
-        className="fixed p-2 top-0 sm:-top-8 md:top-2 left-8 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
+        className="fixed p-2 top-0 sm:-top-8 md:top-2 left-2 sm:left-4 md:left-8 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
         onClick={() => handleNavClick('/')}
       >
         <img 
@@ -130,7 +130,7 @@ const NavBar = () => {
       {/* Mobile Menu Overlay */}
       {mobileOpen && (
         <div 
-          className="xl:hidden sm:h-40 fixed inset-0 z-[70] bg-black/40 backdrop-blur-[2px]"
+          className="xl:hidden fixed inset-0 z-[70] bg-black/40 backdrop-blur-[2px]"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -140,7 +140,7 @@ const NavBar = () => {
         id="mobile-bottom-sheet"
         className={`xl:hidden fixed left-0 right-0 bottom-0 z-[90] bg-black border-t border-gray-700 transition-transform duration-300 ease-out ${
           mobileOpen ? 'translate-y-0' : 'translate-y-full'
-        } h-[60vh] tablet:h-[70vh] rounded-t-2xl`}
+        } h-[80vh] min-h-[500px] max-h-[90vh] rounded-t-2xl flex flex-col`}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -179,11 +179,11 @@ const NavBar = () => {
         </div>
 
         {/* Language switcher - always visible */}
-        <div className="pt-4 border-t border-gray-700 flex items-center justify-between bg-black shadow-[0_-6px_16px_rgba(0,0,0,0.6)]"
-             style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 12px)' }}>
-          <div className="px-6">
+        <div className="pt-4 pb-6 border-t border-gray-700 flex items-center justify-between bg-black shadow-[0_-6px_16px_rgba(0,0,0,0.6)] mt-auto"
+             style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}>
+          <div className="px-6 w-full">
             <span className="text-gray-400 text-sm">Jazyk</span>
-            <div className="flex gap-3 mt-1">
+            <div className="flex gap-3 mt-2">
               <button className="text-gray-400 text-lg font-medium">SK</button>
               <button className="text-gray-400 text-lg">EN</button>
             </div>

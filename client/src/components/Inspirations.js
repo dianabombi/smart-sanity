@@ -140,7 +140,7 @@ const Inspirations = () => {
       
       <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Inšpirácie
           </h1>
@@ -270,36 +270,35 @@ const Inspirations = () => {
       {/* Image Lightbox Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-6"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-6 pt-24"
           onClick={closeImageModal}
         >
           <div 
-            className="relative w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center"
+            className="relative bg-gray-900 rounded-lg p-6 max-w-4xl max-h-[80vh] w-full mx-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
             <button
               onClick={closeImageModal}
-              className="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl font-bold z-20 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200"
+              className="absolute top-3 right-3 text-white hover:text-gray-300 text-2xl font-bold z-20 bg-gray-600 hover:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
             >
               ×
             </button>
             
             {/* Image Container */}
-            <div className="relative w-full h-full flex items-center justify-center p-4">
+            <div className="flex flex-col items-center justify-start min-h-[400px] pt-16">
               <img
                 src={selectedImage.image}
                 alt={selectedImage.title}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                style={{ maxHeight: 'calc(90vh - 80px)', maxWidth: 'calc(100vw - 80px)' }}
+                className="max-w-full max-h-[55vh] object-contain rounded-lg shadow-lg"
               />
               
-              {/* Image info overlay - bottom left */}
+              {/* Image info */}
               {selectedImage.title && (
-                <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white p-3 rounded-lg max-w-md">
-                  <h3 className="text-lg font-semibold">{selectedImage.title}</h3>
+                <div className="mt-6 text-center max-w-md">
+                  <h3 className="text-xl font-semibold text-white">{selectedImage.title}</h3>
                   {selectedImage.description && (
-                    <p className="text-sm text-gray-300 mt-1">{selectedImage.description}</p>
+                    <p className="text-sm text-gray-300 mt-2 leading-relaxed">{selectedImage.description}</p>
                   )}
                 </div>
               )}

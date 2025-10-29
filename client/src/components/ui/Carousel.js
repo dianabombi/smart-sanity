@@ -170,10 +170,10 @@ const Carousel = ({
                 console.log('Dot clicked:', index, 'Current:', currentIndex);
                 goToSlide(index);
               }}
-              className={`w-12 h-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 cursor-pointer ${
+              className={`w-12 h-0.5 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 cursor-pointer ${
                 index === currentIndex 
                   ? 'bg-white' 
-                  : 'bg-white bg-opacity-30 hover:bg-opacity-60'
+                  : 'bg-gray-400 hover:bg-gray-300'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
