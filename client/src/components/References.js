@@ -108,12 +108,12 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-32">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 mt-52 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide">
               Referencie
             </h1>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {pageDescription}
             </p>
           </div>
@@ -163,12 +163,12 @@ const References = () => {
       <NavBar />
       
       {/* Header Section */}
-      <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-28">
+      <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-400 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide">
             Referencie
           </h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             {pageDescription}
           </p>
         </div>

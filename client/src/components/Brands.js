@@ -123,10 +123,10 @@ const Brands = () => {
         {/* Header Section */}
         <div className="pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-400 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               Obchodované značky
             </h1>
-            <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
               {pageDescription}
             </p>
           </div>
@@ -194,10 +194,10 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-400 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Obchodované značky
           </h1>
-          <p className="text-lg tablet:text-xl text-gray-400 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
           {pageDescription}
           </p>
         </div>
@@ -245,10 +245,10 @@ const Brands = () => {
           <div className="absolute inset-0 -z-10" style={getBackgroundStyle()}></div>
         )}
         <div className="max-w-6xl mx-auto relative z-10">
-          <h2 className="text-2xl tablet:text-3xl font-bold text-gray-400 mb-4 text-center tracking-wide opacity-100 translate-y-0">
+          <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide opacity-100 translate-y-0">
             Ostatné
           </h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
             Ďalší producenti, ktorých vám vieme ponúknuť
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
@@ -270,7 +270,7 @@ const Brands = () => {
         <div className="max-w-6xl mx-auto text-center">
           <button 
             onClick={() => navigate('/contact')}
-            className="py-2 px-4 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full max-w-xs"
           >
             Kontaktujte nás
           </button>
