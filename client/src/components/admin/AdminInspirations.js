@@ -33,29 +33,31 @@ const AdminInspirations = ({ onLogout }) => {
       
       if (result.success) {
         console.log(`✅ ADMIN: Loaded ${result.inspirations.length} inspirations from database`);
+        console.log('✅ ADMIN: Data source:', result.source || 'unknown');
         setInspirations(result.inspirations);
+        setError(''); // Clear any previous errors
       } else {
-        console.error('❌ ADMIN: Failed to load inspirations:', result.message);
+        console.error('❌ ADMIN: Failed to load inspirations');
+        console.error('❌ ADMIN: Error message:', result.message);
+        console.error('❌ ADMIN: Error source:', result.source);
         
-        // Check if it's a database table issue and provide fallback
-        if (result.message.includes('does not exist') || result.message.includes('timeout')) {
-          console.log('📦 ADMIN: Using fallback inspirations due to database issue');
-          const fallbackInspirations = ApiService.getFallbackInspirations();
-          setInspirations(fallbackInspirations);
-          setError('Databáza nie je dostupná. Zobrazujú sa predvolené inšpirácie. Kontaktujte administrátora pre nastavenie databázy.');
-        } else {
-          setError('Chyba pri načítavaní inšpirácií: ' + result.message);
-          setInspirations([]);
+        // NO FALLBACK - show error and empty state
+        let errorMsg = 'Chyba pri načítavaní inšpirácií z databázy: ' + (result.message || 'Unknown error');
+        
+        // Add helpful message for timeout errors
+        if (result.message && result.message.includes('timeout')) {
+          errorMsg += '\n\n💡 Tip: Timeout je spôsobený veľkými obrázkami (base64) v databáze. Vytvorte Supabase Storage bucket "inspiration-images" pre rýchlejšie načítavanie.';
         }
+        
+        setError(errorMsg);
+        setInspirations([]);
       }
     } catch (error) {
       console.error('❌ ADMIN: Error loading inspirations:', error);
       
-      // Provide fallback inspirations on error
-      console.log('📦 ADMIN: Using fallback inspirations due to error');
-      const fallbackInspirations = ApiService.getFallbackInspirations();
-      setInspirations(fallbackInspirations);
-      setError('Chyba pripojenia k databáze. Zobrazujú sa predvolené inšpirácie.');
+      // NO FALLBACK - show error and empty state
+      setError('Chyba pripojenia k databáze: ' + error.message);
+      setInspirations([]);
     } finally {
       setLoading(false);
     }

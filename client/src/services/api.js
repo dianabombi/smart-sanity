@@ -1601,29 +1601,49 @@ class ApiService {
   }
 
   // Inspirations Management
-  async getInspirations() {
+  async getInspirations(retryCount = 0) {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available');
-      return { success: false, message: 'Database connection not available' };
+      return { success: false, message: 'Database connection not available', source: 'no-supabase' };
     }
 
     try {
-      console.log('🔄 Loading inspirations from database...');
+      console.log(`🔄 Loading inspirations from database... (attempt ${retryCount + 1})`);
+      
+      // Load with .limit() to reduce initial payload and avoid timeout
+      // This helps when images are stored as base64 in database
       const { data, error } = await supabase
         .from('inspirations')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false})
+        .limit(100); // Add limit to help with timeout issues
       
       if (error) {
         console.error('❌ Supabase error loading inspirations:', error);
-        return { success: false, message: `Database error: ${error.message}` };
+        
+        // Retry on timeout errors (up to 2 retries)
+        if (error.message && error.message.includes('timeout') && retryCount < 2) {
+          console.log(`⚠️ Timeout detected, retrying... (attempt ${retryCount + 2}/3)`);
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+          return this.getInspirations(retryCount + 1);
+        }
+        
+        return { success: false, message: `Database error: ${error.message}`, source: 'supabase-error' };
       }
       
       console.log(`✅ Loaded ${data?.length || 0} inspirations from database`);
-      return { success: true, inspirations: data || [] };
+      return { success: true, inspirations: data || [], source: 'supabase-database' };
     } catch (error) {
       console.error('❌ Error fetching inspirations:', error);
-      return { success: false, message: `Error loading inspirations: ${error.message}` };
+      
+      // Retry on timeout
+      if (error.message && error.message.includes('timeout') && retryCount < 2) {
+        console.log(`⚠️ Timeout detected, retrying... (attempt ${retryCount + 2}/3)`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return this.getInspirations(retryCount + 1);
+      }
+      
+      return { success: false, message: `Error loading inspirations: ${error.message}`, source: 'exception' };
     }
   }
 

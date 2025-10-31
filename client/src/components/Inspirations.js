@@ -9,7 +9,7 @@ const Inspirations = () => {
   const [loading, setLoading] = useState(true);
   const [pageDescription, setPageDescription] = useState('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
   const [selectedImage, setSelectedImage] = useState(null);
-  const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
+  const [skeletonCount, setSkeletonCount] = useState(9); // Default skeleton count
 
   const loadInspirations = useCallback(async (forceRefresh = false) => {
     try {
@@ -19,13 +19,13 @@ const Inspirations = () => {
       const result = await ApiService.getInspirations();
       
       console.log('🔍 INSPIRATIONS: API result:', result);
+      console.log('🔍 INSPIRATIONS: Data source:', result.source);
       
       if (result.success && result.inspirations) {
         console.log(`✅ INSPIRATIONS: Loaded ${result.inspirations.length} inspirations from database`);
-        console.log('🔍 INSPIRATIONS: First inspiration:', result.inspirations[0]);
         
         // Set skeleton count based on actual data
-        setSkeletonCount(result.inspirations.length || 6);
+        setSkeletonCount(result.inspirations.length || 9);
         
         // Preload the first image for faster display
         if (result.inspirations.length > 0 && result.inspirations[0].image) {
@@ -36,11 +36,13 @@ const Inspirations = () => {
         setInspirations(result.inspirations);
       } else {
         console.error('❌ INSPIRATIONS: Failed to load inspirations:', result.message);
+        console.error('❌ INSPIRATIONS: Error source:', result.source);
         setSkeletonCount(0); // No skeletons if no data
         setInspirations([]);
       }
     } catch (error) {
       console.error('❌ INSPIRATIONS: Error in loadInspirations:', error);
+      setSkeletonCount(0);
       setInspirations([]);
     } finally {
       setLoading(false);
@@ -229,7 +231,7 @@ const Inspirations = () => {
                 </div>
                 
                 {/* Hover overlay with zoom icon */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center pointer-events-none">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
