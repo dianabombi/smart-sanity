@@ -2283,13 +2283,10 @@ class ApiService {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `inspirations/${fileName}`;
 
-      // Compress image before upload
-      const compressedFile = await this.compressImage(file, 1920, 0.85);
-
       // Upload to Supabase Storage
       const { error } = await supabase.storage
         .from('inspiration-images')
-        .upload(filePath, compressedFile, {
+        .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false
         });
