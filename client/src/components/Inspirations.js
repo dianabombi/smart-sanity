@@ -10,6 +10,7 @@ const Inspirations = () => {
   const [pageDescription, setPageDescription] = useState('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
   const [selectedImage, setSelectedImage] = useState(null);
   const [fullScreenImage, setFullScreenImage] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [skeletonCount, setSkeletonCount] = useState(9); // Default skeleton count
 
   const loadInspirations = useCallback(async (forceRefresh = false) => {
@@ -70,11 +71,15 @@ const Inspirations = () => {
 
   const openImageModal = (inspiration) => {
     setSelectedImage(inspiration);
+    // Find the index of this inspiration
+    const index = filteredInspirations.findIndex(i => i.id === inspiration.id);
+    setCurrentImageIndex(index);
   };
 
   const closeImageModal = () => {
     setSelectedImage(null);
     setFullScreenImage(false);
+    setCurrentImageIndex(0);
   };
 
   // Close modal with Escape key and prevent body scroll
@@ -85,6 +90,13 @@ const Inspirations = () => {
           setFullScreenImage(false);
         } else if (selectedImage) {
           closeImageModal();
+        }
+      } else if (fullScreenImage && filteredInspirations.length > 1) {
+        // Arrow key navigation in fullscreen
+        if (e.key === 'ArrowLeft') {
+          navigateImage(-1);
+        } else if (e.key === 'ArrowRight') {
+          navigateImage(1);
         }
       }
     };
@@ -101,7 +113,7 @@ const Inspirations = () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [selectedImage, fullScreenImage]);
+  }, [selectedImage, fullScreenImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // const categories = [
   //   { id: 'all', name: 'Všetky inšpirácie', icon: '🏠' },
@@ -116,6 +128,21 @@ const Inspirations = () => {
   const filteredInspirations = selectedCategory === 'all' 
     ? inspirations 
     : inspirations.filter(item => item.category === selectedCategory);
+
+  // Navigation function for fullscreen image gallery
+  const navigateImage = (direction) => {
+    if (!filteredInspirations || filteredInspirations.length === 0) return;
+    
+    const totalImages = filteredInspirations.length;
+    let newIndex = currentImageIndex + direction;
+    
+    // Wrap around
+    if (newIndex < 0) newIndex = totalImages - 1;
+    if (newIndex >= totalImages) newIndex = 0;
+    
+    setCurrentImageIndex(newIndex);
+    setSelectedImage(filteredInspirations[newIndex]);
+  };
 
   // const tips = [
   //   {
@@ -201,6 +228,17 @@ const Inspirations = () => {
                 </div>
               </div>
             ))}
+          </div>
+        ) : filteredInspirations.length === 0 ? (
+          /* No inspirations message */
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🏠</div>
+            <h2 className="text-2xl font-semibold text-gray-300 mb-4">Žiadne inšpirácie</h2>
+            <p className="text-gray-400 mb-6">Momentálne nie sú k dispozícii žiadne inšpirácie.</p>
+            <p className="text-sm text-gray-500">
+              Ak vidíte túto správu, databáza sa pravdepodobne nepodarilo načítať kvôli veľkým obrázkom.<br/>
+              Spustite SQL skript pre vyčistenie base64 obrázkov.
+            </p>
           </div>
         ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -288,27 +326,28 @@ const Inspirations = () => {
       {/* Image Lightbox Modal */}
       {selectedImage && !fullScreenImage && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-6 pt-24"
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[120] p-4 pt-20"
           onClick={closeImageModal}
         >
           <div 
-            className="relative bg-gray-900 rounded-lg p-6 max-w-4xl max-h-[80vh] w-full mx-auto"
+            className="relative bg-gray-900 rounded-lg p-4 max-w-6xl w-full mx-auto flex flex-col"
             onClick={(e) => e.stopPropagation()}
+            style={{ maxHeight: 'calc(100vh - 100px)' }}
           >
             {/* Close button */}
             <button
               onClick={closeImageModal}
-              className="absolute top-3 right-3 text-white hover:text-gray-300 text-2xl font-bold z-20 bg-gray-600 hover:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
+              className="absolute top-3 right-3 text-white hover:text-gray-300 text-2xl font-bold z-[130] bg-gray-600 hover:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
             >
               ×
             </button>
             
             {/* Image Container */}
-            <div className="flex flex-col items-center justify-start min-h-[400px] pt-16">
+            <div className="flex flex-col items-center justify-center flex-1 overflow-hidden pt-10">
               <img
                 src={selectedImage.image}
                 alt={selectedImage.title}
-                className="max-w-full max-h-[55vh] object-contain rounded-lg shadow-lg cursor-pointer hover:opacity-90 transition-opacity"
+                className="max-w-full max-h-[calc(100vh-200px)] w-auto h-auto object-contain rounded-lg shadow-lg cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation();
                   setFullScreenImage(true);
@@ -333,23 +372,63 @@ const Inspirations = () => {
       {/* Full Screen Image Modal */}
       {selectedImage && fullScreenImage && (
         <div 
-          className="fixed inset-0 bg-black flex items-center justify-center z-[60] overflow-hidden"
+          className="fixed inset-0 bg-black flex items-center justify-center z-[130] overflow-hidden"
           onClick={() => setFullScreenImage(false)}
         >
           {/* Close button */}
           <button
             onClick={() => setFullScreenImage(false)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl font-bold z-[70] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
             title="Zavrieť (ESC)"
           >
             ×
           </button>
           
+          {/* Navigation arrows - show only if more than 1 image */}
+          {filteredInspirations && filteredInspirations.length > 1 && (
+            <>
+              {/* Left arrow */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateImage(-1);
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-4xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                title="Predchádzajúca inšpirácia (←)"
+              >
+                ‹
+              </button>
+              
+              {/* Right arrow */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateImage(1);
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-4xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                title="Ďalšia inšpirácia (→)"
+              >
+                ›
+              </button>
+              
+              {/* Image counter */}
+              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-gray-800/70 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-sm z-[140]">
+                {currentImageIndex + 1} / {filteredInspirations.length}
+              </div>
+            </>
+          )}
+          
           {/* Full screen image */}
           <img
             src={selectedImage.image}
             alt={selectedImage.title}
-            className="max-w-[95vw] max-h-[95vh] w-auto h-auto object-contain"
+            className="object-contain"
+            style={{ 
+              maxWidth: 'calc(100vw - 32px)',
+              maxHeight: selectedImage.title ? 'calc(100vh - 120px)' : 'calc(100vh - 80px)',
+              width: 'auto',
+              height: 'auto'
+            }}
             onClick={(e) => e.stopPropagation()}
           />
           

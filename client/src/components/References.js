@@ -39,6 +39,8 @@ const References = () => {
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
   const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
   const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
 
@@ -95,7 +97,60 @@ const References = () => {
 
   const closeImageGallery = () => {
     setSelectedReferenceImages(null);
+    setFullscreenImage(null);
+    setFullscreenImageIndex(0);
   };
+
+  const navigateImage = useCallback((direction) => {
+    if (!selectedReferenceImages || !selectedReferenceImages.images) return;
+    
+    const totalImages = selectedReferenceImages.images.length;
+    let newIndex = fullscreenImageIndex + direction;
+    
+    // Wrap around
+    if (newIndex < 0) newIndex = totalImages - 1;
+    if (newIndex >= totalImages) newIndex = 0;
+    
+    setFullscreenImageIndex(newIndex);
+    
+    // Get the new image URL
+    const image = selectedReferenceImages.images[newIndex];
+    const imageUrl = typeof image === 'string' ? image : (image.url || image.dataUrl || image.src || image.path || image.filename);
+    setFullscreenImage(imageUrl);
+  }, [selectedReferenceImages, fullscreenImageIndex]);
+
+  // Handle ESC key and prevent body scroll
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        if (fullscreenImage) {
+          setFullscreenImage(null);
+        } else if (selectedReferenceImages) {
+          closeImageGallery();
+        }
+      } else if (fullscreenImage && selectedReferenceImages) {
+        // Arrow key navigation
+        if (e.key === 'ArrowLeft') {
+          navigateImage(-1);
+        } else if (e.key === 'ArrowRight') {
+          navigateImage(1);
+        }
+      }
+    };
+
+    // Prevent body scroll when modal is open
+    if (selectedReferenceImages || fullscreenImage) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedReferenceImages, fullscreenImage, navigateImage]);
 
   if (loading) {
     return (
@@ -253,8 +308,8 @@ const References = () => {
       </div>
 
       {/* Image Gallery Modal */}
-      {selectedReferenceImages && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+      {selectedReferenceImages && !fullscreenImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[120] p-4">
           <div className="bg-gray-800 rounded-lg max-w-6xl w-full max-h-[85vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center">
@@ -296,11 +351,15 @@ const References = () => {
                   console.log(`🖼️ DEBUG: Image ${index} URL:`, imageUrl);
                   
                   return (
-                    <div key={index} className="aspect-square bg-gray-900 rounded-lg overflow-hidden">
+                    <div key={index} className="aspect-square bg-gray-900 rounded-lg overflow-hidden cursor-pointer group relative">
                       <img
                         src={imageUrl}
                         alt={typeof image === 'object' ? (image.originalName || `Reference image ${index + 1}`) : `Reference image ${index + 1}`}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        onClick={() => {
+                          setFullscreenImage(imageUrl);
+                          setFullscreenImageIndex(index);
+                        }}
                         onLoad={() => {
                           console.log(`✅ Image ${index} loaded successfully`);
                         }}
@@ -311,6 +370,12 @@ const References = () => {
                           e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                      {/* Zoom icon overlay */}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center pointer-events-none">
+                        <svg className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                      </div>
                       <div className="w-full h-full bg-gray-700 flex items-center justify-center text-gray-300" style={{ display: 'none' }}>
                         <div className="text-center">
                           <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,6 +400,71 @@ const References = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && (
+        <div 
+          className="fixed inset-0 bg-black flex items-center justify-center z-[130] overflow-hidden"
+          onClick={() => setFullscreenImage(null)}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setFullscreenImage(null)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+            title="Zavrieť (ESC)"
+          >
+            ×
+          </button>
+          
+          {/* Navigation arrows - show only if more than 1 image */}
+          {selectedReferenceImages && selectedReferenceImages.images && selectedReferenceImages.images.length > 1 && (
+            <>
+              {/* Left arrow */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateImage(-1);
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-4xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                title="Predchádzajúci obrázok (←)"
+              >
+                ‹
+              </button>
+              
+              {/* Right arrow */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigateImage(1);
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-4xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                title="Ďalší obrázok (→)"
+              >
+                ›
+              </button>
+              
+              {/* Image counter */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-800/70 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-sm z-[140]">
+                {fullscreenImageIndex + 1} / {selectedReferenceImages.images.length}
+              </div>
+            </>
+          )}
+          
+          {/* Fullscreen image */}
+          <img
+            src={fullscreenImage}
+            alt="Fullscreen reference"
+            className="object-contain"
+            style={{ 
+              maxWidth: 'calc(100vw - 32px)',
+              maxHeight: 'calc(100vh - 80px)',
+              width: 'auto',
+              height: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
       
