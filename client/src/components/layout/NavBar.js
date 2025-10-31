@@ -66,13 +66,13 @@ const NavBar = () => {
     <>
       {/* Logo - Separate positioned div */}
       <div 
-        className="fixed p-2 top-0 sm:-top-8 md:top-2 left-2 sm:left-4 md:left-8 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
+        className="fixed p-4 pb-6 sm:p-2 top-0 sm:-top-8 md:top-2 left-2 sm:left-4 md:left-8 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
         onClick={() => handleNavClick('/')}
       >
         <img 
           src="/logo vektory_bez pozadia.png" 
           alt="SMART SANITY" 
-          className="h-12 p-2 mobile:h-14 tablet:h-16 laptop:h-18 w-auto object-contain"
+          className="h-10 mobile:h-14 tablet:h-16 laptop:h-14 w-auto object-contain"
           style={{
             imageRendering: 'high-quality',
           }}

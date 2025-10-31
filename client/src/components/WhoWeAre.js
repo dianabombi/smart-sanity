@@ -107,65 +107,51 @@ const WhoWeAre = () => {
 
   const loadContent = async () => {
     try {
-      // Load all data first, then set state once
+      // Load all data in PARALLEL for faster loading
+      const [brandsResult, partnershipResult, contentResult] = await Promise.all([
+        ApiService.getBrands().catch(err => ({ success: false, error: err })),
+        ApiService.getPageContent('who-we-are', 'partnership', 'text').catch(err => ({ success: false, error: err })),
+        ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err }))
+      ]);
+
+      // Process logo
       let logoData = '/ebk-logo.svg';
+      if (brandsResult.success && brandsResult.brands) {
+        const ebkBrand = brandsResult.brands.find(brand => 
+          brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
+        );
+        if (ebkBrand && ebkBrand.logo) {
+          logoData = ebkBrand.logo;
+        }
+      }
+
+      // Process partnership text
       let partnershipData = 'Partnersky spolupracujeme s interiérovým štúdiom';
+      if (partnershipResult.success && partnershipResult.content) {
+        partnershipData = partnershipResult.content;
+      }
+      
+      // Process main content
       let contentData = {
         mainContent: ["Načítavam obsah..."],
         partnershipContent: ""
       };
-
-      // Load logo
-      try {
-        const brandsResult = await ApiService.getBrands();
-        if (brandsResult.success && brandsResult.brands) {
-          const ebkBrand = brandsResult.brands.find(brand => 
-            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-          );
-          if (ebkBrand && ebkBrand.logo) {
-            logoData = ebkBrand.logo;
-          }
-        }
-      } catch (error) {
-        console.log('Logo loading failed, using default');
-      }
-
-      // Load partnership text
-      try {
-        const partnershipResult = await ApiService.getPageContent('who-we-are', 'partnership', 'text');
-        if (partnershipResult.success && partnershipResult.content) {
-          partnershipData = partnershipResult.content;
-        }
-      } catch (error) {
-        console.log('Partnership text loading failed, using default');
-      }
       
-      // Load main content
-      try {
-        const result = await ApiService.getWhoWeAreSections();
+      if (contentResult.success && contentResult.sections && contentResult.sections.length > 0) {
+        const mainContent = contentResult.sections
+          .filter(section => section.size === 'large')
+          .sort((a, b) => a.order - b.order)
+          .map(section => section.content);
         
-        if (result.success && result.sections && result.sections.length > 0) {
-          const mainContent = result.sections
-            .filter(section => section.size === 'large')
-            .sort((a, b) => a.order - b.order)
-            .map(section => section.content);
-          
-          const partnershipSection = result.sections.find(section => section.size === 'small');
-          
-          contentData = {
-            mainContent: mainContent.length > 0 ? mainContent : [result.sections[0].content],
-            partnershipContent: partnershipSection ? partnershipSection.content : ""
-          };
-        } else {
-          contentData = {
-            mainContent: ["Obsah nie je k dispozícii. Prosím, nastavte obsah v admin paneli."],
-            partnershipContent: ""
-          };
-        }
-      } catch (apiError) {
-        console.log('Content loading failed:', apiError.message);
+        const partnershipSection = contentResult.sections.find(section => section.size === 'small');
+        
         contentData = {
-          mainContent: ["Chyba pri načítavaní obsahu. Prosím, skontrolujte pripojenie."],
+          mainContent: mainContent.length > 0 ? mainContent : [contentResult.sections[0].content],
+          partnershipContent: partnershipSection ? partnershipSection.content : ""
+        };
+      } else {
+        contentData = {
+          mainContent: ["Obsah nie je k dispozícii. Prosím, nastavte obsah v admin paneli."],
           partnershipContent: ""
         };
       }
@@ -188,19 +174,61 @@ const WhoWeAre = () => {
 
   if (loading || !content) {
     return (
-      <div className="min-h-screen bg-black">
-        <NavBar />
-        <div className="pb-4 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-              Smart Sanit s.r.o.
-            </h1>
-          </div>
+      <div className="min-h-screen bg-black relative flex flex-col">
+        {/* Background for skeleton */}
+        <div className="fixed inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-50"></div>
         </div>
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="text-white">Načítavam obsah...</p>
+        
+        <div className="relative flex-1 flex flex-col">
+          <NavBar />
+          
+          {/* Header Skeleton */}
+          <div className="pb-2 px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="max-w-6xl mx-auto text-center">
+              <div className="mt-36 mb-2 h-12 md:h-14 w-80 mx-auto bg-gray-700/30 rounded-lg animate-pulse"></div>
+            </div>
+          </div>
+          
+          {/* Content Skeleton */}
+          <div className="flex items-center justify-center pt-8 pb-60 flex-1 relative z-10">
+            <div className="w-full px-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
+                {/* Left Card Skeleton */}
+                <div className="flex justify-center">
+                  <div className="rounded-lg p-8 py-20 w-full h-full bg-black/80 border border-gray-600/50">
+                    <div className="space-y-4 animate-pulse">
+                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-5/6"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-4/5"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-3/4"></div>
+                      <div className="mt-6 h-4 bg-gray-700/40 rounded w-full"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-5/6"></div>
+                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Card Skeleton */}
+                <div className="flex justify-center">
+                  <div className="rounded-lg p-8 py-20 w-full h-full bg-black/80 border border-gray-600/50">
+                    <div className="flex flex-col items-center space-y-12 animate-pulse">
+                      {/* Text skeleton */}
+                      <div className="space-y-3 w-full">
+                        <div className="h-4 bg-gray-700/40 rounded w-3/4 mx-auto"></div>
+                        <div className="h-4 bg-gray-700/40 rounded w-2/3 mx-auto"></div>
+                      </div>
+                      {/* Logo skeleton */}
+                      <div className="bg-gray-700/20 rounded-lg p-4 border border-gray-600/30">
+                        <div className="h-20 w-48 bg-gray-700/40 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -298,7 +326,7 @@ const WhoWeAre = () => {
           </div>
         </div>
         
-        <div className="flex items-center justify-center py-32 flex-1 relative z-10">
+        <div className="flex items-center justify-center pt-8  pb-60 flex-1 relative z-10">
           {contentSection}
         </div>
       </div>
