@@ -9,6 +9,7 @@ const Inspirations = () => {
   const [loading, setLoading] = useState(true);
   const [pageDescription, setPageDescription] = useState('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [fullScreenImage, setFullScreenImage] = useState(false);
   const [skeletonCount, setSkeletonCount] = useState(9); // Default skeleton count
 
   const loadInspirations = useCallback(async (forceRefresh = false) => {
@@ -73,19 +74,34 @@ const Inspirations = () => {
 
   const closeImageModal = () => {
     setSelectedImage(null);
+    setFullScreenImage(false);
   };
 
-  // Close modal with Escape key
+  // Close modal with Escape key and prevent body scroll
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && selectedImage) {
-        closeImageModal();
+      if (e.key === 'Escape') {
+        if (fullScreenImage) {
+          setFullScreenImage(false);
+        } else if (selectedImage) {
+          closeImageModal();
+        }
       }
     };
 
+    // Prevent body scroll when modal is open
+    if (selectedImage || fullScreenImage) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [selectedImage]);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedImage, fullScreenImage]);
 
   // const categories = [
   //   { id: 'all', name: 'Všetky inšpirácie', icon: '🏠' },
@@ -270,7 +286,7 @@ const Inspirations = () => {
       </div>
 
       {/* Image Lightbox Modal */}
-      {selectedImage && (
+      {selectedImage && !fullScreenImage && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-6 pt-24"
           onClick={closeImageModal}
@@ -292,7 +308,12 @@ const Inspirations = () => {
               <img
                 src={selectedImage.image}
                 alt={selectedImage.title}
-                className="max-w-full max-h-[55vh] object-contain rounded-lg shadow-lg"
+                className="max-w-full max-h-[55vh] object-contain rounded-lg shadow-lg cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setFullScreenImage(true);
+                }}
+                title="Kliknite pre zobrazenie v plnej veľkosti"
               />
               
               {/* Image info */}
@@ -306,6 +327,38 @@ const Inspirations = () => {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Full Screen Image Modal */}
+      {selectedImage && fullScreenImage && (
+        <div 
+          className="fixed inset-0 bg-black flex items-center justify-center z-[60] overflow-hidden"
+          onClick={() => setFullScreenImage(false)}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setFullScreenImage(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl font-bold z-[70] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+            title="Zavrieť (ESC)"
+          >
+            ×
+          </button>
+          
+          {/* Full screen image */}
+          <img
+            src={selectedImage.image}
+            alt={selectedImage.title}
+            className="max-w-[95vw] max-h-[95vh] w-auto h-auto object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+          
+          {/* Image title at bottom */}
+          {selectedImage.title && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg">
+              <h3 className="text-xl font-semibold text-white">{selectedImage.title}</h3>
+            </div>
+          )}
         </div>
       )}
       
