@@ -1527,7 +1527,7 @@ class ApiService {
     }
 
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('contact_content')
         .select('*')
         .single();
@@ -1556,7 +1556,7 @@ class ApiService {
     }
 
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('contact_content')
         .upsert({
           id: 1,
