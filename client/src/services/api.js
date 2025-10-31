@@ -2243,6 +2243,106 @@ class ApiService {
   // INSPIRATIONS CRUD OPERATIONS
   // =====================================================
 
+  async uploadInspirationImage(file) {
+    if (!this.isSupabaseAvailable()) {
+      console.log('⚠️ Supabase not available, falling back to base64');
+      // Fallback to base64 if Supabase Storage is not available
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ success: true, url: reader.result, isBase64: true });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    try {
+      console.log('📤 Uploading inspiration image to Supabase Storage...');
+      
+      // Create unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `inspirations/${fileName}`;
+
+      // Compress image before upload
+      const compressedFile = await this.compressImage(file, 1920, 0.85);
+
+      // Upload to Supabase Storage
+      const { error } = await supabase.storage
+        .from('inspiration-images')
+        .upload(filePath, compressedFile, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error('❌ Supabase Storage upload error:', error);
+        
+        // If bucket doesn't exist, fall back to base64
+        if (error.message.includes('not found') || error.message.includes('does not exist')) {
+          console.log('⚠️ Storage bucket not found, falling back to base64');
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve({ success: true, url: reader.result, isBase64: true });
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
+        
+        return { success: false, message: error.message };
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('inspiration-images')
+        .getPublicUrl(filePath);
+
+      console.log('✅ Image uploaded successfully:', urlData.publicUrl);
+      return { success: true, url: urlData.publicUrl, isBase64: false };
+    } catch (error) {
+      console.error('❌ Exception uploading image:', error);
+      // Fallback to base64 on error
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ success: true, url: reader.result, isBase64: true });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  async deleteInspirationImage(imageUrl) {
+    if (!this.isSupabaseAvailable() || !imageUrl || imageUrl.startsWith('data:')) {
+      // Can't delete base64 images or if Supabase not available
+      return { success: true };
+    }
+
+    try {
+      // Extract file path from URL
+      const urlParts = imageUrl.split('/inspiration-images/');
+      if (urlParts.length < 2) {
+        return { success: true }; // Not a storage URL
+      }
+      
+      const filePath = `inspirations/${urlParts[1]}`;
+      
+      const { error } = await supabase.storage
+        .from('inspiration-images')
+        .remove([filePath]);
+
+      if (error) {
+        console.error('⚠️ Error deleting image:', error);
+        // Don't fail the operation if image deletion fails
+        return { success: true };
+      }
+
+      console.log('✅ Image deleted from storage');
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Exception deleting image:', error);
+      return { success: true }; // Don't fail the operation
+    }
+  }
+
   async createInspiration(inspirationData) {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available');

@@ -65,13 +65,15 @@ const AdminInspirations = ({ onLogout }) => {
     try {
       setUploadingImage(true);
       
-      // Convert to base64 for storage
-      const reader = new FileReader();
-      return new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Upload to Supabase Storage (with automatic fallback to base64)
+      const result = await ApiService.uploadInspirationImage(file);
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Upload failed');
+      }
+      
+      console.log(result.isBase64 ? '📦 Image stored as base64' : '☁️ Image uploaded to Supabase Storage');
+      return result.url;
     } catch (error) {
       console.error('Error uploading image:', error);
       throw error;
@@ -119,9 +121,18 @@ const AdminInspirations = ({ onLogout }) => {
     try {
       console.log('🔄 ADMIN: Deleting inspiration from database...', id);
       
+      // Find the inspiration to get its image URL
+      const inspiration = inspirations.find(i => i.id === id);
+      
+      // Delete the inspiration from database
       const result = await ApiService.deleteInspiration(id);
       
       if (result.success) {
+        // Also delete the image from storage if it exists
+        if (inspiration?.image) {
+          await ApiService.deleteInspirationImage(inspiration.image);
+        }
+        
         console.log('✅ ADMIN: Inspiration deleted successfully');
         setSuccess('Inšpirácia odstránená!');
         await loadInspirations(); // Reload from database
