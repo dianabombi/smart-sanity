@@ -61,12 +61,12 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
 
   return (
     <div className={className}>
-      <h2 className="text-2xl font-semibold text-gray-400 mb-6">
+      <h2 className="text-2xl font-semibold text-gray-300 mb-6">
         {title}
       </h2>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             label="Meno a priezvisko"
             type="text"
@@ -126,9 +126,6 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
             Nastala chyba pri odosielaní správy. Skúste to prosím znovu.
           </div>
         )}
-
-        {/* Spacer to push button to align with "Technická podpora" */}
-        <div className="h-6"></div>
 
         <button
           type="submit"
