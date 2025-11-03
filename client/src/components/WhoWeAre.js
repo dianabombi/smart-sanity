@@ -308,7 +308,7 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg p-6 py-16 transition-all duration-500 opacity-28 w-full h-full flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
+          <div className="group rounded-lg p-6 py-16 transition-all duration-500 w-full h-full flex flex-col justify-center bg-black/50 border-gray-600" style={{ borderWidth: '0.5px' }}>
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
                 <div 
@@ -323,7 +323,7 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group rounded-lg p-6 py-16 transition-all duration-500 w-full h-full opacity-28 flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
+        <div className="group rounded-lg p-6 py-16 transition-all duration-500 w-full h-full flex flex-col justify-center bg-black/50 border-gray-600" style={{ borderWidth: '0.5px' }}>
           <div className="space-y-6">
             {/* Partnership text above logo */}
             <div className="flex flex-col justify-center items-center space-y-12">
