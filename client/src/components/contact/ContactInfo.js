@@ -80,7 +80,7 @@ const ContactInfo = ({
         transition: 'all 0.8s ease-out',
         transitionDelay: '1.0s'
       }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-300 mb-6">
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         
@@ -93,8 +93,8 @@ const ContactInfo = ({
             'Technická podpora'
           ]).map((service, index) => (
             <li key={index} className="flex items-center space-x-3">
-              <svg className="w-5 h-5 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+              <svg className="w-3 h-3 text-gray-300 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
               </svg>
               <span>{service}</span>
             </li>

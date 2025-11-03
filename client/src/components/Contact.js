@@ -60,7 +60,7 @@ const Contact = () => {
 
   const getDefaultContactContent = () => ({
     title: 'Kontakt',
-    subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.',
+    subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás.',
     formTitle: 'Napíšte nám',
     contactInfoTitle: 'Kontaktné údaje',
     servicesTitle: 'Naše služby',
@@ -119,7 +119,7 @@ const Contact = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
             {/* Contact Form */}
             <Card
               className={`p-8 h-full ${
