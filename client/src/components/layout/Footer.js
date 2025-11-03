@@ -52,16 +52,15 @@ const Footer = () => {
           </div>
           
           {/* Wavelyne Credit - Centered */}
-          <div className="text-center text-sm text-gray-400">
-            Created by{' '}
+          <div className="text-center text-sm">
             <a 
               href="https://wavelynecode.com" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
             >
-            Wavelyne
-            </a>.
+              Created by Wavelyne.
+            </a>
           </div>
         </div>
 
@@ -112,16 +111,15 @@ const Footer = () => {
           </div>
           
           {/* Wavelyne Credit - Right Corner */}
-          <div className="absolute bottom-0 right-4 text-sm text-gray-400">
-            Created by{' '}
+          <div className="absolute bottom-0 right-4 text-sm">
             <a 
               href="https://wavelynecode.com" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
             >
-              Wavelyne
-            </a>.
+              Created by Wavelyne.
+            </a>
           </div>
         </div>
       </div>

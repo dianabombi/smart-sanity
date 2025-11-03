@@ -7,9 +7,9 @@ const ContactInfo = ({
   delay = '0.8s'
 }) => {
   return (
-    <div className="flex flex-col gap-6 h-full">
+    <div className="flex flex-col gap-4 h-full">
       {/* Company Info */}
-      <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 ${
+      <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       } ${className}`}
       style={{
@@ -20,7 +20,7 @@ const ContactInfo = ({
           {contactContent?.contactInfoTitle || 'Kontaktné údaje'}
         </h2>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="flex items-start space-x-4">
             <div className="text-gray-300 text-xl">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

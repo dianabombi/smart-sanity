@@ -65,7 +65,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         {title}
       </h2>
       
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-3 pt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <FormField
             label="Meno a priezvisko"
@@ -126,6 +126,9 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
             Nastala chyba pri odosielaní správy. Skúste to prosím znovu.
           </div>
         )}
+
+        {/* Spacer to push button down */}
+        <div className="h-6"></div>
 
         <button
           type="submit"

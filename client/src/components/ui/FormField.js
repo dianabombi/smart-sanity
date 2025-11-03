@@ -16,7 +16,7 @@ const FormField = ({
   helpText,
   disabled = false
 }) => {
-  const baseInputClasses = `w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 ${
+  const baseInputClasses = `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-1 ${
     disabled ? 'opacity-50 cursor-not-allowed' : ''
   }`;
 
