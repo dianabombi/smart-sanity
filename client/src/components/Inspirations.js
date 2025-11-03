@@ -312,7 +312,7 @@ const Inspirations = () => {
           {/* Close button */}
           <button
             onClick={() => setFullScreenImage(false)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-light z-[140] transition-all duration-200"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-thin z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >
             ×
@@ -327,10 +327,12 @@ const Inspirations = () => {
                   e.stopPropagation();
                   navigateImage(-1);
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-5xl font-thin z-[140] transition-all duration-200"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 hover:scale-110 transition-all duration-300 z-[140]"
                 title="Predchádzajúca inšpirácia (←)"
               >
-                ‹
+                <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 20l-8-8 8-8" />
+                </svg>
               </button>
               
               {/* Right arrow */}
@@ -339,10 +341,12 @@ const Inspirations = () => {
                   e.stopPropagation();
                   navigateImage(1);
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-5xl font-thin z-[140] transition-all duration-200"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 hover:scale-110 transition-all duration-300 z-[140]"
                 title="Ďalšia inšpirácia (→)"
               >
-                ›
+                <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4l8 8-8 8" />
+                </svg>
               </button>
               
               {/* Image counter */}

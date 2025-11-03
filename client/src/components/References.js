@@ -195,7 +195,7 @@ const References = () => {
         <div className="container mx-auto px-4 py-8 pb-16 min-h-[60vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {Array.from({ length: skeletonCount }, (_, index) => (
-              <div key={index} className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
+              <div key={index} className="group bg-white/5 border border-blue-500/50 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
                 <div className="mb-4">
                   {/* Title skeleton */}
                   <div className="h-6 bg-gray-700 rounded mb-2 animate-pulse">
@@ -264,7 +264,7 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105 h-80 flex flex-col"
+                className="group bg-white/5 border border-blue-500/50 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500 transition-all duration-300 transform hover:scale-105 h-80 flex flex-col"
                 style={{ opacity: 1 }}
               >
                 <div className="flex-1 flex flex-col">
@@ -310,9 +310,9 @@ const References = () => {
       {/* Image Gallery Modal */}
       {selectedReferenceImages && !fullscreenImage && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[120] p-4">
-          <div className="bg-gray-800 rounded-lg max-w-6xl w-full max-h-[85vh] overflow-y-auto">
+          <div className="bg-black rounded-lg max-w-6xl w-full max-h-[85vh] overflow-y-auto border border-gray-600">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center">
+            <div className="sticky top-0 bg-black border-b border-gray-700 p-4 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-white mb-2">{selectedReferenceImages.title}</h2>
                 <p className="text-gray-300">{selectedReferenceImages.description}</p>
@@ -324,7 +324,7 @@ const References = () => {
               </div>
               <button
                 onClick={closeImageGallery}
-                className="text-gray-300 hover:text-white text-2xl font-bold"
+                className="text-white hover:text-gray-300 text-4xl font-thin transition-all duration-200"
               >
                 ×
               </button>
@@ -373,7 +373,7 @@ const References = () => {
                       {/* Zoom icon overlay */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center pointer-events-none">
                         <svg className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                         </svg>
                       </div>
                       <div className="w-full h-full bg-gray-700 flex items-center justify-center text-gray-300" style={{ display: 'none' }}>
@@ -391,10 +391,10 @@ const References = () => {
             </div>
 
             {/* Close Button */}
-            <div className="sticky bottom-0 bg-gray-800 border-t border-gray-700 p-3 text-center">
+            <div className="sticky bottom-0 bg-black border-t border-gray-700 p-3 text-center">
               <button
                 onClick={closeImageGallery}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors"
+                className="py-2 px-6 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
               >
                 Zavrieť galériu
               </button>
@@ -412,7 +412,7 @@ const References = () => {
           {/* Close button */}
           <button
             onClick={() => setFullscreenImage(null)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-thin z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >
             ×
@@ -427,10 +427,12 @@ const References = () => {
                   e.stopPropagation();
                   navigateImage(-1);
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-4xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 hover:scale-110 transition-all duration-300 z-[140]"
                 title="Predchádzajúci obrázok (←)"
               >
-                ‹
+                <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 20l-8-8 8-8" />
+                </svg>
               </button>
               
               {/* Right arrow */}
@@ -439,10 +441,12 @@ const References = () => {
                   e.stopPropagation();
                   navigateImage(1);
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 text-4xl font-bold z-[140] bg-gray-800/50 hover:bg-gray-700/50 rounded-full w-14 h-14 flex items-center justify-center transition-all duration-200 backdrop-blur-sm"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 hover:scale-110 transition-all duration-300 z-[140]"
                 title="Ďalší obrázok (→)"
               >
-                ›
+                <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4l8 8-8 8" />
+                </svg>
               </button>
               
               {/* Image counter */}
