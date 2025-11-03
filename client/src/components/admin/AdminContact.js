@@ -250,7 +250,7 @@ const AdminContact = ({ onLogout }) => {
           </div>
           
           <div className="space-y-2">
-            {contactContent.services.map((service, index) => (
+            {Array.isArray(contactContent.services) && contactContent.services.map((service, index) => (
               <p key={index} className="text-gray-400 bg-gray-700 p-3 rounded">
                 ✓ {service}
               </p>
@@ -275,7 +275,7 @@ const AdminContact = ({ onLogout }) => {
 
 // Edit Modal Component
 const EditModal = ({ section, content, onSave, onCancel, saving }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(section === 'services' ? [] : {});
 
   useEffect(() => {
     if (section === 'basic') {
@@ -292,7 +292,7 @@ const EditModal = ({ section, content, onSave, onCancel, saving }) => {
     } else if (section === 'contactDetails') {
       setFormData({ ...content.contactDetails });
     } else if (section === 'services') {
-      setFormData(content.services);
+      setFormData(Array.isArray(content.services) ? content.services : []);
     }
   }, [section, content]);
 
@@ -452,7 +452,7 @@ const EditModal = ({ section, content, onSave, onCancel, saving }) => {
                 </button>
               </div>
               <div className="space-y-3">
-                {formData.map((service, index) => (
+                {Array.isArray(formData) && formData.map((service, index) => (
                   <div key={index} className="flex gap-2">
                     <input
                       type="text"
