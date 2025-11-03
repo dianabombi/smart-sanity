@@ -195,7 +195,7 @@ const References = () => {
         <div className="container mx-auto px-4 py-8 pb-16 min-h-[60vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {Array.from({ length: skeletonCount }, (_, index) => (
-              <div key={index} className="group bg-white/5 border border-blue-500/50 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
+              <div key={index} className="group bg-white/5 border border-gray-600 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
                 <div className="mb-4">
                   {/* Title skeleton */}
                   <div className="h-6 bg-gray-700 rounded mb-2 animate-pulse">
@@ -264,7 +264,7 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-white/5 border border-blue-500/50 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-blue-500 transition-all duration-300 transform hover:scale-105 h-80 flex flex-col"
+                className="group bg-white/5 border border-gray-600 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 h-80 flex flex-col"
                 style={{ opacity: 1 }}
               >
                 <div className="flex-1 flex flex-col">
