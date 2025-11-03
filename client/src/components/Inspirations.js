@@ -88,11 +88,7 @@ const Inspirations = () => {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
-        if (fullScreenImage) {
-          setFullScreenImage(false);
-        } else if (selectedImage) {
-          closeImageModal();
-        }
+        closeImageModal();
       } else if (fullScreenImage && filteredInspirations.length > 1) {
         // Arrow key navigation in fullscreen
         if (e.key === 'ArrowLeft') {
@@ -104,7 +100,7 @@ const Inspirations = () => {
     };
 
     // Prevent body scroll when modal is open
-    if (selectedImage || fullScreenImage) {
+    if (selectedImage && fullScreenImage) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -307,11 +303,11 @@ const Inspirations = () => {
       {selectedImage && fullScreenImage && (
         <div 
           className="fixed inset-0 bg-black flex items-center justify-center z-[130] overflow-hidden"
-          onClick={() => setFullScreenImage(false)}
+          onClick={closeImageModal}
         >
           {/* Close button */}
           <button
-            onClick={() => setFullScreenImage(false)}
+            onClick={closeImageModal}
             className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-thin z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >

@@ -7,20 +7,20 @@ const ContactInfo = ({
   delay = '0.8s'
 }) => {
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col gap-6 h-full">
       {/* Company Info */}
-      <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 ${
+      <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       } ${className}`}
       style={{
         transition: 'all 0.8s ease-out',
         transitionDelay: delay
       }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
           {contactContent?.contactInfoTitle || 'Kontaktné údaje'}
         </h2>
         
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="flex items-start space-x-4">
             <div className="text-gray-300 text-xl">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,14 +73,14 @@ const ContactInfo = ({
       </div>
 
       {/* Services */}
-      <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 hover:bg-white/10 transition-all duration-500 ${
+      <div className={`flex-1 bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
       style={{
         transition: 'all 0.8s ease-out',
         transitionDelay: '1.0s'
       }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         

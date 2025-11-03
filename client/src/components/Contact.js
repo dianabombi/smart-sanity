@@ -95,7 +95,7 @@ const Contact = () => {
     <Layout>
       <NavBar />
       
-      <div className="min-h-screen bg-black py-8">
+      <div className="min-h-screen bg-black pb-8">
         <div className="w-full max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-12 pt-8">
@@ -119,10 +119,10 @@ const Contact = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
             {/* Contact Form */}
             <Card
-              className={`p-8 ${
+              className={`p-8 h-full ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{
