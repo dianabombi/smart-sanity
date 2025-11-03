@@ -193,45 +193,67 @@ const AdminWhoWeAre = ({ onLogout }) => {
   const formatContentForDisplay = (content) => {
     if (!content) return '';
     
-    return content
-      // Convert **bold** to <strong>
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      // Convert *italic* to <em>
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      // Handle HTML formatting tags
-      .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
-      .replace(/<s>(.*?)<\/s>/g, '<s>$1</s>')
-      .replace(/<center>(.*?)<\/center>/g, '<div class="text-center">$1</div>')
-      .replace(/<left>(.*?)<\/left>/g, '<div class="text-left">$1</div>')
-      .replace(/<right>(.*?)<\/right>/g, '<div class="text-right">$1</div>')
-      .replace(/<h1>(.*?)<\/h1>/g, '<h1 class="text-3xl font-bold mb-4">$1</h1>')
-      .replace(/<h2>(.*?)<\/h2>/g, '<h2 class="text-2xl font-semibold mb-3">$1</h2>')
-      .replace(/<h3>(.*?)<\/h3>/g, '<h3 class="text-xl font-medium mb-2">$1</h3>')
-      // Convert bullet points
-      .replace(/^• (.+)$/gm, '<li>$1</li>')
-      // Convert numbered lists
-      .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-      // Convert line breaks to <br>
-      .replace(/\n\n/g, '</p><p>')
-      // Wrap in paragraphs
-      .replace(/^(.+)$/gm, (match, p1) => {
-        if (p1.startsWith('<li>') || p1.startsWith('<div class="text-') || p1.startsWith('<h')) return p1;
-        return p1;
-      })
-      // Wrap bullet points in <ul>
-      .replace(/(<li>.*<\/li>)/gs, (match) => {
-        if (match.includes('</p>')) return match;
-        return `<ul class="list-disc list-inside space-y-1 my-2">${match}</ul>`;
-      })
-      // Wrap content in paragraphs
-      .split('\n\n')
-      .map(paragraph => {
-        if (paragraph.includes('<ul>') || paragraph.includes('<li>') || paragraph.includes('<div class="text-') || paragraph.includes('<h')) {
-          return paragraph;
-        }
-        return `<p class="mb-4">${paragraph}</p>`;
-      })
-      .join('');
+    // Split by double line breaks first to handle paragraphs
+    const paragraphs = content.split('\n\n');
+    
+    return paragraphs.map(paragraph => {
+      // Apply text formatting to each paragraph
+      let formatted = paragraph
+        // Convert **bold** to <strong>
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Convert *italic* to <em>
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // Handle HTML formatting tags
+        .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
+        .replace(/<s>(.*?)<\/s>/g, '<s>$1</s>')
+        .replace(/<h1>(.*?)<\/h1>/g, '<h1 class="text-3xl font-bold mb-4">$1</h1>')
+        .replace(/<h2>(.*?)<\/h2>/g, '<h2 class="text-2xl font-semibold mb-3">$1</h2>')
+        .replace(/<h3>(.*?)<\/h3>/g, '<h3 class="text-xl font-medium mb-2">$1</h3>')
+        // Convert single line breaks to <br>
+        .replace(/\n/g, '<br>');
+      
+      // Handle bullet points (convert to list)
+      if (formatted.includes('• ')) {
+        const items = formatted.split('<br>').filter(line => line.trim());
+        const listItems = items
+          .map(item => item.trim().replace(/^• /, ''))
+          .map(item => `<li>${item}</li>`)
+          .join('');
+        return `<ul class="list-disc list-inside space-y-1 my-4">${listItems}</ul>`;
+      }
+      
+      // Handle numbered lists
+      if (/^\d+\./.test(formatted)) {
+        const items = formatted.split('<br>').filter(line => line.trim());
+        const listItems = items
+          .map(item => item.trim().replace(/^\d+\.\s*/, ''))
+          .map(item => `<li>${item}</li>`)
+          .join('');
+        return `<ol class="list-decimal list-inside space-y-1 my-4">${listItems}</ol>`;
+      }
+      
+      // Handle alignment tags
+      if (formatted.includes('<center>')) {
+        formatted = formatted.replace(/<center>(.*?)<\/center>/g, '<div class="text-center">$1</div>');
+        return formatted;
+      }
+      if (formatted.includes('<left>')) {
+        formatted = formatted.replace(/<left>(.*?)<\/left>/g, '<div class="text-left">$1</div>');
+        return formatted;
+      }
+      if (formatted.includes('<right>')) {
+        formatted = formatted.replace(/<right>(.*?)<\/right>/g, '<div class="text-right">$1</div>');
+        return formatted;
+      }
+      
+      // Handle headings (don't wrap in <p>)
+      if (formatted.startsWith('<h1') || formatted.startsWith('<h2') || formatted.startsWith('<h3')) {
+        return formatted;
+      }
+      
+      // Regular paragraph
+      return `<p class="mb-4">${formatted}</p>`;
+    }).join('');
   };
 
   const handleEbkLogoUpload = async (event) => {

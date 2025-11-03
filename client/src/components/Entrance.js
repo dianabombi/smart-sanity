@@ -109,7 +109,7 @@ const Entrance = () => {
                   key={index}
                   className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/80 border-gray-600 ${
                     visibleItems.includes(index) 
-                      ? 'translate-y-0 opacity-24 scale-100' 
+                      ? 'translate-y-0 opacity-28 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
                   }`}
                   style={{ transitionDelay: `${index * 100}ms`, borderWidth: '0.5px' }}

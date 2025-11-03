@@ -105,6 +105,73 @@ const WhoWeAre = () => {
     return () => clearInterval(interval);
   }, [ebkLogo]);
 
+  // Format content for display (convert markdown-style to HTML)
+  const formatContentForDisplay = (content) => {
+    if (!content) return '';
+    
+    // Split by double line breaks first to handle paragraphs
+    const paragraphs = content.split('\n\n');
+    
+    return paragraphs.map(paragraph => {
+      // Apply text formatting to each paragraph
+      let formatted = paragraph
+        // Convert **bold** to <strong>
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Convert *italic* to <em>
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // Handle HTML formatting tags
+        .replace(/<u>(.*?)<\/u>/g, '<u>$1</u>')
+        .replace(/<s>(.*?)<\/s>/g, '<s>$1</s>')
+        .replace(/<h1>(.*?)<\/h1>/g, '<h1 class="text-3xl font-bold mb-4">$1</h1>')
+        .replace(/<h2>(.*?)<\/h2>/g, '<h2 class="text-2xl font-semibold mb-3">$1</h2>')
+        .replace(/<h3>(.*?)<\/h3>/g, '<h3 class="text-xl font-medium mb-2">$1</h3>')
+        // Convert single line breaks to <br>
+        .replace(/\n/g, '<br>');
+      
+      // Handle bullet points (convert to list)
+      if (formatted.includes('• ')) {
+        const items = formatted.split('<br>').filter(line => line.trim());
+        const listItems = items
+          .map(item => item.trim().replace(/^• /, ''))
+          .map(item => `<li>${item}</li>`)
+          .join('');
+        return `<ul class="list-disc list-inside space-y-1 my-4">${listItems}</ul>`;
+      }
+      
+      // Handle numbered lists
+      if (/^\d+\./.test(formatted)) {
+        const items = formatted.split('<br>').filter(line => line.trim());
+        const listItems = items
+          .map(item => item.trim().replace(/^\d+\.\s*/, ''))
+          .map(item => `<li>${item}</li>`)
+          .join('');
+        return `<ol class="list-decimal list-inside space-y-1 my-4">${listItems}</ol>`;
+      }
+      
+      // Handle alignment tags
+      if (formatted.includes('<center>')) {
+        formatted = formatted.replace(/<center>(.*?)<\/center>/g, '<div class="text-center">$1</div>');
+        return formatted;
+      }
+      if (formatted.includes('<left>')) {
+        formatted = formatted.replace(/<left>(.*?)<\/left>/g, '<div class="text-left">$1</div>');
+        return formatted;
+      }
+      if (formatted.includes('<right>')) {
+        formatted = formatted.replace(/<right>(.*?)<\/right>/g, '<div class="text-right">$1</div>');
+        return formatted;
+      }
+      
+      // Handle headings (don't wrap in <p>)
+      if (formatted.startsWith('<h1') || formatted.startsWith('<h2') || formatted.startsWith('<h3')) {
+        return formatted;
+      }
+      
+      // Regular paragraph
+      return `<p class="mb-4">${formatted}</p>`;
+    }).join('');
+  };
+
   const loadContent = async () => {
     try {
       // Load all data in PARALLEL for faster loading
@@ -141,12 +208,12 @@ const WhoWeAre = () => {
         const mainContent = contentResult.sections
           .filter(section => section.size === 'large')
           .sort((a, b) => a.order - b.order)
-          .map(section => section.content);
+          .map(section => formatContentForDisplay(section.content)); // Apply formatting
         
         const partnershipSection = contentResult.sections.find(section => section.size === 'small');
         
         contentData = {
-          mainContent: mainContent.length > 0 ? mainContent : [contentResult.sections[0].content],
+          mainContent: mainContent.length > 0 ? mainContent : [formatContentForDisplay(contentResult.sections[0].content)],
           partnershipContent: partnershipSection ? partnershipSection.content : ""
         };
       } else {
@@ -241,7 +308,7 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg p-8 py-20 transition-all duration-500 opacity-24 w-full h-full flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
+          <div className="group rounded-lg p-6 py-16 transition-all duration-500 opacity-28 w-full h-full flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
                 <div 
@@ -256,7 +323,7 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group rounded-lg p-8 py-20 transition-all duration-500 w-full h-full opacity-24 flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
+        <div className="group rounded-lg p-6 py-16 transition-all duration-500 w-full h-full opacity-28 flex flex-col justify-center bg-black/80 border-gray-600" style={{ borderWidth: '0.5px' }}>
           <div className="space-y-6">
             {/* Partnership text above logo */}
             <div className="flex flex-col justify-center items-center space-y-12">
