@@ -73,18 +73,18 @@ const ContactInfo = ({
       </div>
 
       {/* Services */}
-      <div className={`flex-1 bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 ${
+      <div className={`flex-1 bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
       style={{
         transition: 'all 0.8s ease-out',
         transitionDelay: '1.0s'
       }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         
-        <ul className="space-y-2 text-gray-300/70">
+        <ul className="space-y-3 text-gray-300/70">
           {(contactContent?.services || [
             'Poradenstvo a návrh kúpeľní',
             'Dodávka sanitárnych zariadení',
@@ -92,8 +92,8 @@ const ContactInfo = ({
             'Servis a údržba',
             'Technická podpora'
           ]).map((service, index) => (
-            <li key={index} className="flex items-center space-x-3">
-              <svg className="w-3 h-3 text-gray-300 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <li key={index} className="flex items-start space-x-3">
+              <svg className="w-3 h-3 text-gray-300 flex-shrink-0 mt-1.5" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" />
               </svg>
               <span>{service}</span>
