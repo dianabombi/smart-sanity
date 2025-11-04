@@ -8,6 +8,7 @@ import Brands from './components/Brands';
 import CategoryGallery from './components/CategoryGallery';
 import References from './components/References';
 import Inspirations from './components/Inspirations';
+import PrivacyPolicy from './components/PrivacyPolicy';
 import Admin from './components/Admin';
 import CookieConsent from './components/ui/CookieConsent';
 import ScrollToTop from './components/ScrollToTop';
@@ -27,6 +28,7 @@ function App() {
           <Route path="/brands" element={<Brands />} />
           <Route path="/references" element={<References />} />
           <Route path="/inspirations" element={<Inspirations />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/components/category/:category" element={<CategoryGallery />} />
           <Route path="/admin/*" element={<Admin />} />
         </Routes>
