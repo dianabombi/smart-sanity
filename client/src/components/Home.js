@@ -109,9 +109,19 @@ const Home = () => {
           <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
             <button 
               onClick={() => navigate('/brands')}
-              className="py-2 px-10 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium min-w-[200px]"
+              className="py-2 px-10 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium min-w-[200px] flex items-center justify-center gap-2"
             >
+              <img 
+                src="/right-chevron.png" 
+                alt="" 
+                className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity duration-200 rotate-180"
+              />
               Vstúpte
+              <img 
+                src="/right-chevron.png" 
+                alt="" 
+                className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+              />
             </button>
           </div>
         </div>

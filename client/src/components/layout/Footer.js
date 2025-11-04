@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 const Footer = () => {
   const navigate = useNavigate();
   return (
-    <footer className="bg-black border-t border-gray-700 px-4 sm:px-6 lg:px-8 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center min-h-[160px]">
+    <footer className="bg-black border-t border-gray-700 px-4 sm:px-6 lg:px-8 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center min-h-[100px] py-4">
       <div className="max-w-4xl mx-auto w-full">
         {/* Mobile Layout - Stacked */}
-        <div className="block md:hidden space-y-3">
+        <div className="block md:hidden space-y-2">
           {/* Company Info */}
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-1">
             <h3 className="text-lg font-semibold text-gray-400">Smart Sanit s.r.o.</h3>
             <p className="text-sm text-gray-400">Premium Design • Smart Solutions</p>
           </div>
@@ -73,7 +73,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               >
-                Created by Wavelyne & Design 6.
+                Created by Wavelyne & Design 6
               </a>
             </div>
           </div>
@@ -82,12 +82,12 @@ const Footer = () => {
         {/* Desktop Layout - Restructured */}
         <div className="hidden md:block">
           {/* Company Name */}
-          <div className="text-center mb-2">
+          <div className="text-center mb-1">
             <h3 className="text-lg font-semibold text-gray-400">Smart Sanit s.r.o.</h3>
           </div>
           
           {/* Icons, Premium Design Text, and Wavelyne on Same Line */}
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-1">
             {/* Social Media Icons - Left */}
             <div className="flex space-x-4 flex-1">
               <a 
@@ -140,7 +140,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
               >
-                Created by Wavelyne & Design 6.
+                Created by Wavelyne & Design 6
               </a>
             </div>
           </div>
