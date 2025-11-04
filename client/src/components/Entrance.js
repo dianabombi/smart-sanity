@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from './layout/NavBar';
+import Footer from './layout/Footer';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
@@ -131,6 +132,9 @@ const Entrance = () => {
             {/* Category tiles removed - empty space ready for new content */}
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

@@ -84,7 +84,7 @@ const ContactInfo = ({
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         
-        <ul className="space-y-3 text-gray-300/70">
+        <ul className="space-y-3 p-2 text-gray-300/70">
           {(contactContent?.services || [
             'Poradenstvo a návrh kúpeľní',
             'Dodávka sanitárnych zariadení',
@@ -92,7 +92,7 @@ const ContactInfo = ({
             'Servis a údržba',
             'Technická podpora'
           ]).map((service, index) => (
-            <li key={index} className="flex items-start space-x-3">
+            <li key={index} className="flex items-start space-x-5">
               <svg className="w-3 h-3 text-gray-300 flex-shrink-0 mt-1.5" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" />
               </svg>

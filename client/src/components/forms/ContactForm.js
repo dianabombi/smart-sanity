@@ -128,7 +128,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         )}
 
         {/* Spacer to push button down */}
-        <div className="h-6"></div>
+        <div className="h-12"></div>
 
         <button
           type="submit"
