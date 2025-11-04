@@ -433,7 +433,7 @@ const References = () => {
                 <img 
                   src="/right-chevron.png" 
                   alt="Previous" 
-                  className="w-8 h-12 rotate-180 drop-shadow-lg"
+                  className="h-12 rotate-180 drop-shadow-lg"
                   style={{ filter: 'brightness(0.8) invert(0.8)', transition: 'all 0.3s' }}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'brightness(0.8) invert(0.8)'}
@@ -452,7 +452,7 @@ const References = () => {
                 <img 
                   src="/right-chevron.png" 
                   alt="Next" 
-                  className="w-8 h-12 drop-shadow-lg"
+                  className="h-12 drop-shadow-lg"
                   style={{ filter: 'brightness(0.8) invert(0.8)', transition: 'all 0.3s' }}
                   onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'brightness(0.8) invert(0.8)'}
