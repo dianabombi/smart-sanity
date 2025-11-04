@@ -105,18 +105,8 @@ const BrandCard = ({
 
         {/* Vstúpte Button - Fixed Position */}
         <div className="absolute bottom-4 left-4 right-4">
-          <button className="w-full py-2 px-4 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm flex items-center justify-center gap-2">
-            <img 
-              src="/right-chevron.png" 
-              alt="" 
-              className="w-4 h-4 opacity-70 transition-opacity duration-200 rotate-180"
-            />
+          <button className="w-full py-2 px-4 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm">
             Vstúpte
-            <img 
-              src="/right-chevron.png" 
-              alt="" 
-              className="w-4 h-4 opacity-70 transition-opacity duration-200"
-            />
           </button>
         </div>
       </div>

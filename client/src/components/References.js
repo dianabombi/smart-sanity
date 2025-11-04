@@ -427,12 +427,17 @@ const References = () => {
                   e.stopPropagation();
                   navigateImage(-1);
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 hover:scale-110 transition-all duration-300 z-[140]"
+                className="absolute left-4 top-1/2 -translate-y-1/2 hover:scale-110 transition-all duration-300 z-[140] group"
                 title="Predchádzajúci obrázok (←)"
               >
-                <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 20l-8-8 8-8" />
-                </svg>
+                <img 
+                  src="/right-chevron.png" 
+                  alt="Previous" 
+                  className="w-8 h-12 rotate-180 drop-shadow-lg"
+                  style={{ filter: 'brightness(0.8) invert(0.8)', transition: 'all 0.3s' }}
+                  onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'brightness(0.8) invert(0.8)'}
+                />
               </button>
               
               {/* Right arrow */}
@@ -441,12 +446,17 @@ const References = () => {
                   e.stopPropagation();
                   navigateImage(1);
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 hover:scale-110 transition-all duration-300 z-[140]"
+                className="absolute right-4 top-1/2 -translate-y-1/2 hover:scale-110 transition-all duration-300 z-[140] group"
                 title="Ďalší obrázok (→)"
               >
-                <svg className="w-8 h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4l8 8-8 8" />
-                </svg>
+                <img 
+                  src="/right-chevron.png" 
+                  alt="Next" 
+                  className="w-8 h-12 drop-shadow-lg"
+                  style={{ filter: 'brightness(0.8) invert(0.8)', transition: 'all 0.3s' }}
+                  onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'brightness(0.8) invert(0.8)'}
+                />
               </button>
               
               {/* Image counter */}
