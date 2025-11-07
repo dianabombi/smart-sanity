@@ -308,10 +308,10 @@ const Inspirations = () => {
           {/* Close button */}
           <button
             onClick={closeImageModal}
-            className="absolute top-4 right-6 z-[140] transition-all duration-200"
+            className="absolute top-4 right-5 z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >
-            <svg className="w-11 h-11 text-gray-400 hover:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-10 h-10 text-gray-400 hover:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -328,14 +328,9 @@ const Inspirations = () => {
                 className="absolute left-4 top-1/2 -translate-y-1/2 hover:scale-110 transition-all duration-300 z-[140] group"
                 title="Predchádzajúca inšpirácia (←)"
               >
-                <img 
-                  src="/right-chevron.png" 
-                  alt="Previous" 
-                  className="h-12 scale-90 rotate-180 drop-shadow-lg"
-                  style={{ filter: 'brightness(0.8) invert(0.8)', transition: 'all 0.3s' }}
-                  onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
-                  onMouseLeave={(e) => e.target.style.filter = 'brightness(0.8) invert(0.8)'}
-                />
+                <svg className="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
               
               {/* Right arrow */}
@@ -347,14 +342,9 @@ const Inspirations = () => {
                 className="absolute right-4 top-1/2 -translate-y-1/2 hover:scale-110 transition-all duration-300 z-[140] group"
                 title="Ďalšia inšpirácia (→)"
               >
-                <img 
-                  src="/right-chevron.png" 
-                  alt="Next" 
-                  className="h-12 scale-90 drop-shadow-lg"
-                  style={{ filter: 'brightness(0.8) invert(0.8)', transition: 'all 0.3s' }}
-                  onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
-                  onMouseLeave={(e) => e.target.style.filter = 'brightness(0.8) invert(0.8)'}
-                />
+                <svg className="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" />
+                </svg>
               </button>
               
               {/* Image counter */}
