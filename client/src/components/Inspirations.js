@@ -308,10 +308,10 @@ const Inspirations = () => {
           {/* Close button */}
           <button
             onClick={closeImageModal}
-            className="absolute top-4 right-4 hover:opacity-70 z-[140] transition-all duration-200"
+            className="absolute top-4 right-6 z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >
-            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-11 h-11 text-gray-400 hover:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
