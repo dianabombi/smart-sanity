@@ -367,9 +367,9 @@ const AdminHeroBanners = ({ onLogout }) => {
                 </h2>
                 <button
                   onClick={resetForm}
-                  className="text-gray-400 hover:text-white text-2xl"
+                  className="hover:opacity-70 transition-all duration-200"
                 >
-                  ×
+                  <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
                 </button>
               </div>
 

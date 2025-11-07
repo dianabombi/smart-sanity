@@ -86,7 +86,7 @@ const Home = () => {
         {/* Right Section - full width on mobile/tablet, 1/3 on laptop+ */}
         <div className="w-full laptop:w-1/3 bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
           {/* Smart Sanit Logo - positioned higher */}
-          <div className="flex-shrink-0 pt-2 tablet:pt-4 laptop:pt-12 flex justify-center">
+          <div className="flex-shrink-0 pt-12 tablet:pt-16 laptop:pt-24 flex justify-center">
             <img 
               src="/logo vektory_bez pozadia.png" 
               alt="Smart Sanit" 
@@ -97,7 +97,7 @@ const Home = () => {
           </div>
           
           {/* Text Section */}
-          <div className="flex flex-col items-center justify-center pt-8 pb-8 tablet:pt-6 tablet:pb-6 laptop:pt-12 laptop:pb-12">
+          <div className="flex flex-col items-center justify-center pt-16 pb-8 tablet:pt-12 tablet:pb-6 laptop:pt-20 laptop:pb-12">
             <div className="text-xl tablet:text-2xl text-gray-400 opacity-0 animate-[fadeInUp_2.5s_ease-out_0.8s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
               <p className="text-center">Profesionálne riešenia</p>
               <p className="text-center">pre interiérových dizajnérov</p>
@@ -109,7 +109,7 @@ const Home = () => {
           <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
             <button 
               onClick={() => navigate('/brands')}
-              className="scale-90 py-2 px-10 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium min-w-[200px]"
+              className="scale-[0.89] py-2 px-10 border-2 border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium min-w-[200px]"
             >
               Vstúpte
             </button>

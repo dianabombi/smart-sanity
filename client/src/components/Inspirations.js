@@ -308,10 +308,10 @@ const Inspirations = () => {
           {/* Close button */}
           <button
             onClick={closeImageModal}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-thin z-[140] transition-all duration-200"
+            className="absolute top-4 right-4 hover:opacity-70 z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >
-            ×
+            <img src="/icons/close.png" alt="Close" className="w-8 h-8" style={{ filter: 'brightness(0) invert(1)' }} />
           </button>
           
           {/* Navigation arrows - show only if more than 1 image */}

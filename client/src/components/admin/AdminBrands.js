@@ -661,9 +661,9 @@ const AdminBrands = ({ onLogout }) => {
                 setEditingCategory(false);
                 setTempCategory('');
               }}
-              className="text-gray-400 hover:text-gray-200 text-2xl"
+              className="hover:opacity-70 transition-all duration-200"
             >
-              ×
+              <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
             </button>
           </div>
 
@@ -1441,9 +1441,9 @@ const AdminBrands = ({ onLogout }) => {
               </h2>
               <button
                 onClick={handleCancelAddBrand}
-                className="text-gray-400 hover:text-gray-200 text-2xl"
+                className="hover:opacity-70 transition-all duration-200"
               >
-                ×
+                <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
               </button>
             </div>
 

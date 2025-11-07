@@ -102,9 +102,9 @@ const DatabaseSetup = ({ onClose, onSuccess }) => {
           <h2 className="text-2xl font-bold text-white">Nastavenie databázy</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl"
+            className="hover:opacity-70 transition-all duration-200"
           >
-            ×
+            <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
           </button>
         </div>
 

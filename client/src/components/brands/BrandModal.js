@@ -97,9 +97,9 @@ const BrandModal = ({
           
           <button
             onClick={onClose}
-            className="text-gray-300 hover:text-white text-3xl p-2 flex-shrink-0"
+            className="hover:opacity-70 transition-all duration-200 p-2 flex-shrink-0"
           >
-            ×
+            <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
           </button>
         </div>
         

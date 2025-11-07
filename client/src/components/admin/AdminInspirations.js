@@ -311,7 +311,9 @@ const InspirationModal = ({ formData, setFormData, onSubmit, onCancel, onImageUp
           <h2 className="text-2xl font-bold text-white">
             {isEditing ? 'Upraviť inšpiráciu' : 'Pridať inšpiráciu'}
           </h2>
-          <button onClick={onCancel} className="text-gray-400 hover:text-white text-2xl">×</button>
+          <button onClick={onCancel} className="hover:opacity-70 transition-all duration-200">
+            <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
+          </button>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
