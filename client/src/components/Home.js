@@ -97,7 +97,7 @@ const Home = () => {
           </div>
           
           {/* Text Section */}
-          <div className="flex flex-col items-center justify-center pt-16 pb-8 tablet:pt-12 tablet:pb-6 laptop:pt-20 laptop:pb-12">
+          <div className="flex flex-col items-center justify-center pt-6 pb-9 tablet:pt-3 tablet:pb-6 laptop:pt-10 laptop:pb-16">
             <div className="text-xl tablet:text-2xl text-gray-400 opacity-0 animate-[fadeInUp_2.5s_ease-out_0.8s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
               <p className="text-center">Profesionálne riešenia</p>
               <p className="text-center">pre interiérových dizajnérov</p>
@@ -109,7 +109,7 @@ const Home = () => {
           <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
             <button 
               onClick={() => navigate('/brands')}
-              className="h-[38px] px-10 border-2 border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium min-w-[200px] flex items-center justify-center"
+              className="h-[40px] px-10 border-2 border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium min-w-[200px] flex items-center justify-center"
             >
               Vstúpte
             </button>
