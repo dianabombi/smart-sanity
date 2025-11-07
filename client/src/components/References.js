@@ -324,9 +324,11 @@ const References = () => {
               </div>
               <button
                 onClick={closeImageGallery}
-                className="hover:opacity-70 transition-all duration-200"
+                className="hover:opacity-70 transition-all duration-200 mr-7"
               >
-                <img src="/icons/close.png" alt="Close" className="w-8 h-8" style={{ filter: 'brightness(0) invert(1)' }} />
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
@@ -415,7 +417,9 @@ const References = () => {
             className="absolute top-4 right-4 hover:opacity-70 z-[140] transition-all duration-200"
             title="Zavrieť (ESC)"
           >
-            <img src="/icons/close.png" alt="Close" className="w-8 h-8" style={{ filter: 'brightness(0) invert(1)' }} />
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
           
           {/* Navigation arrows - show only if more than 1 image */}
