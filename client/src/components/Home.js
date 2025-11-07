@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Carousel from './ui/Carousel';
+import VstupteButton from './ui/VstupteButton';
 import apiService from '../services/api';
 
 const Home = () => {
-  const navigate = useNavigate();
-  
   const [carouselImages, setCarouselImages] = useState([]);
 
   useEffect(() => {
@@ -97,7 +95,7 @@ const Home = () => {
           </div>
           
           {/* Text Section */}
-          <div className="flex flex-col items-center justify-center pt-6 pb-9 tablet:pt-3 tablet:pb-6 laptop:pt-10 laptop:pb-16">
+          <div className="flex flex-col items-center justify-center pt-3 pb-2 tablet:pt-2 tablet:pb-2 laptop:pt-6 laptop:pb-8">
             <div className="text-xl tablet:text-2xl text-gray-400 opacity-0 animate-[fadeInUp_2.5s_ease-out_0.8s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
               <p className="text-center">Profesionálne riešenia</p>
               <p className="text-center">pre interiérových dizajnérov</p>
@@ -107,12 +105,7 @@ const Home = () => {
           
           {/* Button Section - Separate component */}
           <div className="pb-8 tablet:pb-4 laptop:pb-24 flex justify-center">
-            <button 
-              onClick={() => navigate('/brands')}
-              className="h-[40px] px-10 border-2 border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium w-[180px] flex items-center justify-center"
-            >
-              Vstúpte
-            </button>
+            <VstupteButton />
           </div>
         </div>
       </div>
