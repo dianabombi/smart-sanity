@@ -19,8 +19,8 @@ const Modal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className={`bg-gray-800 rounded-lg w-full max-h-[90vh] overflow-hidden border border-gray-700 ${sizeClasses[size]} ${className}`}>
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100] p-4">
+      <div className={`bg-black rounded-lg w-full max-h-[90vh] overflow-hidden border-2 border-gray-600 ${sizeClasses[size]} ${className}`}>
         {/* Header */}
         {(title || showCloseButton) && (
           <div className="p-6 border-b border-gray-700 flex items-center justify-between">

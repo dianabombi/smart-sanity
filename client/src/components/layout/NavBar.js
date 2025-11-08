@@ -66,7 +66,7 @@ const NavBar = () => {
     <>
       {/* Logo - Separate positioned div */}
       <div 
-        className="fixed p-4 sm:p-2 md:py-6 md:px-2 top-0 sm:-top-8 md:top-0 left-2 sm:left-4 md:left-8 z-[110] cursor-pointer hover:opacity-80 transition-opacity"
+        className="fixed p-4 sm:p-2 md:py-6 md:px-2 top-0 sm:-top-8 md:top-0 left-2 sm:left-4 md:left-8 z-[60] cursor-pointer hover:opacity-80 transition-opacity"
         onClick={() => handleNavClick('/')}
       >
         <img 
@@ -90,7 +90,7 @@ const NavBar = () => {
       </div>
 
       {/* Navbar - Compact with large gray shadow (desktop only) */}
-      <nav className="bg-black fixed top-0 left-0 right-0 z-[100]">
+      <nav className="bg-black fixed top-0 left-0 right-0 z-[50]">
         <div className="hidden xl:block absolute inset-0 pointer-events-none" style={{ boxShadow: '0 10px 25px -3px rgba(156, 163, 175, 0.4), 0 4px 6px -2px rgba(156, 163, 175, 0.2), 0 20px 40px -10px rgba(156, 163, 175, 0.15)' }}></div>
         <div className="flex items-center justify-end pl-1 pr-2 md:px-2 lg:px-3 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 h-16 sm:h-20 md:h-24">
         
