@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
-import Footer from './layout/Footer';
 
 const PrivacyPolicy = () => {
   const [visible, setVisible] = useState(false);
@@ -269,8 +268,6 @@ const PrivacyPolicy = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </Layout>
   );
 };
