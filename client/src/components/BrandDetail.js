@@ -159,7 +159,7 @@ const BrandDetail = () => {
         <img 
           src="/right-chevron.png" 
           alt="Back" 
-          className="h-11 rotate-180 drop-shadow-lg transition-all duration-300"
+          className="h-9 rotate-180 drop-shadow-lg transition-all duration-300"
           style={{ filter: 'brightness(0.6) invert(0.6)' }}
           onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
           onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
@@ -254,7 +254,7 @@ const BrandDetail = () => {
         )}
 
         {/* Call to Action */}
-        <div className="text-center text-white p-12">
+        <div className="text-center text-white pt-4 px-12 pb-12">
           <h2 className="text-3xl font-bold mb-4">
             Zaujala vás táto značka?
           </h2>
