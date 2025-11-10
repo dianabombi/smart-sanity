@@ -150,16 +150,16 @@ const BrandDetail = () => {
     <div className="min-h-screen bg-black">
       <NavBar />
       
-      {/* Back Navigation Button - Fixed Position Right Side */}
+      {/* Back Navigation Button - Absolute Position Right Side */}
       <button
         onClick={() => navigate('/brands')}
-        className="fixed right-8 top-28 z-50 hover:scale-110 transition-all duration-300"
+        className="absolute right-14 top-36 z-10 hover:scale-110 transition-all duration-300"
         title="Späť na značky"
       >
         <img 
           src="/right-chevron.png" 
           alt="Back" 
-          className="h-12 -rotate-90 drop-shadow-lg transition-all duration-300"
+          className="h-11 -rotate-90 drop-shadow-lg transition-all duration-300"
           style={{ filter: 'brightness(0.6) invert(0.6)' }}
           onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
           onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
@@ -254,7 +254,7 @@ const BrandDetail = () => {
         )}
 
         {/* Call to Action */}
-        <div className="text-center bg-black/50 border border-gray-600 text-white p-12 rounded-lg" style={{ borderWidth: '0.5px' }}>
+        <div className="text-center text-white p-12">
           <h2 className="text-3xl font-bold mb-4">
             Zaujala vás táto značka?
           </h2>
