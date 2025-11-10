@@ -252,30 +252,6 @@ const BrandDetail = () => {
             })}
           </div>
         )}
-
-        {/* Call to Action */}
-        <div className="text-center text-white pt-4 px-12 pb-12">
-          <h2 className="text-3xl font-bold mb-4">
-            Zaujala vás táto značka?
-          </h2>
-          <p className="text-xl mb-8 text-gray-300">
-            Kontaktujte nás pre viac informácií a cenové ponuky
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => navigate('/contact')}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
-            >
-              Kontaktujte nás
-            </button>
-            <button 
-              onClick={() => navigate('/brands')}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
-            >
-              Späť na značky
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Full Screen Image Modal */}

@@ -274,28 +274,20 @@ const Inspirations = () => {
         </div>
         )}
 
-        {/* Call to Action */}
-        <div className="text-center bg-black/50 border border-gray-600 text-white p-12 rounded-lg" style={{ borderWidth: '0.5px' }}>
-          <h2 className="text-3xl font-bold mb-4">
-            Potrebujete pomoc s návrhom?
-          </h2>
-          <p className="text-xl mb-8 text-gray-300">
-            Naši dizajnéri vám pomôžu vytvoriť kúpeľňu vašich snov
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => window.location.href = '/contact'}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
-            >
-              Kontaktujte nás
-            </button>
-            <button 
-              onClick={() => window.location.href = '/brands'}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
-            >
-              Prezrieť značky
-            </button>
-          </div>
+        {/* Navigation Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+          <button 
+            onClick={() => window.location.href = '/contact'}
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
+          >
+            Kontaktujte nás
+          </button>
+          <button 
+            onClick={() => window.location.href = '/brands'}
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
+          >
+            Prezrieť značky
+          </button>
         </div>
       </div>
 
