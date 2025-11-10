@@ -108,7 +108,7 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/50 border-gray-600 hover:bg-black/60 hover:border-gray-400 hover:scale-105 ${
+                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400 hover:scale-105 ${
                     visibleItems.includes(index) 
                       ? 'translate-y-0 opacity-100 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
