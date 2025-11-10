@@ -108,7 +108,7 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/50 border-gray-600 ${
+                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/50 border-gray-600 hover:bg-white/10 hover:border-gray-400 hover:scale-105 ${
                     visibleItems.includes(index) 
                       ? 'translate-y-0 opacity-100 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
@@ -131,6 +131,16 @@ const Entrance = () => {
           <div className="max-w-6xl mx-auto">
             {/* Category tiles removed - empty space ready for new content */}
           </div>
+        </div>
+
+        {/* Contact Button */}
+        <div className="flex justify-center mt-2 mb-12 px-4">
+          <button 
+            onClick={() => window.location.href = '/contact'}
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
+          >
+            Kontaktujte nás
+          </button>
         </div>
 
         {/* Footer */}

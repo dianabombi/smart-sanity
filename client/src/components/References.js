@@ -305,6 +305,16 @@ const References = () => {
             <p className="text-gray-400">Referencie sa načítavaju...</p>
           </div>
         )}
+        
+        {/* Contact Button */}
+        <div className="flex justify-center mt-12 mb-12">
+          <button 
+            onClick={() => window.location.href = '/contact'}
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
+          >
+            Kontaktujte nás
+          </button>
+        </div>
       </div>
 
       {/* Image Gallery Modal */}
