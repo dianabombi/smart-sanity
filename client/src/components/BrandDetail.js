@@ -153,13 +153,13 @@ const BrandDetail = () => {
       {/* Back Navigation Button - Absolute Position Right Side */}
       <button
         onClick={() => navigate('/brands')}
-        className="absolute right-14 top-36 z-10 hover:scale-110 transition-all duration-300"
+        className="absolute right-14 top-[135px] z-10 hover:scale-110 transition-all duration-300"
         title="Späť na značky"
       >
         <img 
           src="/right-chevron.png" 
           alt="Back" 
-          className="h-11 -rotate-90 drop-shadow-lg transition-all duration-300"
+          className="h-11 rotate-180 drop-shadow-lg transition-all duration-300"
           style={{ filter: 'brightness(0.6) invert(0.6)' }}
           onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
           onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
