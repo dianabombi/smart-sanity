@@ -153,7 +153,7 @@ const BrandDetail = () => {
       {/* Back Navigation Button - Absolute Position Right Side */}
       <button
         onClick={() => navigate('/brands')}
-        className="absolute right-14 top-[135px] z-10 hover:scale-110 transition-all duration-300"
+        className="absolute right-12 top-[135px] z-10 hover:scale-110 transition-all duration-300"
         title="Späť na značky"
       >
         <img 
