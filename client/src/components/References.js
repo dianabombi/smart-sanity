@@ -307,10 +307,10 @@ const References = () => {
         )}
         
         {/* Contact Button */}
-        <div className="flex justify-center mt-12 mb-12">
+        <div className="flex justify-center mt-12 px-4">
           <button 
             onClick={() => window.location.href = '/contact'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full sm:w-48"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full max-w-xs mx-auto"
           >
             Kontaktujte nás
           </button>
