@@ -5,6 +5,7 @@ import Entrance from './components/Entrance';
 import WhoWeAre from './components/WhoWeAre';
 import Contact from './components/Contact';
 import Brands from './components/Brands';
+import BrandDetail from './components/BrandDetail';
 import CategoryGallery from './components/CategoryGallery';
 import References from './components/References';
 import Inspirations from './components/Inspirations';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/who-we-are" element={<WhoWeAre />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/brands" element={<Brands />} />
+          <Route path="/brands/:brandId" element={<BrandDetail />} />
           <Route path="/references" element={<References />} />
           <Route path="/inspirations" element={<Inspirations />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

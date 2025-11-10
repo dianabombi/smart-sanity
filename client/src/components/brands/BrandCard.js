@@ -8,11 +8,7 @@ const BrandCard = ({
   variant = 'main' // 'main' or 'compact'
 }) => {
   const handleClick = () => {
-    if (brand.images && brand.images.length > 0 && showImages) {
-      onClick(brand, 'gallery');
-    } else {
-      onClick(brand, 'logo');
-    }
+    onClick(brand);
   };
 
   if (variant === 'compact') {

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import BrandCard from './brands/BrandCard';
-import BrandModal from './brands/BrandModal';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
@@ -11,39 +10,15 @@ const Brands = () => {
   const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [modalType, setModalType] = useState('gallery'); // 'gallery' or 'logo'
   const [pageDescription, setPageDescription] = useState('Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.');
   const [skeletonCount, setSkeletonCount] = useState(8); // Default skeleton count for brands
   const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle } = useBackgroundSettings();
 
-  const handleBrandClick = (brand, type) => {
-    console.log('Opening brand modal:', brand.name, 'Type:', type);
-    if (type === 'gallery' && brand.images && brand.images.length > 0) {
-      console.log('Brand images:', brand.images);
-      console.log('Brand images length:', brand.images?.length);
-      
-      // Log each image structure for debugging
-      brand.images.forEach((image, index) => {
-        console.log(`Image ${index + 1} structure:`, {
-          url: image.url,
-          dataUrl: image.dataUrl,
-          path: image.path,
-          src: image.src,
-          filename: image.filename,
-          originalName: image.originalName,
-          fullObject: image
-        });
-      });
-    }
-    
-    setSelectedBrand(brand);
-    setModalType(type);
-  };
-
-  const closeBrandModal = () => {
-    setSelectedBrand(null);
-    setModalType('gallery');
+  const handleBrandClick = (brand) => {
+    console.log('Navigating to brand detail:', brand.name);
+    // Create URL-friendly brand identifier
+    const brandId = brand.id || brand._id || brand.name.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/brands/${brandId}`);
   };
 
 
@@ -276,14 +251,6 @@ const Brands = () => {
           </button>
         </div>
       </div>
-
-      {/* Brand Modal */}
-      <BrandModal
-        brand={selectedBrand}
-        isOpen={!!selectedBrand}
-        onClose={closeBrandModal}
-        type={modalType}
-      />
 
     </Layout>
   );
