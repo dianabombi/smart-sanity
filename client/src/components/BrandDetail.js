@@ -150,6 +150,22 @@ const BrandDetail = () => {
     <div className="min-h-screen bg-black">
       <NavBar />
       
+      {/* Back Navigation Button - Fixed Position Right Side */}
+      <button
+        onClick={() => navigate('/brands')}
+        className="fixed right-8 top-28 z-50 hover:scale-110 transition-all duration-300"
+        title="Späť na značky"
+      >
+        <img 
+          src="/right-chevron.png" 
+          alt="Back" 
+          className="h-12 -rotate-90 drop-shadow-lg transition-all duration-300"
+          style={{ filter: 'brightness(0.6) invert(0.6)' }}
+          onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
+          onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+        />
+      </button>
+
       <div className="container mx-auto px-4 py-12">
         {/* Header Section - Brand Name and Description */}
         <div className="text-center mb-8">
