@@ -76,7 +76,7 @@ const WhoWeAre = () => {
       setCurrentImageIndex((prevIndex) => 
         (prevIndex + 1) % backgroundImages.length
       );
-    }, 5000); // Change image every 5 seconds
+    }, 10000); // Change image every 10 seconds
 
     return () => clearInterval(slideInterval);
   }, [backgroundImages.length]);
@@ -335,7 +335,7 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg p-6 py-6 transition-all duration-500 w-full h-full flex flex-col justify-center bg-black/30 border-gray-600" style={{ borderWidth: '0.5px' }}>
+          <div className="group rounded-lg transition-all duration-500 w-full h-full flex flex-col justify-center bg-black/30 border-gray-600" style={{ borderWidth: '0.5px', padding: '3rem' }}>
             <div className="space-y-6">
               {content?.mainContent?.map((text, index) => (
                 <div 
@@ -350,7 +350,7 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group rounded-lg pt-6 transition-all duration-500 w-full h-full flex flex-col justify-start bg-black/30 border-gray-600" style={{ borderWidth: '0.5px' }}>
+        <div className="group rounded-lg transition-all duration-500 w-full h-full flex flex-col justify-start bg-black/30 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
           <div className="space-y-6">
             {/* Partnership text above logo */}
             <div className="flex flex-col justify-center items-center space-y-8">
@@ -361,15 +361,14 @@ const WhoWeAre = () => {
               
               {/* Logos Container */}
               <div className="flex justify-center">
-                <div className="flex flex-wrap justify-center items-center gap-8">
+                <div className="flex flex-wrap justify-center items-center gap-4">
                   {partnerLogos.length > 0 ? (
                     partnerLogos.map((logo) => (
-                      <div key={logo.id} className="rounded-lg p-4 transition-all duration-300 w-fit">
+                      <div key={logo.id} className="rounded-lg p-2 transition-all duration-300" style={{ height: '80px', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <img 
                           src={logo.logo} 
                           alt={logo.name}
-                          className="h-20 w-auto object-contain"
-                          style={{ mixBlendMode: 'screen' }}
+                          style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
                           onError={(e) => {
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'block';
@@ -381,13 +380,12 @@ const WhoWeAre = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="rounded-lg p-4 transition-all duration-300 w-fit">
+                    <div className="rounded-lg p-2 transition-all duration-300" style={{ height: '80px', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <img 
                         key={logoKey}
                         src="/elite_logoRGB-11.jpg" 
                         alt="Elite Bath + Kitchen"
-                        className="h-20 w-auto object-contain"
-                        style={{ mixBlendMode: 'screen' }}
+                        style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
@@ -404,6 +402,16 @@ const WhoWeAre = () => {
           </div>
         </div>
         </div>
+      </div>
+
+      {/* Contact Button */}
+      <div className="flex justify-center mt-12">
+        <a
+          href="/contact"
+          className="px-8 py-3 border border-gray-400 text-gray-400 rounded-lg font-medium transition-all duration-300 hover:bg-white hover:text-black hover:border-white"
+        >
+          Kontaktujte nás
+        </a>
       </div>
     </div>
   );

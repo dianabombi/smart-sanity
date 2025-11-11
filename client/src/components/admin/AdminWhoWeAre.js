@@ -13,8 +13,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
     content: '',
     size: 'large'
   });
-  const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
-  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [partnershipText, setPartnershipText] = useState('Partnersky spolupracujeme s interiérovým štúdiom');
   const [editingPartnershipText, setEditingPartnershipText] = useState(false);
   const [tempPartnershipText, setTempPartnershipText] = useState('');
@@ -213,21 +211,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
     try {
       setLoading(true);
       
-      // Load EB+K logo from database
-      try {
-        const brandsResult = await ApiService.getBrands();
-        if (brandsResult.success && brandsResult.brands) {
-          const ebkBrand = brandsResult.brands.find(brand => 
-            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-          );
-          if (ebkBrand && ebkBrand.logo) {
-            setEbkLogo(ebkBrand.logo);
-          }
-        }
-      } catch (error) {
-        console.log('Failed to load EB+K logo from database');
-      }
-      
       // Load sections from database ONLY
       try {
         const result = await ApiService.getWhoWeAreSections();
@@ -387,68 +370,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
       // Regular paragraph
       return `<p class="mb-4">${formatted}</p>`;
     }).join('');
-  };
-
-  const handleEbkLogoUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      alert('Podporované sú iba obrázky (JPG, PNG, SVG, WebP)');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
-      return;
-    }
-
-    try {
-      setUploadingLogo(true);
-      
-      console.log('🚨 ADMIN: Uploading EB+K logo to Supabase database...');
-      
-      // Convert file to data URL
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const logoDataUrl = e.target.result;
-        
-        try {
-          // Update EB+K brand in Supabase database
-          const result = await ApiService.updateBrandLogo('Elite Bath + Kitchen (EB+K)', logoDataUrl);
-          
-          if (result.success) {
-            console.log('✅ ADMIN: EB+K logo uploaded to database successfully!');
-            setEbkLogo(logoDataUrl);
-            setSuccess('EB+K logo bol úspešne aktualizovaný v databáze!');
-            
-            // Clear success message after 3 seconds
-            setTimeout(() => setSuccess(''), 3000);
-          } else {
-            console.error('❌ ADMIN: Database upload failed:', result.message);
-            setError('Chyba pri ukladaní do databázy: ' + result.message);
-          }
-        } catch (error) {
-          console.error('🚨 ADMIN: Critical database error:', error);
-          setError('Kritická chyba databázy: ' + error.message);
-        } finally {
-          setUploadingLogo(false);
-        }
-      };
-      
-      reader.readAsDataURL(file);
-      
-    } catch (error) {
-      console.error('🚨 ADMIN: Error uploading EB+K logo:', error);
-      setError('Chyba pri nahrávaní EB+K loga');
-      setUploadingLogo(false);
-    }
-    
-    // Clear file input
-    event.target.value = '';
   };
 
   // Partnership Text Management Functions
@@ -729,60 +650,6 @@ const AdminWhoWeAre = ({ onLogout }) => {
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Správa sekcií - O nás</h1>
             <p className="text-gray-400">Spravujte sekcie na stránke "O nás"</p>
-          </div>
-        </div>
-
-        {/* EB+K Logo Management */}
-        <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">EB+K Logo Management</h2>
-          <div className="flex items-center space-x-6">
-            {/* Current Logo Preview */}
-            <div className="flex-shrink-0">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <img 
-                  src={ebkLogo} 
-                  alt="Elite Bath + Kitchen (EB+K)"
-                  className="h-16 w-auto object-contain filter brightness-0 invert"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
-                  }}
-                />
-                <div className="text-white font-semibold text-center hidden">
-                  EB+K
-                </div>
-              </div>
-            </div>
-
-            {/* Upload Controls */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-4">
-                <label 
-                  htmlFor="ebk-logo-upload"
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                    uploadingLogo 
-                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
-                  }`}
-                >
-                  {uploadingLogo ? 'Nahrávam...' : 'Nahrať EB+K Logo'}
-                </label>
-                <input
-                  type="file"
-                  id="ebk-logo-upload"
-                  accept="image/*"
-                  onChange={handleEbkLogoUpload}
-                  disabled={uploadingLogo}
-                  className="hidden"
-                />
-                <span className="text-gray-400 text-sm">
-                  JPG, PNG, SVG, WebP (max 5MB)
-                </span>
-              </div>
-              <p className="text-gray-400 text-sm mt-2">
-                Logo sa zobrazí na stránke "O nás" v sekcii partnerstva a na stránke značiek.
-              </p>
-            </div>
           </div>
         </div>
 
