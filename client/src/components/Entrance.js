@@ -137,7 +137,7 @@ const Entrance = () => {
         <div className="flex justify-center -mt-10 mb-12 px-4">
           <button 
             onClick={() => window.location.href = '/contact'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full max-w-xs"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
           >
             Kontaktujte nás
           </button>

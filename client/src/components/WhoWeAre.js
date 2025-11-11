@@ -416,7 +416,7 @@ const WhoWeAre = () => {
       </div>
 
       {/* Contact Button */}
-      <div className="flex justify-center mt-16 mb-4">
+      <div className="flex justify-center mt-12 mb-1">
         <button
           onClick={() => window.location.href = '/contact'}
           className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
@@ -454,7 +454,7 @@ const WhoWeAre = () => {
       <div className="relative flex-1 flex flex-col">
         <NavBar />
         
-        <div className="flex items-center justify-center pt-32 pb-16 flex-1 relative z-10">
+        <div className="flex items-center justify-center pt-32 pb-14 flex-1 relative z-10">
           {contentSection}
         </div>
       </div>
