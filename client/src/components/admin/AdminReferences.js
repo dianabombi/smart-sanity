@@ -442,7 +442,7 @@ const AdminReferences = ({ onLogout }) => {
                 {reference.location && <span>{reference.location}</span>}
               </div>
               {reference.client && (
-                <p className="text-sm text-gray-500 mt-1">{reference.client}</p>
+                <p className="text-sm text-gray-500 mt-1">Architekt: {reference.client}</p>
               )}
               {reference.images && reference.images.length > 0 && (
                 <p className="text-sm text-blue-400 mt-1">📷 {reference.images.length} obrázkov</p>
@@ -571,18 +571,16 @@ const AdminReferences = ({ onLogout }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Klient / Architekt
+                  Architekt
                 </label>
-                <select
+                <input
+                  type="text"
                   name="client"
                   value={formData.client}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                >
-                  <option value="">Vyberte typ...</option>
-                  <option value="Klient">Klient</option>
-                  <option value="Architekt">Architekt</option>
-                </select>
+                  placeholder="napr. Studio E, Identity Architecture, ZADESIGN..."
+                />
               </div>
 
               {/* Image Upload Section */}

@@ -326,7 +326,7 @@ const References = () => {
                   </div>
                   
                   {reference.client && (
-                    <p className="text-sm text-gray-300 mb-4 text-left w-full">{reference.client}</p>
+                    <p className="text-sm text-gray-300 mb-4 text-left w-full">Architekt: {reference.client}</p>
                   )}
                 </div>
                 
@@ -380,7 +380,7 @@ const References = () => {
                 <div className="flex gap-4 text-sm text-gray-500 mt-2">
                   <span>{selectedReferenceImages.year}</span>
                   {selectedReferenceImages.location && <span>{selectedReferenceImages.location}</span>}
-                  {selectedReferenceImages.client && <span>Klient: {selectedReferenceImages.client}</span>}
+                  {selectedReferenceImages.client && <span>Architekt: {selectedReferenceImages.client}</span>}
                 </div>
               </div>
               <button
