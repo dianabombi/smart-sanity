@@ -8,7 +8,6 @@ const WhoWeAre = () => {
   const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
-  const [partnershipText, setPartnershipText] = useState('Partnersky spolupracujeme s interiérovým štúdiom');
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -175,9 +174,8 @@ const WhoWeAre = () => {
   const loadContent = async () => {
     try {
       // Load all data in PARALLEL for faster loading
-      const [brandsResult, partnershipResult, contentResult] = await Promise.all([
+      const [brandsResult, contentResult] = await Promise.all([
         ApiService.getBrands().catch(err => ({ success: false, error: err })),
-        ApiService.getPageContent('who-we-are', 'partnership', 'text').catch(err => ({ success: false, error: err })),
         ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err }))
       ]);
 
@@ -190,12 +188,6 @@ const WhoWeAre = () => {
         if (ebkBrand && ebkBrand.logo) {
           logoData = ebkBrand.logo;
         }
-      }
-
-      // Process partnership text
-      let partnershipData = 'Partnersky spolupracujeme s interiérovým štúdiom';
-      if (partnershipResult.success && partnershipResult.content) {
-        partnershipData = partnershipResult.content;
       }
       
       // Process main content
@@ -225,7 +217,6 @@ const WhoWeAre = () => {
       
       // Set all state at once to prevent flickering
       setEbkLogo(logoData);
-      setPartnershipText(partnershipData);
       setContent(contentData);
       setLoading(false);
       
