@@ -21,12 +21,26 @@ const Entrance = () => {
     loadContent();
   }, []);
 
+  // Force component re-render when background settings change
+  const [renderKey, setRenderKey] = React.useState(0);
+  
+  useEffect(() => {
+    // Force re-render when background settings change
+    setRenderKey(prev => prev + 1);
+  }, [
+    backgroundSettings.backgroundImagePositionX,
+    backgroundSettings.backgroundImagePositionY,
+    backgroundSettings.backgroundImageSize,
+    backgroundSettings.backgroundImageOpacity,
+    backgroundSettings.backgroundImageBlur
+  ]);
+  
   // Separate useEffect for background settings refresh
   useEffect(() => {
     const interval = setInterval(() => {
       console.log('🔄 Refreshing background settings...');
       refreshSettings();
-    }, 10000); // Every 10 seconds
+    }, 2000); // Every 2 seconds for faster updates
 
     return () => clearInterval(interval);
   }, [refreshSettings]);
@@ -66,19 +80,37 @@ const Entrance = () => {
 
   console.log('🎨 ENTRANCE: Current background settings:', backgroundSettings);
   console.log('🎨 ENTRANCE: Has background image:', !!backgroundSettings.entrancePageBackgroundImage);
+  console.log('🎨 ENTRANCE: Position X:', backgroundSettings.backgroundImagePositionX);
+  console.log('🎨 ENTRANCE: Position Y:', backgroundSettings.backgroundImagePositionY);
+  console.log('🎨 ENTRANCE: Size:', backgroundSettings.backgroundImageSize);
+  console.log('🎨 ENTRANCE: Opacity:', backgroundSettings.backgroundImageOpacity);
+  console.log('🎨 ENTRANCE: Blur:', backgroundSettings.backgroundImageBlur);
+  
+  // Log the actual computed style that will be applied
+  const computedStyle = backgroundSettings.entrancePageBackgroundImage ? {
+    backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
+    backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
+    opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
+    filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
+  } : null;
+  console.log('🎨 ENTRANCE: Computed style to apply:', computedStyle);
 
   return (
-    <div className="min-h-screen bg-black relative">
+    <div className="min-h-screen bg-black relative" key={`entrance-${renderKey}`}>
       {/* Background Image - covers entire viewport */}
       {backgroundSettings.entrancePageBackgroundImage ? (
         <div 
+          key={`bg-${renderKey}-${backgroundSettings.backgroundImagePositionX}-${backgroundSettings.backgroundImagePositionY}`}
           className="fixed inset-0 z-0"
           style={{
             backgroundImage: `url(${backgroundSettings.entrancePageBackgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center center',
+            backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
+            backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
             backgroundRepeat: 'no-repeat',
-            opacity: 0.8
+            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
+            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
+            transition: 'all 0.3s ease',
+            willChange: 'background-position, background-size, opacity, filter'
           }}
         />
       ) : (

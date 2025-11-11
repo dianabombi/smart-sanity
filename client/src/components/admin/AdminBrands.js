@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
-import { useBackgroundSettings } from '../../hooks/useBackgroundSettings';
+import BackgroundControls from './shared/BackgroundControls';
 
 const AdminBrands = ({ onLogout }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -30,9 +30,19 @@ const AdminBrands = ({ onLogout }) => {
   const [addingBrand, setAddingBrand] = useState(false);
   
   // Background settings
-  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
-  const [showBackgroundSettings, setShowBackgroundSettings] = useState(false);
   const [backgroundMessage, setBackgroundMessage] = useState('');
+  const [backgroundLoading, setBackgroundLoading] = useState(false);
+  const [showCustomPosition, setShowCustomPosition] = useState(false);
+  const [backgroundSettings, setBackgroundSettings] = useState({
+    brandsPageBackgroundImage: null,
+    backgroundImageSize: 'cover',
+    backgroundImagePositionX: 'center',
+    backgroundImagePositionY: 'center',
+    backgroundImageOpacity: 0.3,
+    backgroundImageBlur: 0,
+    customPositionX: '50',
+    customPositionY: '50'
+  });
   
   // Page content editing
   const [pageDescription, setPageDescription] = useState('');
@@ -43,7 +53,28 @@ const AdminBrands = ({ onLogout }) => {
   useEffect(() => {
     loadBrands();
     loadPageContent();
-  }, []);
+    loadBackgroundSettings();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  
+  // Load background settings
+  const loadBackgroundSettings = async () => {
+    try {
+      const response = await ApiService.getBackgroundSettings();
+      if (response.success && response.settings) {
+        setBackgroundSettings(prev => ({
+          ...prev,
+          brandsPageBackgroundImage: response.settings.brandsPageBackgroundImage,
+          backgroundImageSize: response.settings.backgroundImageSize || 'cover',
+          backgroundImagePositionX: response.settings.backgroundImagePositionX || 'center',
+          backgroundImagePositionY: response.settings.backgroundImagePositionY || 'center',
+          backgroundImageOpacity: response.settings.backgroundImageOpacity !== undefined ? response.settings.backgroundImageOpacity : 0.3,
+          backgroundImageBlur: response.settings.backgroundImageBlur || 0
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading background settings:', error);
+    }
+  };
 
   const loadPageContent = async () => {
     try {
@@ -80,6 +111,47 @@ const AdminBrands = ({ onLogout }) => {
       setBrands([]);
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Background handlers
+  const handleBgImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBackgroundSettings(prev => ({
+          ...prev,
+          brandsPageBackgroundImage: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading background image:', error);
+      setBackgroundMessage('Chyba pri nahrávaní obrázka');
+    }
+  };
+
+  const saveBackgroundSettings = async () => {
+    try {
+      setBackgroundLoading(true);
+      localStorage.removeItem('backgroundSettings');
+      
+      const response = await ApiService.updateBackgroundSettings(backgroundSettings);
+      
+      if (response.success) {
+        setBackgroundMessage('✅ Nastavenia uložené! Zmeny sa prejavia na stránke do 2 sekúnd.');
+        setTimeout(() => setBackgroundMessage(''), 5000);
+      } else {
+        setBackgroundMessage('Chyba pri ukladaní nastavení pozadia');
+      }
+    } catch (error) {
+      console.error('Error saving background settings:', error);
+      setBackgroundMessage('Chyba pri ukladaní nastavení pozadia: ' + error.message);
+    } finally {
+      setBackgroundLoading(false);
     }
   };
 
@@ -258,88 +330,7 @@ const AdminBrands = ({ onLogout }) => {
     setTempCategory('');
   };
 
-  // Background management functions
-  const handleBackgroundImageUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      setBackgroundMessage('Podporované sú len JPG, PNG a WebP súbory.');
-      return;
-    }
-
-    // Validate file size (max 32MB)
-    if (file.size > 32 * 1024 * 1024) {
-      setBackgroundMessage('Súbor je príliš veľký. Maximálna veľkosť je 32MB.');
-      return;
-    }
-
-    try {
-      // Convert to base64 for storage
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const imageDataUrl = e.target.result;
-        
-        // Update background settings
-        const updatedSettings = {
-          ...backgroundSettings,
-          brandsPageBackgroundImage: imageDataUrl
-        };
-        
-        const response = await ApiService.updateBackgroundSettings(updatedSettings);
-        if (response.success) {
-          setBackgroundMessage('Obrázok pozadia bol úspešne nahraný!');
-          refreshSettings();
-          setTimeout(() => setBackgroundMessage(''), 3000);
-        } else {
-          setBackgroundMessage('Chyba pri ukladaní obrázka pozadia.');
-        }
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error('Error uploading background image:', error);
-      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia.');
-    }
-  };
-
-  const removeBackgroundImage = async () => {
-    try {
-      const updatedSettings = {
-        ...backgroundSettings,
-        brandsPageBackgroundImage: null
-      };
-      
-      const response = await ApiService.updateBackgroundSettings(updatedSettings);
-      if (response.success) {
-        setBackgroundMessage('Obrázok pozadia bol odstránený.');
-        refreshSettings();
-        setTimeout(() => setBackgroundMessage(''), 3000);
-      } else {
-        setBackgroundMessage('Chyba pri odstraňovaní obrázka pozadia.');
-      }
-    } catch (error) {
-      console.error('Error removing background image:', error);
-      setBackgroundMessage('Chyba pri odstraňovaní obrázka pozadia.');
-    }
-  };
-
-  const updateBackgroundSetting = async (field, value) => {
-    try {
-      const updatedSettings = {
-        ...backgroundSettings,
-        [field]: value
-      };
-      
-      const response = await ApiService.updateBackgroundSettings(updatedSettings);
-      if (response.success) {
-        refreshSettings();
-      }
-    } catch (error) {
-      console.error('Error updating background setting:', error);
-    }
-  };
+  // Old background functions removed - now using BackgroundControls component
 
   const handleLogoUpload = async (event) => {
     const file = event.target.files[0];
@@ -1177,150 +1168,17 @@ const AdminBrands = ({ onLogout }) => {
         </div>
 
         {/* Background Settings */}
-        <div className="bg-gray-800 rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-white">Nastavenia pozadia stránky značiek</h3>
-            <button
-              onClick={() => setShowBackgroundSettings(!showBackgroundSettings)}
-              className="text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              {showBackgroundSettings ? '🔼 Skryť' : '🔽 Zobraziť'}
-            </button>
-          </div>
-          
-          {backgroundMessage && (
-            <div className={`mb-4 p-3 rounded-lg text-sm ${
-              backgroundMessage.includes('úspešne') || backgroundMessage.includes('odstránený')
-                ? 'bg-green-900/50 border border-green-500 text-green-300'
-                : 'bg-red-900/50 border border-red-500 text-red-300'
-            }`}>
-              {backgroundMessage}
-            </div>
-          )}
-
-          {showBackgroundSettings && (
-            <div className="space-y-6">
-              {/* Background Image Upload */}
-              <div className="space-y-4">
-                <h4 className="text-md font-medium text-gray-300">Obrázok pozadia</h4>
-                
-                {!backgroundSettings.brandsPageBackgroundImage ? (
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
-                      onChange={handleBackgroundImageUpload}
-                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <p className="text-xs text-gray-400 mt-1">
-                      Podporované formáty: JPG, PNG, WebP. Maximálna veľkosť: 5MB
-                    </p>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="relative inline-block">
-                      <img
-                        src={backgroundSettings.brandsPageBackgroundImage}
-                        alt="Background preview"
-                        className="w-32 h-20 object-cover rounded-lg"
-                      />
-                      <button
-                        onClick={removeBackgroundImage}
-                        className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white p-1 rounded-full transition-colors text-xs"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                    
-                    <div className="mt-4 space-y-3">
-                      <div>
-                        <label className="block text-sm text-gray-300 mb-1">
-                          Priehľadnosť: {backgroundSettings.backgroundImageOpacity}
-                        </label>
-                        <input
-                          type="range"
-                          min="0.1"
-                          max="1"
-                          step="0.1"
-                          value={backgroundSettings.backgroundImageOpacity}
-                          onChange={(e) => updateBackgroundSetting('backgroundImageOpacity', parseFloat(e.target.value))}
-                          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm text-gray-300 mb-1">
-                          Rozmazanie: {backgroundSettings.backgroundImageBlur}px
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="10"
-                          step="1"
-                          value={backgroundSettings.backgroundImageBlur}
-                          onChange={(e) => updateBackgroundSetting('backgroundImageBlur', parseInt(e.target.value))}
-                          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Pattern Settings */}
-              <div className="space-y-4 border-t border-gray-700 pt-4">
-                <h4 className="text-md font-medium text-gray-300">Vzor pozadia</h4>
-                
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    id="enablePattern"
-                    checked={backgroundSettings.brandsPagePattern}
-                    onChange={(e) => updateBackgroundSetting('brandsPagePattern', e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="enablePattern" className="text-gray-300">
-                    Zobraziť vzor pozadia
-                  </label>
-                </div>
-
-                {backgroundSettings.brandsPagePattern && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm text-gray-300 mb-1">Typ vzoru</label>
-                      <select
-                        value={backgroundSettings.patternType}
-                        onChange={(e) => updateBackgroundSetting('patternType', e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="tiles">Dlaždice</option>
-                        <option value="dots">Bodky</option>
-                        <option value="lines">Čiary</option>
-                        <option value="grid">Mriežka</option>
-                        <option value="none">Žiadny</option>
-                      </select>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm text-gray-300 mb-1">
-                        Priehľadnosť: {backgroundSettings.patternOpacity}
-                      </label>
-                      <input
-                        type="range"
-                        min="0.01"
-                        max="0.2"
-                        step="0.01"
-                        value={backgroundSettings.patternOpacity}
-                        onChange={(e) => updateBackgroundSetting('patternOpacity', parseFloat(e.target.value))}
-                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        <BackgroundControls
+          backgroundSettings={backgroundSettings}
+          setBackgroundSettings={setBackgroundSettings}
+          backgroundLoading={backgroundLoading}
+          backgroundMessage={backgroundMessage}
+          onSave={saveBackgroundSettings}
+          onImageUpload={handleBgImageUpload}
+          showCustomPosition={showCustomPosition}
+          setShowCustomPosition={setShowCustomPosition}
+          pageKey="brandsPage"
+        />
 
         {/* Main Brands Section */}
         <div className="bg-gray-800 rounded-lg shadow p-6">

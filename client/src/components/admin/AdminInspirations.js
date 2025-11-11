@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import BackgroundControls from './shared/BackgroundControls';
 
 const AdminInspirations = ({ onLogout }) => {
   const [inspirations, setInspirations] = useState([]);
@@ -18,10 +19,82 @@ const AdminInspirations = ({ onLogout }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  
+  // Background settings
+  const [backgroundSettings, setBackgroundSettings] = useState({
+    inspirationsPageBackgroundImage: null,
+    backgroundImageSize: 'cover',
+    backgroundImagePositionX: 'center',
+    backgroundImagePositionY: 'center',
+    backgroundImageOpacity: 0.3,
+    backgroundImageBlur: 0,
+    customPositionX: '50',
+    customPositionY: '50'
+  });
+  const [backgroundLoading, setBackgroundLoading] = useState(false);
+  const [backgroundMessage, setBackgroundMessage] = useState('');
+  const [showCustomPosition, setShowCustomPosition] = useState(false);
 
   useEffect(() => {
     loadInspirations();
+    loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  
+  const loadBackgroundSettings = async () => {
+    try {
+      const response = await ApiService.getBackgroundSettings();
+      if (response.success && response.settings) {
+        setBackgroundSettings(prev => ({
+          ...prev,
+          inspirationsPageBackgroundImage: response.settings.inspirationsPageBackgroundImage,
+          backgroundImageSize: response.settings.backgroundImageSize || 'cover',
+          backgroundImagePositionX: response.settings.backgroundImagePositionX || 'center',
+          backgroundImagePositionY: response.settings.backgroundImagePositionY || 'center',
+          backgroundImageOpacity: response.settings.backgroundImageOpacity !== undefined ? response.settings.backgroundImageOpacity : 0.3,
+          backgroundImageBlur: response.settings.backgroundImageBlur || 0
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading background settings:', error);
+    }
+  };
+  
+  const handleBgImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBackgroundSettings(prev => ({
+          ...prev,
+          inspirationsPageBackgroundImage: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading background image:', error);
+      setBackgroundMessage('Chyba pri nahrávaní obrázka');
+    }
+  };
+
+  const saveBackgroundSettings = async () => {
+    try {
+      setBackgroundLoading(true);
+      localStorage.removeItem('backgroundSettings');
+      const response = await ApiService.updateBackgroundSettings(backgroundSettings);
+      if (response.success) {
+        setBackgroundMessage('✅ Nastavenia uložené! Zmeny sa prejavia na stránke do 2 sekúnd.');
+        setTimeout(() => setBackgroundMessage(''), 5000);
+      } else {
+        setBackgroundMessage('Chyba pri ukladaní nastavení pozadia');
+      }
+    } catch (error) {
+      console.error('Error saving background settings:', error);
+      setBackgroundMessage('Chyba pri ukladaní nastavení pozadia: ' + error.message);
+    } finally {
+      setBackgroundLoading(false);
+    }
+  };
 
   const loadInspirations = async () => {
     try {
@@ -208,6 +281,19 @@ const AdminInspirations = ({ onLogout }) => {
             {error}
           </div>
         )}
+
+        {/* Background Settings */}
+        <BackgroundControls
+          backgroundSettings={backgroundSettings}
+          setBackgroundSettings={setBackgroundSettings}
+          backgroundLoading={backgroundLoading}
+          backgroundMessage={backgroundMessage}
+          onSave={saveBackgroundSettings}
+          onImageUpload={handleBgImageUpload}
+          showCustomPosition={showCustomPosition}
+          setShowCustomPosition={setShowCustomPosition}
+          pageKey="inspirationsPage"
+        />
 
         {/* Inspirations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

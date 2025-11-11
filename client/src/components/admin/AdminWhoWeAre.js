@@ -1159,20 +1159,52 @@ const AdminWhoWeAre = ({ onLogout }) => {
                 <div className="mb-4 p-3 bg-red-900/20 border border-red-500 rounded">
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       console.log('🧪 TEST: Setting WhoWeAre test values');
-                      setBackgroundSettings(prev => ({
-                        ...prev,
+                      console.log('📊 Current state before:', backgroundSettings);
+                      
+                      const newSettings = {
+                        ...backgroundSettings,
                         backgroundImagePositionX: 'left',
                         backgroundImagePositionY: 'top',
                         backgroundImageSize: 'contain',
                         backgroundImageOpacity: 0.5
-                      }));
+                      };
+                      
+                      console.log('📊 New settings to apply:', newSettings);
+                      setBackgroundSettings(newSettings);
+                      
+                      // Auto-save after setting test values
+                      setTimeout(async () => {
+                        console.log('💾 Auto-saving test values...');
+                        try {
+                          setBackgroundLoading(true);
+                          localStorage.setItem('whoWeAreBackgroundSettings', JSON.stringify(newSettings));
+                          
+                          const result = await ApiService.updatePageContent('who-we-are', 'background', 'settings', JSON.stringify(newSettings));
+                          if (result.success) {
+                            console.log('✅ Test values saved to database');
+                            setBackgroundMessage('Test hodnoty boli nastavené a uložené!');
+                          } else {
+                            console.log('⚠️ Database save failed, using localStorage only');
+                            setBackgroundMessage('Test hodnoty boli nastavené (lokálne).');
+                          }
+                        } catch (error) {
+                          console.error('❌ Error auto-saving test values:', error);
+                          setBackgroundMessage('Chyba pri ukladaní test hodnôt.');
+                        } finally {
+                          setBackgroundLoading(false);
+                          setTimeout(() => setBackgroundMessage(''), 3000);
+                        }
+                      }, 100);
                     }}
                     className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
                   >
-                    🧪 TEST: Set Test Values
+                    🧪 TEST: Set Test Values & Save
                   </button>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Nastaví: Vlavo, Hore, Contain, Opacity 0.5
+                  </p>
                 </div>
                 
                 {/* Image Size */}
