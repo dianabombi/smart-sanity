@@ -192,7 +192,7 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-6 px-4 sm:px-6 lg:px-8 pt-32">
+        <div className="pb-2 px-4 sm:px-6 lg:px-2 pt-32">
           <div className="max-w-6xl mx-auto text-center">
             <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -284,9 +284,9 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-6 px-4 sm:px-6 lg:px-8 pt-32">
+        <div className="pb-2 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
+          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-3 tracking-wide ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
           style={{
@@ -318,17 +318,17 @@ const References = () => {
               >
                 <div className="flex-1 flex flex-col items-center">
                   <h3 className="text-xl font-semibold text-gray-300 mb-6">{reference.title}</h3>
-                  <p className="text-gray-300 text-sm mb-3 flex-1 text-left w-full">{reference.description}</p>
+                  <p className="text-gray-300 text-sm mb-1 text-left w-full">{reference.description}</p>
                   
-                  <div className="flex gap-2 items-center text-sm text-gray-300 mb-2 w-full text-left">
+                  <div className="flex gap-2 items-center text-sm text-blue-300 mb-1 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
-                  
-                  {reference.client && (
-                    <p className="text-sm text-gray-300 mb-4 text-left w-full">Architekt: {reference.client}</p>
-                  )}
                 </div>
+                
+                {reference.client && (
+                  <p className="text-sm text-gray-300 mb-2 text-left w-full">Architekt: {reference.client}</p>
+                )}
                 
                 {reference.images && reference.images.length > 0 && (
                   <div className="mt-auto">

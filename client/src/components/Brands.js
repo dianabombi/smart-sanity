@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
@@ -13,6 +13,7 @@ const Brands = () => {
   const [pageDescription, setPageDescription] = useState('Spolupracujeme s poprednými svetovými výrobcami kúpeľňovej sanity, obkladov a dlažieb. Veríme, že naša ponuka dokáže uspokojiť aj tých najnáročnejších klientov.');
   const [skeletonCount, setSkeletonCount] = useState(8); // Default skeleton count for brands
   const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle } = useBackgroundSettings();
+  const hasLoadedRef = useRef(false); // Prevent double loading
 
   const handleBrandClick = (brand) => {
     console.log('Navigating to brand detail:', brand.name);
@@ -69,18 +70,17 @@ const Brands = () => {
 
 
   useEffect(() => {
+    // Prevent double loading (React Strict Mode and re-renders)
+    if (hasLoadedRef.current) {
+      console.log('⚠️ Brands already loaded, skipping duplicate load');
+      return;
+    }
+    
+    console.log('🚀 Initial Brands load');
+    hasLoadedRef.current = true;
     loadBrands();
     loadPageContent();
-    
-    // Auto-refresh disabled to prevent flickering
-    // Uncomment below if you need auto-refresh in the future
-    // const interval = setInterval(() => {
-    //   console.log('🔄 PUBLIC: Auto-refreshing brands to catch admin changes...');
-    //   loadBrands(true, true); // forceRefresh = true, silent = true
-    // }, 30000); // 30 seconds
-    // 
-    // return () => clearInterval(interval);
-  }, [loadBrands, loadPageContent]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
   // Debug logs commented out to improve performance
