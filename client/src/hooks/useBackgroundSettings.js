@@ -12,8 +12,14 @@ export const useBackgroundSettings = () => {
     globalBackground: 'default',
     brandsPageBackgroundImage: null,
     entrancePageBackgroundImage: null,
+    referencesPageBackgroundImage: null,
+    contactPageBackgroundImage: null,
+    inspirationsPageBackgroundImage: null,
     backgroundImageOpacity: 0.3,
-    backgroundImageBlur: 0
+    backgroundImageBlur: 0,
+    backgroundImageSize: 'cover',
+    backgroundImagePositionX: 'center',
+    backgroundImagePositionY: 'center'
   });
   const [loading, setLoading] = useState(true);
 
@@ -23,19 +29,27 @@ export const useBackgroundSettings = () => {
 
   const loadSettings = async () => {
     try {
-      console.log('🔄 Loading background settings from API...');
+      console.log('🔄 HOOK: Loading background settings from API...');
       const response = await ApiService.getBackgroundSettings();
       if (response.success && response.settings) {
-        console.log('✅ Background settings loaded:', response.settings);
+        console.log('✅ HOOK: Background settings loaded from DB:', {
+          hasReferencesImage: !!response.settings.referencesPageBackgroundImage,
+          referencesImageLength: response.settings.referencesPageBackgroundImage?.length || 0,
+          hasBrandsImage: !!response.settings.brandsPageBackgroundImage,
+          hasEntranceImage: !!response.settings.entrancePageBackgroundImage,
+          hasContactImage: !!response.settings.contactPageBackgroundImage,
+          hasInspirationsImage: !!response.settings.inspirationsPageBackgroundImage,
+          allKeys: Object.keys(response.settings).filter(k => k.includes('Image'))
+        });
         setSettings(prev => ({
           ...prev,
           ...response.settings
         }));
       } else {
-        console.log('⚠️ Using default background settings');
+        console.log('⚠️ HOOK: Using default background settings');
       }
     } catch (error) {
-      console.error('❌ Error loading background settings:', error);
+      console.error('❌ HOOK: Error loading background settings:', error);
     } finally {
       setLoading(false);
     }

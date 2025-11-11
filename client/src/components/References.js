@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
+import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 // Fallback references data
 const fallbackReferences = [
@@ -43,6 +44,9 @@ const References = () => {
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
   const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
   const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
+  
+  // Background settings hook
+  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
 
   const loadReferences = useCallback(async (forceRefresh = false) => {
     try {
@@ -77,6 +81,15 @@ const References = () => {
     loadPageDescription();
     // Removed auto-refresh to prevent screen flickering
   }, [loadReferences]);
+
+  // Auto-refresh background settings every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshSettings();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [refreshSettings]);
 
   const loadPageDescription = async () => {
     try {
@@ -230,12 +243,37 @@ const References = () => {
   }
 
 
+  console.log('🎨 PUBLIC REFERENCES: Background Image Status:', {
+    hasImage: !!backgroundSettings.referencesPageBackgroundImage,
+    imageLength: backgroundSettings.referencesPageBackgroundImage?.length || 0,
+    position: `${backgroundSettings.backgroundImagePositionX}/${backgroundSettings.backgroundImagePositionY}`,
+    size: backgroundSettings.backgroundImageSize,
+    opacity: backgroundSettings.backgroundImageOpacity,
+    blur: backgroundSettings.backgroundImageBlur
+  });
+
   return (
-    <div className="min-h-screen bg-black">
-      <NavBar />
-      
-      {/* Header Section */}
-      <div className="pb-6 px-4 sm:px-6 lg:px-8 pt-32">
+    <div className="min-h-screen bg-black relative">
+      {/* Background Image */}
+      {backgroundSettings.referencesPageBackgroundImage && (
+        <div 
+          className="fixed inset-0 z-0"
+          style={{
+            backgroundImage: `url(${backgroundSettings.referencesPageBackgroundImage})`,
+            backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
+            backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
+            backgroundRepeat: 'no-repeat',
+            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
+            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
+          }}
+        />
+      )}
+
+      <div className="relative min-h-screen">
+        <NavBar />
+        
+        {/* Header Section */}
+        <div className="pb-6 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -496,7 +534,8 @@ const References = () => {
         </div>
       )}
       
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 };

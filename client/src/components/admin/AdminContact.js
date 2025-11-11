@@ -85,7 +85,11 @@ const AdminContact = ({ onLogout }) => {
     try {
       setBackgroundLoading(true);
       localStorage.removeItem('backgroundSettings');
-      const response = await ApiService.updateBackgroundSettings(backgroundSettings);
+      
+      // Remove customPositionX/Y (not in database schema)
+      const { customPositionX, customPositionY, ...settingsToSave } = backgroundSettings;
+      
+      const response = await ApiService.updateBackgroundSettings(settingsToSave);
       if (response.success) {
         setBackgroundMessage('✅ Nastavenia uložené! Zmeny sa prejavia na stránke do 2 sekúnd.');
         setTimeout(() => setBackgroundMessage(''), 5000);

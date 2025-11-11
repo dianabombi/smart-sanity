@@ -41,8 +41,17 @@ const AdminReferences = ({ onLogout }) => {
   
   const loadBackgroundSettings = async () => {
     try {
+      console.log('📥 ADMIN REFERENCES: Loading background settings from database...');
       const response = await ApiService.getBackgroundSettings();
+      console.log('📥 ADMIN REFERENCES: API response:', response);
+      
       if (response.success && response.settings) {
+        console.log('📥 ADMIN REFERENCES: Settings from DB:', {
+          hasReferencesImage: !!response.settings.referencesPageBackgroundImage,
+          imageLength: response.settings.referencesPageBackgroundImage?.length || 0,
+          allKeys: Object.keys(response.settings)
+        });
+        
         setBackgroundSettings(prev => ({
           ...prev,
           referencesPageBackgroundImage: response.settings.referencesPageBackgroundImage,
@@ -52,22 +61,38 @@ const AdminReferences = ({ onLogout }) => {
           backgroundImageOpacity: response.settings.backgroundImageOpacity !== undefined ? response.settings.backgroundImageOpacity : 0.3,
           backgroundImageBlur: response.settings.backgroundImageBlur || 0
         }));
+        
+        console.log('📥 ADMIN REFERENCES: Settings state updated');
+      } else {
+        console.warn('⚠️ ADMIN REFERENCES: No settings returned from API');
       }
     } catch (error) {
-      console.error('Error loading background settings:', error);
+      console.error('❌ ADMIN REFERENCES: Error loading background settings:', error);
     }
   };
   
   const handleBgImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    console.log('📤 ADMIN REFERENCES: File selected:', file.name, file.size, file.type);
+
     try {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setBackgroundSettings(prev => ({
-          ...prev,
-          referencesPageBackgroundImage: reader.result
-        }));
+        console.log('📤 ADMIN REFERENCES: Image converted to base64, length:', reader.result.length);
+        setBackgroundSettings(prev => {
+          const newSettings = {
+            ...prev,
+            referencesPageBackgroundImage: reader.result
+          };
+          console.log('📤 ADMIN REFERENCES: Updated settings state:', {
+            hasImage: !!newSettings.referencesPageBackgroundImage,
+            imageLength: newSettings.referencesPageBackgroundImage?.length || 0
+          });
+          return newSettings;
+        });
+        setBackgroundMessage('Obrázok nahraný! Kliknite na "💾 Uložiť pozadie" pre uloženie.');
       };
       reader.readAsDataURL(file);
     } catch (error) {
@@ -80,7 +105,20 @@ const AdminReferences = ({ onLogout }) => {
     try {
       setBackgroundLoading(true);
       localStorage.removeItem('backgroundSettings');
-      const response = await ApiService.updateBackgroundSettings(backgroundSettings);
+      
+      // Remove customPositionX/Y if not using custom positions (they're not in database schema)
+      const { customPositionX, customPositionY, ...settingsToSave } = backgroundSettings;
+      
+      // Debug: Log what we're saving
+      console.log('💾 ADMIN REFERENCES: Saving background settings:', settingsToSave);
+      console.log('💾 ADMIN REFERENCES: Image key check:', {
+        hasImage: !!settingsToSave.referencesPageBackgroundImage,
+        imageLength: settingsToSave.referencesPageBackgroundImage?.length || 0
+      });
+      
+      const response = await ApiService.updateBackgroundSettings(settingsToSave);
+      console.log('💾 ADMIN REFERENCES: Save response:', response);
+      
       if (response.success) {
         setBackgroundMessage('✅ Nastavenia uložené! Zmeny sa prejavia na stránke do 2 sekúnd.');
         setTimeout(() => setBackgroundMessage(''), 5000);
