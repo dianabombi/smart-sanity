@@ -19,6 +19,12 @@ const AdminWhoWeAre = ({ onLogout }) => {
   const [editingPartnershipText, setEditingPartnershipText] = useState(false);
   const [tempPartnershipText, setTempPartnershipText] = useState('');
 
+  // Partner Logos state
+  const [partnerLogos, setPartnerLogos] = useState([]);
+  const [loadingLogos, setLoadingLogos] = useState(false);
+  const [uploadingPartnerLogo, setUploadingPartnerLogo] = useState(false);
+  const [logoMessage, setLogoMessage] = useState('');
+
   // Background settings state for WhoWeAre page
   const [backgroundSettings, setBackgroundSettings] = useState({
     whoWeArePattern: true,
@@ -37,6 +43,7 @@ const AdminWhoWeAre = ({ onLogout }) => {
   useEffect(() => {
     loadSections();
     loadBackgroundSettings();
+    loadPartnerLogos();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadBackgroundSettings = async () => {
@@ -73,6 +80,132 @@ const AdminWhoWeAre = ({ onLogout }) => {
       }
     } catch (error) {
       console.error('❌ Error loading background settings:', error);
+    }
+  };
+
+  const loadPartnerLogos = async () => {
+    try {
+      setLoadingLogos(true);
+      const result = await ApiService.getAllPartnerLogos();
+      if (result.success) {
+        setPartnerLogos(result.logos);
+      }
+    } catch (error) {
+      console.error('Error loading partner logos:', error);
+    } finally {
+      setLoadingLogos(false);
+    }
+  };
+
+  const handlePartnerLogoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setLogoMessage('Podporované sú iba obrázky (JPG, PNG, SVG, WebP)');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setLogoMessage('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
+    try {
+      setUploadingPartnerLogo(true);
+      setLogoMessage('Nahrávam logo...');
+
+      // Convert file to data URL
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const logoDataUrl = e.target.result;
+        
+        try {
+          // Get next order number
+          const maxOrder = partnerLogos.length > 0 
+            ? Math.max(...partnerLogos.map(l => l.order || 0)) 
+            : 0;
+
+          // Create new partner logo
+          const result = await ApiService.createPartnerLogo({
+            name: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+            logo: logoDataUrl,
+            order: maxOrder + 1,
+            active: true
+          });
+          
+          if (result.success) {
+            setLogoMessage('✅ Logo bolo úspešne nahrané!');
+            await loadPartnerLogos(); // Reload logos
+            setTimeout(() => setLogoMessage(''), 3000);
+          } else {
+            setLogoMessage('❌ Chyba pri ukladaní: ' + result.message);
+          }
+        } catch (error) {
+          setLogoMessage('❌ Chyba: ' + error.message);
+        } finally {
+          setUploadingPartnerLogo(false);
+        }
+      };
+      
+      reader.readAsDataURL(file);
+      
+    } catch (error) {
+      setLogoMessage('❌ Chyba pri nahrávaní loga');
+      setUploadingPartnerLogo(false);
+    }
+    
+    // Clear file input
+    event.target.value = '';
+  };
+
+  const handleDeletePartnerLogo = async (id) => {
+    if (!window.confirm('Naozaj chcete vymazať toto logo?')) return;
+
+    try {
+      const result = await ApiService.deletePartnerLogo(id);
+      if (result.success) {
+        setLogoMessage('✅ Logo bolo vymazané!');
+        await loadPartnerLogos();
+        setTimeout(() => setLogoMessage(''), 3000);
+      } else {
+        setLogoMessage('❌ Chyba pri mazaní: ' + result.message);
+      }
+    } catch (error) {
+      setLogoMessage('❌ Chyba pri mazaní loga');
+    }
+  };
+
+  const movePartnerLogoUp = async (logo) => {
+    const currentIndex = partnerLogos.findIndex(l => l.id === logo.id);
+    if (currentIndex <= 0) return;
+
+    const prevLogo = partnerLogos[currentIndex - 1];
+    
+    try {
+      await ApiService.updatePartnerLogo(logo.id, { order: prevLogo.order });
+      await ApiService.updatePartnerLogo(prevLogo.id, { order: logo.order });
+      await loadPartnerLogos();
+    } catch (error) {
+      setLogoMessage('❌ Chyba pri zmene poradia');
+    }
+  };
+
+  const movePartnerLogoDown = async (logo) => {
+    const currentIndex = partnerLogos.findIndex(l => l.id === logo.id);
+    if (currentIndex >= partnerLogos.length - 1) return;
+
+    const nextLogo = partnerLogos[currentIndex + 1];
+    
+    try {
+      await ApiService.updatePartnerLogo(logo.id, { order: nextLogo.order });
+      await ApiService.updatePartnerLogo(nextLogo.id, { order: logo.order });
+      await loadPartnerLogos();
+    } catch (error) {
+      setLogoMessage('❌ Chyba pri zmene poradia');
     }
   };
 
@@ -651,6 +784,132 @@ const AdminWhoWeAre = ({ onLogout }) => {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Partner Logos Management */}
+        <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-white mb-2">Logá partnerov</h2>
+              <p className="text-gray-400 text-sm">Spravujte logá zobrazené v sekcii "Naši partneri"</p>
+            </div>
+          </div>
+
+          {logoMessage && (
+            <div className={`mb-4 px-4 py-3 rounded ${
+              logoMessage.includes('✅') 
+                ? 'bg-green-900/50 border border-green-500 text-green-200'
+                : logoMessage.includes('Nahrávam')
+                ? 'bg-blue-900/50 border border-blue-500 text-blue-200'
+                : 'bg-red-900/50 border border-red-500 text-red-200'
+            }`}>
+              {logoMessage}
+            </div>
+          )}
+
+          {/* Upload Button */}
+          <div className="mb-6">
+            <label 
+              htmlFor="partner-logo-upload"
+              className={`inline-block px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
+                uploadingPartnerLogo 
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              {uploadingPartnerLogo ? 'Nahrávam...' : '➕ Nahrať logo partnera'}
+            </label>
+            <input
+              type="file"
+              id="partner-logo-upload"
+              accept="image/*"
+              onChange={handlePartnerLogoUpload}
+              disabled={uploadingPartnerLogo}
+              className="hidden"
+            />
+            <span className="text-gray-400 text-sm ml-3">
+              JPG, PNG, SVG, WebP (max 5MB)
+            </span>
+          </div>
+
+          {/* Partner Logos List */}
+          {loadingLogos ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-3"></div>
+              <p className="text-gray-400">Načítavam logá...</p>
+            </div>
+          ) : partnerLogos.length === 0 ? (
+            <div className="text-center py-8 bg-gray-700 rounded-lg border border-gray-600">
+              <p className="text-gray-400 mb-2">Žiadne logá partnerov</p>
+              <p className="text-gray-500 text-sm">Kliknite na "Nahrať logo partnera" pre pridanie nového loga</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {partnerLogos.map((logo, index) => (
+                <div key={logo.id} className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                  <div className="flex items-center gap-4">
+                    {/* Logo Preview */}
+                    <div className="flex-shrink-0">
+                      <div className="bg-white/10 rounded p-2 border border-gray-500">
+                        <img 
+                          src={logo.logo} 
+                          alt={logo.name}
+                          className="h-16 w-auto object-contain"
+                          style={{ mixBlendMode: 'screen' }}
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Logo Info */}
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
+                          #{logo.order}
+                        </span>
+                        <span className="text-gray-300 font-medium">{logo.name}</span>
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        {index === 0 ? 'Prvé logo (zobrazí sa ako prvé)' : 
+                         `${index + 1}. logo v poradí`}
+                      </div>
+                    </div>
+                    
+                    {/* Order Controls */}
+                    <div className="flex flex-col gap-1">
+                      <button
+                        type="button"
+                        onClick={() => movePartnerLogoUp(logo)}
+                        disabled={index === 0}
+                        className="px-2 py-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded text-sm transition-colors"
+                        title="Posunúť vyššie"
+                      >
+                        ⬆️
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => movePartnerLogoDown(logo)}
+                        disabled={index === partnerLogos.length - 1}
+                        className="px-2 py-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded text-sm transition-colors"
+                        title="Posunúť nižšie"
+                      >
+                        ⬇️
+                      </button>
+                    </div>
+                    
+                    {/* Delete Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePartnerLogo(logo.id)}
+                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm transition-colors"
+                      title="Vymazať logo"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Partnership Text Management */}

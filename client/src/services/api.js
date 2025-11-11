@@ -1486,6 +1486,157 @@ class ApiService {
     }
   }
 
+  // Partner Logos
+  async getPartnerLogos() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('🚫 Supabase not available, using fallback');
+      return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback' };
+    }
+
+    try {
+      console.log('Fetching partner logos from Supabase...');
+      const { data, error } = await supabase
+        .from('partner_logos')
+        .select('*')
+        .eq('active', true)
+        .order('order', { ascending: true });
+      
+      if (error) {
+        console.log('🚫 Supabase error:', error);
+        return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback-error' };
+      }
+      
+      if (!data || data.length === 0) {
+        console.log('📭 No logos in database, using fallback');
+        return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback-empty' };
+      }
+
+      console.log('✅ Successfully loaded logos from Supabase database');
+      return { success: true, logos: data, source: 'database' };
+    } catch (error) {
+      console.log('Error fetching logos:', error);
+      return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback-error' };
+    }
+  }
+
+  async getAllPartnerLogos() {
+    if (!this.isSupabaseAvailable()) {
+      console.log('🚫 Supabase not available');
+      return { success: false, logos: [], message: 'Database not available' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('partner_logos')
+        .select('*')
+        .order('order', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching all logos:', error);
+        return { success: false, logos: [], message: error.message };
+      }
+
+      return { success: true, logos: data || [] };
+    } catch (error) {
+      console.error('Error fetching all logos:', error);
+      return { success: false, logos: [], message: error.message };
+    }
+  }
+
+  async createPartnerLogo(logoData) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: false, message: 'Database not available' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('partner_logos')
+        .insert([{
+          name: logoData.name,
+          logo: logoData.logo,
+          order: logoData.order || 999,
+          active: logoData.active !== undefined ? logoData.active : true
+        }])
+        .select();
+
+      if (error) {
+        console.error('Error creating partner logo:', error);
+        return { success: false, message: error.message };
+      }
+
+      return { success: true, logo: data[0] };
+    } catch (error) {
+      console.error('Error creating partner logo:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  async updatePartnerLogo(id, logoData) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: false, message: 'Database not available' };
+    }
+
+    try {
+      const updateData = {};
+      if (logoData.name !== undefined) updateData.name = logoData.name;
+      if (logoData.logo !== undefined) updateData.logo = logoData.logo;
+      if (logoData.order !== undefined) updateData.order = logoData.order;
+      if (logoData.active !== undefined) updateData.active = logoData.active;
+      updateData.updated_at = new Date().toISOString();
+
+      const { data, error } = await supabase
+        .from('partner_logos')
+        .update(updateData)
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('Error updating partner logo:', error);
+        return { success: false, message: error.message };
+      }
+
+      return { success: true, logo: data[0] };
+    } catch (error) {
+      console.error('Error updating partner logo:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  async deletePartnerLogo(id) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: false, message: 'Database not available' };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('partner_logos')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting partner logo:', error);
+        return { success: false, message: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting partner logo:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  getFallbackPartnerLogos() {
+    return [
+      {
+        id: 1,
+        name: 'Elite Bath + Kitchen',
+        logo: '/elite_logoRGB-11.jpg',
+        order: 1,
+        active: true
+      }
+    ];
+  }
+
   getFallbackWhoWeAreSections() {
     return [
       {

@@ -8,6 +8,7 @@ const WhoWeAre = () => {
   const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
+  const [partnerLogos, setPartnerLogos] = useState([]);
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -80,7 +81,7 @@ const WhoWeAre = () => {
     return () => clearInterval(slideInterval);
   }, [backgroundImages.length]);
 
-  // Check for logo updates only (removed content polling)
+  // Check for updates (logos and background settings)
   useEffect(() => {
     const interval = setInterval(async () => {
       // Check for logo updates from Supabase database
@@ -99,10 +100,37 @@ const WhoWeAre = () => {
       } catch (error) {
         console.log('⚠️ Logo update check failed');
       }
-    }, 30000); // Check every 30 seconds (less frequent)
+
+      // Check for background settings updates
+      try {
+        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
+        if (result.success && result.content) {
+          const dbSettings = JSON.parse(result.content);
+          
+          // Check if settings have changed
+          const currentSettingsString = JSON.stringify(backgroundSettings);
+          const newSettingsString = JSON.stringify(dbSettings);
+          
+          if (currentSettingsString !== newSettingsString) {
+            console.log('🔄 Background settings updated, refreshing...');
+            setBackgroundSettings(dbSettings);
+            
+            // Update background images if available
+            if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
+              const imageUrls = dbSettings.whoWeAreBackgroundImages
+                .sort((a, b) => a.order - b.order)
+                .map(img => img.dataUrl);
+              setBackgroundImages(imageUrls);
+            }
+          }
+        }
+      } catch (error) {
+        console.log('⚠️ Background settings update check failed');
+      }
+    }, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
-  }, [ebkLogo]);
+  }, [ebkLogo, backgroundSettings]);
 
   // Format content for display (convert markdown-style to HTML)
   const formatContentForDisplay = (content) => {
@@ -174,9 +202,10 @@ const WhoWeAre = () => {
   const loadContent = async () => {
     try {
       // Load all data in PARALLEL for faster loading
-      const [brandsResult, contentResult] = await Promise.all([
+      const [brandsResult, contentResult, logosResult] = await Promise.all([
         ApiService.getBrands().catch(err => ({ success: false, error: err })),
-        ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err }))
+        ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err })),
+        ApiService.getPartnerLogos().catch(err => ({ success: false, error: err }))
       ]);
 
       // Process logo
@@ -215,9 +244,16 @@ const WhoWeAre = () => {
         };
       }
       
+      // Process partner logos
+      let logosData = [];
+      if (logosResult && logosResult.success && logosResult.logos) {
+        logosData = logosResult.logos;
+      }
+      
       // Set all state at once to prevent flickering
       setEbkLogo(logoData);
       setContent(contentData);
+      setPartnerLogos(logosData);
       setLoading(false);
       
     } catch (error) {
@@ -323,23 +359,45 @@ const WhoWeAre = () => {
                 Naši partneri
               </h2>
               
-              {/* Logo Container */}
+              {/* Logos Container */}
               <div className="flex justify-center">
-                <div className="rounded-lg p-4 transition-all duration-300 w-fit">
-                  <img 
-                    key={logoKey}
-                    src="/elite_logoRGB-11.jpg" 
-                    alt="Elite Bath + Kitchen"
-                    className="h-20 w-auto object-contain"
-                    style={{ mixBlendMode: 'screen' }}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'block';
-                    }}
-                  />
-                  <div className="text-white font-semibold text-center hidden">
-                    Elite Bath + Kitchen
-                  </div>
+                <div className="flex flex-wrap justify-center items-center gap-8">
+                  {partnerLogos.length > 0 ? (
+                    partnerLogos.map((logo) => (
+                      <div key={logo.id} className="rounded-lg p-4 transition-all duration-300 w-fit">
+                        <img 
+                          src={logo.logo} 
+                          alt={logo.name}
+                          className="h-20 w-auto object-contain"
+                          style={{ mixBlendMode: 'screen' }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'block';
+                          }}
+                        />
+                        <div className="text-white font-semibold text-center hidden">
+                          {logo.name}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="rounded-lg p-4 transition-all duration-300 w-fit">
+                      <img 
+                        key={logoKey}
+                        src="/elite_logoRGB-11.jpg" 
+                        alt="Elite Bath + Kitchen"
+                        className="h-20 w-auto object-contain"
+                        style={{ mixBlendMode: 'screen' }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <div className="text-white font-semibold text-center hidden">
+                        Elite Bath + Kitchen
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
