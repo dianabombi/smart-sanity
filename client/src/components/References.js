@@ -284,7 +284,7 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-2 px-4 sm:px-6 lg:px-8 pt-32">
+        <div className="pb-0 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-3 tracking-wide ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -307,7 +307,7 @@ const References = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-8 pb-14 min-h-[60vh]">
+      <div className="container mx-auto px-2 py-8 pb-14 min-h-[60vh]">
         {references.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {references.map((reference, index) => (
