@@ -318,15 +318,15 @@ const References = () => {
               >
                 <div className="flex-1 flex flex-col items-center">
                   <h3 className="text-xl font-semibold text-white mb-6">{reference.title}</h3>
-                  <p className="text-gray-400 text-sm mb-3 flex-1">{reference.description}</p>
+                  <p className="text-gray-400 text-sm mb-3 flex-1 text-left w-full">{reference.description}</p>
                   
-                  <div className="flex justify-center gap-4 items-center text-sm text-gray-400 mb-2 w-full">
+                  <div className="flex gap-4 items-center text-sm text-gray-400 mb-2 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
                   
                   {reference.client && (
-                    <p className="text-sm text-gray-400 mb-4">Klient: {reference.client}</p>
+                    <p className="text-sm text-gray-400 mb-4 text-left w-full">Klient: {reference.client}</p>
                   )}
                 </div>
                 
