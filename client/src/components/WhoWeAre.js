@@ -340,7 +340,7 @@ const WhoWeAre = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg transition-all duration-500 w-full h-full flex flex-col justify-start bg-black/30 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+          <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
             <div className="flex flex-col justify-start items-center space-y-10">
               {/* Smart Sanit s.r.o. title */}
               <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
@@ -361,7 +361,7 @@ const WhoWeAre = () => {
 
         {/* Partnership Section - Side by Side */}
         <div className="flex justify-center">
-        <div className="group rounded-lg transition-all duration-500 w-full h-full flex flex-col justify-start bg-black/30 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+        <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
           <div className="space-y-6">
             {/* Partnership text above logo */}
             <div className="flex flex-col justify-center items-center space-y-8">
