@@ -185,14 +185,17 @@ const AdminReferences = ({ onLogout }) => {
       console.log('API result:', result);
 
       if (result.success) {
-        console.log('Reference saved successfully');
+        console.log('✅ Reference saved successfully to database');
         await loadReferences();
         resetForm();
         setShowAddModal(false);
         setEditingReference(null);
         alert('Referencia bola úspešne uložená!');
       } else {
-        console.error('API returned error:', result.message);
+        console.error('❌ DATABASE UPDATE FAILED');
+        console.error('Error message:', result.message);
+        console.error('Form data that failed:', formData);
+        console.error('Reference ID:', editingReference?.id);
         
         // Try to save locally as fallback
         console.log('Attempting to save locally as fallback...');
@@ -218,7 +221,7 @@ const AdminReferences = ({ onLogout }) => {
           resetForm();
           setShowAddModal(false);
           setEditingReference(null);
-          alert('Referencia uložená lokálne (databáza nedostupná)');
+          alert(`⚠️ CHYBA DATABÁZY: ${result.message}\n\nReferencia bola dočasne uložená lokálne, ale ZMIZNE po obnovení stránky!\n\nSkontrolujte konzolu (F12) pre viac detailov.`);
         } catch (localError) {
           console.error('Local save failed:', localError);
           alert(result.message || 'Chyba pri ukladaní referencie');
