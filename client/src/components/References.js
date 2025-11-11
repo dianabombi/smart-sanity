@@ -320,13 +320,13 @@ const References = () => {
                   <h3 className="text-xl font-semibold text-gray-300 mb-6">{reference.title}</h3>
                   <p className="text-gray-300 text-sm mb-3 flex-1 text-left w-full">{reference.description}</p>
                   
-                  <div className="flex gap-4 items-center text-sm text-gray-300 mb-2 w-full text-left">
+                  <div className="flex gap-2 items-center text-sm text-gray-300 mb-2 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
                   
                   {reference.client && (
-                    <p className="text-sm text-gray-300 mb-4 text-left w-full">Klient: {reference.client}</p>
+                    <p className="text-sm text-gray-300 mb-4 text-left w-full">{reference.client}</p>
                   )}
                 </div>
                 
