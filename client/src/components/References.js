@@ -313,14 +313,14 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-colors duration-500 h-80 flex flex-col"
+                className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-colors duration-500 h-80 flex flex-col text-center"
                 style={{ borderWidth: '0.5px', opacity: 1 }}
               >
-                <div className="flex-1 flex flex-col">
-                  <h3 className="text-xl font-semibold text-white mb-2">{reference.title}</h3>
+                <div className="flex-1 flex flex-col items-center">
+                  <h3 className="text-xl font-semibold text-white mb-6">{reference.title}</h3>
                   <p className="text-gray-400 text-sm mb-3 flex-1">{reference.description}</p>
                   
-                  <div className="flex justify-between items-center text-sm text-gray-400 mb-2">
+                  <div className="flex justify-center gap-4 items-center text-sm text-gray-400 mb-2 w-full">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
