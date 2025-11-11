@@ -307,9 +307,9 @@ const References = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-8 pb-16 min-h-[60vh]">
+      <div className="container mx-auto px-4 py-8 pb-14 min-h-[60vh]">
         {references.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
@@ -334,7 +334,8 @@ const References = () => {
                   <div className="mt-auto">
                     <button
                       onClick={() => openImageGallery(reference)}
-                      className="w-full py-2 px-4 border border-gray-400 text-gray-400 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+                      className="w-full py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm"
+                      style={{ borderWidth: '0.5px' }}
                     >
                       Galéria
                     </button>
@@ -359,7 +360,8 @@ const References = () => {
         <div className="flex justify-center mt-12 px-4">
           <button 
             onClick={() => window.location.href = '/contact'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full max-w-xs mx-auto"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm w-full max-w-xs mx-auto"
+            style={{ borderWidth: '0.5px' }}
           >
             Kontaktujte nás
           </button>
@@ -455,7 +457,8 @@ const References = () => {
             <div className="sticky bottom-0 bg-black border-t border-gray-700 p-3 text-center">
               <button
                 onClick={closeImageGallery}
-                className="py-2 px-6 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+                className="py-2 px-6 border border-gray-400 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm"
+                style={{ borderWidth: '0.5px' }}
               >
                 Zavrieť galériu
               </button>
