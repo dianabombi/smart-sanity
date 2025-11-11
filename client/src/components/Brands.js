@@ -33,10 +33,13 @@ const Brands = () => {
     }
   }, []);
 
-  const loadBrands = useCallback(async (forceRefresh = false) => {
+  const loadBrands = useCallback(async (forceRefresh = false, silent = false) => {
     try {
-      setLoading(true);
-      console.log(`🔄 PUBLIC: Loading brands from database... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
+      // Only show loading state on initial load, not on background refresh
+      if (!silent) {
+        setLoading(true);
+      }
+      console.log(`🔄 PUBLIC: Loading brands from database... ${forceRefresh ? '(FORCE REFRESH)' : ''} ${silent ? '(SILENT)' : ''}`);
       
       const result = await ApiService.getBrands();
       
@@ -47,14 +50,20 @@ const Brands = () => {
         setBrands(result.brands);
       } else {
         console.error('❌ PUBLIC: Failed to load brands:', result.message);
-        setSkeletonCount(0); // No skeletons if no data
-        setBrands([]);
+        if (!silent) {
+          setSkeletonCount(0); // No skeletons if no data
+          setBrands([]);
+        }
       }
     } catch (error) {
       console.error('❌ PUBLIC: Error loading brands:', error);
-      setBrands([]);
+      if (!silent) {
+        setBrands([]);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -63,10 +72,10 @@ const Brands = () => {
     loadBrands();
     loadPageContent();
     
-    // Auto-refresh brands every 30 seconds to catch admin changes
+    // Auto-refresh brands every 30 seconds to catch admin changes (silently)
     const interval = setInterval(() => {
       console.log('🔄 PUBLIC: Auto-refreshing brands to catch admin changes...');
-      loadBrands(true);
+      loadBrands(true, true); // forceRefresh = true, silent = true
     }, 30000); // 30 seconds
     
     return () => clearInterval(interval);
