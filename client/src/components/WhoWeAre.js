@@ -285,7 +285,7 @@ const WhoWeAre = () => {
           </div>
           
           {/* Content Skeleton */}
-          <div className="flex items-center justify-center pt-8 pb-60 flex-1 relative z-10">
+          <div className="flex items-center justify-center pt-8 pb-32 flex-1 relative z-10">
             <div className="w-full px-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
                 {/* Left Card Skeleton */}
@@ -355,20 +355,20 @@ const WhoWeAre = () => {
             {/* Partnership text above logo */}
             <div className="flex flex-col justify-center items-center space-y-8">
               {/* Naši partneri title */}
-              <h2 className="text-3xl font-bold text-gray-300 text-center">
+              <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
                 Naši partneri
               </h2>
               
               {/* Logos Container */}
-              <div className="flex justify-center">
-                <div className="flex flex-wrap justify-center items-center gap-4">
+              <div className="flex justify-center w-full pb-6">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', maxWidth: '500px', width: '100%', justifyItems: 'center' }}>
                   {partnerLogos.length > 0 ? (
                     partnerLogos.map((logo) => (
-                      <div key={logo.id} className="rounded-lg p-2 transition-all duration-300" style={{ height: '80px', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div key={logo.id} className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <img 
                           src={logo.logo} 
                           alt={logo.name}
-                          style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                          style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
                           onError={(e) => {
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'block';
@@ -380,12 +380,12 @@ const WhoWeAre = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="rounded-lg p-2 transition-all duration-300" style={{ height: '80px', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <img 
                         key={logoKey}
                         src="/elite_logoRGB-11.jpg" 
                         alt="Elite Bath + Kitchen"
-                        style={{ height: '64px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                        style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
@@ -405,13 +405,13 @@ const WhoWeAre = () => {
       </div>
 
       {/* Contact Button */}
-      <div className="flex justify-center mt-12">
-        <a
-          href="/contact"
-          className="px-8 py-3 border border-gray-400 text-gray-400 rounded-lg font-medium transition-all duration-300 hover:bg-white hover:text-black hover:border-white"
+      <div className="flex justify-center mt-16 mb-4">
+        <button
+          onClick={() => window.location.href = '/contact'}
+          className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full max-w-xs"
         >
           Kontaktujte nás
-        </a>
+        </button>
       </div>
     </div>
   );
@@ -452,7 +452,7 @@ const WhoWeAre = () => {
           </div>
         </div>
         
-        <div className="flex items-center justify-center pt-8  pb-60 flex-1 relative z-10">
+        <div className="flex items-center justify-center pt-8  pb-16 flex-1 relative z-10">
           {contentSection}
         </div>
       </div>

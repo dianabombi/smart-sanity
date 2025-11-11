@@ -72,22 +72,24 @@ const Brands = () => {
     loadBrands();
     loadPageContent();
     
-    // Auto-refresh brands every 30 seconds to catch admin changes (silently)
-    const interval = setInterval(() => {
-      console.log('🔄 PUBLIC: Auto-refreshing brands to catch admin changes...');
-      loadBrands(true, true); // forceRefresh = true, silent = true
-    }, 30000); // 30 seconds
-    
-    return () => clearInterval(interval);
+    // Auto-refresh disabled to prevent flickering
+    // Uncomment below if you need auto-refresh in the future
+    // const interval = setInterval(() => {
+    //   console.log('🔄 PUBLIC: Auto-refreshing brands to catch admin changes...');
+    //   loadBrands(true, true); // forceRefresh = true, silent = true
+    // }, 30000); // 30 seconds
+    // 
+    // return () => clearInterval(interval);
   }, [loadBrands, loadPageContent]);
 
 
-  console.log('🚀 PRODUCTION DEPLOYMENT - BRANDS LOADING:');
-  console.log('- brands.length:', brands.length);
-  console.log('- loading:', loading);
-  console.log('- timestamp:', new Date().toISOString());
-  console.log('- production_version: 2025-01-20-14:16-FINAL');
-  console.log('- brands data:', brands.slice(0, 2)); // First 2 brands
+  // Debug logs commented out to improve performance
+  // console.log('🚀 PRODUCTION DEPLOYMENT - BRANDS LOADING:');
+  // console.log('- brands.length:', brands.length);
+  // console.log('- loading:', loading);
+  // console.log('- timestamp:', new Date().toISOString());
+  // console.log('- production_version: 2025-01-20-14:16-FINAL');
+  // console.log('- brands data:', brands.slice(0, 2)); // First 2 brands
 
   if (loading) {
     return (
