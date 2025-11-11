@@ -331,19 +331,30 @@ const WhoWeAre = () => {
 
   const contentSection = (
     <div className="w-full px-4">
+      {/* Page Title */}
+      <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+        O nás
+      </h1>
+      
       {/* Side by Side Layout - Full Width */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
-          <div className="group rounded-lg transition-all duration-500 w-full h-full flex flex-col justify-center bg-black/30 border-gray-600" style={{ borderWidth: '0.5px', padding: '3rem' }}>
-            <div className="space-y-6">
-              {content?.mainContent?.map((text, index) => (
-                <div 
-                  key={index} 
-                  className="text-lg leading-relaxed text-gray-300 text-justify"
-                  dangerouslySetInnerHTML={{ __html: text }}
-                />
-              ))}
+          <div className="group rounded-lg transition-all duration-500 w-full h-full flex flex-col justify-start bg-black/30 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+            <div className="flex flex-col justify-start items-center space-y-10">
+              {/* Smart Sanit s.r.o. title */}
+              <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
+                Smart Sanit s.r.o.
+              </h2>
+              <div className="space-y-6 px-8 pb-6 w-full">
+                {content?.mainContent?.map((text, index) => (
+                  <div 
+                    key={index} 
+                    className="text-lg leading-relaxed text-gray-300 text-justify"
+                    dangerouslySetInnerHTML={{ __html: text }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -408,7 +419,7 @@ const WhoWeAre = () => {
       <div className="flex justify-center mt-16 mb-4">
         <button
           onClick={() => window.location.href = '/contact'}
-          className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full max-w-xs"
+          className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
         >
           Kontaktujte nás
         </button>
@@ -443,16 +454,7 @@ const WhoWeAre = () => {
       <div className="relative flex-1 flex flex-col">
         <NavBar />
         
-        {/* Header Section */}
-        <div className="pb-2 px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-2 mt-36 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-              Smart Sanit s.r.o.
-            </h1>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-center pt-8  pb-16 flex-1 relative z-10">
+        <div className="flex items-center justify-center pt-32 pb-16 flex-1 relative z-10">
           {contentSection}
         </div>
       </div>
