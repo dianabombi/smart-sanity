@@ -313,8 +313,8 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-white/5 border border-gray-600 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 hover:border-gray-400 transition-all duration-300 transform hover:scale-105 h-80 flex flex-col"
-                style={{ opacity: 1 }}
+                className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-colors duration-500 h-80 flex flex-col"
+                style={{ borderWidth: '0.5px', opacity: 1 }}
               >
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-white mb-2">{reference.title}</h3>
