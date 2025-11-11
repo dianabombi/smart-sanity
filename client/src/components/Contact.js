@@ -6,15 +6,28 @@ import ContactInfo from './contact/ContactInfo';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Card from './ui/Card';
 import ApiService from '../services/api';
+import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Contact = () => {
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [contactContent, setContactContent] = useState(null);
+  
+  // Background settings hook
+  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
 
   useEffect(() => {
     loadContactContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-refresh background settings every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshSettings();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [refreshSettings]);
 
   const loadContactContent = async () => {
     try {
@@ -93,9 +106,26 @@ const Contact = () => {
 
   return (
     <Layout>
-      <NavBar />
-      
-      <div className="min-h-screen bg-black pb-4">
+      <div className="min-h-screen bg-black relative">
+        {/* Background Image */}
+        {backgroundSettings.contactPageBackgroundImage && (
+          <div 
+            className="fixed inset-0 z-0"
+            style={{
+              backgroundImage: `url(${backgroundSettings.contactPageBackgroundImage})`,
+              backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
+              backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
+              backgroundRepeat: 'no-repeat',
+              opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
+              filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
+            }}
+          />
+        )}
+
+        <div className="relative min-h-screen">
+          <NavBar />
+          
+          <div className="min-h-screen bg-transparent pb-4">
         <div className="w-full max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-12 pt-8">
@@ -138,6 +168,8 @@ const Contact = () => {
               contactContent={contactContent}
               visible={visible}
             />
+          </div>
+        </div>
           </div>
         </div>
       </div>

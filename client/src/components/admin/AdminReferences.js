@@ -137,49 +137,28 @@ const AdminReferences = ({ onLogout }) => {
     try {
       setLoading(true);
       
-      // 🔍 DEBUGGING: Clear localStorage to force database fetch
-      console.log('🔍 DEBUG: Clearing localStorage to test database connection...');
-      localStorage.removeItem('adminReferences');
-      
-      // Try to load from API (database)
-      console.log('🔍 DEBUG: Attempting to load references from database...');
+      // Load from API (database)
+      console.log('🔍 DEBUG: Loading references from database...');
       const result = await ApiService.getReferences();
       
       if (result.success) {
         console.log(`✅ SUCCESS: Loaded ${result.references.length} references from database:`, result.references);
         setReferences(result.references);
+        console.log('✅ State updated: setReferences called with', result.references.length, 'items');
         
-        // Save to localStorage as backup
-        localStorage.setItem('adminReferences', JSON.stringify(result.references));
+        // Don't save to localStorage - data is too large with images
+        // localStorage.setItem('adminReferences', JSON.stringify(result.references));
       } else {
         console.error('❌ DATABASE FAILED:', result.message);
-        console.log('🔍 DEBUG: Checking if localStorage has backup data...');
-        
-        const localReferences = localStorage.getItem('adminReferences');
-        if (localReferences) {
-          const parsed = JSON.parse(localReferences);
-          console.log(`📦 FALLBACK: Using ${parsed.length} references from localStorage:`, parsed);
-          setReferences(parsed);
-        } else {
-          console.log('📭 EMPTY: No references found anywhere');
-          setReferences([]);
-        }
+        setReferences([]);
       }
     } catch (error) {
       console.error('💥 EXCEPTION in loadReferences:', error);
-      
-      // Try localStorage as final fallback
-      const localReferences = localStorage.getItem('adminReferences');
-      if (localReferences) {
-        const parsed = JSON.parse(localReferences);
-        console.log(`🆘 EMERGENCY FALLBACK: Using ${parsed.length} references from localStorage`);
-        setReferences(parsed);
-      } else {
-        console.log('🚨 TOTAL FAILURE: No references available');
-        setReferences([]);
-      }
+      console.error('💥 Error details:', error.message, error.stack);
+      setReferences([]);
     } finally {
       setLoading(false);
+      console.log('🏁 loadReferences FINISHED - loading set to false');
     }
   };
 
@@ -387,6 +366,10 @@ const AdminReferences = ({ onLogout }) => {
     setEditingReference(null);
     setShowAddModal(true);
   };
+
+  console.log('🎨 RENDER: AdminReferences rendering with', references.length, 'references');
+  console.log('🎨 RENDER: Loading state:', loading);
+  console.log('🎨 RENDER: References array:', references);
 
   if (loading) {
     return (

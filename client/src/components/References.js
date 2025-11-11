@@ -51,30 +51,41 @@ const References = () => {
   const loadReferences = useCallback(async (forceRefresh = false) => {
     try {
       setLoading(true);
+      console.log('🔄 PUBLIC REFERENCES: Loading references from database...');
       const result = await ApiService.getReferences();
+      console.log('📊 PUBLIC REFERENCES: API result:', result);
       
       if (result.success && result.references && result.references.length > 0) {
-        console.log(`✅ PUBLIC: Loaded ${result.references.length} references from database`);
+        console.log(`✅ PUBLIC REFERENCES: Loaded ${result.references.length} references from database`);
+        console.log('📋 PUBLIC REFERENCES: First reference:', result.references[0]);
         // Set skeleton count based on actual data
         setSkeletonCount(result.references.length || 6);
         setReferences(result.references);
       } else {
-        console.log('📋 PUBLIC: No references in database, using fallback data');
+        console.warn('⚠️ PUBLIC REFERENCES: No references in database or failed to load');
+        console.log('📊 PUBLIC REFERENCES: Result details:', {
+          success: result.success,
+          hasReferences: !!result.references,
+          count: result.references?.length || 0,
+          message: result.message
+        });
+        console.log('📋 PUBLIC REFERENCES: Using fallback data');
         setSkeletonCount(fallbackReferences.length);
         setReferences(fallbackReferences);
       }
     } catch (error) {
-      console.error('❌ PUBLIC: Error in loadReferences:', error);
-      console.log('📋 PUBLIC: Using fallback references due to error');
+      console.error('❌ PUBLIC REFERENCES: Error in loadReferences:', error);
+      console.log('📋 PUBLIC REFERENCES: Using fallback references due to error');
       setReferences(fallbackReferences);
     } finally {
       setLoading(false);
+      console.log('✅ PUBLIC REFERENCES: Loading finished, references count:', references.length);
       // Start animation after content is loaded
       setTimeout(() => {
         setVisible(true);
       }, 400);
     }
-  }, []);
+  }, [references.length]);
 
   useEffect(() => {
     loadReferences();

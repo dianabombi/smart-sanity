@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
+import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Inspirations = () => {
   const [selectedCategory] = useState('all');
@@ -12,6 +13,9 @@ const Inspirations = () => {
   const [fullScreenImage, setFullScreenImage] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [skeletonCount, setSkeletonCount] = useState(9); // Default skeleton count
+  
+  // Background settings hook
+  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
 
   const loadInspirations = useCallback(async (forceRefresh = false) => {
     try {
@@ -57,6 +61,15 @@ const Inspirations = () => {
     loadPageDescription();
     // Removed auto-refresh to prevent screen flickering
   }, [loadInspirations]);
+
+  // Auto-refresh background settings every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshSettings();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [refreshSettings]);
 
   const loadPageDescription = async () => {
     try {
@@ -145,21 +158,37 @@ const Inspirations = () => {
 
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Custom CSS for shimmer animation */}
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
-      <NavBar />
-      
-      
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-black relative">
+      {/* Background Image */}
+      {backgroundSettings.inspirationsPageBackgroundImage && (
+        <div 
+          className="fixed inset-0 z-0"
+          style={{
+            backgroundImage: `url(${backgroundSettings.inspirationsPageBackgroundImage})`,
+            backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
+            backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
+            backgroundRepeat: 'no-repeat',
+            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
+            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
+          }}
+        />
+      )}
+
+      <div className="relative min-h-screen">
+        {/* Custom CSS for shimmer animation */}
+        <style jsx>{`
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          .animate-shimmer {
+            animation: shimmer 2s infinite;
+          }
+        `}</style>
+        <NavBar />
+        
+        
+        <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
@@ -379,7 +408,8 @@ const Inspirations = () => {
         </div>
       )}
       
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 };
