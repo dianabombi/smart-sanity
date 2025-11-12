@@ -48,15 +48,12 @@ const Contact = () => {
       );
       
       try {
-        const result = await Promise.race([
+        await Promise.race([
           ApiService.getContactContent(),
           timeoutPromise
         ]);
         
         // Temporarily disabled - use fallback with proper line breaks
-        // if (result.success && result.content) {
-        //   setContactContent(result.content);
-        // }
       } catch (apiError) {
         console.log('API failed or timed out, keeping fallback content:', apiError.message);
       }

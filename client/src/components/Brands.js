@@ -40,12 +40,10 @@ const Brands = () => {
       if (!silent) {
         setLoading(true);
       }
-      console.log(`🔄 PUBLIC: Loading brands from database... ${forceRefresh ? '(FORCE REFRESH)' : ''} ${silent ? '(SILENT)' : ''}`);
       
       const result = await ApiService.getBrands();
       
       if (result.success && result.brands) {
-        console.log(`✅ PUBLIC: Loaded ${result.brands.length} brands from database`);
         // Set skeleton count based on actual data
         setSkeletonCount(result.brands.length || 8);
         setBrands(result.brands);
@@ -72,11 +70,9 @@ const Brands = () => {
   useEffect(() => {
     // Prevent double loading (React Strict Mode and re-renders)
     if (hasLoadedRef.current) {
-      console.log('⚠️ Brands already loaded, skipping duplicate load');
       return;
     }
     
-    console.log('🚀 Initial Brands load');
     hasLoadedRef.current = true;
     loadBrands();
     loadPageContent();
@@ -109,10 +105,10 @@ const Brands = () => {
         {/* Header Section */}
         <div className="pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 mt-8 tracking-wide">
               Obchodované značky
             </h1>
-            <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg tablet:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {pageDescription}
             </p>
           </div>
@@ -183,7 +179,7 @@ const Brands = () => {
           <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-4 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Obchodované značky
           </h1>
-          <p className="text-lg tablet:text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed mt-5">
+          <p className="text-lg tablet:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mt-5">
           {pageDescription}
           </p>
         </div>
@@ -201,9 +197,6 @@ const Brands = () => {
           <div className="absolute inset-0 -z-10" style={getBackgroundStyle()}></div>
         )}
         <div className="max-w-6xl mx-auto relative z-10">
-          {console.log('🎨 Rendering brands. Total:', brands.length, 'Main brands:', brands.filter(brand => brand.is_main !== false).length, 'Other brands:', brands.filter(brand => brand.is_main === false).length)}
-          
-
           {/* Main Brands Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {brands.filter(brand => brand.is_main !== false).map((brand, index) => (
@@ -221,15 +214,6 @@ const Brands = () => {
 
       {/* Ostatné Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8 relative">
-        {/* Background Image */}
-        {backgroundSettings.brandsPageBackgroundImage && (
-          <div className="absolute inset-0 -z-20" style={getBackgroundImageStyle()}></div>
-        )}
-        
-        {/* Dynamic background pattern */}
-        {backgroundSettings.brandsPagePattern && backgroundSettings.patternType !== 'none' && (
-          <div className="absolute inset-0 -z-10" style={getBackgroundStyle()}></div>
-        )}
         <div className="max-w-6xl mx-auto relative z-10">
           <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide opacity-100 translate-y-0">
             Ostatné
