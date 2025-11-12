@@ -100,7 +100,7 @@ const FormField = ({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-gray-400 mb-2">
+        <label className="block text-sm font-medium text-white mb-2">
           {label}
           {required && <span className="text-red-400 ml-1">*</span>}
         </label>

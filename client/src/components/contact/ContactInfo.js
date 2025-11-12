@@ -9,10 +9,11 @@ const ContactInfo = ({
   return (
     <div className="flex flex-col gap-4 h-full">
       {/* Company Info */}
-      <div className={`bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 ${
+      <div className={`group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 p-8 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       } ${className}`}
       style={{
+        borderWidth: '0.5px',
         transition: 'all 0.8s ease-out',
         transitionDelay: delay
       }}>
@@ -28,8 +29,8 @@ const ContactInfo = ({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-300">Konateľ spoločnosti</h3>
-              <p className="text-gray-300/70">{contactContent?.contactDetails?.manager || 'Ing. Dušan Drinka, PhD.'}</p>
+              <h3 className="text-lg font-medium text-gray-300">Konatelia spoločnosti</h3>
+              <p className="text-white">{contactContent?.contactDetails?.manager || 'Ing. Dušan Drinka, PhD., Mgr. Juraj Stodolovský'}</p>
             </div>
           </div>
 
@@ -41,7 +42,7 @@ const ContactInfo = ({
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-300">Telefón</h3>
-              <p className="text-gray-300/70">{contactContent?.contactDetails?.phone || '+421 948 882 376'}</p>
+              <p className="text-white">{contactContent?.contactDetails?.phone || '+421 948 882 376'}</p>
             </div>
           </div>
 
@@ -53,7 +54,7 @@ const ContactInfo = ({
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-300">Email</h3>
-              <p className="text-gray-300/70">{contactContent?.contactDetails?.email || 'dusan.drinka@smartsanit.sk'}</p>
+              <p className="text-white">{contactContent?.contactDetails?.email || 'dusan.drinka@smartsanit.sk'}</p>
             </div>
           </div>
 
@@ -66,17 +67,18 @@ const ContactInfo = ({
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-300">Adresa</h3>
-              <p className="text-gray-300/70 whitespace-pre-line">{contactContent?.contactDetails?.address || 'Továrenská 14\n811 09 Bratislava'}</p>
+              <p className="text-white whitespace-pre-line">{contactContent?.contactDetails?.address || 'Továrenská 14\n811 09 Bratislava'}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Services */}
-      <div className={`flex-1 bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-8 ${
+      <div className={`flex-1 group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 p-8 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
       style={{
+        borderWidth: '0.5px',
         transition: 'all 0.8s ease-out',
         transitionDelay: '1.0s'
       }}>
@@ -84,7 +86,7 @@ const ContactInfo = ({
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         
-        <ul className="space-y-3 p-2 text-gray-300/70">
+        <ul className="space-y-3 p-2 text-white">
           {(contactContent?.services || [
             'Poradenstvo a návrh kúpeľní',
             'Dodávka sanitárnych zariadení',

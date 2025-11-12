@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
+import Footer from './layout/Footer';
 import ContactForm from './forms/ContactForm';
 import ContactInfo from './contact/ContactInfo';
 import LoadingSpinner from './ui/LoadingSpinner';
-import Card from './ui/Card';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
@@ -78,7 +77,7 @@ const Contact = () => {
     contactInfoTitle: 'Kontaktné údaje',
     servicesTitle: 'Naše služby',
     contactDetails: {
-      manager: 'Ing. Dušan Drinka, PhD.',
+      manager: 'Ing. Dušan Drinka, PhD., Mgr. Juraj Stodolovský',
       phone: '+421 948 882 376',
       email: 'dusan.drinka@smartsanit.sk',
       address: 'Továrenská 14\n811 09 Bratislava'
@@ -95,85 +94,90 @@ const Contact = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <div className="min-h-screen bg-black flex flex-col">
         <NavBar />
-        <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center">
           <LoadingSpinner text="Načítavam kontakt..." />
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-black relative">
-        {/* Background Image */}
-        {backgroundSettings.contactPageBackgroundImage && (
-          <div 
-            className="fixed inset-0 z-0"
-            style={{
-              backgroundImage: `url(${backgroundSettings.contactPageBackgroundImage})`,
-              backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
-              backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
-              backgroundRepeat: 'no-repeat',
-              opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
-              filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
-            }}
-          />
-        )}
+    <div className="min-h-screen bg-black relative flex flex-col">
+      {/* Background Image */}
+      {backgroundSettings.contactPageBackgroundImage && (
+        <div 
+          className="fixed inset-0 z-0"
+          style={{
+            backgroundImage: `url(${backgroundSettings.contactPageBackgroundImage})`,
+            backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
+            backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
+            backgroundRepeat: 'no-repeat',
+            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
+            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
+          }}
+        />
+      )}
 
-        <div className="relative min-h-screen">
-          <NavBar />
-          
-          <div className="min-h-screen bg-transparent pb-4">
-        <div className="w-full max-w-6xl mx-auto px-4">
-          {/* Header */}
-          <div className="text-center mb-12 pt-8">
-            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-8 ${
-              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transition: 'all 0.8s ease-out',
-              transitionDelay: '0.2s'
-            }}>
-              {contactContent?.title || 'Kontakt'}
-            </h1>
-            <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
-              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transition: 'all 0.8s ease-out',
-              transitionDelay: '0.4s'
-            }}>
-              {contactContent?.subtitle || 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            {/* Contact Form */}
-            <Card
-              className={`p-8 h-full ${
+      {/* Main content area */}
+      <div className="relative flex-1 flex flex-col">
+        <NavBar />
+        
+        <div className="flex-1 bg-transparent pb-12 pt-32 relative z-10">
+          <div className="w-full max-w-6xl mx-auto px-4">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className={`text-4xl md:text-5xl font-bold text-white mb-8 ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{
                 transition: 'all 0.8s ease-out',
-                transitionDelay: '0.6s'
-              }}
-            >
-              <ContactForm title={contactContent?.formTitle} />
-            </Card>
+                transitionDelay: '0.2s'
+              }}>
+                {contactContent?.title || 'Kontakt'}
+              </h1>
+              <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+                visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{
+                transition: 'all 0.8s ease-out',
+                transitionDelay: '0.4s'
+              }}>
+                {contactContent?.subtitle || 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.'}
+              </p>
+            </div>
 
-            {/* Contact Information */}
-            <ContactInfo 
-              contactContent={contactContent}
-              visible={visible}
-            />
-          </div>
-        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+              {/* Contact Form */}
+              <div
+                className={`group rounded-lg transition-colors duration-500 w-full h-full bg-black/30 hover:bg-black/50 border-gray-600 p-8 ${
+                  visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{
+                  borderWidth: '0.5px',
+                  transition: 'all 0.8s ease-out',
+                  transitionDelay: '0.6s'
+                }}
+              >
+                <ContactForm title={contactContent?.formTitle} />
+              </div>
+
+              {/* Contact Information */}
+              <ContactInfo 
+                contactContent={contactContent}
+                visible={visible}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </Layout>
+      
+      {/* Footer at bottom */}
+      <div className="relative z-10 mt-auto">
+        <Footer />
+      </div>
+    </div>
   );
 };
 

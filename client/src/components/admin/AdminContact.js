@@ -309,7 +309,7 @@ const AdminContact = ({ onLogout }) => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Konateľ</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Konatelia</label>
               <p className="text-gray-400 bg-gray-700 p-3 rounded">{contactContent.contactDetails.manager}</p>
             </div>
             <div>
@@ -487,7 +487,7 @@ const EditModal = ({ section, content, onSave, onCancel, saving }) => {
           {section === 'contactDetails' && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Konateľ spoločnosti</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Konatelia spoločnosti</label>
                 <input
                   type="text"
                   value={formData.manager || ''}
