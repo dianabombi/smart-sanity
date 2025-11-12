@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
@@ -44,6 +44,7 @@ const References = () => {
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
   const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
   const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
+  const hasLoadedRef = useRef(false); // Prevent double loading
   
   // Background settings hook
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
@@ -79,19 +80,24 @@ const References = () => {
       setReferences(fallbackReferences);
     } finally {
       setLoading(false);
-      console.log('✅ PUBLIC REFERENCES: Loading finished, references count:', references.length);
       // Start animation after content is loaded
       setTimeout(() => {
         setVisible(true);
       }, 400);
     }
-  }, [references.length]);
+  }, []);
 
   useEffect(() => {
+    // Prevent double loading (React Strict Mode and re-renders)
+    if (hasLoadedRef.current) {
+      return;
+    }
+    
+    hasLoadedRef.current = true;
     loadReferences();
     loadPageDescription();
     // Removed auto-refresh to prevent screen flickering
-  }, [loadReferences]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-refresh background settings every 2 seconds
   useEffect(() => {
@@ -192,9 +198,9 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-2 px-4 sm:px-6 lg:px-2 pt-32">
+        <div className="pb-2 px-4 sm:px-6 lg:px-8 pt-32">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-2 tracking-wide ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{
@@ -216,10 +222,10 @@ const References = () => {
         </div>
         
         {/* Skeleton Grid */}
-        <div className="container mx-auto px-4 py-8 pb-16 min-h-[60vh]">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 min-h-[60vh]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {Array.from({ length: skeletonCount }, (_, index) => (
-              <div key={index} className="group bg-white/5 border border-gray-600 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
+              <div key={index} className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300 relative pb-16 min-h-[360px]" style={{ opacity: 1 }}>
                 <div className="mb-4">
                   {/* Title skeleton */}
                   <div className="h-6 bg-gray-700 rounded mb-2 animate-pulse">
@@ -239,9 +245,13 @@ const References = () => {
                   
                   {/* Client skeleton */}
                   <div className="h-3 bg-gray-700 rounded w-24 mb-4 animate-pulse"></div>
+                </div>
                   
-                  {/* Button skeleton */}
-                  <div className="h-8 bg-gray-700 rounded animate-pulse"></div>
+                {/* Button skeleton - Fixed Position */}
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="h-8 bg-gray-700 rounded-lg animate-pulse relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -284,9 +294,9 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-0 px-4 sm:px-6 lg:px-8 pt-32">
+        <div className="pb-2 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-4 tracking-wide ${
+          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-2 tracking-wide ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
           style={{
@@ -307,35 +317,35 @@ const References = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-2 py-8 pb-14 min-h-[60vh]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6 min-h-[60vh]">
         {references.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-colors duration-500 h-80 flex flex-col text-center"
-                style={{ borderWidth: '0.5px', opacity: 1 }}
+                className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/50 transition-all duration-500 cursor-pointer transform relative pb-16 opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-xl flex flex-col min-h-[360px]"
+                style={{ opacity: 1 }}
               >
-                <div className="flex-1 flex flex-col items-center">
-                  <h3 className="text-xl font-semibold text-gray-300 mb-6">{reference.title}</h3>
-                  <p className="text-gray-300 text-sm mb-1 text-left w-full">{reference.description}</p>
+                <div className="flex-1 flex flex-col">
+                  <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
                   
                   <div className="flex gap-2 items-center text-sm text-blue-300 mb-1 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
+                  
+                  <p className="text-gray-300 text-sm mb-4 text-left w-full">{reference.description}</p>
                 </div>
                 
                 {reference.client && (
-                  <p className="text-sm text-gray-300 mb-2 text-left w-full">Architekt: {reference.client}</p>
+                  <p className="absolute bottom-12 p-2 left-4 right-4 text-sm text-gray-300 text-left">Architekt: {reference.client}</p>
                 )}
                 
                 {reference.images && reference.images.length > 0 && (
-                  <div className="mt-auto">
+                  <div className="absolute bottom-4 left-4 right-4">
                     <button
                       onClick={() => openImageGallery(reference)}
-                      className="w-full py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm"
-                      style={{ borderWidth: '0.5px' }}
+                      className="w-full py-2 px-4 mt-2 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
                     >
                       Galéria
                     </button>
