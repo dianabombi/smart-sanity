@@ -329,7 +329,7 @@ const References = () => {
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
                   
-                  <div className="flex gap-3 items-center text-sm text-blue-300 mb-2 w-full text-left">
+                  <div className="flex gap-3 items-center text-sm text-blue-300 mb-5 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
@@ -338,7 +338,7 @@ const References = () => {
                 </div>
                 
                 {reference.client && (
-                  <p className="absolute bottom-12 p-2 left-4 right-4 text-sm text-gray-300 text-left">Architekt: {reference.client}</p>
+                  <p className="absolute bottom-16 p-2 left-4 right-4 text-sm text-gray-300 text-left">Architekt: {reference.client}</p>
                 )}
                 
                 {reference.images && reference.images.length > 0 && (
