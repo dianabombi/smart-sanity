@@ -17,7 +17,7 @@ const ContactInfo = ({
         transition: 'all 0.8s ease-out',
         transitionDelay: delay
       }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-400 mb-4">
           {contactContent?.contactInfoTitle || 'Kontaktné údaje'}
         </h2>
         
@@ -29,7 +29,7 @@ const ContactInfo = ({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-300">Konatelia spoločnosti</h3>
+              <h3 className="text-lg font-medium text-gray-400">Konatelia spoločnosti</h3>
               <p className="text-gray-300 whitespace-pre-line">{contactContent?.contactDetails?.manager || 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský'}</p>
             </div>
           </div>
@@ -41,7 +41,7 @@ const ContactInfo = ({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-300">Telefón</h3>
+              <h3 className="text-lg font-medium text-gray-400">Telefón</h3>
               <p className="text-gray-300">{contactContent?.contactDetails?.phone || '+421 948 882 376'}</p>
             </div>
           </div>
@@ -53,7 +53,7 @@ const ContactInfo = ({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-300">Email</h3>
+              <h3 className="text-lg font-medium text-gray-400">Email</h3>
               <p className="text-gray-300">{contactContent?.contactDetails?.email || 'dusan.drinka@smartsanit.sk'}</p>
             </div>
           </div>
@@ -66,7 +66,7 @@ const ContactInfo = ({
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-300">Adresa</h3>
+              <h3 className="text-lg font-medium text-gray-400">Adresa</h3>
               <p className="text-gray-300 whitespace-pre-line">{contactContent?.contactDetails?.address || 'Továrenská 14\n811 09 Bratislava'}</p>
             </div>
           </div>
@@ -82,7 +82,7 @@ const ContactInfo = ({
         transition: 'all 0.8s ease-out',
         transitionDelay: '1.0s'
       }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-400 mb-4">
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         
