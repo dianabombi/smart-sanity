@@ -17,7 +17,7 @@ const ContactInfo = ({
         transition: 'all 0.8s ease-out',
         transitionDelay: delay
       }}>
-        <h2 className="text-2xl font-semibold text-gray-400 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
           {contactContent?.contactInfoTitle || 'Kontaktné údaje'}
         </h2>
         
@@ -82,7 +82,7 @@ const ContactInfo = ({
         transition: 'all 0.8s ease-out',
         transitionDelay: '1.0s'
       }}>
-        <h2 className="text-2xl font-semibold text-gray-400 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
           {contactContent?.servicesTitle || 'Naše služby'}
         </h2>
         

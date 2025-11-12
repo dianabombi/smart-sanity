@@ -122,7 +122,7 @@ const Contact = () => {
       <div className="relative flex-1 flex flex-col">
         <NavBar />
         
-        <div className="flex-1 bg-transparent pb-32 pt-32 relative z-10">
+        <div className="flex-1 bg-transparent pb-20 pt-32 relative z-10">
           <div className="w-full max-w-6xl mx-auto px-4">
             {/* Header */}
             <div className="text-center mb-12">
