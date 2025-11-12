@@ -149,7 +149,7 @@ const Contact = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
               {/* Contact Form */}
               <div
-                className={`group rounded-lg transition-colors duration-500 w-full h-full bg-black/30 hover:bg-black/50 border-gray-600 p-8 ${
+                className={`group rounded-lg transition-colors duration-500 w-full h-full bg-black/30 hover:bg-black/50 border-gray-600 p-10 ${
                   visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}
                 style={{
