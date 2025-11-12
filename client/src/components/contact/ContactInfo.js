@@ -9,7 +9,7 @@ const ContactInfo = ({
   return (
     <div className="flex flex-col gap-4 h-full">
       {/* Company Info */}
-      <div className={`group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 p-8 ${
+      <div className={`group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 p-10 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       } ${className}`}
       style={{

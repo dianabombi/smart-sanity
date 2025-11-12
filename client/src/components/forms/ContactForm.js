@@ -61,7 +61,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
 
   return (
     <div className={className}>
-      <h2 className="text-2xl font-semibold text-gray-300 mb-5">
+      <h2 className="text-2xl font-semibold text-gray-300 mb-4">
         {title}
       </h2>
       
@@ -130,7 +130,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full text-gray-300 border  border-gray-400 bg-transparent hover:text-white hover:border-white px-8 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full !mt-10 text-gray-300 border border-gray-400 bg-transparent hover:text-white hover:border-white px-8 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Odosielam...' : 'Odoslať správu'}
         </button>
