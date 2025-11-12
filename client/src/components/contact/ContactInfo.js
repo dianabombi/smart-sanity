@@ -30,7 +30,7 @@ const ContactInfo = ({
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-300">Konatelia spoločnosti</h3>
-              <p className="text-gray-300 whitespace-pre-line">{contactContent?.contactDetails?.manager || 'Ing. Dušan Drinka, PhD.;\nMgr. Juraj Stodolovský'}</p>
+              <p className="text-gray-300 whitespace-pre-line">{contactContent?.contactDetails?.manager || 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský'}</p>
             </div>
           </div>
 

@@ -53,7 +53,7 @@ const Contact = () => {
           timeoutPromise
         ]);
         
-        // Temporarily disabled to force use of new fallback format
+        // Temporarily disabled - use fallback with proper line breaks
         // if (result.success && result.content) {
         //   setContactContent(result.content);
         // }
@@ -78,7 +78,7 @@ const Contact = () => {
     contactInfoTitle: 'Kontaktné údaje',
     servicesTitle: 'Naše služby',
     contactDetails: {
-      manager: 'Ing. Dušan Drinka, PhD.;\nMgr. Juraj Stodolovský',
+      manager: 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský',
       phone: '+421 948 882 376',
       email: 'dusan.drinka@smartsanit.sk',
       address: 'Továrenská 14\n811 09 Bratislava'
@@ -129,7 +129,7 @@ const Contact = () => {
           <div className="w-full max-w-6xl mx-auto px-4">
             {/* Header */}
             <div className="text-center mb-12">
-              <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-8 ${
+              <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{
