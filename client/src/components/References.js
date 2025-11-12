@@ -323,13 +323,13 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/50 transition-all duration-500 cursor-pointer transform relative pb-16 opacity-100 translate-y-0 scale-100 hover:scale-105 hover:-translate-y-1 hover:shadow-xl flex flex-col min-h-[360px]"
+                className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/50 transition-all duration-500 cursor-pointer relative pb-16 flex flex-col min-h-[360px]"
                 style={{ opacity: 1 }}
               >
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
                   
-                  <div className="flex gap-2 items-center text-sm text-blue-300 mb-1 w-full text-left">
+                  <div className="flex gap-3 items-center text-sm text-blue-300 mb-2 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
@@ -345,7 +345,7 @@ const References = () => {
                   <div className="absolute bottom-4 left-4 right-4">
                     <button
                       onClick={() => openImageGallery(reference)}
-                      className="w-full py-2 px-4 mt-2 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+                      className="w-full py-2 px-4 mt-5 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
                     >
                       Galéria
                     </button>
