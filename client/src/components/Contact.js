@@ -53,9 +53,10 @@ const Contact = () => {
           timeoutPromise
         ]);
         
-        if (result.success && result.content) {
-          setContactContent(result.content);
-        }
+        // Temporarily disabled to force use of new fallback format
+        // if (result.success && result.content) {
+        //   setContactContent(result.content);
+        // }
       } catch (apiError) {
         console.log('API failed or timed out, keeping fallback content:', apiError.message);
       }
@@ -77,7 +78,7 @@ const Contact = () => {
     contactInfoTitle: 'Kontaktné údaje',
     servicesTitle: 'Naše služby',
     contactDetails: {
-      manager: 'Ing. Dušan Drinka, PhD., Mgr. Juraj Stodolovský',
+      manager: 'Ing. Dušan Drinka, PhD.;\nMgr. Juraj Stodolovský',
       phone: '+421 948 882 376',
       email: 'dusan.drinka@smartsanit.sk',
       address: 'Továrenská 14\n811 09 Bratislava'
@@ -128,7 +129,7 @@ const Contact = () => {
           <div className="w-full max-w-6xl mx-auto px-4">
             {/* Header */}
             <div className="text-center mb-12">
-              <h1 className={`text-4xl md:text-5xl font-bold text-white mb-8 ${
+              <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-8 ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{

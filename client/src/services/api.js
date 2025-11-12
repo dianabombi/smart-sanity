@@ -1736,7 +1736,7 @@ class ApiService {
       contactInfoTitle: 'Kontaktné údaje',
       servicesTitle: 'Naše služby',
       contactDetails: {
-        manager: 'Ing. Dušan Drinka, PhD., Mgr. Juraj Stodolovský',
+        manager: 'Ing. Dušan Drinka, PhD.;\nMgr. Juraj Stodolovský',
         phone: '+421 948 882 376',
         email: 'dusan.drinka@smartsanit.sk',
         address: 'Továrenská 14\n811 09 Bratislava'

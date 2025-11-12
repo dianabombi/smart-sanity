@@ -111,7 +111,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
           name="message"
           value={formData.message}
           onChange={handleInputChange}
-          rows={6}
+          rows={10}
           required
         />
 
@@ -126,9 +126,6 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
             Nastala chyba pri odosielaní správy. Skúste to prosím znovu.
           </div>
         )}
-
-        {/* Spacer to push button down */}
-        <div className="h-12"></div>
 
         <button
           type="submit"
