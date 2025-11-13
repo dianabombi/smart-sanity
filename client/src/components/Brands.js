@@ -206,7 +206,7 @@ const Brands = () => {
         <div className="max-w-6xl mx-auto text-center">
           <button 
             onClick={() => navigate('/contact')}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm w-full max-w-xs"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
           >
             Kontaktujte nás
           </button>
