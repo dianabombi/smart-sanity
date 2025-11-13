@@ -264,13 +264,13 @@ const Inspirations = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12 px-4">
           <button 
             onClick={() => window.location.href = '/contact'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full sm:w-48"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
           >
             Kontaktujte nás
           </button>
           <button 
             onClick={() => window.location.href = '/brands'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/50 text-sm w-full sm:w-48"
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
           >
             Prezrieť značky
           </button>
