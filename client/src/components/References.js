@@ -210,9 +210,9 @@ const References = () => {
         <NavBar />
         
         {/* Header Section */}
-        <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-32">
+        <div className="pb-10 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-4 tracking-wide ${
+          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
           style={{
