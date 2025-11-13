@@ -5,7 +5,6 @@ import ApiService from '../services/api';
 
 const WhoWeAre = () => {
   const [content, setContent] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
   const [partnerLogos, setPartnerLogos] = useState([]);
@@ -254,7 +253,6 @@ const WhoWeAre = () => {
       setEbkLogo(logoData);
       setContent(contentData);
       setPartnerLogos(logosData);
-      setLoading(false);
       
     } catch (error) {
       console.error('Error loading content:', error);
@@ -262,74 +260,11 @@ const WhoWeAre = () => {
         mainContent: ["Chyba pri načítavaní obsahu. Prosím, obnovte stránku."],
         partnershipContent: ""
       });
-      setLoading(false);
     }
   };
 
-  if (loading || !content) {
-    return (
-      <div className="min-h-screen bg-black relative flex flex-col">
-        {/* Background for skeleton */}
-        <div className="fixed inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black opacity-50"></div>
-        </div>
-        
-        <div className="relative flex-1 flex flex-col">
-          <NavBar />
-          
-          {/* Header Skeleton */}
-          <div className="pb-2 px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="max-w-6xl mx-auto text-center">
-              <div className="mt-36 mb-2 h-12 md:h-14 w-80 mx-auto bg-gray-700/30 rounded-lg animate-pulse"></div>
-            </div>
-          </div>
-          
-          {/* Content Skeleton */}
-          <div className="flex items-center justify-center pt-8 pb-32 flex-1 relative z-10">
-            <div className="w-full px-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
-                {/* Left Card Skeleton */}
-                <div className="flex justify-center">
-                  <div className="rounded-lg p-8 py-20 w-full h-full bg-black/80 border border-gray-600/50">
-                    <div className="space-y-4 animate-pulse">
-                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-5/6"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-4/5"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-3/4"></div>
-                      <div className="mt-6 h-4 bg-gray-700/40 rounded w-full"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-5/6"></div>
-                      <div className="h-4 bg-gray-700/40 rounded w-full"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Card Skeleton */}
-                <div className="flex justify-center">
-                  <div className="rounded-lg p-8 py-20 w-full h-full bg-black/80 border border-gray-600/50">
-                    <div className="flex flex-col items-center space-y-12 animate-pulse">
-                      {/* Text skeleton */}
-                      <div className="space-y-3 w-full">
-                        <div className="h-4 bg-gray-700/40 rounded w-3/4 mx-auto"></div>
-                        <div className="h-4 bg-gray-700/40 rounded w-2/3 mx-auto"></div>
-                      </div>
-                      {/* Logo skeleton */}
-                      <div className="bg-gray-700/20 rounded-lg p-4 border border-gray-600/30">
-                        <div className="h-20 w-48 bg-gray-700/40 rounded"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const contentSection = (
+  // Only render content section when data is loaded
+  const contentSection = !content ? null : (
     <div className="w-full px-4">
       {/* Page Title */}
       <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">

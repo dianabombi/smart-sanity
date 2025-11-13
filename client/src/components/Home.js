@@ -72,12 +72,7 @@ const Home = () => {
               transitionType="ken-burns"
             />
           ) : (
-            <div className="w-full h-full bg-gray-900 flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <div className="text-lg mb-2">Žiadne bannery</div>
-                <div className="text-sm">Pridajte bannery v admin paneli</div>
-              </div>
-            </div>
+            <div className="w-full h-full bg-black"></div>
           )}
         </div>
         

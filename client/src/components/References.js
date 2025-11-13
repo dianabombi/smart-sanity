@@ -37,13 +37,11 @@ const fallbackReferences = [
 
 const References = () => {
   const [references, setReferences] = useState(fallbackReferences);
-  const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
   const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
-  const [skeletonCount, setSkeletonCount] = useState(6); // Default skeleton count
   const hasLoadedRef = useRef(false); // Prevent double loading
   
   // Background settings hook
@@ -51,7 +49,6 @@ const References = () => {
 
   const loadReferences = useCallback(async (forceRefresh = false) => {
     try {
-      setLoading(true);
       console.log('🔄 PUBLIC REFERENCES: Loading references from database...');
       const result = await ApiService.getReferences();
       console.log('📊 PUBLIC REFERENCES: API result:', result);
@@ -59,8 +56,6 @@ const References = () => {
       if (result.success && result.references && result.references.length > 0) {
         console.log(`✅ PUBLIC REFERENCES: Loaded ${result.references.length} references from database`);
         console.log('📋 PUBLIC REFERENCES: First reference:', result.references[0]);
-        // Set skeleton count based on actual data
-        setSkeletonCount(result.references.length || 6);
         setReferences(result.references);
       } else {
         console.warn('⚠️ PUBLIC REFERENCES: No references in database or failed to load');
@@ -71,7 +66,6 @@ const References = () => {
           message: result.message
         });
         console.log('📋 PUBLIC REFERENCES: Using fallback data');
-        setSkeletonCount(fallbackReferences.length);
         setReferences(fallbackReferences);
       }
     } catch (error) {
@@ -79,11 +73,10 @@ const References = () => {
       console.log('📋 PUBLIC REFERENCES: Using fallback references due to error');
       setReferences(fallbackReferences);
     } finally {
-      setLoading(false);
       // Start animation after content is loaded
       setTimeout(() => {
         setVisible(true);
-      }, 400);
+      }, 100);
     }
   }, []);
 
@@ -182,86 +175,7 @@ const References = () => {
     };
   }, [selectedReferenceImages, fullscreenImage, navigateImage]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black">
-        {/* Custom CSS for shimmer animation */}
-        <style jsx>{`
-          @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-          .animate-shimmer {
-            animation: shimmer 2s infinite;
-          }
-        `}</style>
-        <NavBar />
-        
-        {/* Header Section */}
-        <div className="pb-12 px-4 sm:px-6 lg:px-8 pt-32">
-          <div className="max-w-6xl mx-auto text-center">
-            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-4 tracking-wide ${
-              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transition: 'all 0.8s ease-out',
-              transitionDelay: '0.2s'
-            }}>
-              Referencie
-            </h1>
-            <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
-              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transition: 'all 0.8s ease-out',
-              transitionDelay: '0.4s'
-            }}>
-              {pageDescription}
-            </p>
-          </div>
-        </div>
-        
-        {/* Skeleton Grid */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 min-h-[60vh]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
-            {Array.from({ length: skeletonCount }, (_, index) => (
-              <div key={index} className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300 relative pb-16 min-h-[360px]" style={{ opacity: 1 }}>
-                <div className="mb-4">
-                  {/* Title skeleton */}
-                  <div className="h-6 bg-gray-700 rounded mb-2 animate-pulse">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                  
-                  {/* Description skeleton */}
-                  <div className="h-4 bg-gray-700 rounded mb-3 w-3/4 animate-pulse">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                  
-                  {/* Year and location skeleton */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="h-3 bg-gray-700 rounded w-16 animate-pulse"></div>
-                    <div className="h-3 bg-gray-700 rounded w-20 animate-pulse"></div>
-                  </div>
-                  
-                  {/* Client skeleton */}
-                  <div className="h-3 bg-gray-700 rounded w-24 mb-4 animate-pulse"></div>
-                </div>
-                  
-                {/* Button skeleton - Fixed Position */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="h-8 bg-gray-700 rounded-lg animate-pulse relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <Footer />
-      </div>
-    );
-  }
+  // Removed skeleton loading state - show content immediately
 
 
   console.log('🎨 PUBLIC REFERENCES: Background Image Status:', {

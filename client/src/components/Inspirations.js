@@ -7,19 +7,16 @@ import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 const Inspirations = () => {
   const [selectedCategory] = useState('all');
   const [inspirations, setInspirations] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [pageDescription, setPageDescription] = useState('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
   const [selectedImage, setSelectedImage] = useState(null);
   const [fullScreenImage, setFullScreenImage] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [skeletonCount, setSkeletonCount] = useState(9); // Default skeleton count
   
   // Background settings hook
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
 
   const loadInspirations = useCallback(async (forceRefresh = false) => {
     try {
-      setLoading(true);
       console.log(`🔄 INSPIRATIONS: Loading inspirations... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
       
       const result = await ApiService.getInspirations();
@@ -29,9 +26,6 @@ const Inspirations = () => {
       
       if (result.success && result.inspirations) {
         console.log(`✅ INSPIRATIONS: Loaded ${result.inspirations.length} inspirations from database`);
-        
-        // Set skeleton count based on actual data
-        setSkeletonCount(result.inspirations.length || 9);
         
         // Preload the first image for faster display
         if (result.inspirations.length > 0 && result.inspirations[0].image) {
@@ -43,15 +37,11 @@ const Inspirations = () => {
       } else {
         console.error('❌ INSPIRATIONS: Failed to load inspirations:', result.message);
         console.error('❌ INSPIRATIONS: Error source:', result.source);
-        setSkeletonCount(0); // No skeletons if no data
         setInspirations([]);
       }
     } catch (error) {
       console.error('❌ INSPIRATIONS: Error in loadInspirations:', error);
-      setSkeletonCount(0);
       setInspirations([]);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -201,40 +191,7 @@ const Inspirations = () => {
 
 
         {/* Photos Only Gallery */}
-        {loading ? (
-          /* Skeleton Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {Array.from({ length: skeletonCount }, (_, index) => (
-              <div key={index} className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300" style={{ opacity: 1 }}>
-                {/* Image placeholder */}
-                <div className="h-48 bg-gray-700 rounded-lg mb-4 relative overflow-hidden animate-pulse">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                </div>
-                
-                {/* Content skeleton */}
-                <div className="space-y-3">
-                  {/* Title skeleton */}
-                  <div className="h-5 bg-gray-700 rounded w-3/4 animate-pulse relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                  
-                  {/* Description skeleton */}
-                  <div className="h-4 bg-gray-700 rounded w-full animate-pulse relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                  <div className="h-4 bg-gray-700 rounded w-2/3 animate-pulse relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                  
-                  {/* Button skeleton */}
-                  <div className="h-8 bg-gray-700 rounded mt-4 animate-pulse relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredInspirations.length === 0 ? (
+        {filteredInspirations.length === 0 ? (
           /* No inspirations message */
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏠</div>
