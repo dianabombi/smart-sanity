@@ -74,10 +74,8 @@ const Entrance = () => {
             backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
             backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
             backgroundRepeat: 'no-repeat',
-            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
-            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
-            transition: 'all 0.3s ease',
-            willChange: 'background-position, background-size, opacity, filter'
+            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 1.0,
+            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
           }}
         />
       ) : (

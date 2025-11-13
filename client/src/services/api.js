@@ -2043,7 +2043,11 @@ class ApiService {
   // Background Settings API methods
   async getBackgroundSettings() {
     try {
+      console.log('📡 API: getBackgroundSettings called');
+      console.log('📡 API: Supabase available?', this.isSupabaseAvailable());
+      
       if (!this.isSupabaseAvailable()) {
+        console.warn('⚠️ API: Supabase NOT available, returning default settings');
         // Return default settings if Supabase not available
         return {
           success: true,
@@ -2061,31 +2065,46 @@ class ApiService {
         };
       }
 
+      console.log('📡 API: Querying background_settings table...');
       const { data, error } = await supabase
         .from('background_settings')
         .select('*')
         .single();
 
+      console.log('📡 API: Query result:', { 
+        hasData: !!data, 
+        hasError: !!error,
+        errorCode: error?.code,
+        dataKeys: data ? Object.keys(data) : [],
+        hasBrandsImage: !!data?.brandsPageBackgroundImage,
+        brandsImageLength: data?.brandsPageBackgroundImage?.length || 0
+      });
+
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        console.error('📡 API: Supabase error:', error);
         throw error;
       }
 
+      const settings = data || {
+        brandsPagePattern: true,
+        patternOpacity: 0.05,
+        patternSize: 20,
+        patternType: 'tiles',
+        homePageBackground: 'default',
+        globalBackground: 'default',
+        brandsPageBackgroundImage: null,
+        backgroundImageOpacity: 0.3,
+        backgroundImageBlur: 0
+      };
+
+      console.log('✅ API: Returning settings with brandsImage:', !!settings.brandsPageBackgroundImage);
+      
       return {
         success: true,
-        settings: data || {
-          brandsPagePattern: true,
-          patternOpacity: 0.05,
-          patternSize: 20,
-          patternType: 'tiles',
-          homePageBackground: 'default',
-          globalBackground: 'default',
-          brandsPageBackgroundImage: null,
-          backgroundImageOpacity: 0.3,
-          backgroundImageBlur: 0
-        }
+        settings: settings
       };
     } catch (error) {
-      console.error('Error fetching background settings:', error);
+      console.error('❌ API: Error fetching background settings:', error);
       return {
         success: false,
         error: error.message,

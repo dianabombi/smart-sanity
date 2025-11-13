@@ -5,7 +5,7 @@ export const useBackgroundSettings = () => {
   const [settings, setSettings] = useState({
     brandsPagePattern: true,
     entrancePagePattern: true,
-    patternOpacity: 0.3,
+    patternOpacity: 0.15,
     patternSize: 20,
     patternType: 'tiles',
     homePageBackground: 'default',
@@ -36,15 +36,23 @@ export const useBackgroundSettings = () => {
 
   const loadSettings = async () => {
     try {
+      console.log('🔄 HOOK: Fetching background settings from API...');
       const response = await ApiService.getBackgroundSettings();
+      console.log('📦 HOOK: API Response:', {
+        success: response.success,
+        hasBrandsImage: !!response.settings?.brandsPageBackgroundImage,
+        imageLength: response.settings?.brandsPageBackgroundImage?.length || 0,
+        fullResponse: response
+      });
       if (response.success && response.settings) {
         setSettings(prev => ({
           ...prev,
           ...response.settings
         }));
+        console.log('✅ HOOK: Settings updated in state');
       }
     } catch (error) {
-      console.error('Error loading background settings:', error);
+      console.error('❌ HOOK: Error loading background settings:', error);
     } finally {
       setLoading(false);
     }
@@ -106,12 +114,14 @@ export const useBackgroundSettings = () => {
     const positionY = settings.backgroundImagePositionY || 'center';
     const size = settings.backgroundImageSize || 'cover';
 
+    const opacity = settings.backgroundImageOpacity !== undefined ? settings.backgroundImageOpacity : 1.0;
+    
     return {
       backgroundImage: `url(${backgroundImage})`,
       backgroundSize: size,
       backgroundPosition: `${positionX} ${positionY}`,
       backgroundRepeat: 'no-repeat',
-      opacity: settings.backgroundImageOpacity || 0.3,
+      opacity: opacity,
       filter: `blur(${settings.backgroundImageBlur || 0}px)`
     };
   };

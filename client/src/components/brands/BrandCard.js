@@ -14,7 +14,7 @@ const BrandCard = ({
   if (variant === 'compact') {
     return (
       <div
-        className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/10 transition-all duration-500 cursor-pointer"
+        className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-black/40 transition-all duration-500 cursor-pointer"
         style={{ transitionDelay: `${index * 80 + 200}ms` }}
         onClick={handleClick}
       >
@@ -45,7 +45,7 @@ const BrandCard = ({
 
   return (
     <div
-      className="group bg-white/5 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-500 cursor-pointer relative pb-16"
+      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16"
       style={{ transitionDelay: `${index * 100}ms` }}
       onClick={handleClick}
     >

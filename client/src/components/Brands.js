@@ -23,7 +23,7 @@ const Brands = () => {
   const [pageDescription, setPageDescription] = useState(
     dataCache.pageDescription || 'Objavte našu ponuku prémiových značiek pre kúpeľne, interiér i exteriér.'
   );
-  const { settings: backgroundSettings, getBackgroundStyle, getBackgroundImageStyle } = useBackgroundSettings();
+  const { settings: backgroundSettings, getBackgroundImageStyle } = useBackgroundSettings();
   const isMountedRef = useRef(false); // Prevent double loading
 
   const handleBrandClick = (brand) => {
@@ -105,6 +105,10 @@ const Brands = () => {
   // Removed skeleton loading state - show content immediately
 
   // Debug background settings
+  const bgImageStyle = backgroundSettings.brandsPageBackgroundImage 
+    ? getBackgroundImageStyle(backgroundSettings.brandsPageBackgroundImage, 'brands')
+    : null;
+  
   console.log('🎨 BRANDS PAGE DEBUG:', {
     'Has Background Image?': !!backgroundSettings.brandsPageBackgroundImage,
     'Image URL Length': backgroundSettings.brandsPageBackgroundImage?.length || 0,
@@ -112,32 +116,26 @@ const Brands = () => {
     'Pattern Enabled?': backgroundSettings.brandsPagePattern,
     'Pattern Type': backgroundSettings.patternType,
     'Pattern Opacity': backgroundSettings.patternOpacity,
+    'Background Image Style Applied': bgImageStyle,
     'All Settings': backgroundSettings
   });
 
   return (
-    <Layout>
-      {/* Full Page Background Image */}
+    <>
+      {/* Full Page Background Image - Only uploaded image, no pattern */}
       {backgroundSettings.brandsPageBackgroundImage && (
         <div 
-          className="fixed inset-0" 
+          className="fixed inset-0 bg-black"
           style={{
             ...getBackgroundImageStyle(backgroundSettings.brandsPageBackgroundImage, 'brands'),
             pointerEvents: 'none',
-            zIndex: -20
+            zIndex: 0
           }}
         ></div>
       )}
       
-      {/* Dynamic background pattern - only show with background image */}
-      {backgroundSettings.brandsPageBackgroundImage && backgroundSettings.brandsPagePattern && backgroundSettings.patternType !== 'none' && (
-        <div className="fixed inset-0" style={{
-          ...getBackgroundStyle('brands'),
-          zIndex: -10
-        }}></div>
-      )}
-      
-      <NavBar />
+      <Layout>
+        <NavBar />
       
       {/* Header Section */}
       <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
@@ -206,7 +204,8 @@ const Brands = () => {
         </div>
       </div>
 
-    </Layout>
+      </Layout>
+    </>
   );
 };
 
