@@ -305,7 +305,7 @@ const References = () => {
           }}>
             Referencie
           </h1>
-          <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+          <p className={`text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
           style={{

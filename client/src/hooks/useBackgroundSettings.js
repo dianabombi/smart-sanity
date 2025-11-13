@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ApiService from '../services/api';
 
 export const useBackgroundSettings = () => {
   const [settings, setSettings] = useState({
     brandsPagePattern: true,
     entrancePagePattern: true,
-    patternOpacity: 0.05,
+    patternOpacity: 0.3,
     patternSize: 20,
     patternType: 'tiles',
     homePageBackground: 'default',
@@ -22,56 +22,53 @@ export const useBackgroundSettings = () => {
     backgroundImagePositionY: 'center'
   });
   const [loading, setLoading] = useState(true);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent double loading in React Strict Mode
+    if (isMountedRef.current) {
+      return;
+    }
+    
+    isMountedRef.current = true;
     loadSettings();
   }, []);
 
   const loadSettings = async () => {
     try {
-      console.log('🔄 HOOK: Loading background settings from API...');
       const response = await ApiService.getBackgroundSettings();
       if (response.success && response.settings) {
-        console.log('✅ HOOK: Background settings loaded from DB:', {
-          hasReferencesImage: !!response.settings.referencesPageBackgroundImage,
-          referencesImageLength: response.settings.referencesPageBackgroundImage?.length || 0,
-          hasBrandsImage: !!response.settings.brandsPageBackgroundImage,
-          hasEntranceImage: !!response.settings.entrancePageBackgroundImage,
-          hasContactImage: !!response.settings.contactPageBackgroundImage,
-          hasInspirationsImage: !!response.settings.inspirationsPageBackgroundImage,
-          allKeys: Object.keys(response.settings).filter(k => k.includes('Image'))
-        });
         setSettings(prev => ({
           ...prev,
           ...response.settings
         }));
-      } else {
-        console.log('⚠️ HOOK: Using default background settings');
       }
     } catch (error) {
-      console.error('❌ HOOK: Error loading background settings:', error);
+      console.error('Error loading background settings:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const getPatternCSS = (patternType) => {
+    const patternColor = '#000000'; // Solid black - opacity controlled by layer
+    
     switch (patternType) {
       case 'tiles':
         return `
-          linear-gradient(45deg, #ffffff 25%, transparent 25%),
-          linear-gradient(-45deg, #ffffff 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #ffffff 75%),
-          linear-gradient(-45deg, transparent 75%, #ffffff 75%)
+          linear-gradient(45deg, ${patternColor} 25%, transparent 25%),
+          linear-gradient(-45deg, ${patternColor} 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, ${patternColor} 75%),
+          linear-gradient(-45deg, transparent 75%, ${patternColor} 75%)
         `;
       case 'dots':
-        return `radial-gradient(circle, #ffffff 2px, transparent 2px)`;
+        return `radial-gradient(circle, ${patternColor} 2px, transparent 2px)`;
       case 'lines':
-        return `linear-gradient(90deg, #ffffff 1px, transparent 1px)`;
+        return `linear-gradient(90deg, ${patternColor} 1px, transparent 1px)`;
       case 'grid':
         return `
-          linear-gradient(90deg, #ffffff 1px, transparent 1px),
-          linear-gradient(0deg, #ffffff 1px, transparent 1px)
+          linear-gradient(90deg, ${patternColor} 1px, transparent 1px),
+          linear-gradient(0deg, ${patternColor} 1px, transparent 1px)
         `;
       default:
         return 'none';
@@ -91,7 +88,8 @@ export const useBackgroundSettings = () => {
       backgroundImage: getPatternCSS(settings.patternType),
       backgroundSize: `${settings.patternSize}px ${settings.patternSize}px`,
       backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-      opacity: settings.patternOpacity
+      opacity: settings.patternOpacity,
+      pointerEvents: 'none'
     };
   };
 
@@ -108,17 +106,7 @@ export const useBackgroundSettings = () => {
     const positionY = settings.backgroundImagePositionY || 'center';
     const size = settings.backgroundImageSize || 'cover';
 
-    console.log('🎨 Background Image Style Debug:', {
-      page,
-      positionX,
-      positionY,
-      size,
-      opacity: settings.backgroundImageOpacity,
-      blur: settings.backgroundImageBlur,
-      settings
-    });
-
-    const style = {
+    return {
       backgroundImage: `url(${backgroundImage})`,
       backgroundSize: size,
       backgroundPosition: `${positionX} ${positionY}`,
@@ -126,9 +114,6 @@ export const useBackgroundSettings = () => {
       opacity: settings.backgroundImageOpacity || 0.3,
       filter: `blur(${settings.backgroundImageBlur || 0}px)`
     };
-
-    console.log('🎨 Final background style:', style);
-    return style;
   };
 
   return {

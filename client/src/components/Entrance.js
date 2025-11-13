@@ -1,71 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
+// Cache to survive React Strict Mode remounts
+const defaultBulletPoints = [
+  "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
+  "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
+  "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
+  "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
+  "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
+  "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
+];
+
+const entranceCache = {
+  bulletPoints: null,
+  isLoaded: false
+};
+
 const Entrance = () => {
   const [visibleItems, setVisibleItems] = useState([]);
-  const { settings: backgroundSettings, getBackgroundStyle, refreshSettings } = useBackgroundSettings();
-  const [bulletPoints, setBulletPoints] = useState([
-    "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
-    "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
-    "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
-    "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
-    "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
-    "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
-  ]);
+  const { settings: backgroundSettings, getBackgroundStyle } = useBackgroundSettings();
+  const [bulletPoints, setBulletPoints] = useState(
+    entranceCache.bulletPoints || defaultBulletPoints
+  );
+  const isMountedRef = useRef(false);
 
-  // Load content from admin
+  // Load content from admin only once on mount
   useEffect(() => {
+    if (isMountedRef.current) {
+      return;
+    }
+    isMountedRef.current = true;
     loadContent();
-  }, []);
-
-  // Force component re-render when background settings change
-  const [renderKey, setRenderKey] = React.useState(0);
-  
-  useEffect(() => {
-    // Force re-render when background settings change
-    setRenderKey(prev => prev + 1);
-  }, [
-    backgroundSettings.backgroundImagePositionX,
-    backgroundSettings.backgroundImagePositionY,
-    backgroundSettings.backgroundImageSize,
-    backgroundSettings.backgroundImageOpacity,
-    backgroundSettings.backgroundImageBlur
-  ]);
-  
-  // Separate useEffect for background settings refresh
-  useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('🔄 Refreshing background settings...');
-      refreshSettings();
-    }, 2000); // Every 2 seconds for faster updates
-
-    return () => clearInterval(interval);
-  }, [refreshSettings]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContent = async () => {
     try {
-      console.log('🔄 Loading content from API...');
       const result = await ApiService.getPageContent('what-we-offer', 'main', 'content');
-      console.log('📊 Content API result:', result);
       
       if (result.success && result.content) {
         const lines = result.content.split('\n').filter(line => line.trim().startsWith('•'));
         const points = lines.map(line => line.replace('•', '').trim());
         if (points.length > 0) {
-          console.log('✅ Content loaded from API:', points);
           setBulletPoints(points);
-        } else {
-          console.log('⚠️ No bullet points found in API content, using defaults');
+          entranceCache.bulletPoints = points;
+          entranceCache.isLoaded = true;
         }
-      } else {
-        console.log('⚠️ No content from API, using default bullet points');
       }
     } catch (error) {
-      console.error('❌ Error loading content:', error);
-      console.log('⚠️ Using default bullet points due to error');
+      console.error('Error loading content:', error);
     }
   };
 
@@ -78,29 +63,11 @@ const Entrance = () => {
     return () => clearTimeout(timer);
   }, [bulletPoints]);
 
-  console.log('🎨 ENTRANCE: Current background settings:', backgroundSettings);
-  console.log('🎨 ENTRANCE: Has background image:', !!backgroundSettings.entrancePageBackgroundImage);
-  console.log('🎨 ENTRANCE: Position X:', backgroundSettings.backgroundImagePositionX);
-  console.log('🎨 ENTRANCE: Position Y:', backgroundSettings.backgroundImagePositionY);
-  console.log('🎨 ENTRANCE: Size:', backgroundSettings.backgroundImageSize);
-  console.log('🎨 ENTRANCE: Opacity:', backgroundSettings.backgroundImageOpacity);
-  console.log('🎨 ENTRANCE: Blur:', backgroundSettings.backgroundImageBlur);
-  
-  // Log the actual computed style that will be applied
-  const computedStyle = backgroundSettings.entrancePageBackgroundImage ? {
-    backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
-    backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
-    opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 0.3,
-    filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
-  } : null;
-  console.log('🎨 ENTRANCE: Computed style to apply:', computedStyle);
-
   return (
-    <div className="min-h-screen bg-black relative" key={`entrance-${renderKey}`}>
+    <div className="min-h-screen bg-black relative">
       {/* Background Image - covers entire viewport */}
       {backgroundSettings.entrancePageBackgroundImage ? (
         <div 
-          key={`bg-${renderKey}-${backgroundSettings.backgroundImagePositionX}-${backgroundSettings.backgroundImagePositionY}`}
           className="fixed inset-0 z-0"
           style={{
             backgroundImage: `url(${backgroundSettings.entrancePageBackgroundImage})`,
@@ -135,7 +102,6 @@ const Entrance = () => {
         {/* Services Cards Section */}
         <div className="pb-12 px-4 sm:px-6 lg:px-8 relative z-10 mt-8">
           <div className="max-w-4xl mx-auto">
-            {console.log('🔍 Rendering bullet points:', bulletPoints.length, bulletPoints)}
             <div className="grid grid-cols-1 gap-6 md:gap-8">
               {bulletPoints.map((text, index) => (
                 <div
