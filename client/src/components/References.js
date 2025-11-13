@@ -35,17 +35,26 @@ const fallbackReferences = [
     }
   ];
 
+// Cache to survive component remounts
+const referencesCache = {
+  references: null,
+  pageDescription: null,
+  isLoaded: false
+};
+
 const References = () => {
-  const [references, setReferences] = useState(fallbackReferences);
+  const [references, setReferences] = useState(referencesCache.references || []);
   const [visible, setVisible] = useState(false);
   const [selectedReferenceImages, setSelectedReferenceImages] = useState(null);
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
-  const [pageDescription, setPageDescription] = useState('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
-  const hasLoadedRef = useRef(false); // Prevent double loading
+  const [pageDescription, setPageDescription] = useState(
+    referencesCache.pageDescription || 'Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.'
+  );
+  const isMountedRef = useRef(false); // Prevent double loading
   
   // Background settings hook
-  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
+  const { settings: backgroundSettings } = useBackgroundSettings();
 
   const loadReferences = useCallback(async (forceRefresh = false) => {
     try {
@@ -57,6 +66,8 @@ const References = () => {
         console.log(`✅ PUBLIC REFERENCES: Loaded ${result.references.length} references from database`);
         console.log('📋 PUBLIC REFERENCES: First reference:', result.references[0]);
         setReferences(result.references);
+        referencesCache.references = result.references;
+        referencesCache.isLoaded = true;
       } else {
         console.warn('⚠️ PUBLIC REFERENCES: No references in database or failed to load');
         console.log('📊 PUBLIC REFERENCES: Result details:', {
@@ -81,34 +92,25 @@ const References = () => {
   }, []);
 
   useEffect(() => {
-    // Prevent double loading (React Strict Mode and re-renders)
-    if (hasLoadedRef.current) {
+    // Prevent double loading
+    if (isMountedRef.current) {
       return;
     }
     
-    hasLoadedRef.current = true;
+    isMountedRef.current = true;
     loadReferences();
     loadPageDescription();
-    // Removed auto-refresh to prevent screen flickering
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Auto-refresh background settings every 2 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refreshSettings();
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [refreshSettings]);
 
   const loadPageDescription = async () => {
     try {
       const result = await ApiService.getPageContent('references', 'main', 'description');
       if (result.success && result.content) {
         setPageDescription(result.content);
+        referencesCache.pageDescription = result.content;
       }
     } catch (error) {
-      console.error('Error loading page description:', error);
+      console.log('Using default page description');
     }
   };
 

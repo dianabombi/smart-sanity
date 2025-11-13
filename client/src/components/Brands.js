@@ -169,28 +169,30 @@ const Brands = () => {
         </div>
       </div>
 
-      {/* Ostatné Section */}
-      <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-6xl mx-auto relative z-10">
-          <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide opacity-100 translate-y-0">
-            Ostatné
-          </h2>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
-            Ďalší producenti, ktorých vám vieme ponúknuť
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {brands.filter(brand => brand.is_main === false || brand.category === 'Ostatné').map((brand, index) => (
-              <BrandCard
-                key={brand.id || brand._id || index}
-                brand={brand}
-                index={index}
-                onClick={handleBrandClick}
-                variant="compact"
-              />
-            ))}
+      {/* Ostatné Section - Only show if there are brands in this category */}
+      {brands.filter(brand => brand.is_main === false || brand.category === 'Ostatné').length > 0 && (
+        <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-6xl mx-auto relative z-10">
+            <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-4 text-center tracking-wide opacity-100 translate-y-0">
+              Ostatné
+            </h2>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
+              Ďalší producenti, ktorých vám vieme ponúknuť
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              {brands.filter(brand => brand.is_main === false || brand.category === 'Ostatné').map((brand, index) => (
+                <BrandCard
+                  key={brand.id || brand._id || index}
+                  brand={brand}
+                  index={index}
+                  onClick={handleBrandClick}
+                  variant="compact"
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Call to Action Button Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
