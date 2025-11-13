@@ -194,7 +194,10 @@ const AdminWhatWeOffer = ({ onLogout }) => {
       // Clear any localStorage cache before saving
       localStorage.removeItem('backgroundSettings');
       
-      const response = await ApiService.updateBackgroundSettings(backgroundSettings);
+      // Filter out UI helper fields that shouldn't be saved to database
+      const { customPositionX, customPositionY, ...settingsToSave } = backgroundSettings;
+      
+      const response = await ApiService.updateBackgroundSettings(settingsToSave);
       console.log('📊 Save response:', response);
       
       if (response.success) {
@@ -528,7 +531,8 @@ const AdminWhatWeOffer = ({ onLogout }) => {
                         setTimeout(async () => {
                           try {
                             setBackgroundLoading(true);
-                            const result = await ApiService.updateBackgroundSettings(testSettings);
+                            const { customPositionX, customPositionY, ...settingsToSave } = testSettings;
+                            const result = await ApiService.updateBackgroundSettings(settingsToSave);
                             if (result.success) {
                               setBackgroundMessage('✅ Test hodnoty nastavené a uložené!');
                             }
@@ -568,7 +572,8 @@ const AdminWhatWeOffer = ({ onLogout }) => {
                         setTimeout(async () => {
                           try {
                             setBackgroundLoading(true);
-                            const result = await ApiService.updateBackgroundSettings(defaultSettings);
+                            const { customPositionX, customPositionY, ...settingsToSave } = defaultSettings;
+                            const result = await ApiService.updateBackgroundSettings(settingsToSave);
                             if (result.success) {
                               setBackgroundMessage('✅ Nastavenia resetované na predvolené!');
                             }

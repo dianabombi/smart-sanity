@@ -21,7 +21,7 @@ const entranceCache = {
 
 const Entrance = () => {
   const [visibleItems, setVisibleItems] = useState([]);
-  const { settings: backgroundSettings, getBackgroundStyle } = useBackgroundSettings();
+  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
   const [bulletPoints, setBulletPoints] = useState(
     entranceCache.bulletPoints || defaultBulletPoints
   );
@@ -35,6 +35,15 @@ const Entrance = () => {
     isMountedRef.current = true;
     loadContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-refresh background settings every 3 seconds to pick up admin changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshSettings();
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [refreshSettings]);
 
   const loadContent = async () => {
     try {
@@ -63,29 +72,36 @@ const Entrance = () => {
     return () => clearTimeout(timer);
   }, [bulletPoints]);
 
+  // Debug logging for background settings
+  console.log('🎨 ENTRANCE PAGE DEBUG:', {
+    'Has Entrance Background?': !!backgroundSettings.entrancePageBackgroundImage,
+    'Entrance Image Length': backgroundSettings.entrancePageBackgroundImage?.length || 0,
+    'Image Preview (first 50 chars)': backgroundSettings.entrancePageBackgroundImage?.substring(0, 50) || 'NO IMAGE',
+    'Opacity': backgroundSettings.backgroundImageOpacity,
+    'All Settings': backgroundSettings
+  });
+
   return (
-    <div className="min-h-screen bg-black relative">
-      {/* Background Image - covers entire viewport */}
-      {backgroundSettings.entrancePageBackgroundImage ? (
+    <>
+      {/* Background Image - Outside parent, covers entire viewport */}
+      {backgroundSettings.entrancePageBackgroundImage && (
         <div 
-          className="fixed inset-0 z-0"
+          className="fixed inset-0 bg-black"
           style={{
             backgroundImage: `url(${backgroundSettings.entrancePageBackgroundImage})`,
             backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
             backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
             backgroundRepeat: 'no-repeat',
             opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 1.0,
-            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none'
+            filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
+            zIndex: 0,
+            pointerEvents: 'none'
           }}
-        />
-      ) : (
-        <div 
-          className="fixed inset-0 z-0"
-          style={getBackgroundStyle('entrance')}
         />
       )}
       
-      <div className="relative min-h-screen">
+      <div className="min-h-screen relative">
+        <div className="relative min-h-screen">
         <NavBar />
         
         {/* Header Section */}
@@ -104,7 +120,7 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400 hover:scale-105 ${
+                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400 ${
                     visibleItems.includes(index) 
                       ? 'translate-y-0 opacity-100 scale-100' 
                       : 'translate-y-8 opacity-0 scale-95'
@@ -141,8 +157,9 @@ const Entrance = () => {
 
         {/* Footer */}
         <Footer />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -2077,7 +2077,9 @@ class ApiService {
         errorCode: error?.code,
         dataKeys: data ? Object.keys(data) : [],
         hasBrandsImage: !!data?.brandsPageBackgroundImage,
-        brandsImageLength: data?.brandsPageBackgroundImage?.length || 0
+        brandsImageLength: data?.brandsPageBackgroundImage?.length || 0,
+        hasEntranceImage: !!data?.entrancePageBackgroundImage,
+        entranceImageLength: data?.entrancePageBackgroundImage?.length || 0
       });
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
@@ -2125,6 +2127,13 @@ class ApiService {
 
   async updateBackgroundSettings(settings) {
     try {
+      console.log('💾 API: Updating background settings:', {
+        hasEntranceImage: !!settings.entrancePageBackgroundImage,
+        entranceImageLength: settings.entrancePageBackgroundImage?.length || 0,
+        hasBrandsImage: !!settings.brandsPageBackgroundImage,
+        allKeys: Object.keys(settings)
+      });
+      
       if (!this.isSupabaseAvailable()) {
         // Store in localStorage as fallback
         localStorage.setItem('backgroundSettings', JSON.stringify(settings));
@@ -2142,6 +2151,7 @@ class ApiService {
 
       if (error) throw error;
 
+      console.log('✅ API: Background settings updated successfully');
       return { success: true, settings: data[0] };
     } catch (error) {
       console.error('Error updating background settings:', error);
