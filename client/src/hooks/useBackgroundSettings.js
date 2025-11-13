@@ -25,7 +25,7 @@ export const useBackgroundSettings = () => {
   const isMountedRef = useRef(false);
 
   useEffect(() => {
-    // Prevent double loading in React Strict Mode
+    // Load on mount only once
     if (isMountedRef.current) {
       return;
     }
@@ -34,7 +34,7 @@ export const useBackgroundSettings = () => {
     loadSettings();
   }, []);
 
-  const loadSettings = async () => {
+  const loadSettings = async (force = false) => {
     try {
       console.log('🔄 HOOK: Fetching background settings from API...');
       const response = await ApiService.getBackgroundSettings();

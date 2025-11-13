@@ -23,8 +23,17 @@ const Brands = () => {
   const [pageDescription, setPageDescription] = useState(
     dataCache.pageDescription || 'Objavte našu ponuku prémiových značiek pre kúpeľne, interiér i exteriér.'
   );
-  const { settings: backgroundSettings, getBackgroundImageStyle } = useBackgroundSettings();
+  const { settings: backgroundSettings, getBackgroundImageStyle, refreshSettings } = useBackgroundSettings();
   const isMountedRef = useRef(false); // Prevent double loading
+  
+  // Auto-refresh background settings every 3 seconds to pick up admin changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshSettings();
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [refreshSettings]);
 
   const handleBrandClick = (brand) => {
     console.log('Navigating to brand detail:', brand.name);
