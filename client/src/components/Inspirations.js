@@ -180,7 +180,7 @@ const Inspirations = () => {
         
         <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
             Inšpirácie
           </h1>
