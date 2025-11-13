@@ -222,7 +222,7 @@ const References = () => {
         </div>
         
         {/* Skeleton Grid */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 min-h-[60vh]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 min-h-[60vh]">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {Array.from({ length: skeletonCount }, (_, index) => (
               <div key={index} className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 transition-all duration-300 relative pb-16 min-h-[360px]" style={{ opacity: 1 }}>
@@ -317,7 +317,7 @@ const References = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12 min-h-[60vh]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 min-h-[60vh]">
         {references.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {references.map((reference, index) => (
