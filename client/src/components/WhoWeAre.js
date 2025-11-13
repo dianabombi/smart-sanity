@@ -12,9 +12,8 @@ const WhoWeAre = () => {
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [backgroundImages, setBackgroundImages] = useState([
-    '/photos/FRE218_1.jpg',
-    '/photos/FRE218_2.jpg'
-  ]); // Default fallback images
+    // Placeholder - no default background until set in admin
+  ]); // O nás background - configure in admin
   const [backgroundSettings, setBackgroundSettings] = useState(null);
 
   useEffect(() => {
@@ -71,6 +70,9 @@ const WhoWeAre = () => {
 
   // Background slideshow rotation
   useEffect(() => {
+    // Only start slideshow if there are images
+    if (backgroundImages.length === 0) return;
+    
     const slideInterval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
         (prevIndex + 1) % backgroundImages.length
