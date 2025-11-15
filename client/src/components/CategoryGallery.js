@@ -1,10 +1,11 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 
 const CategoryGallery = () => {
   const { category } = useParams();
+  const navigate = useNavigate();
   
   // Placeholder images - you can replace these with actual category-specific images
   // const galleryImages = [
@@ -38,13 +39,35 @@ const CategoryGallery = () => {
       
       {/* Header Section */}
       <div className="pt-8 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-light text-gray-300 mb-6 tracking-wide">
-            {categoryTitles[category] || 'GALLERY'}
-          </h1>
-          <p className="text-lg text-gray-300 opacity-80 max-w-2xl mx-auto leading-relaxed">
-            {categoryDescriptions[category] || 'Explore our collection of sanitary facilities.'}
-          </p>
+        <div className="max-w-6xl mx-auto">
+          {/* Back Arrow */}
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-6 group"
+            style={{ transform: 'translateX(-60px)' }}
+            title="Späť"
+          >
+            <img 
+              src="/right-chevron.png" 
+              alt="Späť" 
+              className="h-12 scale-90 rotate-180 drop-shadow-lg brightness-[0.6] group-hover:brightness-100"
+              style={{ 
+                filter: 'brightness(0.6) invert(0.6)', 
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
+              onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+            />
+          </button>
+          
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-light text-gray-300 mb-6 tracking-wide">
+              {categoryTitles[category] || 'GALLERY'}
+            </h1>
+            <p className="text-lg text-gray-300 opacity-80 max-w-2xl mx-auto leading-relaxed">
+              {categoryDescriptions[category] || 'Explore our collection of sanitary facilities.'}
+            </p>
+          </div>
         </div>
       </div>
 

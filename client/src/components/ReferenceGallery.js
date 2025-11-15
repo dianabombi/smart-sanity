@@ -143,9 +143,29 @@ const ReferenceGallery = () => {
         <NavBar />
         
         <div className="container mx-auto px-4 py-12">
+          {/* Back Arrow */}
+          <button
+            onClick={() => navigate('/references')}
+            className="mb-6 group mt-32"
+            style={{ transform: 'translateX(-60px)' }}
+            title="Späť na referencie"
+          >
+            <img 
+              src="/right-chevron.png" 
+              alt="Späť" 
+              className="h-12 scale-90 rotate-180 drop-shadow-lg brightness-[0.6] group-hover:brightness-100"
+              style={{ 
+                filter: 'brightness(0.6) invert(0.6)', 
+                transition: 'all 0.3s'
+              }}
+              onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
+              onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+            />
+          </button>
+          
           {/* Header Section with Reference Details */}
-          <div className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-4 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <div className="text-center mb-10 -mt-20">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
               {reference.title}
             </h1>
             

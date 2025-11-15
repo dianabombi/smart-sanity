@@ -149,20 +149,7 @@ const References = () => {
         
         {/* Header Section */}
         <div className="pb-10 px-4 sm:px-6 lg:px-8 pt-32">
-        <div className="max-w-6xl mx-auto">
-          {/* Back Arrow */}
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200 mb-6 group"
-            title="Späť"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span className="text-sm">Späť</span>
-          </button>
-          
-          <div className="text-center">
+        <div className="max-w-6xl mx-auto text-center">
             <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
@@ -183,7 +170,6 @@ const References = () => {
             </p>
           </div>
         </div>
-      </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 min-h-[60vh]">
         {references.length > 0 ? (
