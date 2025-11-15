@@ -8,6 +8,7 @@ import Brands from './components/Brands';
 import BrandDetail from './components/BrandDetail';
 import CategoryGallery from './components/CategoryGallery';
 import References from './components/References';
+import ReferenceGallery from './components/ReferenceGallery';
 import Inspirations from './components/Inspirations';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import Admin from './components/Admin';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/brands" element={<Brands />} />
           <Route path="/brands/:brandId" element={<BrandDetail />} />
           <Route path="/references" element={<References />} />
+          <Route path="/references/:referenceId" element={<ReferenceGallery />} />
           <Route path="/inspirations" element={<Inspirations />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/components/category/:category" element={<CategoryGallery />} />

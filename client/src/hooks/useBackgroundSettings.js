@@ -13,6 +13,7 @@ export const useBackgroundSettings = () => {
     brandsPageBackgroundImage: null,
     entrancePageBackgroundImage: null,
     referencesPageBackgroundImage: null,
+    referenceGalleryBackgroundImage: null,
     contactPageBackgroundImage: null,
     inspirationsPageBackgroundImage: null,
     backgroundImageOpacity: 0.3,

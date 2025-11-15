@@ -9,6 +9,7 @@ import AdminMessages from './admin/AdminMessages';
 import AdminHeroBanners from './admin/AdminHeroBanners';
 import AdminReferences from './admin/AdminReferences';
 import AdminReferencesContent from './admin/AdminReferencesContent';
+import AdminReferenceGallery from './admin/AdminReferenceGallery';
 import AdminContact from './admin/AdminContact';
 import AdminInspirations from './admin/AdminInspirations';
 import AdminInspirationsContent from './admin/AdminInspirationsContent';
@@ -59,6 +60,7 @@ const Admin = () => {
       <Route path="/inspirations-content" element={<AdminInspirationsContent onLogout={handleLogout} />} />
       <Route path="/references" element={<AdminReferences onLogout={handleLogout} />} />
       <Route path="/references-content" element={<AdminReferencesContent onLogout={handleLogout} />} />
+      <Route path="/references-gallery" element={<AdminReferenceGallery onLogout={handleLogout} />} />
       <Route path="/contact" element={<AdminContact onLogout={handleLogout} />} />
     </Routes>
   );

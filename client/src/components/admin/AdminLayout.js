@@ -16,6 +16,7 @@ const AdminLayout = ({ children, onLogout }) => {
     { label: 'Inšpirácie - Text', path: '/admin/inspirations-content', icon: '📝' },
     { label: 'Referencie', path: '/admin/references', icon: '📋' },
     { label: 'Referencie - Text', path: '/admin/references-content', icon: '📝' },
+    { label: 'Referencie - Galéria', path: '/admin/references-gallery', icon: '🖼️' },
     { label: 'Kontakt', path: '/admin/contact', icon: '📞' },
     { label: 'Kontaktné správy', path: '/admin/messages', icon: '📧' }
   ];
