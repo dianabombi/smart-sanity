@@ -142,12 +142,11 @@ const ReferenceGallery = () => {
       <div className="relative min-h-screen">
         <NavBar />
         
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-4">
           {/* Back Arrow */}
           <button
             onClick={() => navigate('/references')}
-            className="mb-6 group mt-32"
-            style={{ transform: 'translateX(-60px)' }}
+            className="fixed top-32 right-8 group z-[110]"
             title="Späť na referencie"
           >
             <img 
@@ -164,25 +163,25 @@ const ReferenceGallery = () => {
           </button>
           
           {/* Header Section with Reference Details */}
-          <div className="text-center mb-10 -mt-20">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <div className="mb-10 mt-32 max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-center">
               {reference.title}
             </h1>
             
             {/* Reference Metadata */}
-            <div className="flex flex-wrap justify-center gap-4 text-blue-300 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
+            <div className="flex flex-wrap gap-4 text-blue-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] text-left">
               <span className="font-medium">{reference.year}</span>
               {reference.location && <span>{reference.location}</span>}
             </div>
             
             {/* Description */}
-            <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed mb-4">
+            <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] leading-snug mb-2 text-left">
               {reference.description}
             </p>
             
             {/* Client/Architect */}
             {reference.client && (
-              <p className="text-lg text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.8s_forwards]">
+              <p className="text-lg text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.8s_forwards] text-left">
                 Architekt: {reference.client}
               </p>
             )}
@@ -256,12 +255,6 @@ const ReferenceGallery = () => {
 
           {/* Navigation Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12 px-4">
-            <button 
-              onClick={() => navigate('/references')}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
-            >
-              ← Späť na referencie
-            </button>
             <button 
               onClick={() => navigate('/contact')}
               className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
