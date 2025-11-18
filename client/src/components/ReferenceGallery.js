@@ -188,7 +188,8 @@ const ReferenceGallery = () => {
           </div>
 
           {/* Photos Gallery */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="max-w-6xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {reference.images.map((image, index) => {
               // Handle both string paths and object formats
               let imageUrl;
@@ -201,7 +202,7 @@ const ReferenceGallery = () => {
               return (
                 <div key={index} className="group" style={{ opacity: 1 }}>
                   <div 
-                    className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
+                    className="h-48 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
                     onClick={() => openImageModal(imageUrl, index)}
                   >
                     {/* Loading skeleton */}
@@ -222,7 +223,7 @@ const ReferenceGallery = () => {
                       decoding="async"
                       style={{
                         backgroundColor: '#1f2937',
-                        minHeight: '256px'
+                        minHeight: '192px'
                       }}
                       onLoad={(e) => {
                         e.target.style.opacity = '1';
@@ -251,6 +252,7 @@ const ReferenceGallery = () => {
                 </div>
               );
             })}
+            </div>
           </div>
 
           {/* Navigation Buttons */}
