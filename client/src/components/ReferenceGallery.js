@@ -142,7 +142,7 @@ const ReferenceGallery = () => {
       <div className="relative min-h-screen">
         <NavBar />
         
-        <div className="container mx-auto px-4 py-4">
+        <div className="container ml-9 px-1 py-4">
           {/* Back Arrow */}
           <button
             onClick={() => navigate('/references')}
@@ -163,8 +163,8 @@ const ReferenceGallery = () => {
           </button>
           
           {/* Header Section with Reference Details */}
-          <div className="mb-10 mt-32 max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-center">
+          <div className="mb-10 mt-32 max-w-4xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-left">
               {reference.title}
             </h1>
             
