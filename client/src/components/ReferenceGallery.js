@@ -142,7 +142,7 @@ const ReferenceGallery = () => {
       <div className="relative min-h-screen">
         <NavBar />
         
-        <div className="container ml-9 px-1 pt-4 pb-16">
+        <div className="container mx-auto px-4 pt-32 pb-16">
           {/* Back Arrow */}
           <button
             onClick={() => navigate('/references')}
@@ -162,8 +162,8 @@ const ReferenceGallery = () => {
           </button>
           
           {/* Header Section with Reference Details */}
-          <div className="mb-10 mt-32 max-w-4xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-left">
+          <div className="mb-10 max-w-4xl mx-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide text-left">
               {reference.title}
             </h1>
             
@@ -187,8 +187,8 @@ const ReferenceGallery = () => {
           </div>
 
           {/* Photos Gallery */}
-          <div className="max-w-6xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
             {reference.images.map((image, index) => {
               // Handle both string paths and object formats
               let imageUrl;
@@ -255,13 +255,15 @@ const ReferenceGallery = () => {
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-start mt-12 px-4">
-            <button 
-              onClick={() => navigate('/contact')}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
-            >
-              Kontaktujte nás
-            </button>
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col sm:flex-row gap-4 justify-start mt-12">
+              <button 
+                onClick={() => navigate('/contact')}
+                className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
+              >
+                Kontaktujte nás
+              </button>
+            </div>
           </div>
         </div>
 
