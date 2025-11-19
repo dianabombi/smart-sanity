@@ -142,7 +142,7 @@ const ReferenceGallery = () => {
       <div className="relative min-h-screen">
         <NavBar />
         
-        <div className="container ml-9 px-1 py-4">
+        <div className="container ml-9 px-1 pt-4 pb-16">
           {/* Back Arrow */}
           <button
             onClick={() => navigate('/references')}
@@ -152,10 +152,9 @@ const ReferenceGallery = () => {
             <img 
               src="/right-chevron.png" 
               alt="Späť" 
-              className="h-12 scale-90 rotate-180 drop-shadow-lg brightness-[0.6] group-hover:brightness-100"
+              className="h-9 rotate-180 drop-shadow-lg transition-all duration-300"
               style={{ 
-                filter: 'brightness(0.6) invert(0.6)', 
-                transition: 'all 0.3s'
+                filter: 'brightness(0.6) invert(0.6)'
               }}
               onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
               onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
@@ -189,7 +188,7 @@ const ReferenceGallery = () => {
 
           {/* Photos Gallery */}
           <div className="max-w-6xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {reference.images.map((image, index) => {
               // Handle both string paths and object formats
               let imageUrl;
@@ -202,7 +201,7 @@ const ReferenceGallery = () => {
               return (
                 <div key={index} className="group" style={{ opacity: 1 }}>
                   <div 
-                    className="h-48 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
+                    className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
                     onClick={() => openImageModal(imageUrl, index)}
                   >
                     {/* Loading skeleton */}
@@ -223,7 +222,7 @@ const ReferenceGallery = () => {
                       decoding="async"
                       style={{
                         backgroundColor: '#1f2937',
-                        minHeight: '192px'
+                        minHeight: '256px'
                       }}
                       onLoad={(e) => {
                         e.target.style.opacity = '1';
@@ -256,7 +255,7 @@ const ReferenceGallery = () => {
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12 px-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-start mt-12 px-4">
             <button 
               onClick={() => navigate('/contact')}
               className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
