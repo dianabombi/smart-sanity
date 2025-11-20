@@ -46,7 +46,7 @@ const referencesCache = {
 const References = () => {
   const navigate = useNavigate();
   const [references, setReferences] = useState(referencesCache.references || []);
-  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(!referencesCache.isLoaded);
   const [pageDescription, setPageDescription] = useState(
     referencesCache.pageDescription || 'Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.'
   );
@@ -83,10 +83,7 @@ const References = () => {
       console.log('📋 PUBLIC REFERENCES: Using fallback references due to error');
       setReferences(fallbackReferences);
     } finally {
-      // Start animation after content is loaded
-      setTimeout(() => {
-        setVisible(true);
-      }, 100);
+      setLoading(false);
     }
   };
 
@@ -150,29 +147,21 @@ const References = () => {
         {/* Header Section */}
         <div className="pb-10 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
-              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transition: 'all 0.8s ease-out',
-              transitionDelay: '0.2s'
-            }}>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
               Referencie
             </h1>
-            <p className={`text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed ${
-              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transition: 'all 0.8s ease-out',
-              transitionDelay: '0.4s'
-            }}>
+            <p className="text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
               {pageDescription}
             </p>
           </div>
         </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 min-h-[60vh]">
-        {references.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-32 min-h-[40vh] flex flex-col justify-center">
+            <div className="text-gray-300 text-xl">Načítavam...</div>
+          </div>
+        ) : references.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {references.map((reference, index) => (
               <div 
