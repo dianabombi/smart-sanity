@@ -5,6 +5,7 @@ import ApiService from '../services/api';
 
 const WhoWeAre = () => {
   const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
   const [partnerLogos, setPartnerLogos] = useState([]);
@@ -202,23 +203,8 @@ const WhoWeAre = () => {
 
   const loadContent = async () => {
     try {
-      // Load all data in PARALLEL for faster loading
-      const [brandsResult, contentResult, logosResult] = await Promise.all([
-        ApiService.getBrands().catch(err => ({ success: false, error: err })),
-        ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err })),
-        ApiService.getPartnerLogos().catch(err => ({ success: false, error: err }))
-      ]);
-
-      // Process logo
-      let logoData = '/ebk-logo.svg';
-      if (brandsResult.success && brandsResult.brands) {
-        const ebkBrand = brandsResult.brands.find(brand => 
-          brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-        );
-        if (ebkBrand && ebkBrand.logo) {
-          logoData = ebkBrand.logo;
-        }
-      }
+      // Load critical content FIRST - show page immediately
+      const contentResult = await ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err }));
       
       // Process main content
       let contentData = {
@@ -245,16 +231,36 @@ const WhoWeAre = () => {
         };
       }
       
-      // Process partner logos
-      let logosData = [];
-      if (logosResult && logosResult.success && logosResult.logos) {
-        logosData = logosResult.logos;
-      }
-      
-      // Set all state at once to prevent flickering
-      setEbkLogo(logoData);
+      // Show content immediately
       setContent(contentData);
-      setPartnerLogos(logosData);
+      setLoading(false);
+      
+      // Load secondary data in background (logos)
+      Promise.all([
+        ApiService.getBrands().catch(err => ({ success: false, error: err })),
+        ApiService.getPartnerLogos().catch(err => ({ success: false, error: err }))
+      ]).then(([brandsResult, logosResult]) => {
+        // Process logo
+        let logoData = '/ebk-logo.svg';
+        if (brandsResult.success && brandsResult.brands) {
+          const ebkBrand = brandsResult.brands.find(brand => 
+            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
+          );
+          if (ebkBrand && ebkBrand.logo) {
+            logoData = ebkBrand.logo;
+          }
+        }
+        
+        // Process partner logos
+        let logosData = [];
+        if (logosResult && logosResult.success && logosResult.logos) {
+          logosData = logosResult.logos;
+        }
+        
+        // Update logos when ready
+        setEbkLogo(logoData);
+        setPartnerLogos(logosData);
+      });
       
     } catch (error) {
       console.error('Error loading content:', error);
@@ -262,6 +268,7 @@ const WhoWeAre = () => {
         mainContent: ["Chyba pri načítavaní obsahu. Prosím, obnovte stránku."],
         partnershipContent: ""
       });
+      setLoading(false);
     }
   };
 
@@ -392,7 +399,13 @@ const WhoWeAre = () => {
         <NavBar />
         
         <div className="flex items-center justify-center pt-32 pb-12 flex-1 relative z-10">
-          {contentSection}
+          {loading ? (
+            <div className="text-center">
+              <div className="text-gray-300 text-xl">Načítavam...</div>
+            </div>
+          ) : (
+            contentSection
+          )}
         </div>
       </div>
       
