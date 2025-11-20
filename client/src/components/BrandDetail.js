@@ -202,35 +202,19 @@ const BrandDetail = () => {
                     className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
                     onClick={() => openImageModal(image, index)}
                   >
-                    {/* Loading skeleton */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse">
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-gray-500 text-center">
-                          <div className="text-4xl mb-2">📷</div>
-                          <div className="text-sm">Načítavam...</div>
-                        </div>
-                      </div>
-                    </div>
-                    
                     <img 
                       src={imageUrl} 
                       alt={`${brand.name} ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-all duration-300 opacity-0"
-                      loading={index === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                      fetchpriority={index === 0 ? "high" : "low"}
+                      className="w-full h-full object-cover hover:scale-105 transition-all duration-300"
+                      loading="eager"
+                      decoding="sync"
                       style={{
                         backgroundColor: '#1f2937',
                         minHeight: '256px'
                       }}
-                      onLoad={(e) => {
-                        e.target.style.opacity = '1';
-                        e.target.previousSibling.style.display = 'none';
-                      }}
                       onError={(e) => {
                         e.target.style.display = 'none';
                         e.target.nextSibling.style.display = 'flex';
-                        e.target.previousSibling.style.display = 'none';
                       }}
                     />
                     <div className="text-gray-500 text-center absolute inset-0 flex flex-col items-center justify-center" style={{display: 'none'}}>

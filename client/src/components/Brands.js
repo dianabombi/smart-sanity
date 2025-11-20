@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
@@ -18,25 +18,25 @@ const dataCache = {
 
 const Brands = () => {
   const navigate = useNavigate();
-  // Initialize from cache if available
-  const [brands, setBrands] = useState(dataCache.brands || []);
+  
+  // CRITICAL: Initialize with fallback brands immediately for instant display
+  const fallbackBrands = ApiService.getFallbackBrands();
+  const [brands, setBrands] = useState(dataCache.brands || fallbackBrands);
   const [pageDescription, setPageDescription] = useState(
     dataCache.pageDescription || 'Objavte našu ponuku prémiových značiek pre kúpeľne, interiér i exteriér.'
   );
   const { settings: backgroundSettings, getBackgroundImageStyle, refreshSettings } = useBackgroundSettings();
-  const isMountedRef = useRef(false); // Prevent double loading
   
-  // Auto-refresh background settings every 3 seconds to pick up admin changes
+  // Auto-refresh background settings every 30 seconds to pick up admin changes
   useEffect(() => {
     const interval = setInterval(() => {
       refreshSettings();
-    }, 3000);
+    }, 30000);
     
     return () => clearInterval(interval);
   }, [refreshSettings]);
 
   const handleBrandClick = (brand) => {
-    console.log('Navigating to brand detail:', brand.name);
     // Create URL-friendly brand identifier
     const brandId = brand.id || brand._id || brand.name.toLowerCase().replace(/\s+/g, '-');
     navigate(`/brands/${brandId}`);
@@ -51,7 +51,7 @@ const Brands = () => {
         dataCache.pageDescription = result.content; // Update cache
       }
     } catch (error) {
-      console.log('⚠️ PUBLIC: Failed to load page content, using fallback');
+      // Silently use fallback
     }
   }, []);
 
@@ -64,70 +64,20 @@ const Brands = () => {
         // Update cache
         dataCache.brands = result.brands;
         dataCache.isLoaded = true;
-      } else {
-        console.error('❌ PUBLIC: Failed to load brands:', result.message);
-        setBrands([]);
       }
     } catch (error) {
-      console.error('❌ PUBLIC: Error loading brands:', error);
-      setBrands([]);
+      console.error('❌ Error loading brands:', error);
     }
   }, []);
 
 
   useEffect(() => {
-    // Prevent double loading in React Strict Mode
-    if (isMountedRef.current) {
-      return;
-    }
-    
-    isMountedRef.current = true;
-    let isActive = true; // Track if component is still mounted
-    
-    const loadData = async () => {
-      try {
-        await Promise.all([loadBrands(), loadPageContent()]);
-      } catch (error) {
-        if (isActive) {
-          console.error('❌ BRANDS: Error loading data:', error);
-        }
-      }
-    };
-    
-    loadData();
-    
-    // Cleanup function to prevent state updates after unmount
-    return () => {
-      isActive = false;
-    };
+    // Load data in background - don't block rendering
+    loadBrands();
+    loadPageContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
-  // Debug logs commented out to improve performance
-  // console.log('🚀 PRODUCTION DEPLOYMENT - BRANDS LOADING:');
-  // console.log('- brands.length:', brands.length);
-  // console.log('- loading:', loading);
-  // console.log('- timestamp:', new Date().toISOString());
-  // console.log('- production_version: 2025-01-20-14:16-FINAL');
-  // console.log('- brands data:', brands.slice(0, 2)); // First 2 brands
-
-  // Removed skeleton loading state - show content immediately
-
-  // Debug background settings
-  const bgImageStyle = backgroundSettings.brandsPageBackgroundImage 
-    ? getBackgroundImageStyle(backgroundSettings.brandsPageBackgroundImage, 'brands')
-    : null;
-  
-  console.log('🎨 BRANDS PAGE DEBUG:', {
-    'Has Background Image?': !!backgroundSettings.brandsPageBackgroundImage,
-    'Image URL Length': backgroundSettings.brandsPageBackgroundImage?.length || 0,
-    'Image Preview (first 50 chars)': backgroundSettings.brandsPageBackgroundImage?.substring(0, 50) || 'NO IMAGE',
-    'Pattern Enabled?': backgroundSettings.brandsPagePattern,
-    'Pattern Type': backgroundSettings.patternType,
-    'Pattern Opacity': backgroundSettings.patternOpacity,
-    'Background Image Style Applied': bgImageStyle,
-    'All Settings': backgroundSettings
-  });
 
   return (
     <>
@@ -161,7 +111,7 @@ const Brands = () => {
       {/* Main Brands Grid */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto relative">
-          {/* Main Brands Section */}
+          {/* Main Brands Section - Always show, even if empty */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {brands.filter(brand => brand.is_main !== false).map((brand, index) => (
               <BrandCard

@@ -263,40 +263,23 @@ class ApiService {
 
   // Brands
   async getBrands() {
-    console.log('🔍 DEEP DEBUG: getBrands called');
-    console.log('🔍 Supabase available?', this.isSupabaseAvailable());
-    
     if (!this.isSupabaseAvailable()) {
-      console.log('🚫 Supabase not available, using fallback brands');
       return { success: true, brands: this.getFallbackBrands(), source: 'fallback-no-supabase' };
     }
 
     try {
-      console.log('🔍 DEEP DEBUG: Fetching brands from Supabase...');
-      
-      // Add timeout to prevent long waits
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased to 10 seconds
-      
       const { data, error } = await supabase
         .from('brands')
         .select('*')
         .order('order', { ascending: true })
-        .abortSignal(controller.signal);
-      
-      clearTimeout(timeoutId);
-      
-      console.log('🔍 DEEP DEBUG: Supabase response - error:', error);
-      console.log('🔍 DEEP DEBUG: Supabase response - data length:', data?.length);
-      console.log('🔍 DEEP DEBUG: Supabase response - first item:', data?.[0]);
+        .abortSignal(new AbortController().signal);
       
       if (error) {
-        console.log('🚫 Supabase error:', error);
+        console.error('Supabase error:', error.message);
         return { success: false, error: error, message: 'Supabase error: ' + error.message };
       }
       
       if (!data || data.length === 0) {
-        console.log('🚫 No brands in database');
         return { success: false, message: 'No brands found in database' };
       }
 
@@ -341,7 +324,6 @@ class ApiService {
         };
       });
 
-      console.log('✅ Successfully loaded brands from Supabase database');
       return { success: true, brands: processedBrands, source: 'supabase-database' };
     } catch (error) {
       if (error.name === 'AbortError') {
