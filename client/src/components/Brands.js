@@ -19,9 +19,9 @@ const dataCache = {
 const Brands = () => {
   const navigate = useNavigate();
   
-  // CRITICAL: Initialize with fallback brands immediately for instant display
-  const fallbackBrands = ApiService.getFallbackBrands();
-  const [brands, setBrands] = useState(dataCache.brands || fallbackBrands);
+  // Initialize with cache only - NO fallback brands
+  const [brands, setBrands] = useState(dataCache.brands || []);
+  const [brandsLoading, setBrandsLoading] = useState(!dataCache.isLoaded);
   const [pageDescription, setPageDescription] = useState(
     dataCache.pageDescription || 'Objavte našu ponuku prémiových značiek pre kúpeľne, interiér i exteriér.'
   );
@@ -67,13 +67,19 @@ const Brands = () => {
       }
     } catch (error) {
       console.error('❌ Error loading brands:', error);
+    } finally {
+      setBrandsLoading(false);
     }
   }, []);
 
 
   useEffect(() => {
-    // Load data in background - don't block rendering
-    loadBrands();
+    // Load brands immediately on mount
+    if (!dataCache.isLoaded) {
+      loadBrands();
+    } else {
+      setBrandsLoading(false);
+    }
     loadPageContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -111,18 +117,31 @@ const Brands = () => {
       {/* Main Brands Grid */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto relative">
-          {/* Main Brands Section - Always show, even if empty */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {brands.filter(brand => brand.is_main !== false).map((brand, index) => (
-              <BrandCard
-                key={brand.id || brand._id || index}
-                brand={brand}
-                index={index}
-                onClick={handleBrandClick}
-                variant="main"
-              />
-            ))}
-          </div>
+          {brandsLoading ? (
+            /* Skeleton loading while brands fetch from database */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+              {[...Array(8)].map((_, index) => (
+                <div key={index} className="bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 animate-pulse" style={{ minHeight: '320px' }}>
+                  <div className="h-32 bg-gray-700 rounded mb-4"></div>
+                  <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Main Brands Section - Show real brands only */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+              {brands.filter(brand => brand.is_main !== false).map((brand, index) => (
+                <BrandCard
+                  key={brand.id || brand._id || index}
+                  brand={brand}
+                  index={index}
+                  onClick={handleBrandClick}
+                  variant="main"
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
