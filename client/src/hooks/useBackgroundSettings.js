@@ -1,8 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ApiService from '../services/api';
 
+// Global cache for background settings - shared across all components
+const settingsCache = {
+  data: null,
+  timestamp: null,
+  maxAge: 30000 // Cache for 30 seconds
+};
+
 export const useBackgroundSettings = () => {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState(settingsCache.data || {
     brandsPagePattern: true,
     entrancePagePattern: true,
     patternOpacity: 0.15,
@@ -25,6 +32,37 @@ export const useBackgroundSettings = () => {
   const [loading, setLoading] = useState(true);
   const isMountedRef = useRef(false);
 
+  const loadSettings = useCallback(async (force = false) => {
+    try {
+      // Check cache first unless forced refresh
+      const now = Date.now();
+      if (!force && settingsCache.data && settingsCache.timestamp && (now - settingsCache.timestamp) < settingsCache.maxAge) {
+        setSettings(settingsCache.data);
+        setLoading(false);
+        return;
+      }
+      
+      const response = await ApiService.getBackgroundSettings();
+      
+      if (response.success && response.settings) {
+        const newSettings = {
+          ...settings,
+          ...response.settings
+        };
+        
+        // Update cache
+        settingsCache.data = newSettings;
+        settingsCache.timestamp = Date.now();
+        
+        setSettings(newSettings);
+      }
+    } catch (error) {
+      console.error('Error loading background settings:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [settings]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     // Load on mount only once
     if (isMountedRef.current) {
@@ -32,32 +70,17 @@ export const useBackgroundSettings = () => {
     }
     
     isMountedRef.current = true;
-    loadSettings();
-  }, []);
-
-  const loadSettings = async (force = false) => {
-    try {
-      console.log('🔄 HOOK: Fetching background settings from API...');
-      const response = await ApiService.getBackgroundSettings();
-      console.log('📦 HOOK: API Response:', {
-        success: response.success,
-        hasBrandsImage: !!response.settings?.brandsPageBackgroundImage,
-        imageLength: response.settings?.brandsPageBackgroundImage?.length || 0,
-        fullResponse: response
-      });
-      if (response.success && response.settings) {
-        setSettings(prev => ({
-          ...prev,
-          ...response.settings
-        }));
-        console.log('✅ HOOK: Settings updated in state');
-      }
-    } catch (error) {
-      console.error('❌ HOOK: Error loading background settings:', error);
-    } finally {
+    
+    // Use cached data if available and fresh
+    const now = Date.now();
+    if (settingsCache.data && settingsCache.timestamp && (now - settingsCache.timestamp) < settingsCache.maxAge) {
+      setSettings(settingsCache.data);
       setLoading(false);
+      return;
     }
-  };
+    
+    loadSettings();
+  }, [loadSettings]);
 
   const getPatternCSS = (patternType) => {
     const patternColor = '#000000'; // Solid black - opacity controlled by layer
