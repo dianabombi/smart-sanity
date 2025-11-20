@@ -142,24 +142,25 @@ const ReferenceGallery = () => {
       <div className="relative min-h-screen">
         <NavBar />
         
+        {/* Back Arrow */}
+        <button
+          onClick={() => navigate('/references')}
+          className="absolute right-12 top-[135px] z-10 hover:scale-110 transition-all duration-300"
+          title="Späť na referencie"
+        >
+          <img 
+            src="/right-chevron.png" 
+            alt="Späť" 
+            className="h-9 rotate-180 drop-shadow-lg transition-all duration-300"
+            style={{ 
+              filter: 'brightness(0.6) invert(0.6)'
+            }}
+            onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
+            onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+          />
+        </button>
+        
         <div className="container mx-auto px-4 pt-32 pb-16">
-          {/* Back Arrow */}
-          <button
-            onClick={() => navigate('/references')}
-            className="fixed top-32 right-8 group z-[110]"
-            title="Späť na referencie"
-          >
-            <img 
-              src="/right-chevron.png" 
-              alt="Späť" 
-              className="h-9 rotate-180 drop-shadow-lg transition-all duration-300"
-              style={{ 
-                filter: 'brightness(0.6) invert(0.6)'
-              }}
-              onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
-              onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
-            />
-          </button>
           
           {/* Header Section with Reference Details */}
           <div className="mb-10 max-w-4xl mx-12">
@@ -256,10 +257,10 @@ const ReferenceGallery = () => {
 
           {/* Navigation Buttons */}
           <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4 justify-start mt-12">
+            <div className="flex justify-center mt-12">
               <button 
                 onClick={() => navigate('/contact')}
-                className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
+                className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-48"
               >
                 Kontaktujte nás
               </button>
