@@ -8,7 +8,8 @@ const WhoWeAre = () => {
   const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
-  const [partnerLogos, setPartnerLogos] = useState([]);
+  const [partnerLogos, setPartnerLogos] = useState(null); // null = not loaded yet, [] = loaded but empty
+  const [logosLoading, setLogosLoading] = useState(true);
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -231,11 +232,7 @@ const WhoWeAre = () => {
         };
       }
       
-      // Show content immediately
-      setContent(contentData);
-      setLoading(false);
-      
-      // Load secondary data in background (logos)
+      // Load logos FIRST before showing content
       Promise.all([
         ApiService.getBrands().catch(err => ({ success: false, error: err })),
         ApiService.getPartnerLogos().catch(err => ({ success: false, error: err }))
@@ -257,9 +254,14 @@ const WhoWeAre = () => {
           logosData = logosResult.logos;
         }
         
-        // Update logos when ready
+        // Update logos FIRST
         setEbkLogo(logoData);
         setPartnerLogos(logosData);
+        setLogosLoading(false);
+        
+        // Then show content
+        setContent(contentData);
+        setLoading(false);
       });
       
     } catch (error) {
@@ -317,13 +319,19 @@ const WhoWeAre = () => {
               {/* Logos Container */}
               <div className="flex justify-center w-full pb-6">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', maxWidth: '500px', width: '100%', justifyItems: 'center' }}>
-                  {partnerLogos.length > 0 ? (
+                  {logosLoading ? (
+                    /* Show nothing while loading - prevents flash */
+                    <div className="col-span-2 text-gray-400 text-center py-8">
+                      {/* Silent loading - no text */}
+                    </div>
+                  ) : partnerLogos && partnerLogos.length > 0 ? (
                     partnerLogos.map((logo) => (
                       <div key={logo.id} className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <img 
                           src={logo.logo} 
                           alt={logo.name}
                           style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                          loading="eager"
                           onError={(e) => {
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'block';
@@ -335,12 +343,14 @@ const WhoWeAre = () => {
                       </div>
                     ))
                   ) : (
+                    /* Fallback only if no logos found after loading */
                     <div className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <img 
                         key={logoKey}
-                        src="/elite_logoRGB-11.jpg" 
+                        src={ebkLogo}
                         alt="Elite Bath + Kitchen"
                         style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                        loading="eager"
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
