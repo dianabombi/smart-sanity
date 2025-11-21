@@ -173,7 +173,7 @@ const Brands = () => {
         <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto relative z-10">
             <div className="bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg px-4 sm:px-8 py-8">
-              <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-2 text-center tracking-wide">
+              <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-6 text-center tracking-wide">
                 Ostatné
               </h2>
               <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8">
