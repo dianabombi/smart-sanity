@@ -306,17 +306,17 @@ const WhoWeAre = () => {
                   <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
                     Naši partneri
                   </h2>
-                  <div className="flex justify-center w-full pb-6">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', maxWidth: '800px', width: '100%', justifyItems: 'center' }}>
+                  <div className="flex justify-center w-full pb-8">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
                       {logosLoading ? (
                         <div className="col-span-2 text-gray-400 text-center py-8" />
                       ) : partnerLogos && partnerLogos.length > 0 ? (
                         partnerLogos.map((logo) => (
-                          <div key={logo.id} className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div key={logo.id} className="rounded-lg p-2 transition-all duration-300" style={{ height: '110px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <img 
                               src={logo.logo} 
                               alt={logo.name}
-                              style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                              style={{ height: '95px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
                               loading="eager"
                               onError={(e) => {
                                 e.target.style.display = 'none';
