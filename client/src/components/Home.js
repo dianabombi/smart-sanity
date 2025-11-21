@@ -93,8 +93,8 @@ const Home = () => {
           <div className="flex flex-col items-center justify-center pt-3 pb-2 tablet:pt-2 tablet:pb-2 laptop:pt-6 laptop:pb-8">
             <div className="text-xl tablet:text-2xl text-gray-400 opacity-0 animate-[fadeInUp_2.5s_ease-out_0.8s_forwards] max-w-3xl mx-auto leading-relaxed text-center">
               <p className="text-center">Profesionálne riešenia</p>
-              <p className="text-center">pre interiérových dizajnérov</p>
-              <p className="text-center">a architektov</p>
+              <p className="text-center">pre architektov a interiérových</p>
+              <p className="text-center">dizajnérov</p>
             </div>
           </div>
           
