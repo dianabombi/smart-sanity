@@ -17,27 +17,14 @@ const BrandDetail = () => {
       setLoading(true);
       console.log('🔄 BRAND DETAIL: Loading brand:', brandId);
       
-      const result = await ApiService.getBrands();
-      
-      if (result.success && result.brands) {
-        // Find brand by ID or name
-        const foundBrand = result.brands.find(b => 
-          b.id?.toString() === brandId || 
-          b._id?.toString() === brandId ||
-          b.name?.toLowerCase().replace(/\s+/g, '-') === brandId.toLowerCase()
-        );
-        
-        if (foundBrand) {
-          console.log('✅ BRAND DETAIL: Brand found:', foundBrand.name);
-          console.log('📷 BRAND DETAIL: Images:', foundBrand.images?.length || 0);
-          setBrand(foundBrand);
-        } else {
-          console.error('❌ BRAND DETAIL: Brand not found');
-          // Redirect back to brands page if not found
-          setTimeout(() => navigate('/brands'), 2000);
-        }
+      const result = await ApiService.getBrandById(brandId);
+
+      if (result.success && result.brand) {
+        console.log('✅ BRAND DETAIL: Brand found:', result.brand.name);
+        console.log('📷 BRAND DETAIL: Images:', result.brand.images?.length || 0);
+        setBrand(result.brand);
       } else {
-        console.error('❌ BRAND DETAIL: Failed to load brands');
+        console.error('❌ BRAND DETAIL: Brand not found or failed to load');
         setTimeout(() => navigate('/brands'), 2000);
       }
     } catch (error) {

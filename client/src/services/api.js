@@ -335,6 +335,77 @@ class ApiService {
     }
   }
 
+  // Single brand fetch by ID - optimized for brand detail page
+  async getBrandById(brandId) {
+    if (!this.isSupabaseAvailable()) {
+      // Try to find brand in fallback list
+      const fallback = this.getFallbackBrands().find(b => b.id?.toString() === String(brandId));
+      return fallback
+        ? { success: true, brand: fallback, source: 'fallback' }
+        : { success: false, message: 'Brand not found (fallback)', source: 'fallback-miss' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .eq('id', brandId)
+        .single();
+
+      if (error) {
+        console.error('Supabase error (getBrandById):', error.message);
+        return { success: false, message: 'Supabase error: ' + error.message };
+      }
+
+      if (!data) {
+        return { success: false, message: 'Brand not found' };
+      }
+
+      // Reuse the same image processing logic as in getBrands, but for a single brand
+      let images = [];
+      try {
+        if (Array.isArray(data.images)) {
+          images = data.images;
+        } else if (typeof data.images === 'string' && data.images.trim().startsWith('[')) {
+          images = JSON.parse(data.images);
+        }
+      } catch (e) {
+        images = [];
+      }
+
+      const validatedImages = images
+        .map(img => {
+          if (!img) return null;
+
+          if (img.url && img.url.startsWith('data:')) {
+            return img;
+          }
+
+          const imagePath = img.path || img.filename;
+          if (imagePath) {
+            return {
+              ...img,
+              url: `https://lckbwknxfmbjffjsmahs.supabase.co/storage/v1/object/public/brand-images/${imagePath}`
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean);
+
+      const processedBrand = {
+        ...data,
+        logoFilter: 'none',
+        images: validatedImages,
+      };
+
+      return { success: true, brand: processedBrand, source: 'supabase-database' };
+    } catch (error) {
+      console.error('Error fetching brand by id:', error);
+      return { success: false, message: 'Error fetching brand: ' + error.message };
+    }
+  }
+
   // Lightweight brands fetch: only basic fields, no image parsing
   async getBrandsLight() {
     if (!this.isSupabaseAvailable()) {

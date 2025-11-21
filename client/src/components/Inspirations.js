@@ -192,9 +192,8 @@ const Inspirations = () => {
 
         {/* Photos Only Gallery */}
         {filteredInspirations.length === 0 ? (
-          /* No inspirations message */
+          /* No inspirations message (without house icon) */
           <div className="text-center py-20">
-            <div className="text-6xl mb-4">🏠</div>
             <h2 className="text-2xl font-semibold text-gray-300 mb-4">Žiadne inšpirácie</h2>
             <p className="text-gray-400 mb-6">Momentálne nie sú k dispozícii žiadne inšpirácie.</p>
             <p className="text-sm text-gray-500">
@@ -210,8 +209,10 @@ const Inspirations = () => {
                 className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
                 onClick={() => openImageModal(inspiration)}
               >
-                {/* Loading skeleton - pure shimmer, no icon/text */}
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse" />
+                {/* Loading skeleton with camera icon */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse flex items-center justify-center">
+                  <div className="text-gray-500 text-4xl">📷</div>
+                </div>
                 
                 <img 
                   src={inspiration.image} 
