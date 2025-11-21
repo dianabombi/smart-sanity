@@ -45,7 +45,7 @@ const BrandCard = ({
 
   return (
     <div
-      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16 min-h-[320px]"
+      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16 h-[350px]"
       style={{ transitionDelay: `${index * 100}ms` }}
       onClick={handleClick}
     >
@@ -87,7 +87,7 @@ const BrandCard = ({
           {brand.category}
         </div>
         
-        <p className="text-sm leading-relaxed text-gray-300 overflow-hidden" style={{
+        <p className="text-sm leading-relaxed text-gray-300 overflow-hidden pt-3" style={{
           display: '-webkit-box',
           WebkitLineClamp: 4,
           WebkitBoxOrient: 'vertical'
