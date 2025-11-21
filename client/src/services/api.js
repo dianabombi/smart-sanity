@@ -1524,9 +1524,9 @@ class ApiService {
 
     try {
       console.log('Fetching partner logos from Supabase...');
-      // Use a longer timeout so real admin logos have time to load
+      // Use a short timeout so the page doesn't block too long on this decorative section
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out')), 5000)
+        setTimeout(() => reject(new Error('Request timed out')), 2000)
       );
 
       const fetchPromise = supabase

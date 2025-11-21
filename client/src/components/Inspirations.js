@@ -210,15 +210,8 @@ const Inspirations = () => {
                 className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
                 onClick={() => openImageModal(inspiration)}
               >
-                {/* Loading skeleton */}
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse">
-                  <div className="flex items-center justify-center h-full">
-                    <div className="text-gray-500 text-center">
-                      <div className="text-4xl mb-2">📷</div>
-                      <div className="text-sm">Načítavam...</div>
-                    </div>
-                  </div>
-                </div>
+                {/* Loading skeleton - pure shimmer, no icon/text */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse" />
                 
                 <img 
                   src={inspiration.image} 

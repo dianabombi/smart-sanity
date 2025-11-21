@@ -184,13 +184,7 @@ const BrandDetail = () => {
           <div className="text-center py-20">
             <div className="text-6xl mb-4">📷</div>
             <h2 className="text-2xl font-semibold text-gray-300 mb-4">Žiadne fotografie</h2>
-            <p className="text-gray-400 mb-6">Pre túto značku zatiaľ nie sú k dispozícii žiadne fotografie.</p>
-            <button 
-              onClick={() => navigate('/brands')}
-              className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
-            >
-              Späť na značky
-            </button>
+            <p className="text-gray-400">Pre túto značku zatiaľ nie sú k dispozícii žiadne fotografie.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -236,6 +230,16 @@ const BrandDetail = () => {
             })}
           </div>
         )}
+
+        {/* Bottom back button */}
+        <div className="pb-16 mt-4 flex justify-center">
+          <button 
+            onClick={() => navigate('/brands')}
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+          >
+            ← Späť na značky
+          </button>
+        </div>
       </div>
 
       {/* Full Screen Image Modal */}
