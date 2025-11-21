@@ -179,7 +179,7 @@ const Brands = () => {
               <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8">
                 Ďalší producenti, ktorých vám vieme ponúknuť
               </p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5 items-center">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5 items-center">
                 {brands
                   .filter(brand => {
                     const name = (brand.name || '').toLowerCase();
