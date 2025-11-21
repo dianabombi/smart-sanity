@@ -204,35 +204,34 @@ const WhoWeAre = () => {
 
   const loadContent = async () => {
     try {
-      // Load critical content FIRST - show page immediately
+      // Load critical content FIRST - show page as soon as text is ready
       const contentResult = await ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err }));
-      
+
       // Process main content
       let contentData = {
-        mainContent: ["Načítavam obsah..."],
+        mainContent: ["Obsah nie je k dispozícii. Prosím, nastavte obsah v admin paneli."],
         partnershipContent: ""
       };
-      
+
       if (contentResult.success && contentResult.sections && contentResult.sections.length > 0) {
         const mainContent = contentResult.sections
           .filter(section => section.size === 'large')
           .sort((a, b) => a.order - b.order)
           .map(section => formatContentForDisplay(section.content)); // Apply formatting
-        
+
         const partnershipSection = contentResult.sections.find(section => section.size === 'small');
-        
+
         contentData = {
           mainContent: mainContent.length > 0 ? mainContent : [formatContentForDisplay(contentResult.sections[0].content)],
           partnershipContent: partnershipSection ? partnershipSection.content : ""
         };
-      } else {
-        contentData = {
-          mainContent: ["Obsah nie je k dispozícii. Prosím, nastavte obsah v admin paneli."],
-          partnershipContent: ""
-        };
       }
-      
-      // Load logos FIRST before showing content
+
+      // Show content immediately after it is processed
+      setContent(contentData);
+      setLoading(false);
+
+      // Load logos in background without blocking main content
       Promise.all([
         ApiService.getBrands().catch(err => ({ success: false, error: err })),
         ApiService.getPartnerLogos().catch(err => ({ success: false, error: err }))
@@ -247,21 +246,16 @@ const WhoWeAre = () => {
             logoData = ebkBrand.logo;
           }
         }
-        
+
         // Process partner logos
         let logosData = [];
         if (logosResult && logosResult.success && logosResult.logos) {
           logosData = logosResult.logos;
         }
-        
-        // Update logos FIRST
+
         setEbkLogo(logoData);
         setPartnerLogos(logosData);
         setLogosLoading(false);
-        
-        // Then show content
-        setContent(contentData);
-        setLoading(false);
       });
       
     } catch (error) {
@@ -278,12 +272,12 @@ const WhoWeAre = () => {
   const contentSection = !content ? null : (
     <div className="w-full px-4">
       {/* Page Title */}
-      <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+      <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
         O nás
       </h1>
       
       {/* Side by Side Layout - Full Width */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch justify-center">
         {/* Combined Main Content */}
         <div className="flex justify-center">
           <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
@@ -408,10 +402,40 @@ const WhoWeAre = () => {
       <div className="relative flex-1 flex flex-col">
         <NavBar />
         
-        <div className="flex items-center justify-center pt-32 pb-12 flex-1 relative z-10">
+        <div className="flex items-start justify-center pt-24 pb-8 flex-1 relative z-10">
           {loading ? (
-            <div className="text-center">
-              <div className="text-gray-300 text-xl">Načítavam...</div>
+            <div className="w-full px-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
+                <div className="flex justify-center">
+                  <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+                    <div className="flex flex-col justify-start items-center space-y-6 animate-pulse">
+                      <div className="h-8 w-40 bg-gray-700 rounded"></div>
+                      <div className="space-y-3 px-6 pb-4 w-full">
+                        <div className="h-4 w-full bg-gray-700 rounded"></div>
+                        <div className="h-4 w-5/6 bg-gray-700 rounded"></div>
+                        <div className="h-4 w-4/6 bg-gray-700 rounded"></div>
+                        <div className="h-4 w-3/6 bg-gray-700 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+                    <div className="space-y-6 animate-pulse">
+                      <div className="flex flex-col justify-center items-center space-y-6">
+                        <div className="h-8 w-40 bg-gray-700 rounded"></div>
+                        <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+                          <div className="h-20 bg-gray-700 rounded"></div>
+                          <div className="h-20 bg-gray-700 rounded"></div>
+                          <div className="h-20 bg-gray-700 rounded"></div>
+                          <div className="h-20 bg-gray-700 rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             contentSection

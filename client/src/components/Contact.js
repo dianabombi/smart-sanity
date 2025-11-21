@@ -70,7 +70,7 @@ const Contact = () => {
 
   const getDefaultContactContent = () => ({
     title: 'Kontakt',
-    subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás.',
+    subtitle: '',
     formTitle: 'Napíšte nám',
     contactInfoTitle: 'Kontaktné údaje',
     servicesTitle: 'Naše služby',
@@ -142,7 +142,7 @@ const Contact = () => {
                 transition: 'all 0.8s ease-out',
                 transitionDelay: '0.4s'
               }}>
-                {contactContent?.subtitle || 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.'}
+                {contactContent?.subtitle || ''}
               </p>
             </div>
 

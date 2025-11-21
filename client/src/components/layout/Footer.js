@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Footer = () => {
   const navigate = useNavigate();
   return (
-    <footer className="bg-black border-t border-gray-700 px-4 sm:px-6 lg:px-8 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center min-h-[100px] py-4">
+    <footer className="bg-black border-t border-gray-700 px-4 sm:px-6 lg:px-8 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center min-h-[80px] py-2 sm:py-3">
       <div className="max-w-4xl mx-auto w-full">
         {/* Mobile Layout - Stacked */}
         <div className="block md:hidden space-y-2">
