@@ -45,12 +45,12 @@ const BrandCard = ({
 
   return (
     <div
-      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16 h-[350px]"
+      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16 h-[375px]"
       style={{ transitionDelay: `${index * 100}ms` }}
       onClick={handleClick}
     >
       {/* Logo Container */}
-      <div className={`p-4 mb-4 h-24 flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
+      <div className={`p-4 mb-2 h-24 flex items-center justify-center ${brand.useBlackBackground ? 'bg-black rounded-lg' : ''}`}>
         {brand.useTextLogo ? (
           <div className="text-white font-bold text-xl text-center flex items-center justify-center h-full w-full">
             {brand.name}
@@ -87,7 +87,7 @@ const BrandCard = ({
           {brand.category}
         </div>
         
-        <p className="text-sm leading-relaxed text-gray-300 overflow-hidden pt-3" style={{
+        <p className="pt-5 text-sm leading-relaxed text-gray-300 overflow-hidden" style={{
           display: '-webkit-box',
           WebkitLineClamp: 4,
           WebkitBoxOrient: 'vertical'
