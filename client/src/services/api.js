@@ -335,6 +335,40 @@ class ApiService {
     }
   }
 
+  // Lightweight brands fetch: only basic fields, no image parsing
+  async getBrandsLight() {
+    if (!this.isSupabaseAvailable()) {
+      return { success: true, brands: this.getFallbackBrands(), source: 'fallback-no-supabase' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('id, name, category, description, logo, logoSize, logoFilter, is_main, order, website')
+        .order('order', { ascending: true });
+
+      if (error) {
+        console.error('Supabase error (light brands):', error.message);
+        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-error' };
+      }
+
+      if (!data || data.length === 0) {
+        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-empty' };
+      }
+
+      // For light version we just pass data through (no images processing)
+      const processedBrands = data.map(brand => ({
+        ...brand,
+        logoFilter: brand.logoFilter || 'none',
+      }));
+
+      return { success: true, brands: processedBrands, source: 'supabase-database' };
+    } catch (error) {
+      console.log('Error fetching light brands, using fallback:', error);
+      return { success: true, brands: this.getFallbackBrands(), source: 'fallback-error' };
+    }
+  }
+
   async getBrand(id) {
     try {
       const { data, error } = await supabase

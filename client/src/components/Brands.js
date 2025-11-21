@@ -57,7 +57,7 @@ const Brands = () => {
 
   const loadBrands = useCallback(async () => {
     try {
-      const result = await ApiService.getBrands();
+      const result = await ApiService.getBrandsLight();
       
       if (result.success && result.brands) {
         setBrands(result.brands);
@@ -66,7 +66,7 @@ const Brands = () => {
         dataCache.isLoaded = true;
       }
     } catch (error) {
-      console.error('❌ Error loading brands:', error);
+      console.error('❌ Error loading brands (light):', error);
     } finally {
       setBrandsLoading(false);
     }

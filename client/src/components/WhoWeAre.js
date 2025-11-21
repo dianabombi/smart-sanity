@@ -87,9 +87,9 @@ const WhoWeAre = () => {
   // Check for updates (logos and background settings)
   useEffect(() => {
     const interval = setInterval(async () => {
-      // Check for logo updates from Supabase database
+      // Check for logo updates from Supabase database (lightweight fetch)
       try {
-        const brandsResult = await ApiService.getBrands();
+        const brandsResult = await ApiService.getBrandsLight();
         if (brandsResult.success && brandsResult.brands) {
           const ebkBrand = brandsResult.brands.find(brand => 
             brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
@@ -209,7 +209,7 @@ const WhoWeAre = () => {
 
       // Process main content
       let contentData = {
-        mainContent: ["Obsah nie je k dispozícii. Prosím, nastavte obsah v admin paneli."],
+        mainContent: [],
         partnershipContent: ""
       };
 
