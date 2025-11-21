@@ -172,7 +172,7 @@ const References = () => {
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
                   
-                  <div className="flex gap-2 items-center text-sm text-blue-300 mb-5 w-full text-left">
+                  <div className="flex gap-2 items-center text-sm text-blue-300 mb-9 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
