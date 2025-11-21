@@ -7,7 +7,6 @@ const WhoWeAre = () => {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
-  const [logoKey, setLogoKey] = useState(Date.now()); // Force re-render
   const [partnerLogos, setPartnerLogos] = useState(null); // null = not loaded yet, [] = loaded but empty
   const [logosLoading, setLogosLoading] = useState(true);
   
@@ -97,7 +96,6 @@ const WhoWeAre = () => {
           if (ebkBrand && ebkBrand.logo && ebkBrand.logo !== ebkLogo) {
             console.log('🔄 EB+K logo updated in database, refreshing...');
             setEbkLogo(ebkBrand.logo);
-            setLogoKey(Date.now()); // Force re-render
           }
         }
       } catch (error) {
