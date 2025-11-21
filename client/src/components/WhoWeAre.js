@@ -309,7 +309,7 @@ const WhoWeAre = () => {
                     Naši partneri
                   </h2>
                   <div className="flex justify-center w-full pb-6">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', maxWidth: '500px', width: '100%', justifyItems: 'center' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', maxWidth: '640px', width: '100%', justifyItems: 'center' }}>
                       {logosLoading ? (
                         <div className="col-span-2 text-gray-400 text-center py-8" />
                       ) : partnerLogos && partnerLogos.length > 0 ? (
@@ -330,24 +330,7 @@ const WhoWeAre = () => {
                             </div>
                           </div>
                         ))
-                      ) : (
-                        <div className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <img 
-                            key={logoKey}
-                            src={ebkLogo}
-                            alt="Elite Bath + Kitchen"
-                            style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
-                            loading="eager"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'block';
-                            }}
-                          />
-                          <div className="text-white font-semibold text-center hidden">
-                            Elite Bath + Kitchen
-                          </div>
-                        </div>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </div>

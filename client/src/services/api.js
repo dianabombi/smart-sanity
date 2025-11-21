@@ -1344,9 +1344,9 @@ class ApiService {
 
     try {
       console.log('Fetching who-we-are sections from Supabase...');
-      // Add a short timeout so the page does not hang if the database is slow
+      // Add a timeout, but long enough so real content usually loads from database
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out')), 500)
+        setTimeout(() => reject(new Error('Request timed out')), 5000)
       );
 
       const fetchPromise = supabase
@@ -1481,15 +1481,15 @@ class ApiService {
   // Partner Logos
   async getPartnerLogos() {
     if (!this.isSupabaseAvailable()) {
-      console.log('🚫 Supabase not available, using fallback');
-      return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback' };
+      console.log('🚫 Supabase not available, returning no partner logos');
+      return { success: true, logos: [], source: 'no-supabase' };
     }
 
     try {
       console.log('Fetching partner logos from Supabase...');
-      // Short timeout so UI is not blocked by a slow database
+      // Use a longer timeout so real admin logos have time to load
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out')), 500)
+        setTimeout(() => reject(new Error('Request timed out')), 5000)
       );
 
       const fetchPromise = supabase
@@ -1502,20 +1502,20 @@ class ApiService {
       
       if (error) {
         console.log('🚫 Supabase error:', error);
-        return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback-error' };
+        return { success: true, logos: [], source: 'error' };
       }
       
       if (!data || data.length === 0) {
-        console.log('📭 No logos in database, using fallback');
-        return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback-empty' };
+        console.log('📭 No logos in database');
+        return { success: true, logos: [], source: 'empty' };
       }
 
       console.log('✅ Successfully loaded logos from Supabase database');
       return { success: true, logos: data, source: 'database' };
     } catch (error) {
       console.log('Error fetching logos:', error);
-      const reason = error && error.message === 'Request timed out' ? 'fallback-timeout' : 'fallback-error';
-      return { success: true, logos: this.getFallbackPartnerLogos(), source: reason };
+      const reason = error && error.message === 'Request timed out' ? 'timeout' : 'connection-error';
+      return { success: true, logos: [], source: reason };
     }
   }
 
