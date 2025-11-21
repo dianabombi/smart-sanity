@@ -17,7 +17,10 @@ const dataCache = {
 };
 
 // Brands that should appear only as logos in the Ostatne section
-const LOGO_ONLY_BRANDS = ['tres', 'alca', 'kludi', 'keuco', 'hansgrohe', 'huppe', 'hüppe'];
+const LOGO_ONLY_BRANDS = ['tres', 'alca', 'kludi', 'keuco', 'hansgrohe', 'huppe', 'hüppe', 'kaldewei'];
+
+// Brands that should appear as main cards AND also be listed as logos in Ostatne
+const ALSO_IN_OSTATNE_BRANDS = ['axor', 'dornbracht', 'laufen'];
 
 const Brands = () => {
   const navigate = useNavigate();
@@ -137,7 +140,11 @@ const Brands = () => {
               {brands
                 .filter(brand => {
                   const name = (brand.name || '').toLowerCase();
-                  return brand.is_main !== false && !LOGO_ONLY_BRANDS.includes(name);
+                  return (
+                    brand.is_main !== false &&
+                    !LOGO_ONLY_BRANDS.includes(name) &&
+                    !ALSO_IN_OSTATNE_BRANDS.includes(name)
+                  );
                 })
                 .map((brand, index) => (
                 <BrandCard
@@ -153,10 +160,15 @@ const Brands = () => {
         </div>
       </div>
 
-      {/* Ostatné Section - Only show if there are brands in this category or logo-only brands */}
+      {/* Ostatné Section - Only show if there are brands in this category, logo-only brands, or extra brands */}
       {brands.filter(brand => {
         const name = (brand.name || '').toLowerCase();
-        return brand.is_main === false || brand.category === 'Ostatné' || LOGO_ONLY_BRANDS.includes(name);
+        return (
+          brand.is_main === false ||
+          brand.category === 'Ostatné' ||
+          LOGO_ONLY_BRANDS.includes(name) ||
+          ALSO_IN_OSTATNE_BRANDS.includes(name)
+        );
       }).length > 0 && (
         <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto relative z-10">
@@ -171,7 +183,12 @@ const Brands = () => {
                 {brands
                   .filter(brand => {
                     const name = (brand.name || '').toLowerCase();
-                    return brand.is_main === false || brand.category === 'Ostatné' || LOGO_ONLY_BRANDS.includes(name);
+                    return (
+                      brand.is_main === false ||
+                      brand.category === 'Ostatné' ||
+                      LOGO_ONLY_BRANDS.includes(name) ||
+                      ALSO_IN_OSTATNE_BRANDS.includes(name)
+                    );
                   })
                   .map((brand, index) => (
                   <BrandCard

@@ -307,7 +307,7 @@ const WhoWeAre = () => {
                     Naši partneri
                   </h2>
                   <div className="flex justify-center w-full pb-8">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
                       {logosLoading ? (
                         <div className="col-span-2 text-gray-400 text-center py-8" />
                       ) : partnerLogos && partnerLogos.length > 0 ? (
