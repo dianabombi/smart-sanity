@@ -270,107 +270,101 @@ const WhoWeAre = () => {
 
   // Only render content section when data is loaded
   const contentSection = !content ? null : (
-    <div className="w-full px-4">
-      {/* Page Title */}
-      <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-        O nás
-      </h1>
-      
-      {/* Side by Side Layout - Full Width */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch justify-center">
-        {/* Combined Main Content */}
-        <div className="flex justify-center">
-          <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
-            <div className="flex flex-col justify-start items-center space-y-10">
-              {/* Smart Sanit s.r.o. title */}
-              <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
-                Smart Sanit s.r.o.
-              </h2>
-              <div className="space-y-6 px-8 pb-6 w-full">
-                {content?.mainContent?.map((text, index) => (
-                  <div 
-                    key={index} 
-                    className="text-lg leading-relaxed text-gray-300 text-justify"
-                    dangerouslySetInnerHTML={{ __html: text }}
-                  />
-                ))}
+    <div className="w-full">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Page Title */}
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 mt-5 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          O nás
+        </h1>
+        
+        {/* Layout - stacked tiles on all screen sizes */}
+        <div className="grid grid-cols-1 gap-6 items-stretch justify-center">
+          {/* Combined Main Content */}
+          <div className="flex justify-center">
+            <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '0.85rem' }}>
+              <div className="flex flex-col justify-start items-center space-y-8">
+                {/* Smart Sanit s.r.o. title */}
+                <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
+                  Smart Sanit s.r.o.
+                </h2>
+                <div className="space-y-5 px-6 pb-5 w-full">
+                  {content?.mainContent?.map((text, index) => (
+                    <div 
+                      key={index} 
+                      className="text-lg leading-relaxed text-gray-300 text-justify"
+                      dangerouslySetInnerHTML={{ __html: text }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Partnership Section - Side by Side */}
-        <div className="flex justify-center">
-        <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '1rem' }}>
-          <div className="space-y-6">
-            {/* Partnership text above logo */}
-            <div className="flex flex-col justify-center items-center space-y-8">
-              {/* Naši partneri title */}
-              <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
-                Naši partneri
-              </h2>
-              
-              {/* Logos Container */}
-              <div className="flex justify-center w-full pb-6">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', maxWidth: '500px', width: '100%', justifyItems: 'center' }}>
-                  {logosLoading ? (
-                    /* Show nothing while loading - prevents flash */
-                    <div className="col-span-2 text-gray-400 text-center py-8">
-                      {/* Silent loading - no text */}
-                    </div>
-                  ) : partnerLogos && partnerLogos.length > 0 ? (
-                    partnerLogos.map((logo) => (
-                      <div key={logo.id} className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <img 
-                          src={logo.logo} 
-                          alt={logo.name}
-                          style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
-                          loading="eager"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'block';
-                          }}
-                        />
-                        <div className="text-white font-semibold text-center hidden">
-                          {logo.name}
+          {/* Partnership Section */}
+          <div className="flex justify-center">
+            <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '0.85rem' }}>
+              <div className="space-y-6">
+                <div className="flex flex-col justify-center items-center space-y-6">
+                  <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
+                    Naši partneri
+                  </h2>
+                  <div className="flex justify-center w-full pb-6">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', maxWidth: '500px', width: '100%', justifyItems: 'center' }}>
+                      {logosLoading ? (
+                        <div className="col-span-2 text-gray-400 text-center py-8" />
+                      ) : partnerLogos && partnerLogos.length > 0 ? (
+                        partnerLogos.map((logo) => (
+                          <div key={logo.id} className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <img 
+                              src={logo.logo} 
+                              alt={logo.name}
+                              style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                              loading="eager"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'block';
+                              }}
+                            />
+                            <div className="text-white font-semibold text-center hidden">
+                              {logo.name}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <img 
+                            key={logoKey}
+                            src={ebkLogo}
+                            alt="Elite Bath + Kitchen"
+                            style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                            loading="eager"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'block';
+                            }}
+                          />
+                          <div className="text-white font-semibold text-center hidden">
+                            Elite Bath + Kitchen
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    /* Fallback only if no logos found after loading */
-                    <div className="rounded-lg p-1 transition-all duration-300" style={{ height: '90px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img 
-                        key={logoKey}
-                        src={ebkLogo}
-                        alt="Elite Bath + Kitchen"
-                        style={{ height: '80px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
-                        loading="eager"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'block';
-                        }}
-                      />
-                      <div className="text-white font-semibold text-center hidden">
-                        Elite Bath + Kitchen
-                      </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        </div>
-      </div>
 
-      {/* Contact Button */}
-      <div className="flex justify-center mt-12">
-        <button
-          onClick={() => window.location.href = '/contact'}
-          className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
-        >
-          Kontaktujte nás
-        </button>
+        {/* Contact Button */}
+        <div className="flex justify-center mt-12">
+          <button
+            onClick={() => window.location.href = '/contact'}
+            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
+          >
+            Kontaktujte nás
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -379,57 +373,58 @@ const WhoWeAre = () => {
     <div className="min-h-screen bg-black relative flex flex-col">
       {/* Background Slideshow - covers entire viewport */}
       <div className="fixed inset-0 z-0">
-          {backgroundImages.map((image, index) => (
-            <div
-              key={image}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentImageIndex ? 'opacity-30' : 'opacity-0'
-              }`}
-              style={{
-                backgroundImage: `url(${image})`,
-                backgroundSize: backgroundSettings?.backgroundImageSize || 'cover',
-                backgroundPosition: `${backgroundSettings?.backgroundImagePositionX || 'center'} ${backgroundSettings?.backgroundImagePositionY || 'center'}`,
-                backgroundRepeat: 'no-repeat',
-                filter: backgroundSettings?.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
-                opacity: index === currentImageIndex ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
-              }}
-            />
-          ))}
-        {/* Dark overlay removed per user request */}
+        {backgroundImages.map((image, index) => (
+          <div
+            key={image}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentImageIndex ? 'opacity-30' : 'opacity-0'
+            }`}
+            style={{
+              backgroundImage: `url(${image})`,
+              backgroundSize: backgroundSettings?.backgroundImageSize || 'cover',
+              backgroundPosition: `${backgroundSettings?.backgroundImagePositionX || 'center'} ${backgroundSettings?.backgroundImagePositionY || 'center'}`,
+              backgroundRepeat: 'no-repeat',
+              filter: backgroundSettings?.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
+              opacity: index === currentImageIndex ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
+            }}
+          />
+        ))}
       </div>
       
       {/* Main content area */}
       <div className="relative flex-1 flex flex-col">
         <NavBar />
         
-        <div className="flex items-start justify-center pt-24 pb-8 flex-1 relative z-10">
+        <div className="flex items-start justify-center pt-28 pb-8 flex-1 relative z-10">
           {loading ? (
-            <div className="w-full px-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch justify-center">
-                <div className="flex justify-center">
-                  <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
-                    <div className="flex flex-col justify-start items-center space-y-6 animate-pulse">
-                      <div className="h-8 w-40 bg-gray-700 rounded"></div>
-                      <div className="space-y-3 px-6 pb-4 w-full">
-                        <div className="h-4 w-full bg-gray-700 rounded"></div>
-                        <div className="h-4 w-5/6 bg-gray-700 rounded"></div>
-                        <div className="h-4 w-4/6 bg-gray-700 rounded"></div>
-                        <div className="h-4 w-3/6 bg-gray-700 rounded"></div>
+            <div className="w-full">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 gap-5 items-stretch justify-center">
+                  <div className="flex justify-center">
+                    <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+                      <div className="flex flex-col justify-start items-center space-y-5 animate-pulse">
+                        <div className="h-8 w-40 bg-gray-700 rounded"></div>
+                        <div className="space-y-5 px-6 pb-5 w-full">
+                          <div className="h-4 w-full bg-gray-700 rounded"></div>
+                          <div className="h-4 w-5/6 bg-gray-700 rounded"></div>
+                          <div className="h-4 w-4/6 bg-gray-700 rounded"></div>
+                          <div className="h-4 w-3/6 bg-gray-700 rounded"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex justify-center">
-                  <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
-                    <div className="space-y-6 animate-pulse">
-                      <div className="flex flex-col justify-center items-center space-y-6">
-                        <div className="h-8 w-40 bg-gray-700 rounded"></div>
-                        <div className="grid grid-cols-2 gap-4 w-full max-w-md">
-                          <div className="h-20 bg-gray-700 rounded"></div>
-                          <div className="h-20 bg-gray-700 rounded"></div>
-                          <div className="h-20 bg-gray-700 rounded"></div>
-                          <div className="h-20 bg-gray-700 rounded"></div>
+                  <div className="flex justify-center">
+                    <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
+                      <div className="space-y-6 animate-pulse">
+                        <div className="flex flex-col justify-center items-center space-y-6">
+                          <div className="h-8 w-40 bg-gray-700 rounded"></div>
+                          <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+                            <div className="h-20 bg-gray-700 rounded"></div>
+                            <div className="h-20 bg-gray-700 rounded"></div>
+                            <div className="h-20 bg-gray-700 rounded"></div>
+                            <div className="h-20 bg-gray-700 rounded"></div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -441,11 +436,11 @@ const WhoWeAre = () => {
             contentSection
           )}
         </div>
-      </div>
-      
-      {/* Footer at bottom */}
-      <div className="relative z-10 mt-auto">
-        <Footer />
+
+        {/* Footer at bottom */}
+        <div className="relative z-10 mt-auto">
+          <Footer />
+        </div>
       </div>
     </div>
   );
