@@ -14,11 +14,11 @@ const BrandCard = ({
   if (variant === 'compact') {
     return (
       <div
-        className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-black/40 transition-all duration-500 cursor-pointer"
+        className="group flex items-center justify-center p-2 cursor-pointer"
         style={{ transitionDelay: `${index * 80 + 200}ms` }}
         onClick={handleClick}
       >
-        <div className="h-16 flex items-center justify-center">
+        <div className="h-14 flex items-center justify-center">
           <img 
             src={brand.logo} 
             alt={`${brand.name} Logo`}

@@ -16,6 +16,9 @@ const dataCache = {
   isLoaded: false
 };
 
+// Brands that should appear only as logos in the Ostatne section
+const LOGO_ONLY_BRANDS = ['tres', 'alca', 'kludi', 'keuco', 'hansgrohe', 'huppe', 'hüppe'];
+
 const Brands = () => {
   const navigate = useNavigate();
   
@@ -129,9 +132,14 @@ const Brands = () => {
               ))}
             </div>
           ) : (
-            /* Main Brands Section - Show real brands only */
+            /* Main Brands Section - Show real brands only (excluding logo-only ones) */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {brands.filter(brand => brand.is_main !== false).map((brand, index) => (
+              {brands
+                .filter(brand => {
+                  const name = (brand.name || '').toLowerCase();
+                  return brand.is_main !== false && !LOGO_ONLY_BRANDS.includes(name);
+                })
+                .map((brand, index) => (
                 <BrandCard
                   key={brand.id || brand._id || index}
                   brand={brand}
@@ -155,8 +163,13 @@ const Brands = () => {
             <p className="text-lg text-gray-300 max-w-2xl mx-auto text-center mb-8 opacity-100 translate-y-0">
               Ďalší producenti, ktorých vám vieme ponúknuť
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {brands.filter(brand => brand.is_main === false || brand.category === 'Ostatné').map((brand, index) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-5">
+              {brands
+                .filter(brand => {
+                  const name = (brand.name || '').toLowerCase();
+                  return brand.is_main === false || brand.category === 'Ostatné' || LOGO_ONLY_BRANDS.includes(name);
+                })
+                .map((brand, index) => (
                 <BrandCard
                   key={brand.id || brand._id || index}
                   brand={brand}

@@ -338,22 +338,25 @@ class ApiService {
   // Lightweight brands fetch: only basic fields, no image parsing
   async getBrandsLight() {
     if (!this.isSupabaseAvailable()) {
-      return { success: true, brands: this.getFallbackBrands(), source: 'fallback-no-supabase' };
+      console.log('🚫 Supabase not available for brands (light), returning no brands');
+      return { success: true, brands: [], source: 'no-supabase' };
     }
 
     try {
       const { data, error } = await supabase
         .from('brands')
-        .select('id, name, category, description, logo, logoSize, logoFilter, is_main, order, website')
+        // Only select columns that are known to exist in the table
+        .select('id, name, description, category, logo, order')
         .order('order', { ascending: true });
 
       if (error) {
         console.error('Supabase error (light brands):', error.message);
-        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-error' };
+        return { success: true, brands: [], source: 'error' };
       }
 
       if (!data || data.length === 0) {
-        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-empty' };
+        console.log('📭 No brands in database (light), returning empty list');
+        return { success: true, brands: [], source: 'empty' };
       }
 
       // For light version we just pass data through (no images processing)
@@ -362,10 +365,10 @@ class ApiService {
         logoFilter: brand.logoFilter || 'none',
       }));
 
-      return { success: true, brands: processedBrands, source: 'supabase-database' };
+      return { success: true, brands: processedBrands, source: 'database' };
     } catch (error) {
-      console.log('Error fetching light brands, using fallback:', error);
-      return { success: true, brands: this.getFallbackBrands(), source: 'fallback-error' };
+      console.log('Error fetching light brands, returning empty list:', error);
+      return { success: true, brands: [], source: 'connection-error' };
     }
   }
 
