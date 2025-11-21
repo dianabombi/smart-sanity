@@ -191,17 +191,7 @@ const Inspirations = () => {
 
 
         {/* Photos Only Gallery */}
-        {filteredInspirations.length === 0 ? (
-          /* No inspirations message (without house icon) */
-          <div className="text-center py-20">
-            <h2 className="text-2xl font-semibold text-gray-300 mb-4">Žiadne inšpirácie</h2>
-            <p className="text-gray-400 mb-6">Momentálne nie sú k dispozícii žiadne inšpirácie.</p>
-            <p className="text-sm text-gray-500">
-              Ak vidíte túto správu, databáza sa pravdepodobne nepodarilo načítať kvôli veľkým obrázkom.<br/>
-              Spustite SQL skript pre vyčistenie base64 obrázkov.
-            </p>
-          </div>
-        ) : (
+        {filteredInspirations.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredInspirations.map((inspiration) => (
             <div key={inspiration.id} className="group" style={{ opacity: 1 }}>

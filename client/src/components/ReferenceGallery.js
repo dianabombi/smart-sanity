@@ -169,7 +169,7 @@ const ReferenceGallery = () => {
             </h1>
             
             {/* Reference Metadata */}
-            <div className="flex flex-wrap gap-4 text-blue-300 mb-2 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] text-left">
+            <div className="flex flex-wrap gap-4 text-blue-300 mb-4 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards] text-left">
               <span className="font-medium">{reference.year}</span>
               {reference.location && <span>{reference.location}</span>}
             </div>
