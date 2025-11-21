@@ -1344,10 +1344,17 @@ class ApiService {
 
     try {
       console.log('Fetching who-we-are sections from Supabase...');
-      const { data, error } = await supabase
+      // Add a short timeout so the page does not hang if the database is slow
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), 500)
+      );
+
+      const fetchPromise = supabase
         .from('who_we_are_sections')
         .select('*')
         .order('order', { ascending: true });
+
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
       
       if (error) {
         console.log('🚫 Supabase error:', error);
@@ -1363,6 +1370,9 @@ class ApiService {
       return { success: true, sections: data, source: 'supabase-database' };
     } catch (error) {
       console.log('Error fetching sections:', error);
+      if (error && error.message === 'Request timed out') {
+        return { success: false, sections: [], source: 'timeout', message: 'Request timed out' };
+      }
       return { success: false, sections: [], source: 'connection-error', message: error.message };
     }
   }
@@ -1477,11 +1487,18 @@ class ApiService {
 
     try {
       console.log('Fetching partner logos from Supabase...');
-      const { data, error } = await supabase
+      // Short timeout so UI is not blocked by a slow database
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), 500)
+      );
+
+      const fetchPromise = supabase
         .from('partner_logos')
         .select('*')
         .eq('active', true)
         .order('order', { ascending: true });
+
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
       
       if (error) {
         console.log('🚫 Supabase error:', error);
@@ -1497,7 +1514,8 @@ class ApiService {
       return { success: true, logos: data, source: 'database' };
     } catch (error) {
       console.log('Error fetching logos:', error);
-      return { success: true, logos: this.getFallbackPartnerLogos(), source: 'fallback-error' };
+      const reason = error && error.message === 'Request timed out' ? 'fallback-timeout' : 'fallback-error';
+      return { success: true, logos: this.getFallbackPartnerLogos(), source: reason };
     }
   }
 
