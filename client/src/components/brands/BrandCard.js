@@ -45,7 +45,7 @@ const BrandCard = ({
 
   return (
     <div
-      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16"
+      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16 min-h-[320px]"
       style={{ transitionDelay: `${index * 100}ms` }}
       onClick={handleClick}
     >
@@ -83,10 +83,6 @@ const BrandCard = ({
 
       {/* Brand Info */}
       <div className="space-y-3">
-        <h3 className="text-gray-300 font-medium text-lg group-hover:text-white transition-colors">
-          {brand.name}
-        </h3>
-        
         <div className="text-blue-300 text-sm font-light tracking-wide">
           {brand.category}
         </div>
