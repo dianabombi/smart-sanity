@@ -102,7 +102,7 @@ const BrandDetail = () => {
     return (
       <div className="min-h-screen bg-black">
         <NavBar />
-        <div className="container mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-8">
             <div className="h-12 bg-gray-700 rounded w-64 mx-auto mb-4 animate-pulse mt-20"></div>
             <div className="h-6 bg-gray-700 rounded w-96 mx-auto animate-pulse"></div>
@@ -153,7 +153,7 @@ const BrandDetail = () => {
         />
       </button>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
         {/* Header Section - Brand Name and Description */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
@@ -219,12 +219,12 @@ const BrandDetail = () => {
         )}
 
         {/* Bottom back button */}
-        <div className="pb-16 mt-4 flex justify-center">
+        <div className="pb-8 mt-16 flex justify-center">
           <button 
             onClick={() => navigate('/brands')}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
+            className="py-2 px-8 min-w-[220px] border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
           >
-            ← Späť na značky
+            Späť na značky
           </button>
         </div>
       </div>
