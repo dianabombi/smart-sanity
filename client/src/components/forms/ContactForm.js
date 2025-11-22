@@ -61,12 +61,12 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
 
   return (
     <div className={className}>
-      <h2 className="text-2xl font-semibold text-gray-300 mb-2">
+      <h2 className="text-2xl font-semibold text-gray-300 mb-1">
         {title}
       </h2>
       
-      <form onSubmit={handleSubmit} className="space-y-3 pt-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <form onSubmit={handleSubmit} className="space-y-2 pt-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <FormField
             label="Meno a priezvisko"
             type="text"
@@ -111,7 +111,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
           name="message"
           value={formData.message}
           onChange={handleInputChange}
-          rows={10}
+          rows={3}
           required
         />
 
@@ -130,7 +130,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full !mt-10 text-gray-300 border border-gray-400 bg-transparent hover:text-white hover:border-white px-8 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full !mt-6 text-gray-300 border border-gray-400 bg-transparent hover:text-white hover:border-white px-8 py-2 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Odosielam...' : 'Odoslať správu'}
         </button>

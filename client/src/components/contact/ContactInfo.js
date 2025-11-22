@@ -9,7 +9,7 @@ const ContactInfo = ({
   return (
     <div className="flex flex-col gap-4 h-full">
       {/* Company Info */}
-      <div className={`group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 p-10 ${
+      <div className={`group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 px-10 py-8 h-full ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       } ${className}`}
       style={{
@@ -61,7 +61,7 @@ const ContactInfo = ({
           <div className="flex items-start space-x-4">
             <div className="text-gray-300 text-xl">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
@@ -71,37 +71,6 @@ const ContactInfo = ({
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Services */}
-      <div className={`flex-1 group rounded-lg transition-colors duration-500 bg-black/30 hover:bg-black/50 border-gray-600 p-8 ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      }`}
-      style={{
-        borderWidth: '0.5px',
-        transition: 'all 0.8s ease-out',
-        transitionDelay: '1.0s'
-      }}>
-        <h2 className="text-2xl font-semibold text-gray-300 mb-4">
-          {contactContent?.servicesTitle || 'Naše služby'}
-        </h2>
-        
-        <ul className="space-y-3 p-2 text-gray-300">
-          {(contactContent?.services || [
-            'Poradenstvo a návrh kúpeľní',
-            'Dodávka sanitárnych zariadení',
-            'Inštalácia a montáž',
-            'Servis a údržba',
-            'Technická podpora'
-          ]).map((service, index) => (
-            <li key={index} className="flex items-start space-x-5">
-              <svg className="w-3 h-3 text-gray-300 flex-shrink-0 mt-1.5" fill="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              <span>{service}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );
