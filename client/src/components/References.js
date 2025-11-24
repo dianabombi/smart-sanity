@@ -166,8 +166,8 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-transparent border-2 border-white/20 rounded-lg p-6 hover:border-white/50 transition-all duration-500 cursor-pointer relative pb-16 flex flex-col min-h-[360px]"
-                style={{ opacity: 1 }}
+                className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-all duration-500 cursor-pointer relative pb-16 flex flex-col min-h-[360px]"
+                style={{ opacity: 1, borderWidth: '0.5px' }}
               >
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
@@ -213,7 +213,7 @@ const References = () => {
         <div className="flex justify-center mt-12 px-4">
           <button 
             onClick={() => window.location.href = '/contact'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:text-white hover:border-white transition-colors duration-500 bg-transparent text-sm w-full max-w-xs mx-auto"
+            className="py-2 px-4 border-gray-600 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm w-full max-w-xs mx-auto"
             style={{ borderWidth: '0.5px' }}
           >
             Kontaktujte nás
