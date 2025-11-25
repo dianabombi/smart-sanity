@@ -127,7 +127,7 @@ const Brands = () => {
             /* Skeleton loading while brands fetch from database */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
               {[...Array(8)].map((_, index) => (
-                <div key={index} className="bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 animate-pulse" style={{ minHeight: '320px' }}>
+                <div key={index} className="bg-black/30 border-gray-600 rounded-lg p-6 animate-pulse" style={{ opacity: 1, borderWidth: '0.5px', minHeight: '320px' }}>
                   <div className="h-32 bg-gray-700 rounded mb-4"></div>
                   <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
                   <div className="h-4 bg-gray-700 rounded w-1/2"></div>
@@ -172,7 +172,7 @@ const Brands = () => {
       }).length > 0 && (
         <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto relative z-10">
-            <div className="bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg px-4 sm:px-8 py-8">
+            <div className="bg-black/30 border-gray-600 rounded-lg px-4 sm:px-8 py-8" style={{ opacity: 1, borderWidth: '0.5px' }}>
               <h2 className="text-2xl tablet:text-3xl font-bold text-gray-300 mb-6 text-center tracking-wide">
                 Ostatné
               </h2>
@@ -210,7 +210,8 @@ const Brands = () => {
         <div className="max-w-6xl mx-auto text-center">
           <button 
             onClick={() => navigate('/contact')}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
+            className="py-2 px-4 border-gray-600 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm w-full max-w-xs"
+            style={{ borderWidth: '0.5px' }}
           >
             Kontaktujte nás
           </button>

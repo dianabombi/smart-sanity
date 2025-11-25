@@ -45,8 +45,8 @@ const BrandCard = ({
 
   return (
     <div
-      className="group bg-black/30 border border-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-black/40 transition-all duration-500 cursor-pointer relative pb-16 h-[375px]"
-      style={{ transitionDelay: `${index * 100}ms` }}
+      className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-all duration-500 cursor-pointer relative pb-16 h-[375px]"
+      style={{ opacity: 1, borderWidth: '0.5px', transitionDelay: `${index * 100}ms` }}
       onClick={handleClick}
     >
       {/* Logo Container */}
