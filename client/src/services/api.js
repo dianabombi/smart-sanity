@@ -2900,29 +2900,29 @@ class ApiService {
     try {
       console.log(`🔄 Loading page content: ${page}.${section}.${key}`);
       
+      // Use RPC function to avoid PostgREST 'page' parameter conflict
       const { data, error } = await supabase
-        .from('page_content')
-        .select('*')
-        .eq('page', page)
-        .eq('section', section)
-        .eq('key', key)
-        .single();
+        .rpc('get_page_content', {
+          p_page: page,
+          p_section: section,
+          p_key: key
+        });
 
       if (error) {
-        if (error.code === 'PGRST116') {
-          // No rows found
-          console.log(`ℹ️ No content found for ${page}.${section}.${key}`);
-          return { success: false, message: 'Content not found' };
-        }
-        console.error('Supabase error loading page content:', error);
+        console.error('Supabase RPC error loading page content:', error);
         return { 
           success: false, 
           message: `Database error: ${error.message}` 
         };
       }
 
-      console.log(`✅ Loaded page content for ${page}.${section}.${key}`);
-      return { success: true, content: data.content };
+      if (!data || data.length === 0) {
+        console.log(`ℹ️ No content found for ${page}.${section}.${key}`);
+        return { success: false, message: 'Content not found' };
+      }
+
+      console.log(`✅ Loaded page content for ${page}.${section}.${key}`, data[0].content);
+      return { success: true, content: data[0].content };
     } catch (error) {
       console.error('Exception loading page content:', error);
       return { 
@@ -2941,48 +2941,25 @@ class ApiService {
     try {
       console.log(`🔄 Updating page content: ${page}.${section}.${key}`);
       
-      // Try to update first
-      const { data: updateData, error: updateError } = await supabase
-        .from('page_content')
-        .update({
-          content: content,
-          updated_at: new Date().toISOString()
-        })
-        .eq('page', page)
-        .eq('section', section)
-        .eq('key', key)
-        .select();
+      // Use RPC function to avoid PostgREST 'page' parameter conflict
+      const { data, error } = await supabase
+        .rpc('update_page_content', {
+          p_page: page,
+          p_section: section,
+          p_key: key,
+          p_content: content
+        });
 
-      if (updateError) {
-        console.log('Update failed, trying insert:', updateError);
-        
-        // If update fails, try insert (upsert behavior)
-        const { data: insertData, error: insertError } = await supabase
-          .from('page_content')
-          .insert([{
-            page: page,
-            section: section,
-            key: key,
-            content: content,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }])
-          .select();
-
-        if (insertError) {
-          console.error('Supabase error inserting page content:', insertError);
-          return { 
-            success: false, 
-            message: `Database error: ${insertError.message}` 
-          };
-        }
-
-        console.log(`✅ Inserted page content for ${page}.${section}.${key}`);
-        return { success: true, content: insertData[0] };
+      if (error) {
+        console.error('Supabase RPC error updating page content:', error);
+        return { 
+          success: false, 
+          message: `Database error: ${error.message}` 
+        };
       }
 
       console.log(`✅ Updated page content for ${page}.${section}.${key}`);
-      return { success: true, content: updateData[0] };
+      return { success: true, content: data && data.length > 0 ? data[0] : null };
     } catch (error) {
       console.error('Exception updating page content:', error);
       return { 

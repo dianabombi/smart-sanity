@@ -1,0 +1,133 @@
+// ADD THIS TO THE useEffect DEPENDENCIES:
+loadPublicPageHeaders();
+
+// ADD THESE FUNCTIONS AFTER handleCompanyNameCancel:
+
+const loadPublicPageHeaders = async () => {
+  try {
+    const titleResult = await ApiService.getPageContent('who-we-are', 'page-headers', 'title');
+    if (titleResult.success && titleResult.content) {
+      setPublicPageTitle(titleResult.content);
+    }
+
+    const subtitleResult = await ApiService.getPageContent('who-we-are', 'page-headers', 'subtitle');
+    if (subtitleResult.success && subtitleResult.content) {
+      setPublicPageSubtitle(subtitleResult.content);
+    }
+  } catch (error) {
+    console.log('Failed to load public page headers');
+  }
+};
+
+const handlePublicHeadersEdit = () => {
+  setTempPublicTitle(publicPageTitle);
+  setTempPublicSubtitle(publicPageSubtitle);
+  setEditingPublicHeaders(true);
+};
+
+const handlePublicHeadersSave = async () => {
+  try {
+    const titleResult = await ApiService.updatePageContent('who-we-are', 'page-headers', 'title', tempPublicTitle);
+    const subtitleResult = await ApiService.updatePageContent('who-we-are', 'page-headers', 'subtitle', tempPublicSubtitle);
+
+    if (titleResult.success && subtitleResult.success) {
+      setPublicPageTitle(tempPublicTitle);
+      setPublicPageSubtitle(tempPublicSubtitle);
+      setEditingPublicHeaders(false);
+      setTempPublicTitle('');
+      setTempPublicSubtitle('');
+      setSuccess('Nadpisy verejnej stránky boli úspešne aktualizované!');
+      setTimeout(() => setSuccess(''), 3000);
+    } else {
+      setError('Chyba pri aktualizácii nadpisov');
+    }
+  } catch (error) {
+    console.error('Error updating public page headers:', error);
+    setError('Chyba pri aktualizácii nadpisov');
+  }
+};
+
+const handlePublicHeadersCancel = () => {
+  setEditingPublicHeaders(false);
+  setTempPublicTitle('');
+  setTempPublicSubtitle('');
+};
+
+// ADD THIS JSX SECTION AFTER THE "COMPANY NAME" SECTION (right after line 894):
+
+        {/* Public Page Headers - Editable */}
+        <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-grow">
+              <h2 className="text-xl font-semibold text-white mb-2">Nadpisy verejnej stránky "O nás"</h2>
+              <p className="text-gray-400 text-sm mb-4">Tieto texty sa zobrazujú na verejnej stránke http://localhost:3000/who-we-are</p>
+              
+              {editingPublicHeaders ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Nadpis stránky
+                    </label>
+                    <input
+                      type="text"
+                      value={tempPublicTitle}
+                      onChange={(e) => setTempPublicTitle(e.target.value)}
+                      className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Zadajte nadpis..."
+                      maxLength={100}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Podnadpis stránky
+                    </label>
+                    <input
+                      type="text"
+                      value={tempPublicSubtitle}
+                      onChange={(e) => setTempPublicSubtitle(e.target.value)}
+                      className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Zadajte podnadpis..."
+                      maxLength={100}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handlePublicHeadersSave}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Uložiť
+                    </button>
+                    <button
+                      onClick={handlePublicHeadersCancel}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Zrušiť
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-700 border border-gray-600 rounded-lg space-y-2">
+                  <div>
+                    <span className="text-gray-400 text-sm">Nadpis:</span>
+                    <p className="text-white text-lg font-medium">{publicPageTitle}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 text-sm">Podnadpis:</span>
+                    <p className="text-white text-lg font-medium">{publicPageSubtitle}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            {!editingPublicHeaders && (
+              <button
+                onClick={handlePublicHeadersEdit}
+                className="text-blue-400 hover:text-blue-300 text-sm flex items-center ml-4 flex-shrink-0"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Upraviť
+              </button>
+            )}
+          </div>
+        </div>

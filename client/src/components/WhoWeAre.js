@@ -10,6 +10,10 @@ const WhoWeAre = () => {
   const [partnerLogos, setPartnerLogos] = useState(null); // null = not loaded yet, [] = loaded but empty
   const [logosLoading, setLogosLoading] = useState(true);
   
+  // Page headers (editable in admin)
+  const [pageTitle, setPageTitle] = useState('O nás');
+  const [pageSubtitle, setPageSubtitle] = useState('Smart Sanit s.r.o.');
+  
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [backgroundImages, setBackgroundImages] = useState([
@@ -18,9 +22,26 @@ const WhoWeAre = () => {
   const [backgroundSettings, setBackgroundSettings] = useState(null);
 
   useEffect(() => {
+    loadPageHeaders();
     loadContent();
     loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadPageHeaders = async () => {
+    try {
+      const titleResult = await ApiService.getPageContent('who-we-are', 'page-headers', 'title');
+      if (titleResult.success && titleResult.content) {
+        setPageTitle(titleResult.content);
+      }
+
+      const subtitleResult = await ApiService.getPageContent('who-we-are', 'page-headers', 'subtitle');
+      if (subtitleResult.success && subtitleResult.content) {
+        setPageSubtitle(subtitleResult.content);
+      }
+    } catch (error) {
+      console.log('Failed to load page headers, using defaults');
+    }
+  };
 
   const loadBackgroundSettings = async () => {
     try {
@@ -272,7 +293,7 @@ const WhoWeAre = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Title */}
         <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 mt-5 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-          O nás
+          {pageTitle}
         </h1>
         
         {/* Layout - stacked tiles on all screen sizes */}
@@ -281,9 +302,9 @@ const WhoWeAre = () => {
           <div className="flex justify-center">
             <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '0.85rem' }}>
               <div className="flex flex-col justify-start items-center space-y-8">
-                {/* Smart Sanit s.r.o. title */}
+                {/* Company subtitle */}
                 <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
-                  Smart Sanit s.r.o.
+                  {pageSubtitle}
                 </h2>
                 <div className="space-y-5 px-6 pb-5 w-full">
                   {content?.mainContent?.map((text, index) => (
