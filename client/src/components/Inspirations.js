@@ -7,6 +7,7 @@ import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 const Inspirations = () => {
   const [selectedCategory] = useState('all');
   const [inspirations, setInspirations] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [pageDescription, setPageDescription] = useState('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
   const [selectedImage, setSelectedImage] = useState(null);
   const [fullScreenImage, setFullScreenImage] = useState(false);
@@ -17,6 +18,7 @@ const Inspirations = () => {
 
   const loadInspirations = useCallback(async (forceRefresh = false) => {
     try {
+      setLoading(true);
       console.log(`🔄 INSPIRATIONS: Loading inspirations... ${forceRefresh ? '(FORCE REFRESH)' : ''}`);
       
       const result = await ApiService.getInspirations();
@@ -42,6 +44,8 @@ const Inspirations = () => {
     } catch (error) {
       console.error('❌ INSPIRATIONS: Error in loadInspirations:', error);
       setInspirations([]);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -164,7 +168,7 @@ const Inspirations = () => {
         />
       )}
 
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen flex flex-col">
         {/* Custom CSS for shimmer animation */}
         <style jsx>{`
           @keyframes shimmer {
@@ -177,8 +181,9 @@ const Inspirations = () => {
         `}</style>
         <NavBar />
         
-        
-        <div className="container mx-auto px-4 py-12">
+        {/* Main content with flex-grow to push footer down */}
+        <div className="flex-grow">
+          <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
@@ -190,8 +195,29 @@ const Inspirations = () => {
         </div>
 
 
+        {/* Loading Skeletons */}
+        {loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <div key={`skeleton-${index}`} className="group">
+                <div className="h-64 bg-gray-800 rounded-lg overflow-hidden relative">
+                  {/* Animated skeleton */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 animate-pulse">
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-600 to-transparent animate-shimmer"></div>
+                  </div>
+                  {/* Camera icon */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-gray-600 text-5xl">📷</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Photos Only Gallery */}
-        {filteredInspirations.length > 0 && (
+        {!loading && filteredInspirations.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredInspirations.map((inspiration) => (
             <div key={inspiration.id} className="group" style={{ opacity: 1 }}>
@@ -259,7 +285,8 @@ const Inspirations = () => {
             Prezrieť značky
           </button>
         </div>
-      </div>
+        </div>
+        </div>
 
       {/* Full Screen Image Modal */}
       {selectedImage && fullScreenImage && (
@@ -349,7 +376,7 @@ const Inspirations = () => {
         </div>
       )}
       
-        <Footer />
+      <Footer />
       </div>
     </div>
   );
