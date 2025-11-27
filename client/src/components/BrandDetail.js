@@ -146,10 +146,7 @@ const BrandDetail = () => {
         <img 
           src="/right-chevron.png" 
           alt="Back" 
-          className="h-9 rotate-180 drop-shadow-lg transition-all duration-300"
-          style={{ filter: 'brightness(0.6) invert(0.6)' }}
-          onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
-          onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+          className="h-9 rotate-180 drop-shadow-lg brightness-[0.6] hover:brightness-100 invert-[0.6] hover:invert transition-all duration-300"
         />
       </button>
 
@@ -245,10 +242,20 @@ const BrandDetail = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+
+          {/* Brand info in top right corner - outside of photo */}
+          <div className="absolute top-4 right-20 z-[140] flex flex-col items-end gap-2 mr-2">
+            <div className="text-white text-2xl font-bold tracking-wide drop-shadow-lg">
+              {brand.name}
+            </div>
+            <div className="bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-base shadow-lg">
+              {currentImageIndex + 1} / {brandImages.length}
+            </div>
+          </div>
           
-          {/* Navigation arrows - show only if more than 1 image */}
-          {brandImages.length > 1 && (
-            <>
+          {/* Navigation arrows */}
+          {brandImages.length > 1 ? (
+            <React.Fragment>
               {/* Left arrow */}
               <button
                 onClick={(e) => {
@@ -261,10 +268,7 @@ const BrandDetail = () => {
                 <img 
                   src="/right-chevron.png" 
                   alt="Previous" 
-                  className="h-12 scale-90 rotate-180 drop-shadow-lg"
-                  style={{ filter: 'brightness(0.6) invert(0.6)', transition: 'all 0.3s' }}
-                  onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
-                  onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+                  className="h-12 scale-90 rotate-180 drop-shadow-lg brightness-[0.6] hover:brightness-100 invert-[0.6] hover:invert transition-all duration-300"
                 />
               </button>
               
@@ -280,19 +284,11 @@ const BrandDetail = () => {
                 <img 
                   src="/right-chevron.png" 
                   alt="Next" 
-                  className="h-12 scale-90 drop-shadow-lg"
-                  style={{ filter: 'brightness(0.6) invert(0.6)', transition: 'all 0.3s' }}
-                  onMouseEnter={(e) => e.target.style.filter = 'brightness(1) invert(1)'}
-                  onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
+                  className="h-12 scale-90 drop-shadow-lg brightness-[0.6] hover:brightness-100 invert-[0.6] hover:invert transition-all duration-300"
                 />
               </button>
-              
-              {/* Image counter */}
-              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-gray-800/70 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-sm z-[140]">
-                {currentImageIndex + 1} / {brandImages.length}
-              </div>
-            </>
-          )}
+            </React.Fragment>
+          ) : null}
           
           {/* Full screen image */}
           <img
@@ -307,11 +303,6 @@ const BrandDetail = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           />
-          
-          {/* Brand name at bottom */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg">
-            <h3 className="text-xl font-semibold text-white">{brand.name}</h3>
-          </div>
         </div>
       )}
       

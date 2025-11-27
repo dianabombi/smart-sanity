@@ -268,6 +268,21 @@ const BrandModal = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+
+          {/* Brand info in top right corner - outside of photo */}
+          <div className="absolute top-4 right-20 z-[140] flex flex-col items-end gap-2 mr-2">
+            {/* Brand name */}
+            <div className="text-white text-2xl font-bold tracking-wide drop-shadow-lg">
+              {brand.name}
+            </div>
+            
+            {/* Image counter - only show if more than 1 image */}
+            {images && images.length > 1 && (
+              <div className="bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-base shadow-lg">
+                {currentImageIndex + 1} / {images.length}
+              </div>
+            )}
+          </div>
           
           {/* Navigation arrows - show only if more than 1 image */}
           {images && images.length > 1 && (
@@ -309,11 +324,6 @@ const BrandModal = ({
                   onMouseLeave={(e) => e.target.style.filter = 'brightness(0.6) invert(0.6)'}
                 />
               </button>
-              
-              {/* Image counter */}
-              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-gray-800/70 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-sm z-[140]">
-                {currentImageIndex + 1} / {images.length}
-              </div>
             </>
           )}
           
