@@ -622,7 +622,7 @@ class ApiService {
 
   async updateBrandImageTitle(brandId, imageFilename, newTitle) {
     try {
-      console.log('🔄 Updating image title:', brandId, imageFilename, newTitle);
+      console.log('🔄 Updating brand image title:', brandId, imageFilename, newTitle);
       
       if (!this.isSupabaseAvailable()) {
         console.log('Supabase not available, image title update simulated');
@@ -676,10 +676,74 @@ class ApiService {
         return { success: false, message: updateError.message };
       }
 
-      console.log('✅ Image title updated successfully');
+      console.log('✅ Brand image title updated successfully');
       return { success: true, message: 'Názov obrázka bol úspešne aktualizovaný' };
     } catch (error) {
-      console.error('Update image title error:', error);
+      console.error('Update brand image title error:', error);
+      return { success: false, message: 'Chyba pri aktualizácii názvu obrázka' };
+    }
+  }
+
+  async updateReferenceImageTitle(referenceId, imageId, newTitle) {
+    try {
+      console.log('🔄 Updating reference image title:', referenceId, imageId, newTitle);
+      
+      if (!this.isSupabaseAvailable()) {
+        console.log('Supabase not available, image title update simulated');
+        return { success: true, message: 'Názov obrázka bol aktualizovaný (simulácia)' };
+      }
+
+      // 1. Get the current reference data
+      const { data: reference, error: fetchError } = await supabase
+        .from('references')
+        .select('images')
+        .eq('id', referenceId)
+        .single();
+
+      if (fetchError) {
+        console.error('Failed to fetch reference:', fetchError);
+        return { success: false, message: 'Referencia nebola nájdená' };
+      }
+
+      // 2. Parse existing images
+      let images = [];
+      try {
+        if (Array.isArray(reference.images)) {
+          images = reference.images;
+        } else if (typeof reference.images === 'string') {
+          images = JSON.parse(reference.images);
+        }
+      } catch (e) {
+        console.error('Could not parse existing images:', e);
+        return { success: false, message: 'Chyba pri spracovaní obrázkov' };
+      }
+
+      // 3. Find and update the specific image
+      const imageIndex = images.findIndex(img => img.id === imageId);
+      if (imageIndex === -1) {
+        return { success: false, message: 'Obrázok nebol nájdený' };
+      }
+
+      images[imageIndex] = {
+        ...images[imageIndex],
+        title: newTitle
+      };
+
+      // 4. Save back to database
+      const { error: updateError } = await supabase
+        .from('references')
+        .update({ images: images })
+        .eq('id', referenceId);
+
+      if (updateError) {
+        console.error('Failed to update image title:', updateError);
+        return { success: false, message: updateError.message };
+      }
+
+      console.log('✅ Reference image title updated successfully');
+      return { success: true, message: 'Názov obrázka bol úspešne aktualizovaný' };
+    } catch (error) {
+      console.error('Update reference image title error:', error);
       return { success: false, message: 'Chyba pri aktualizácii názvu obrázka' };
     }
   }

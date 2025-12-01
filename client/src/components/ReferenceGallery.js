@@ -75,10 +75,9 @@ const ReferenceGallery = () => {
     
     setCurrentImageIndex(newIndex);
     
-    // Get the new image URL
+    // Set the full image object (not just the URL) so we preserve the title
     const image = reference.images[newIndex];
-    const imageUrl = typeof image === 'string' ? image : (image.url || image.dataUrl || image.src || image.path || image.filename);
-    setSelectedImage(imageUrl);
+    setSelectedImage(image);
   };
 
   // Close modal with Escape key and prevent body scroll
@@ -270,11 +269,11 @@ const ReferenceGallery = () => {
               </svg>
             </button>
 
-            {/* Reference title at bottom center */}
-            {reference.title && (
+            {/* Reference title or image title at bottom center */}
+            {(selectedImage?.title || reference.title) && (
               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[140] bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg">
                 <div className="text-white text-xl font-semibold tracking-wide drop-shadow-lg text-center">
-                  {reference.title}
+                  {selectedImage?.title || reference.title}
                 </div>
               </div>
             )}
@@ -318,8 +317,8 @@ const ReferenceGallery = () => {
             
             {/* Full screen image */}
             <img
-              src={selectedImage}
-              alt={`${reference.title} - fullscreen`}
+              src={typeof selectedImage === 'string' ? selectedImage : (selectedImage?.url || selectedImage?.dataUrl || selectedImage?.src || selectedImage?.path || selectedImage?.filename)}
+              alt={selectedImage?.title || `${reference.title} - fullscreen`}
               className="object-contain"
               style={{ 
                 maxWidth: 'calc(100vw - 32px)',

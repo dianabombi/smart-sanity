@@ -19,6 +19,10 @@ const AdminReferences = ({ onLogout }) => {
   });
   const [uploadingImage, setUploadingImage] = useState(false);
   
+  // Individual image editing
+  const [editingImage, setEditingImage] = useState(null);
+  const [tempImageTitle, setTempImageTitle] = useState('');
+  
   // Background settings
   const [backgroundSettings, setBackgroundSettings] = useState({
     referencesPageBackgroundImage: null,
@@ -364,6 +368,61 @@ const AdminReferences = ({ onLogout }) => {
     }));
   };
 
+  const handleEditImage = (image) => {
+    setEditingImage(image);
+    setTempImageTitle(image.title || '');
+  };
+
+  const handleImageTitleSave = async () => {
+    if (!editingImage || !editingReference) {
+      console.error('Missing editingImage or editingReference:', { editingImage, editingReference });
+      alert('Chyba: Chýbajú potrebné údaje');
+      return;
+    }
+    
+    try {
+      console.log('Attempting to update image title:', {
+        referenceId: editingReference.id,
+        imageId: editingImage.id,
+        newTitle: tempImageTitle
+      });
+      
+      const result = await ApiService.updateReferenceImageTitle(
+        editingReference.id,
+        editingImage.id,
+        tempImageTitle
+      );
+      
+      console.log('API result:', result);
+      
+      if (result.success) {
+        // Update local formData
+        const updatedImages = formData.images.map(img => 
+          img.id === editingImage.id ? { ...img, title: tempImageTitle } : img
+        );
+        setFormData({ ...formData, images: updatedImages });
+        
+        // Reload references
+        await loadReferences();
+        
+        setEditingImage(null);
+        setTempImageTitle('');
+        alert('Názov obrázka bol úspešne aktualizovaný!');
+      } else {
+        console.error('Update failed:', result.message);
+        alert('Chyba pri aktualizácii názvu: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Exception while updating image title:', error);
+      alert('Chyba pri aktualizácii názvu obrázka: ' + error.message);
+    }
+  };
+
+  const handleImageTitleCancel = () => {
+    setEditingImage(null);
+    setTempImageTitle('');
+  };
+
   const handleAddNew = () => {
     resetForm();
     setEditingReference(null);
@@ -629,22 +688,42 @@ const AdminReferences = ({ onLogout }) => {
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {formData.images.map((image) => (
-                      <div key={image.id} className="relative group">
-                        <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
+                      <div key={image.id} className="relative group bg-gray-700 rounded-lg p-2">
+                        <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden mb-2">
                           <img
                             src={image.url}
-                            alt={image.originalName}
+                            alt={image.title || image.originalName}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(image.id)}
-                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm transition-colors opacity-0 group-hover:opacity-100"
-                        >
-                          ×
-                        </button>
-                        <p className="text-xs text-gray-400 mt-1 truncate">{image.originalName}</p>
+                        
+                        {/* Action buttons */}
+                        <div className="flex gap-1 mb-1">
+                          <button
+                            type="button"
+                            onClick={() => handleEditImage(image)}
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded px-2 py-1 text-xs font-medium transition-colors flex items-center justify-center gap-1"
+                            title="Upraviť názov"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Upraviť
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(image.id)}
+                            className="bg-red-600 hover:bg-red-700 text-white rounded px-2 py-1 text-xs font-medium transition-colors"
+                            title="Odstrániť obrázok"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        
+                        {/* Image title or filename */}
+                        <p className="text-xs text-gray-300 font-medium truncate" title={image.title || image.originalName}>
+                          {image.title || image.originalName || 'Bez názvu'}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -674,6 +753,83 @@ const AdminReferences = ({ onLogout }) => {
           </div>
         </div>
       )}
+
+      {/* Edit Image Modal */}
+      {editingImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60] p-4">
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full border border-gray-700">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-white">
+                Upraviť názov obrázka
+              </h2>
+              <button
+                onClick={handleImageTitleCancel}
+                className="hover:opacity-70 transition-all duration-200"
+              >
+                <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              {/* Image Preview */}
+              <div className="mb-6">
+                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
+                  <img
+                    src={editingImage.url}
+                    alt={editingImage.title || 'Image'}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Title Input */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Názov obrázka
+                </label>
+                <input
+                  type="text"
+                  value={tempImageTitle}
+                  onChange={(e) => setTempImageTitle(e.target.value)}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="napr. Recepcia - dizajnový nábytok"
+                  maxLength={200}
+                  autoFocus
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Tento názov sa zobrazí pri maximalizovanom obrázku na verejnej stránke
+                </p>
+              </div>
+
+              {/* Original filename info */}
+              <div className="mb-6 p-3 bg-gray-900 rounded-lg border border-gray-700">
+                <p className="text-xs text-gray-400">
+                  <span className="font-medium">Pôvodný názov súboru:</span> {editingImage.originalName || 'N/A'}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-gray-700 flex justify-end space-x-3">
+              <button
+                onClick={handleImageTitleCancel}
+                className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+              >
+                Zrušiť
+              </button>
+              <button
+                onClick={handleImageTitleSave}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+              >
+                Uložiť názov
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       </div>
     </AdminLayout>
   );
