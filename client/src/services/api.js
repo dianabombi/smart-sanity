@@ -268,19 +268,31 @@ class ApiService {
     }
 
     try {
+      // Create abort controller with 60 second timeout (increased for large image data)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds
+      
       const { data, error } = await supabase
         .from('brands')
         .select('*')
         .order('order', { ascending: true })
-        .abortSignal(new AbortController().signal);
+        .abortSignal(controller.signal);
+      
+      clearTimeout(timeoutId);
       
       if (error) {
         console.error('Supabase error:', error.message);
+        // Check if it's a timeout error
+        if (error.message.includes('timeout') || error.message.includes('canceling statement')) {
+          console.log('⏱️ Database query timed out due to large images, using fallback');
+          return { success: true, brands: this.getFallbackBrands(), source: 'fallback-timeout' };
+        }
         return { success: false, error: error, message: 'Supabase error: ' + error.message };
       }
       
       if (!data || data.length === 0) {
-        return { success: false, message: 'No brands found in database' };
+        console.log('No brands in database, using fallback');
+        return { success: true, brands: this.getFallbackBrands(), source: 'fallback-empty' };
       }
 
       // Process brands without any automatic cleanup
@@ -605,6 +617,70 @@ class ApiService {
     } catch (error) {
       console.error('Update brand description error:', error);
       return { success: false, message: 'Chyba pri aktualizácii popisu značky' };
+    }
+  }
+
+  async updateBrandImageTitle(brandId, imageFilename, newTitle) {
+    try {
+      console.log('🔄 Updating image title:', brandId, imageFilename, newTitle);
+      
+      if (!this.isSupabaseAvailable()) {
+        console.log('Supabase not available, image title update simulated');
+        return { success: true, message: 'Názov obrázka bol aktualizovaný (simulácia)' };
+      }
+
+      // 1. Get the current brand data
+      const { data: brand, error: fetchError } = await supabase
+        .from('brands')
+        .select('images')
+        .eq('id', brandId)
+        .single();
+
+      if (fetchError) {
+        console.error('Failed to fetch brand:', fetchError);
+        return { success: false, message: 'Značka nebola nájdená' };
+      }
+
+      // 2. Parse existing images
+      let images = [];
+      try {
+        if (Array.isArray(brand.images)) {
+          images = brand.images;
+        } else if (typeof brand.images === 'string') {
+          images = JSON.parse(brand.images);
+        }
+      } catch (e) {
+        console.error('Could not parse existing images:', e);
+        return { success: false, message: 'Chyba pri spracovaní obrázkov' };
+      }
+
+      // 3. Find and update the specific image
+      const imageIndex = images.findIndex(img => img.filename === imageFilename);
+      if (imageIndex === -1) {
+        return { success: false, message: 'Obrázok nebol nájdený' };
+      }
+
+      images[imageIndex] = {
+        ...images[imageIndex],
+        title: newTitle
+      };
+
+      // 4. Save back to database
+      const { error: updateError } = await supabase
+        .from('brands')
+        .update({ images: images })
+        .eq('id', brandId);
+
+      if (updateError) {
+        console.error('Failed to update image title:', updateError);
+        return { success: false, message: updateError.message };
+      }
+
+      console.log('✅ Image title updated successfully');
+      return { success: true, message: 'Názov obrázka bol úspešne aktualizovaný' };
+    } catch (error) {
+      console.error('Update image title error:', error);
+      return { success: false, message: 'Chyba pri aktualizácii názvu obrázka' };
     }
   }
 

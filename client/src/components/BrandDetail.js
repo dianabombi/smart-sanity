@@ -243,10 +243,10 @@ const BrandDetail = () => {
             </svg>
           </button>
 
-          {/* Brand name at bottom center */}
+          {/* Brand name or image title at bottom center */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[140] bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg">
             <div className="text-white text-xl font-semibold tracking-wide drop-shadow-lg text-center">
-              {brand.name}
+              {selectedImage?.title || brand.name}
             </div>
           </div>
           

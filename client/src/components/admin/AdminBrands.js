@@ -17,6 +17,10 @@ const AdminBrands = ({ onLogout }) => {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const categoryInputRef = useRef(null);
   
+  // Individual image editing
+  const [editingImage, setEditingImage] = useState(null);
+  const [tempImageTitle, setTempImageTitle] = useState('');
+  
   // Add Brand Modal State
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [newBrand, setNewBrand] = useState({
@@ -97,18 +101,39 @@ const AdminBrands = ({ onLogout }) => {
       const result = await ApiService.getBrands();
       
       if (result.success && result.brands) {
-        console.log('✅ ADMIN: Loaded', result.brands.length, 'brands from database');
+        console.log('✅ ADMIN: Loaded', result.brands.length, 'brands');
+        if (result.source && result.source.includes('fallback')) {
+          console.log('⚠️ Using fallback brands due to:', result.source);
+        }
         setBrands(result.brands);
         setError('');
       } else {
         console.error('❌ ADMIN: Failed to load brands:', result.message);
-        setError('Failed to load brands: ' + result.message);
-        setBrands([]);
+        
+        // On timeout or error, try to use fallback brands
+        const fallbackBrands = ApiService.getFallbackBrands();
+        if (fallbackBrands && fallbackBrands.length > 0) {
+          console.log('⚠️ Using fallback brands after error');
+          setBrands(fallbackBrands);
+          setError('Upozornenie: Používam záložné značky. Databáza je príliš pomalá kvôli veľkým obrázkam.');
+        } else {
+          setError('Failed to load brands: ' + result.message);
+          setBrands([]);
+        }
       }
     } catch (error) {
       console.error('❌ ADMIN: Error loading brands:', error);
-      setError('Error loading brands: ' + error.message);
-      setBrands([]);
+      
+      // On exception, try to use fallback brands
+      const fallbackBrands = ApiService.getFallbackBrands();
+      if (fallbackBrands && fallbackBrands.length > 0) {
+        console.log('⚠️ Using fallback brands after exception');
+        setBrands(fallbackBrands);
+        setError('Upozornenie: Používam záložné značky. Chyba pripojenia: ' + error.message);
+      } else {
+        setError('Error loading brands: ' + error.message);
+        setBrands([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -209,6 +234,51 @@ const AdminBrands = ({ onLogout }) => {
       console.error('Error deleting image:', error);
       alert('Chyba pri odstraňovaní obrázka');
     }
+  };
+
+  const handleEditImage = (image) => {
+    setEditingImage(image);
+    setTempImageTitle(image.title || '');
+  };
+
+  const handleImageTitleSave = async () => {
+    if (!editingImage || !selectedBrand) return;
+    
+    try {
+      const result = await ApiService.updateBrandImageTitle(
+        selectedBrand.id,
+        editingImage.filename,
+        tempImageTitle
+      );
+      
+      if (result.success) {
+        // Reload brands to get updated data
+        await loadBrands();
+        
+        // Update selectedBrand with the new data
+        const updatedBrands = await ApiService.getBrands();
+        if (updatedBrands.success) {
+          const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
+          if (updatedBrand) {
+            setSelectedBrand(updatedBrand);
+          }
+        }
+        
+        setEditingImage(null);
+        setTempImageTitle('');
+        alert('Názov obrázka bol úspešne aktualizovaný!');
+      } else {
+        alert('Chyba pri aktualizácii názvu: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating image title:', error);
+      alert('Chyba pri aktualizácii názvu obrázka');
+    }
+  };
+
+  const handleImageTitleCancel = () => {
+    setEditingImage(null);
+    setTempImageTitle('');
   };
 
   const handleDescriptionEdit = () => {
@@ -634,6 +704,85 @@ const AdminBrands = ({ onLogout }) => {
     </div>
   );
 
+  const EditImageModal = () => {
+    if (!editingImage) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60] p-4">
+        <div className="bg-gray-800 rounded-lg max-w-2xl w-full border border-gray-700">
+          {/* Header */}
+          <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-white">
+              Upraviť názov obrázka
+            </h2>
+            <button
+              onClick={handleImageTitleCancel}
+              className="hover:opacity-70 transition-all duration-200"
+            >
+              <img src="/icons/close.png" alt="Close" className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            {/* Image Preview */}
+            <div className="mb-6">
+              <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
+                <img
+                  src={editingImage.url || editingImage.dataUrl || editingImage.path}
+                  alt={editingImage.title || 'Image'}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </div>
+
+            {/* Title Input */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Názov obrázka
+              </label>
+              <input
+                type="text"
+                value={tempImageTitle}
+                onChange={(e) => setTempImageTitle(e.target.value)}
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="napr. AA/27 - Batéria do kúpeľne"
+                maxLength={200}
+                autoFocus
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Tento názov sa zobrazí pri maximalizovanom obrázku na verejnej stránke
+              </p>
+            </div>
+
+            {/* Original filename info */}
+            <div className="mb-6 p-3 bg-gray-900 rounded-lg border border-gray-700">
+              <p className="text-xs text-gray-400">
+                <span className="font-medium">Pôvodný názov súboru:</span> {editingImage.originalName || 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="p-6 border-t border-gray-700 flex justify-end space-x-3">
+            <button
+              onClick={handleImageTitleCancel}
+              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+            >
+              Zrušiť
+            </button>
+            <button
+              onClick={handleImageTitleSave}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+            >
+              Uložiť názov
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const ImageUploadModal = () => {
     if (!selectedBrand) return null;
 
@@ -964,11 +1113,11 @@ const AdminBrands = ({ onLogout }) => {
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {selectedBrand.images.map((image, index) => (
-                    <div key={image.filename || index} className="relative group">
-                      <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden">
+                    <div key={image.filename || index} className="relative group bg-gray-700 rounded-lg p-2">
+                      <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden mb-2">
                         <img
                           src={image.url || image.dataUrl || image.path || 'data:image/svg+xml,%3Csvg width="300" height="300" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%234A5568"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em"%3ENo Image%3C/text%3E%3C/svg%3E'}
-                          alt={image.originalName || 'Uploaded image'}
+                          alt={image.title || image.originalName || 'Uploaded image'}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             console.log('Admin image load error:', image);
@@ -994,13 +1143,32 @@ const AdminBrands = ({ onLogout }) => {
                           }}
                         />
                       </div>
-                      <button
-                        onClick={() => removeImage(selectedBrand.id, image.filename)}
-                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ×
-                      </button>
-                      <p className="text-xs text-gray-400 mt-1 truncate">{image.originalName || 'No name'}</p>
+                      
+                      {/* Action buttons */}
+                      <div className="flex gap-1 mb-1">
+                        <button
+                          onClick={() => handleEditImage(image)}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded px-2 py-1 text-xs font-medium transition-colors flex items-center justify-center gap-1"
+                          title="Upraviť názov"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          Upraviť
+                        </button>
+                        <button
+                          onClick={() => removeImage(selectedBrand.id, image.filename)}
+                          className="bg-red-600 hover:bg-red-700 text-white rounded px-2 py-1 text-xs font-medium transition-colors"
+                          title="Odstrániť obrázok"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      
+                      {/* Image title or filename */}
+                      <p className="text-xs text-gray-300 font-medium truncate" title={image.title || image.originalName}>
+                        {image.title || image.originalName || 'Bez názvu'}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -1290,6 +1458,9 @@ const AdminBrands = ({ onLogout }) => {
 
       {/* Image Upload Modal */}
       <ImageUploadModal />
+      
+      {/* Edit Image Modal */}
+      <EditImageModal />
       
       {/* Add Brand Modal */}
       {showAddBrandModal && (
