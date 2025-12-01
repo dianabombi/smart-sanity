@@ -243,13 +243,10 @@ const BrandDetail = () => {
             </svg>
           </button>
 
-          {/* Brand info in top right corner - outside of photo */}
-          <div className="absolute top-4 right-20 z-[140] flex flex-col items-end gap-2 mr-2">
-            <div className="text-white text-2xl font-bold tracking-wide drop-shadow-lg">
+          {/* Brand name at bottom center */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[140] bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg">
+            <div className="text-white text-xl font-semibold tracking-wide drop-shadow-lg text-center">
               {brand.name}
-            </div>
-            <div className="bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-base shadow-lg">
-              {currentImageIndex + 1} / {brandImages.length}
             </div>
           </div>
           

@@ -270,17 +270,14 @@ const ReferenceGallery = () => {
               </svg>
             </button>
 
-            {/* Reference info in top right corner - outside of photo */}
-            <div className="absolute top-4 right-20 z-[140] flex flex-col items-end gap-2 mr-2">
-              {reference.title && (
-                <div className="text-white text-2xl font-bold tracking-wide drop-shadow-lg">
+            {/* Reference title at bottom center */}
+            {reference.title && (
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[140] bg-black/70 backdrop-blur-sm px-6 py-3 rounded-lg">
+                <div className="text-white text-xl font-semibold tracking-wide drop-shadow-lg text-center">
                   {reference.title}
                 </div>
-              )}
-              <div className="bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-lg text-white text-base shadow-lg">
-                {currentImageIndex + 1} / {reference.images.length}
               </div>
-            </div>
+            )}
             
             {/* Navigation arrows */}
             {reference.images && reference.images.length > 1 ? (
