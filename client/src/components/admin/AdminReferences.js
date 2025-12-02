@@ -757,9 +757,9 @@ const AdminReferences = ({ onLogout }) => {
       {/* Edit Image Modal */}
       {editingImage && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60] p-4">
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full border border-gray-700">
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-700 flex flex-col">
             {/* Header */}
-            <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+            <div className="p-6 border-b border-gray-700 flex items-center justify-between flex-shrink-0">
               <h2 className="text-xl font-semibold text-white">
                 Upraviť názov obrázka
               </h2>
@@ -771,11 +771,11 @@ const AdminReferences = ({ onLogout }) => {
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-6">
+            {/* Content - Scrollable */}
+            <div className="p-6 overflow-y-auto flex-1">
               {/* Image Preview */}
               <div className="mb-6">
-                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
+                <div className="bg-gray-900 rounded-lg overflow-hidden flex items-center justify-center" style={{ maxHeight: '300px' }}>
                   <img
                     src={editingImage.url}
                     alt={editingImage.title || 'Image'}
@@ -811,8 +811,8 @@ const AdminReferences = ({ onLogout }) => {
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="p-6 border-t border-gray-700 flex justify-end space-x-3">
+            {/* Footer - Fixed */}
+            <div className="p-6 border-t border-gray-700 flex justify-end space-x-3 flex-shrink-0">
               <button
                 onClick={handleImageTitleCancel}
                 className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
