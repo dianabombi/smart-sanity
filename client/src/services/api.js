@@ -1735,9 +1735,9 @@ class ApiService {
 
     try {
       console.log('Fetching partner logos from Supabase...');
-      // Use a short timeout so the page doesn't block too long on this decorative section
+      // Use a 5-second timeout to allow time for large base64 images
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out')), 2000)
+        setTimeout(() => reject(new Error('Request timed out')), 5000)
       );
 
       const fetchPromise = supabase

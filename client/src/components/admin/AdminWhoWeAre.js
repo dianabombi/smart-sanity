@@ -122,42 +122,83 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
     try {
       setUploadingPartnerLogo(true);
-      setLogoMessage('Nahrávam logo...');
+      setLogoMessage('Nahrávam a komprimujem logo...');
 
-      // Convert file to data URL
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const logoDataUrl = e.target.result;
-        
-        try {
-          // Get next order number
-          const maxOrder = partnerLogos.length > 0 
-            ? Math.max(...partnerLogos.map(l => l.order || 0)) 
-            : 0;
-
-          // Create new partner logo
-          const result = await ApiService.createPartnerLogo({
-            name: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
-            logo: logoDataUrl,
-            order: maxOrder + 1,
-            active: true
-          });
-          
-          if (result.success) {
-            setLogoMessage('✅ Logo bolo úspešne nahrané!');
-            await loadPartnerLogos(); // Reload logos
-            setTimeout(() => setLogoMessage(''), 3000);
-          } else {
-            setLogoMessage('❌ Chyba pri ukladaní: ' + result.message);
-          }
-        } catch (error) {
-          setLogoMessage('❌ Chyba: ' + error.message);
-        } finally {
-          setUploadingPartnerLogo(false);
-        }
+      // Compress image before uploading
+      const compressImage = (file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              // Create canvas for compression
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              
+              // Set max dimensions (logos don't need to be huge)
+              const maxWidth = 400;
+              const maxHeight = 400;
+              
+              let width = img.width;
+              let height = img.height;
+              
+              // Calculate new dimensions while maintaining aspect ratio
+              if (width > height) {
+                if (width > maxWidth) {
+                  height = (height * maxWidth) / width;
+                  width = maxWidth;
+                }
+              } else {
+                if (height > maxHeight) {
+                  width = (width * maxHeight) / height;
+                  height = maxHeight;
+                }
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              
+              // Draw and compress
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              // Convert to compressed base64 (70% quality for logos)
+              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+              resolve(compressedDataUrl);
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
       };
+
+      const logoDataUrl = await compressImage(file);
       
-      reader.readAsDataURL(file);
+      try {
+        // Get next order number
+        const maxOrder = partnerLogos.length > 0 
+          ? Math.max(...partnerLogos.map(l => l.order || 0)) 
+          : 0;
+
+        // Create new partner logo
+        const result = await ApiService.createPartnerLogo({
+          name: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+          logo: logoDataUrl,
+          order: maxOrder + 1,
+          active: true
+        });
+        
+        if (result.success) {
+          setLogoMessage('✅ Logo bolo úspešne nahrané a skomprimované!');
+          await loadPartnerLogos(); // Reload logos
+          setTimeout(() => setLogoMessage(''), 3000);
+        } else {
+          setLogoMessage('❌ Chyba pri ukladaní: ' + result.message);
+        }
+      } catch (error) {
+        setLogoMessage('❌ Chyba: ' + error.message);
+      } finally {
+        setUploadingPartnerLogo(false);
+      }
       
     } catch (error) {
       setLogoMessage('❌ Chyba pri nahrávaní loga');

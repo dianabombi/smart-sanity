@@ -330,15 +330,21 @@ const WhoWeAre = () => {
                   <div className="flex justify-center w-full pb-8">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
                       {logosLoading ? (
-                        <div className="col-span-2 text-gray-400 text-center py-8" />
+                        // Show skeleton loaders while loading
+                        Array.from({ length: 8 }).map((_, index) => (
+                          <div key={`skeleton-${index}`} className="rounded-lg p-2 animate-pulse" style={{ height: '110px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <div className="bg-gray-700 rounded" style={{ height: '95px', width: '80%' }}></div>
+                          </div>
+                        ))
                       ) : partnerLogos && partnerLogos.length > 0 ? (
-                        partnerLogos.map((logo) => (
+                        partnerLogos.map((logo, index) => (
                           <div key={logo.id} className="rounded-lg p-2 transition-all duration-300" style={{ height: '110px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <img 
                               src={logo.logo} 
                               alt={logo.name}
                               style={{ height: '95px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
-                              loading="eager"
+                              loading="lazy"
+                              decoding="async"
                               onError={(e) => {
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'block';
