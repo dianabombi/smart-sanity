@@ -91,7 +91,8 @@ const Home = () => {
           
           {/* Text Section */}
           <div className="flex flex-col items-center justify-center pt-3 pb-2 tablet:pt-2 tablet:pb-2 laptop:pt-6 laptop:pb-8">
-            <div className="text-sm tablet:text-base text-gray-400 opacity-0 animate-[fadeInUp_2.5s_ease-out_0.8s_forwards] max-w-3xl mx-auto text-center space-y-1">
+            <div className="text-lg tablet:text-xl laptop:text-2xl text-gray-400 opacity-0 animate-[fadeInSoftUp_1.2s_cubic-bezier(0.25,0.8,0.25,1)_0.3s_forwards]
+ max-w-3xl mx-auto text-center space-y-1">
               <p className="text-center">Profesionálne riešenia</p>
               <p className="text-center">pre architektov a interiérových</p>
               <p className="text-center">dizajnérov</p>
