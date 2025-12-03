@@ -26,6 +26,7 @@ const Entrance = () => {
     entranceCache.bulletPoints || defaultBulletPoints
   );
   const isMountedRef = useRef(false);
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
 
   // Load content from admin only once on mount
   useEffect(() => {
@@ -63,6 +64,36 @@ const Entrance = () => {
     }
   };
 
+  // Preload background image
+  useEffect(() => {
+    if (!backgroundSettings.entrancePageBackgroundImage) {
+      setBackgroundLoaded(true);
+      return;
+    }
+
+    setBackgroundLoaded(false);
+    
+    // Safety timeout - show content after 1.5 seconds even if image hasn't loaded
+    const timeoutId = setTimeout(() => {
+      console.log('⏰ Entrance background loading timeout - showing content anyway');
+      setBackgroundLoaded(true);
+    }, 1500);
+
+    const img = new Image();
+    img.onload = () => {
+      clearTimeout(timeoutId);
+      setBackgroundLoaded(true);
+    };
+    img.onerror = () => {
+      console.error('❌ Failed to load entrance background image');
+      clearTimeout(timeoutId);
+      setBackgroundLoaded(true);
+    };
+    img.src = backgroundSettings.entrancePageBackgroundImage;
+    
+    return () => clearTimeout(timeoutId);
+  }, [backgroundSettings.entrancePageBackgroundImage]);
+
   // Animation for bullet points
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -86,13 +117,15 @@ const Entrance = () => {
       {/* Background Image - Outside parent, covers entire viewport */}
       {backgroundSettings.entrancePageBackgroundImage && (
         <div 
-          className="fixed inset-0 bg-black"
+          className={`fixed inset-0 bg-black transition-opacity duration-1000 ${
+            backgroundLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
           style={{
             backgroundImage: `url(${backgroundSettings.entrancePageBackgroundImage})`,
             backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
             backgroundPosition: `${backgroundSettings.backgroundImagePositionX || 'center'} ${backgroundSettings.backgroundImagePositionY || 'center'}`,
             backgroundRepeat: 'no-repeat',
-            opacity: backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 1.0,
+            opacity: backgroundLoaded ? (backgroundSettings.backgroundImageOpacity !== undefined ? backgroundSettings.backgroundImageOpacity : 1.0) : 0,
             filter: backgroundSettings.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
             zIndex: 0,
             pointerEvents: 'none'

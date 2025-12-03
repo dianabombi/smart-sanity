@@ -20,12 +20,52 @@ const WhoWeAre = () => {
     // Placeholder - no default background until set in admin
   ]); // O nás background - configure in admin
   const [backgroundSettings, setBackgroundSettings] = useState(null);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   useEffect(() => {
     loadPageHeaders();
     loadContent();
     loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Preload background images
+  useEffect(() => {
+    if (backgroundImages.length === 0) {
+      setImagesLoaded(true);
+      return;
+    }
+
+    setImagesLoaded(false);
+    let loadedCount = 0;
+    
+    // Safety timeout - show content after 1.5 seconds even if images haven't loaded
+    const timeoutId = setTimeout(() => {
+      console.log('⏰ Background image loading timeout - showing content anyway');
+      setImagesLoaded(true);
+    }, 1500);
+
+    backgroundImages.forEach((imageSrc) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === backgroundImages.length) {
+          clearTimeout(timeoutId);
+          setImagesLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        console.error('❌ Failed to load background image:', imageSrc.substring(0, 50));
+        loadedCount++;
+        if (loadedCount === backgroundImages.length) {
+          clearTimeout(timeoutId);
+          setImagesLoaded(true);
+        }
+      };
+      img.src = imageSrc;
+    });
+    
+    return () => clearTimeout(timeoutId);
+  }, [backgroundImages]);
 
   const loadPageHeaders = async () => {
     try {
@@ -409,11 +449,12 @@ const WhoWeAre = () => {
     <div className="min-h-screen bg-black relative flex flex-col">
       {/* Background Slideshow - covers entire viewport */}
       <div className="fixed inset-0 z-0">
+        {/* Background images - fade in when loaded */}
         {backgroundImages.map((image, index) => (
           <div
             key={image}
             className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentImageIndex ? 'opacity-30' : 'opacity-0'
+              index === currentImageIndex && imagesLoaded ? 'opacity-30' : 'opacity-0'
             }`}
             style={{
               backgroundImage: `url(${image})`,
@@ -421,16 +462,17 @@ const WhoWeAre = () => {
               backgroundPosition: `${backgroundSettings?.backgroundImagePositionX || 'center'} ${backgroundSettings?.backgroundImagePositionY || 'center'}`,
               backgroundRepeat: 'no-repeat',
               filter: backgroundSettings?.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
-              opacity: index === currentImageIndex ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
+              opacity: index === currentImageIndex && imagesLoaded ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
             }}
           />
         ))}
       </div>
       
-      {/* Main content area */}
+      {/* Main content area - always visible */}
       <div className="relative flex-1 flex flex-col">
         <NavBar />
         
+        {/* Show content immediately, regardless of background loading state */}
         <div className="flex items-start justify-center pt-28 pb-12 flex-1 relative z-10">
           {contentSection}
         </div>

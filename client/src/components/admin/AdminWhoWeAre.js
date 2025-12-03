@@ -532,48 +532,60 @@ const AdminWhoWeAre = ({ onLogout }) => {
 
     try {
       setBackgroundLoading(true);
-      setBackgroundMessage('Nahrávam obrázok...');
+      setBackgroundMessage('Nahrávam a komprimujem obrázok...');
       console.log('🔄 Uploading WhoWeAre background image:', file.name, file.size, file.type);
       
-      const reader = new FileReader();
-      
-      reader.onerror = () => {
-        console.error('❌ FileReader error');
-        setBackgroundMessage('Chyba pri čítaní súboru.');
-        setBackgroundLoading(false);
-      };
-      
-      reader.onload = (e) => {
-        try {
-          console.log('✅ WhoWeAre image converted to data URL, length:', e.target.result.length);
-          
-          const newImage = {
-            id: Date.now(), // Simple ID based on timestamp
-            dataUrl: e.target.result,
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            order: backgroundSettings.whoWeAreBackgroundImages.length + 1
+      // Compress background image for faster loading
+      const compressBackgroundImage = (file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              
+              // Max width for background images (1400px for faster loading)
+              const maxWidth = 1400;
+              const scale = Math.min(1, maxWidth / img.width);
+              
+              canvas.width = img.width * scale;
+              canvas.height = img.height * scale;
+              
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              
+              // Compress to 50% quality for backgrounds (optimized for speed)
+              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.50);
+              console.log(`📦 Compressed from ${e.target.result.length} to ${compressedDataUrl.length} bytes`);
+              resolve(compressedDataUrl);
+            };
+            img.src = e.target.result;
           };
-          
-          setBackgroundSettings(prev => ({
-            ...prev,
-            whoWeAreBackgroundImages: [...prev.whoWeAreBackgroundImages, newImage]
-          }));
-          
-          setBackgroundMessage(`✅ Obrázok "${file.name}" bol úspešne nahraný! Nezabudnite kliknúť "Uložiť pozadie".`);
-          
-          // Clear the file input
-          event.target.value = '';
-        } catch (processError) {
-          console.error('❌ Error processing image:', processError);
-          setBackgroundMessage('Chyba pri spracovaní obrázka.');
-        } finally {
-          setBackgroundLoading(false);
-        }
+          reader.readAsDataURL(file);
+        });
       };
       
-      reader.readAsDataURL(file);
+      const compressedDataUrl = await compressBackgroundImage(file);
+      
+      const newImage = {
+        id: Date.now(),
+        dataUrl: compressedDataUrl,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        order: backgroundSettings.whoWeAreBackgroundImages.length + 1
+      };
+      
+      setBackgroundSettings(prev => ({
+        ...prev,
+        whoWeAreBackgroundImages: [...prev.whoWeAreBackgroundImages, newImage]
+      }));
+      
+      setBackgroundMessage(`✅ Obrázok "${file.name}" bol úspešne nahraný a komprimovaný! Nezabudnite kliknúť "Uložiť pozadie".`);
+      
+      // Clear the file input
+      event.target.value = '';
+      setBackgroundLoading(false);
     } catch (error) {
       console.error('❌ Error uploading WhoWeAre background image:', error);
       setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia: ' + error.message);

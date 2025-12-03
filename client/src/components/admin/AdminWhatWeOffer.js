@@ -230,24 +230,66 @@ const AdminWhatWeOffer = ({ onLogout }) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      setBackgroundMessage('Neplatný typ súboru. Podporované formáty: JPG, PNG, WebP, SVG');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setBackgroundMessage('Súbor je príliš veľký. Maximálna veľkosť je 5MB.');
+      return;
+    }
+
     try {
       setBackgroundLoading(true);
+      setBackgroundMessage('Nahrávam a komprimujem obrázok...');
       console.log('🔄 Uploading background image:', file.name, file.size);
       
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('✅ Image converted to data URL, length:', e.target.result.length);
-        setBackgroundSettings(prev => ({
-          ...prev,
-          entrancePageBackgroundImage: e.target.result
-        }));
-        setBackgroundMessage('Obrázok bol nahraný! Nezabudnite kliknúť "Uložiť pozadie".');
+      // Compress background image for faster loading
+      const compressBackgroundImage = (file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              
+              // Max width for background images (1400px for faster loading)
+              const maxWidth = 1400;
+              const scale = Math.min(1, maxWidth / img.width);
+              
+              canvas.width = img.width * scale;
+              canvas.height = img.height * scale;
+              
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              
+              // Compress to 50% quality for backgrounds (optimized for speed)
+              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.50);
+              console.log(`📦 Compressed from ${e.target.result.length} to ${compressedDataUrl.length} bytes`);
+              resolve(compressedDataUrl);
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
       };
-      reader.readAsDataURL(file);
+      
+      const compressedDataUrl = await compressBackgroundImage(file);
+      
+      setBackgroundSettings(prev => ({
+        ...prev,
+        entrancePageBackgroundImage: compressedDataUrl
+      }));
+      setBackgroundMessage('✅ Obrázok bol úspešne nahraný a komprimovaný! Nezabudnite kliknúť "Uložiť pozadie".');
+      setBackgroundLoading(false);
     } catch (error) {
       console.error('❌ Error uploading background image:', error);
-      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia.');
-    } finally {
+      setBackgroundMessage('Chyba pri nahrávaní obrázka pozadia: ' + error.message);
       setBackgroundLoading(false);
     }
   };
