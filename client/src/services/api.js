@@ -1734,15 +1734,16 @@ class ApiService {
     }
 
     try {
-      console.log('Fetching partner logos from Supabase...');
-      // Use a 5-second timeout to allow time for large base64 images
+      console.log('🔄 Fetching partner logos from Supabase (optimized query)...');
+      // Increased timeout to 10 seconds for large base64 images
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out')), 5000)
+        setTimeout(() => reject(new Error('Request timed out')), 10000)
       );
 
+      // Fetch only essential fields to reduce data transfer
       const fetchPromise = supabase
         .from('partner_logos')
-        .select('*')
+        .select('id, name, logo, order')
         .eq('active', true)
         .order('order', { ascending: true });
 
@@ -1758,7 +1759,7 @@ class ApiService {
         return { success: true, logos: [], source: 'empty' };
       }
 
-      console.log('✅ Successfully loaded logos from Supabase database');
+      console.log(`✅ Successfully loaded ${data.length} logos from Supabase database`);
       return { success: true, logos: data, source: 'database' };
     } catch (error) {
       console.log('Error fetching logos:', error);

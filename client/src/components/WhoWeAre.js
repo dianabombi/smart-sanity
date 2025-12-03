@@ -5,10 +5,10 @@ import ApiService from '../services/api';
 
 const WhoWeAre = () => {
   const [content, setContent] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [partnerLogos, setPartnerLogos] = useState(null); // null = not loaded yet, [] = loaded but empty
   const [logosLoading, setLogosLoading] = useState(true);
+  const [logosCached, setLogosCached] = useState(false);
   
   // Page headers (editable in admin)
   const [pageTitle, setPageTitle] = useState('O nás');
@@ -248,34 +248,9 @@ const WhoWeAre = () => {
 
       // Show content immediately after it is processed
       setContent(contentData);
-      setLoading(false);
 
-      // Load logos in background without blocking main content
-      Promise.all([
-        ApiService.getBrands().catch(err => ({ success: false, error: err })),
-        ApiService.getPartnerLogos().catch(err => ({ success: false, error: err }))
-      ]).then(([brandsResult, logosResult]) => {
-        // Process logo
-        let logoData = '/ebk-logo.svg';
-        if (brandsResult.success && brandsResult.brands) {
-          const ebkBrand = brandsResult.brands.find(brand => 
-            brand.name.includes('Elite Bath + Kitchen') || brand.name.includes('EB+K')
-          );
-          if (ebkBrand && ebkBrand.logo) {
-            logoData = ebkBrand.logo;
-          }
-        }
-
-        // Process partner logos
-        let logosData = [];
-        if (logosResult && logosResult.success && logosResult.logos) {
-          logosData = logosResult.logos;
-        }
-
-        setEbkLogo(logoData);
-        setPartnerLogos(logosData);
-        setLogosLoading(false);
-      });
+      // Load partner logos separately (optimized - don't load all brands)
+      loadPartnerLogosOptimized();
       
     } catch (error) {
       console.error('Error loading content:', error);
@@ -283,7 +258,43 @@ const WhoWeAre = () => {
         mainContent: ["Chyba pri načítavaní obsahu. Prosím, obnovte stránku."],
         partnershipContent: ""
       });
-      setLoading(false);
+    }
+  };
+
+  const loadPartnerLogosOptimized = async () => {
+    // Skip if already cached
+    if (logosCached && partnerLogos !== null) {
+      console.log('📦 Using cached partner logos');
+      setLogosLoading(false);
+      return;
+    }
+
+    try {
+      setLogosLoading(true);
+      console.log('🔄 Loading partner logos...');
+      
+      // Load partner logos (optimized query)
+      const logosResult = await ApiService.getPartnerLogos().catch(err => ({ 
+        success: false, 
+        error: err 
+      }));
+
+      // Process partner logos
+      let logosData = [];
+      if (logosResult && logosResult.success && logosResult.logos) {
+        logosData = logosResult.logos;
+        console.log(`✅ Loaded ${logosData.length} partner logos`);
+      } else {
+        console.log('⚠️ No partner logos loaded');
+      }
+
+      setPartnerLogos(logosData);
+      setLogosCached(true);
+    } catch (error) {
+      console.error('❌ Error loading partner logos:', error);
+      setPartnerLogos([]);
+    } finally {
+      setLogosLoading(false);
     }
   };
 
@@ -328,35 +339,52 @@ const WhoWeAre = () => {
                     Naši partneri
                   </h2>
                   <div className="flex justify-center w-full pb-8">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
-                      {logosLoading ? (
-                        // Show skeleton loaders while loading
-                        Array.from({ length: 8 }).map((_, index) => (
-                          <div key={`skeleton-${index}`} className="rounded-lg p-2 animate-pulse" style={{ height: '110px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <div className="bg-gray-700 rounded" style={{ height: '95px', width: '80%' }}></div>
-                          </div>
-                        ))
-                      ) : partnerLogos && partnerLogos.length > 0 ? (
-                        partnerLogos.map((logo, index) => (
-                          <div key={logo.id} className="rounded-lg p-2 transition-all duration-300" style={{ height: '110px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <img 
-                              src={logo.logo} 
-                              alt={logo.name}
-                              style={{ height: '95px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'block';
+                    {logosLoading ? (
+                      <div className="flex items-center justify-center py-12">
+                        <div className="flex flex-col items-center space-y-3">
+                          <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-gray-400 text-sm">Načítavam logá partnerov...</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
+                        {partnerLogos && partnerLogos.length > 0 ? (
+                          partnerLogos.map((logo, index) => (
+                            <div 
+                              key={logo.id} 
+                              className="rounded-lg p-2 transition-all duration-300 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]" 
+                              style={{ 
+                                height: '110px', 
+                                width: '100%', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                animationDelay: `${index * 0.05}s`
                               }}
-                            />
-                            <div className="text-white font-semibold text-center hidden">
-                              {logo.name}
+                            >
+                              <img 
+                                src={logo.logo} 
+                                alt={logo.name}
+                                style={{ height: '95px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                                loading="lazy"
+                                decoding="async"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'block';
+                                }}
+                              />
+                              <div className="text-white font-semibold text-center hidden">
+                                {logo.name}
+                              </div>
                             </div>
+                          ))
+                        ) : partnerLogos !== null ? (
+                          <div className="col-span-4 text-gray-400 text-center py-8">
+                            Žiadne logá partnerov
                           </div>
-                        ))
-                      ) : null}
-                    </div>
+                        ) : null}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -404,45 +432,7 @@ const WhoWeAre = () => {
         <NavBar />
         
         <div className="flex items-start justify-center pt-28 pb-12 flex-1 relative z-10">
-          {loading ? (
-            <div className="w-full">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 gap-5 items-stretch justify-center">
-                  <div className="flex justify-center">
-                    <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
-                      <div className="flex flex-col justify-start items-center space-y-5 animate-pulse">
-                        <div className="h-8 w-40 bg-gray-700 rounded"></div>
-                        <div className="space-y-5 px-6 pb-5 w-full">
-                          <div className="h-4 w-full bg-gray-700 rounded"></div>
-                          <div className="h-4 w-5/6 bg-gray-700 rounded"></div>
-                          <div className="h-4 w-4/6 bg-gray-700 rounded"></div>
-                          <div className="h-4 w-3/6 bg-gray-700 rounded"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center">
-                    <div className="rounded-lg w-full h-full flex flex-col justify-start bg-black/40 border-gray-700" style={{ borderWidth: '0.5px', padding: '1rem' }}>
-                      <div className="space-y-6 animate-pulse">
-                        <div className="flex flex-col justify-center items-center space-y-6">
-                          <div className="h-8 w-40 bg-gray-700 rounded"></div>
-                          <div className="grid grid-cols-2 gap-4 w-full max-w-md">
-                            <div className="h-20 bg-gray-700 rounded"></div>
-                            <div className="h-20 bg-gray-700 rounded"></div>
-                            <div className="h-20 bg-gray-700 rounded"></div>
-                            <div className="h-20 bg-gray-700 rounded"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            contentSection
-          )}
+          {contentSection}
         </div>
 
         {/* Footer at bottom */}
