@@ -45,16 +45,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      {/* Custom CSS for shimmer animation */}
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
         {/* Hero Banner - full width on mobile/tablet, 2/3 on laptop+ */}

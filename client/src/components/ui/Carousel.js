@@ -75,8 +75,8 @@ const Carousel = ({
         return {
           className: `${baseTransition} ${isActive ? 'opacity-100' : 'opacity-0'}`,
           style: {
-            animation: isActive ? 'smoothZoomIn 8s ease-in-out forwards' : 'none',
-            transform: isActive ? 'scale(1.0)' : 'scale(1.0)'
+            animation: isActive ? 'smoothZoomIn 8s ease-out forwards' : 'none',
+            transform: isActive ? 'scale(1.1)' : 'scale(1.15)' // Inactive at max zoom, active starts slightly smaller
           }
         };
       
@@ -101,9 +101,8 @@ const Carousel = ({
       {/* Smooth zoom-in only animation */}
       <style jsx>{`
         @keyframes smoothZoomIn {
-          0% { transform: scale(1.0); }
-          85% { transform: scale(1.05); }
-          100% { transform: scale(1.05); }
+          0% { transform: scale(1.1); }
+          100% { transform: scale(1.15); }
         }
       `}</style>
 
