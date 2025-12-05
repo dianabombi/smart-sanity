@@ -249,7 +249,7 @@ const AdminWhatWeOffer = ({ onLogout }) => {
       setBackgroundMessage('Nahrávam a komprimujem obrázok...');
       console.log('🔄 Uploading background image:', file.name, file.size);
       
-      // Compress background image for faster loading
+      // Compress background image AGGRESSIVELY for instant uploads
       const compressBackgroundImage = (file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();
@@ -259,8 +259,8 @@ const AdminWhatWeOffer = ({ onLogout }) => {
               const canvas = document.createElement('canvas');
               const ctx = canvas.getContext('2d');
               
-              // Max width for background images (1400px for faster loading)
-              const maxWidth = 1400;
+              // CRITICAL: Use 800px max for instant uploads (backgrounds don't need high res)
+              const maxWidth = 800;
               const scale = Math.min(1, maxWidth / img.width);
               
               canvas.width = img.width * scale;
@@ -268,9 +268,12 @@ const AdminWhatWeOffer = ({ onLogout }) => {
               
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
               
-              // Compress to 50% quality for backgrounds (optimized for speed)
-              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.50);
-              console.log(`📦 Compressed from ${e.target.result.length} to ${compressedDataUrl.length} bytes`);
+              // CRITICAL: Use WebP at 30% quality for tiny file sizes and instant uploads
+              const compressedDataUrl = canvas.toDataURL('image/webp', 0.30);
+              const originalSize = (e.target.result.length / 1024).toFixed(0);
+              const compressedSize = (compressedDataUrl.length / 1024).toFixed(0);
+              const reduction = ((1 - compressedDataUrl.length / e.target.result.length) * 100).toFixed(0);
+              console.log(`📦 OPTIMIZED: ${originalSize}KB → ${compressedSize}KB (${reduction}% reduction)`);
               resolve(compressedDataUrl);
             };
             img.src = e.target.result;

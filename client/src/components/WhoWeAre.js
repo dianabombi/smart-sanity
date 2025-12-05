@@ -2,12 +2,31 @@ import React, { useState, useEffect } from 'react';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
+import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
+
+// Get initial background images from localStorage
+const getInitialBackgroundImages = () => {
+  try {
+    const saved = localStorage.getItem('whoWeAreBackgroundSettings');
+    if (saved) {
+      const settings = JSON.parse(saved);
+      if (settings.whoWeAreBackgroundImages && settings.whoWeAreBackgroundImages.length > 0) {
+        return settings.whoWeAreBackgroundImages
+          .sort((a, b) => a.order - b.order)
+          .map(img => img.dataUrl);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading initial background images:', error);
+  }
+  return [];
+};
 
 const WhoWeAre = () => {
-  const [content, setContent] = useState(null);
+  const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
+  const [content, setContent] = useState({ mainContent: [], partnershipContent: "" });
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
-  const [partnerLogos, setPartnerLogos] = useState(null); // null = not loaded yet, [] = loaded but empty
-  const [logosLoading, setLogosLoading] = useState(true);
+  const [partnerLogos, setPartnerLogos] = useState([]);
   const [logosCached, setLogosCached] = useState(false);
   
   // Page headers (editable in admin)
@@ -16,55 +35,30 @@ const WhoWeAre = () => {
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [backgroundImages, setBackgroundImages] = useState([
-    // Placeholder - no default background until set in admin
-  ]); // O nás background - configure in admin
-  const [backgroundSettings, setBackgroundSettings] = useState(null);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [backgroundImages, setBackgroundImages] = useState(getInitialBackgroundImages());
 
   useEffect(() => {
+    // Load everything in parallel in background - don't wait
     loadPageHeaders();
     loadContent();
+    loadPartnerLogosOptimized();
     loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Preload background images
+  // Auto-refresh background settings to sync with admin changes
   useEffect(() => {
-    if (backgroundImages.length === 0) {
-      setImagesLoaded(true);
-      return;
+    const interval = setInterval(() => {
+      refreshSettings();
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [refreshSettings]);
+
+  // Log background images on load
+  useEffect(() => {
+    if (backgroundImages.length > 0) {
+      console.log(`✅ Showing ${backgroundImages.length} background image(s) immediately`);
     }
-
-    setImagesLoaded(false);
-    let loadedCount = 0;
-    
-    // Safety timeout - show content after 1.5 seconds even if images haven't loaded
-    const timeoutId = setTimeout(() => {
-      console.log('⏰ Background image loading timeout - showing content anyway');
-      setImagesLoaded(true);
-    }, 1500);
-
-    backgroundImages.forEach((imageSrc) => {
-      const img = new Image();
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === backgroundImages.length) {
-          clearTimeout(timeoutId);
-          setImagesLoaded(true);
-        }
-      };
-      img.onerror = () => {
-        console.error('❌ Failed to load background image:', imageSrc.substring(0, 50));
-        loadedCount++;
-        if (loadedCount === backgroundImages.length) {
-          clearTimeout(timeoutId);
-          setImagesLoaded(true);
-        }
-      };
-      img.src = imageSrc;
-    });
-    
-    return () => clearTimeout(timeoutId);
   }, [backgroundImages]);
 
   const loadPageHeaders = async () => {
@@ -85,35 +79,10 @@ const WhoWeAre = () => {
 
   const loadBackgroundSettings = async () => {
     try {
-      console.log('🔄 Loading WhoWeAre background settings...');
-      
-      // Try to load from database first
-      try {
-        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
-        if (result.success && result.content) {
-          const dbSettings = JSON.parse(result.content);
-          console.log('✅ Loaded background settings from database');
-          setBackgroundSettings(dbSettings);
-          
-          // Update background images if available
-          if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
-            const imageUrls = dbSettings.whoWeAreBackgroundImages
-              .sort((a, b) => a.order - b.order)
-              .map(img => img.dataUrl);
-            setBackgroundImages(imageUrls);
-          }
-          return;
-        }
-      } catch (dbError) {
-        console.log('⚠️ Database load failed, trying localStorage:', dbError);
-      }
-      
-      // Fallback to localStorage
+      // Load from localStorage and database
       const saved = localStorage.getItem('whoWeAreBackgroundSettings');
       if (saved) {
         const settings = JSON.parse(saved);
-        console.log('✅ Loaded background settings from localStorage');
-        setBackgroundSettings(settings);
         
         // Update background images if available
         if (settings.whoWeAreBackgroundImages && settings.whoWeAreBackgroundImages.length > 0) {
@@ -122,11 +91,27 @@ const WhoWeAre = () => {
             .map(img => img.dataUrl);
           setBackgroundImages(imageUrls);
         }
-      } else {
-        console.log('ℹ️ No background settings found, using defaults');
+      }
+      
+      // Also check database
+      try {
+        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
+        if (result.success && result.content) {
+          const dbSettings = JSON.parse(result.content);
+          
+          // Update background images if available
+          if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
+            const imageUrls = dbSettings.whoWeAreBackgroundImages
+              .sort((a, b) => a.order - b.order)
+              .map(img => img.dataUrl);
+            setBackgroundImages(imageUrls);
+          }
+        }
+      } catch (dbError) {
+        console.log('⚠️ Database load failed, using localStorage');
       }
     } catch (error) {
-      console.error('❌ Error loading WhoWeAre background settings:', error);
+      console.error('❌ Error loading background settings:', error);
     }
   };
 
@@ -144,7 +129,7 @@ const WhoWeAre = () => {
     return () => clearInterval(slideInterval);
   }, [backgroundImages.length]);
 
-  // Check for updates (logos and background settings)
+  // Check for updates (logos only - background settings handled by hook)
   useEffect(() => {
     const interval = setInterval(async () => {
       // Check for logo updates from Supabase database (lightweight fetch)
@@ -162,37 +147,10 @@ const WhoWeAre = () => {
       } catch (error) {
         console.log('⚠️ Logo update check failed');
       }
-
-      // Check for background settings updates
-      try {
-        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
-        if (result.success && result.content) {
-          const dbSettings = JSON.parse(result.content);
-          
-          // Check if settings have changed
-          const currentSettingsString = JSON.stringify(backgroundSettings);
-          const newSettingsString = JSON.stringify(dbSettings);
-          
-          if (currentSettingsString !== newSettingsString) {
-            console.log('🔄 Background settings updated, refreshing...');
-            setBackgroundSettings(dbSettings);
-            
-            // Update background images if available
-            if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
-              const imageUrls = dbSettings.whoWeAreBackgroundImages
-                .sort((a, b) => a.order - b.order)
-                .map(img => img.dataUrl);
-              setBackgroundImages(imageUrls);
-            }
-          }
-        }
-      } catch (error) {
-        console.log('⚠️ Background settings update check failed');
-      }
     }, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
-  }, [ebkLogo, backgroundSettings]);
+  }, [ebkLogo]);
 
   // Format content for display (convert markdown-style to HTML)
   const formatContentForDisplay = (content) => {
@@ -286,11 +244,8 @@ const WhoWeAre = () => {
         };
       }
 
-      // Show content immediately after it is processed
+      // Set content but don't show yet (controlled by showContent state)
       setContent(contentData);
-
-      // Load partner logos separately (optimized - don't load all brands)
-      loadPartnerLogosOptimized();
       
     } catch (error) {
       console.error('Error loading content:', error);
@@ -305,12 +260,10 @@ const WhoWeAre = () => {
     // Skip if already cached
     if (logosCached && partnerLogos !== null) {
       console.log('📦 Using cached partner logos');
-      setLogosLoading(false);
       return;
     }
 
     try {
-      setLogosLoading(true);
       console.log('🔄 Loading partner logos...');
       
       // Load partner logos (optimized query)
@@ -333,17 +286,15 @@ const WhoWeAre = () => {
     } catch (error) {
       console.error('❌ Error loading partner logos:', error);
       setPartnerLogos([]);
-    } finally {
-      setLogosLoading(false);
     }
   };
 
-  // Only render content section when data is loaded
-  const contentSection = !content ? null : (
+  // Always render content section immediately
+  const contentSection = (
     <div className="w-full">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 mt-5 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 mt-5 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards] tracking-wide">
           {pageTitle}
         </h1>
         
@@ -379,27 +330,18 @@ const WhoWeAre = () => {
                     Naši partneri
                   </h2>
                   <div className="flex justify-center w-full pb-8">
-                    {logosLoading ? (
-                      <div className="flex items-center justify-center py-12">
-                        <div className="flex flex-col items-center space-y-3">
-                          <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                          <p className="text-gray-400 text-sm">Načítavam logá partnerov...</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
-                        {partnerLogos && partnerLogos.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
+                      {partnerLogos && partnerLogos.length > 0 ? (
                           partnerLogos.map((logo, index) => (
                             <div 
                               key={logo.id} 
-                              className="rounded-lg p-2 transition-all duration-300 opacity-0 animate-[fadeIn_0.5s_ease-out_forwards]" 
+                              className="rounded-lg p-2 transition-all duration-300" 
                               style={{ 
                                 height: '110px', 
                                 width: '100%', 
                                 display: 'flex', 
                                 alignItems: 'center', 
-                                justifyContent: 'center',
-                                animationDelay: `${index * 0.05}s`
+                                justifyContent: 'center'
                               }}
                             >
                               <img 
@@ -418,13 +360,8 @@ const WhoWeAre = () => {
                               </div>
                             </div>
                           ))
-                        ) : partnerLogos !== null ? (
-                          <div className="col-span-4 text-gray-400 text-center py-8">
-                            Žiadne logá partnerov
-                          </div>
                         ) : null}
-                      </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -449,20 +386,18 @@ const WhoWeAre = () => {
     <div className="min-h-screen bg-black relative flex flex-col">
       {/* Background Slideshow - covers entire viewport */}
       <div className="fixed inset-0 z-0">
-        {/* Background images - fade in when loaded */}
+        {/* Background images - instant display */}
         {backgroundImages.map((image, index) => (
           <div
             key={image}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentImageIndex && imagesLoaded ? 'opacity-30' : 'opacity-0'
-            }`}
+            className="absolute inset-0"
             style={{
               backgroundImage: `url(${image})`,
               backgroundSize: backgroundSettings?.backgroundImageSize || 'cover',
               backgroundPosition: `${backgroundSettings?.backgroundImagePositionX || 'center'} ${backgroundSettings?.backgroundImagePositionY || 'center'}`,
               backgroundRepeat: 'no-repeat',
               filter: backgroundSettings?.backgroundImageBlur ? `blur(${backgroundSettings.backgroundImageBlur}px)` : 'none',
-              opacity: index === currentImageIndex && imagesLoaded ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
+              opacity: index === currentImageIndex ? (backgroundSettings?.backgroundImageOpacity || 0.3) : 0
             }}
           />
         ))}

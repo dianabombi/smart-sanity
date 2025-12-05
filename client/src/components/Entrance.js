@@ -20,7 +20,6 @@ const entranceCache = {
 };
 
 const Entrance = () => {
-  const [visibleItems, setVisibleItems] = useState([]);
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
   const [bulletPoints, setBulletPoints] = useState(
     entranceCache.bulletPoints || defaultBulletPoints
@@ -64,44 +63,16 @@ const Entrance = () => {
     }
   };
 
-  // Preload background image
+  // Show background image immediately (progressive loading)
   useEffect(() => {
-    if (!backgroundSettings.entrancePageBackgroundImage) {
-      setBackgroundLoaded(true);
-      return;
+    // Always show background immediately - no preloading delay
+    setBackgroundLoaded(true);
+    
+    // Optional: Log background info
+    if (backgroundSettings.entrancePageBackgroundImage) {
+      console.log('✅ Showing entrance background image immediately');
     }
-
-    setBackgroundLoaded(false);
-    
-    // Safety timeout - show content after 1.5 seconds even if image hasn't loaded
-    const timeoutId = setTimeout(() => {
-      console.log('⏰ Entrance background loading timeout - showing content anyway');
-      setBackgroundLoaded(true);
-    }, 1500);
-
-    const img = new Image();
-    img.onload = () => {
-      clearTimeout(timeoutId);
-      setBackgroundLoaded(true);
-    };
-    img.onerror = () => {
-      console.error('❌ Failed to load entrance background image');
-      clearTimeout(timeoutId);
-      setBackgroundLoaded(true);
-    };
-    img.src = backgroundSettings.entrancePageBackgroundImage;
-    
-    return () => clearTimeout(timeoutId);
   }, [backgroundSettings.entrancePageBackgroundImage]);
-
-  // Animation for bullet points
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisibleItems(bulletPoints.map((_, index) => index));
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [bulletPoints]);
 
   // Debug logging for background settings
   console.log('🎨 ENTRANCE PAGE DEBUG:', {
@@ -117,9 +88,7 @@ const Entrance = () => {
       {/* Background Image - Outside parent, covers entire viewport */}
       {backgroundSettings.entrancePageBackgroundImage && (
         <div 
-          className={`fixed inset-0 bg-black transition-opacity duration-1000 ${
-            backgroundLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
+          className="fixed inset-0 bg-black"
           style={{
             backgroundImage: `url(${backgroundSettings.entrancePageBackgroundImage})`,
             backgroundSize: backgroundSettings.backgroundImageSize || 'cover',
@@ -140,7 +109,7 @@ const Entrance = () => {
         {/* Header Section */}
         <div className="pt-32 pb-1 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-0 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-0 opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards] tracking-wide">
               Čo ponúkame
             </h1>
           </div>
@@ -153,12 +122,8 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className={`group rounded-lg p-6 transition-all duration-500 transform bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400 ${
-                    visibleItems.includes(index) 
-                      ? 'translate-y-0 opacity-100 scale-100' 
-                      : 'translate-y-8 opacity-0 scale-95'
-                  }`}
-                  style={{ transitionDelay: `${index * 100}ms`, borderWidth: '0.5px' }}
+                  className="group rounded-lg p-6 transition-colors duration-300 bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400"
+                  style={{ borderWidth: '0.5px' }}
                 >
                   <div className="space-y-3">
                     <p className="text-gray-300 leading-relaxed text-lg text-center">

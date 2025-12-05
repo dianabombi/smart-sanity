@@ -45,8 +45,7 @@ const referencesCache = {
 
 const References = () => {
   const navigate = useNavigate();
-  const [references, setReferences] = useState(referencesCache.references || []);
-  const [loading, setLoading] = useState(!referencesCache.isLoaded);
+  const [references, setReferences] = useState(referencesCache.references || fallbackReferences);
   const [pageDescription, setPageDescription] = useState(
     referencesCache.pageDescription || 'Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.'
   );
@@ -82,8 +81,6 @@ const References = () => {
       console.error('❌ PUBLIC REFERENCES: Error in loadReferences:', error);
       console.log('📋 PUBLIC REFERENCES: Using fallback references due to error');
       setReferences(fallbackReferences);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -94,6 +91,8 @@ const References = () => {
     }
     
     isMountedRef.current = true;
+    
+    // Load in background without showing loading state
     loadReferences();
     loadPageDescription();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -147,21 +146,17 @@ const References = () => {
         {/* Header Section */}
         <div className="pb-10 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards]">
               Referencie
             </h1>
-            <p className="text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
+            <p className="text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed">
               {pageDescription}
             </p>
           </div>
         </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 min-h-[60vh]">
-        {loading ? (
-          <div className="text-center py-32 min-h-[40vh] flex flex-col justify-center">
-            <div className="text-gray-300 text-xl">Načítavam...</div>
-          </div>
-        ) : references.length > 0 ? (
+        {references.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             {references.map((reference, index) => (
               <div 
