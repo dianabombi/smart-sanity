@@ -1584,14 +1584,14 @@ class ApiService {
   }
 
   // Who We Are Sections
-  async getWhoWeAreSections() {
+  async getWhoWeAreSections(language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       console.log('🚫 Supabase not available');
       return { success: false, sections: [], source: 'no-supabase', message: 'Database connection not available' };
     }
 
     try {
-      console.log('Fetching who-we-are sections from Supabase...');
+      console.log(`Fetching who-we-are sections from Supabase (language: ${language})...`);
       // Add a timeout, but long enough so real content usually loads from database
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Request timed out')), 5000)
@@ -1600,6 +1600,7 @@ class ApiService {
       const fetchPromise = supabase
         .from('who_we_are_sections')
         .select('*')
+        .eq('language', language)
         .order('order', { ascending: true });
 
       const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
@@ -3032,21 +3033,22 @@ class ApiService {
   // PAGE CONTENT MANAGEMENT
   // =====================================================
 
-  async getPageContent(page, section, key) {
+  async getPageContent(page, section, key, language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available');
       return { success: false, message: 'Database connection not available' };
     }
 
     try {
-      console.log(`🔄 Loading page content: ${page}.${section}.${key}`);
+      console.log(`🔄 Loading page content: ${page}.${section}.${key} (language: ${language})`);
       
       // Use RPC function to avoid PostgREST 'page' parameter conflict
       const { data, error } = await supabase
         .rpc('get_page_content', {
           p_page: page,
           p_section: section,
-          p_key: key
+          p_key: key,
+          p_language: language
         });
 
       if (error) {

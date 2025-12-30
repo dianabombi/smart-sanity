@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Inspirations = () => {
+  const { t } = useTranslation();
   const [selectedCategory] = useState('all');
   const [inspirations, setInspirations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pageDescription, setPageDescription] = useState('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
+  const [pageDescription, setPageDescription] = useState(t('inspirations.description'));
   const [selectedImage, setSelectedImage] = useState(null);
   const [fullScreenImage, setFullScreenImage] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -187,7 +189,7 @@ const Inspirations = () => {
         {/* Header Section */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-            Inšpirácie
+            {t('inspirations.title')}
           </h1>
           <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
             {pageDescription}

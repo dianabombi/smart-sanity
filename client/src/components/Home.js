@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Carousel from './ui/Carousel';
 import VstupteButton from './ui/VstupteButton';
 import apiService from '../services/api';
 
 const Home = () => {
+  const { t } = useTranslation();
   const [carouselImages, setCarouselImages] = useState([]);
 
   useEffect(() => {
@@ -82,9 +84,9 @@ const Home = () => {
           {/* Text Section */}
           <div className="flex flex-col items-center justify-center pt-3 pb-2 tablet:pt-2 tablet:pb-2 laptop:pt-6 laptop:pb-8">
             <div className="text-lg tablet:text-xl laptop:text-2xl text-gray-400 opacity-0 animate-fadeInSoftUp max-w-3xl mx-auto text-center space-y-1">
-              <p className="text-center">Profesionálne riešenia</p>
-              <p className="text-center">pre architektov a interiérových</p>
-              <p className="text-center">dizajnérov</p>
+              {t('home.subtitle').split('\n').map((line, index) => (
+                <p key={index} className="text-center">{line}</p>
+              ))}
             </div>
           </div>
           

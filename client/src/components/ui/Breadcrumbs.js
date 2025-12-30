@@ -1,32 +1,30 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Breadcrumbs = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   let pathnames = location.pathname.split('/').filter((x) => x);
   
-  // Remove the automatic addition of 'components' breadcrumb
-
-  // Define breadcrumb labels in Slovak
-  const breadcrumbLabels = {
-    '': 'Domov',
-    'what-we-offer': 'Čo ponúkame',
-    'who-we-are': 'O nás',
-    'contact': 'Kontakt',
-    'brands': 'Obchodované značky',
-    'references': 'Referencie',
-    'inspirations': 'Inšpirácie',
-    'category': 'Kategória',
-    'battery': 'Batérie',
-    'tap': 'Kohútik',
-    'sink': 'Umývadlo',
-    'toilet': 'Toaleta',
-    'shower': 'Sprcha',
-    'bathtub': 'Vaňa'
-  };
-
   const getBreadcrumbLabel = (pathname) => {
-    return breadcrumbLabels[pathname] || pathname;
+    const labelMap = {
+      '': 'breadcrumbs.home',
+      'what-we-offer': 'breadcrumbs.whatWeOffer',
+      'who-we-are': 'breadcrumbs.whoWeAre',
+      'contact': 'breadcrumbs.contact',
+      'brands': 'breadcrumbs.brands',
+      'references': 'breadcrumbs.references',
+      'inspirations': 'breadcrumbs.inspirations',
+      'category': 'breadcrumbs.category',
+      'battery': 'breadcrumbs.battery',
+      'tap': 'breadcrumbs.tap',
+      'sink': 'breadcrumbs.sink',
+      'toilet': 'breadcrumbs.toilet',
+      'shower': 'breadcrumbs.shower',
+      'bathtub': 'breadcrumbs.bathtub'
+    };
+    return t(labelMap[pathname] || pathname);
   };
 
   // Don't show breadcrumbs on home page
@@ -41,7 +39,7 @@ const Breadcrumbs = () => {
         to="/" 
         className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
       >
-        Domov
+        {t('breadcrumbs.home')}
       </Link>
       
       {pathnames.map((pathname, index) => {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
@@ -45,9 +46,10 @@ const referencesCache = {
 
 const References = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [references, setReferences] = useState(referencesCache.references || fallbackReferences);
   const [pageDescription, setPageDescription] = useState(
-    referencesCache.pageDescription || 'Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.'
+    referencesCache.pageDescription || t('references.description')
   );
   const isMountedRef = useRef(false); // Prevent double loading
   
@@ -147,7 +149,7 @@ const References = () => {
         <div className="pb-10 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards]">
-              Referencie
+              {t('references.title')}
             </h1>
             <p className="text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed">
               {pageDescription}

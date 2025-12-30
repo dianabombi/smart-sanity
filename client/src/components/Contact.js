@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ContactForm from './forms/ContactForm';
@@ -8,6 +9,7 @@ import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [contactContent, setContactContent] = useState(null);
@@ -69,24 +71,18 @@ const Contact = () => {
   };
 
   const getDefaultContactContent = () => ({
-    title: 'Kontakt',
-    subtitle: '',
-    formTitle: 'Napíšte nám',
-    contactInfoTitle: 'Kontaktné údaje',
-    servicesTitle: 'Naše služby',
+    title: t('contact.title'),
+    subtitle: t('contact.subtitle'),
+    formTitle: t('contact.formTitle'),
+    contactInfoTitle: t('contact.contactInfoTitle'),
+    servicesTitle: t('contact.servicesTitle'),
     contactDetails: {
       manager: 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský',
       phone: '+421 948 882 376',
       email: 'dusan.drinka@smartsanit.sk',
       address: 'Továrenská 14\n811 09 Bratislava'
     },
-    services: [
-      'Poradenstvo a návrh kúpeľní',
-      'Dodávka sanitárnych zariadení',
-      'Inštalácia a montáž',
-      'Servis a údržba',
-      'Technická podpora'
-    ]
+    services: t('contact.services', { returnObjects: true })
   });
 
 

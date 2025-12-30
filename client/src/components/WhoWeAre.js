@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
@@ -23,6 +24,7 @@ const getInitialBackgroundImages = () => {
 };
 
 const WhoWeAre = () => {
+  const { t, i18n } = useTranslation();
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
   const [content, setContent] = useState({ mainContent: [], partnershipContent: "" });
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
@@ -30,8 +32,8 @@ const WhoWeAre = () => {
   const [logosCached, setLogosCached] = useState(false);
   
   // Page headers (editable in admin)
-  const [pageTitle, setPageTitle] = useState('O nás');
-  const [pageSubtitle, setPageSubtitle] = useState('Smart Sanit s.r.o.');
+  const [pageTitle, setPageTitle] = useState(t('whoWeAre.pageTitle'));
+  const [pageSubtitle, setPageSubtitle] = useState(t('whoWeAre.pageSubtitle'));
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -44,6 +46,13 @@ const WhoWeAre = () => {
     loadPartnerLogosOptimized();
     loadBackgroundSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload content when language changes
+  useEffect(() => {
+    if (i18n.isInitialized) {
+      loadContent();
+    }
+  }, [i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-refresh background settings to sync with admin changes
   useEffect(() => {
@@ -221,8 +230,11 @@ const WhoWeAre = () => {
 
   const loadContent = async () => {
     try {
+      // Get current language
+      const currentLanguage = i18n.language || 'sk';
+      
       // Load critical content FIRST - show page as soon as text is ready
-      const contentResult = await ApiService.getWhoWeAreSections().catch(err => ({ success: false, error: err }));
+      const contentResult = await ApiService.getWhoWeAreSections(currentLanguage).catch(err => ({ success: false, error: err }));
 
       // Process main content
       let contentData = {
@@ -250,7 +262,7 @@ const WhoWeAre = () => {
     } catch (error) {
       console.error('Error loading content:', error);
       setContent({
-        mainContent: ["Chyba pri načítavaní obsahu. Prosím, obnovte stránku."],
+        mainContent: [t('whoWeAre.loadingError')],
         partnershipContent: ""
       });
     }
@@ -327,7 +339,7 @@ const WhoWeAre = () => {
               <div className="space-y-6">
                 <div className="flex flex-col justify-center items-center space-y-6">
                   <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
-                    Naši partneri
+                    {t('whoWeAre.ourPartners')}
                   </h2>
                   <div className="flex justify-center w-full pb-8">
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>

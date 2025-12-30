@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, i18n } = useTranslation();
 
   const navItems = [
-    { label: 'O nás', path: '/who-we-are' },
-    { label: 'Čo ponúkame', path: '/what-we-offer' },
-    { label: 'Obchodované značky', path: '/brands' },
-    { label: 'Inšpirácie', path: '/inspirations' },
-    { label: 'Referencie', path: '/references' },
-    { label: 'Kontakt', path: '/contact' }
+    { label: t('nav.whoWeAre'), path: '/who-we-are' },
+    { label: t('nav.whatWeOffer'), path: '/what-we-offer' },
+    { label: t('nav.brands'), path: '/brands' },
+    { label: t('nav.inspirations'), path: '/inspirations' },
+    { label: t('nav.references'), path: '/references' },
+    { label: t('nav.contact'), path: '/contact' }
   ];
 
   // Mobile menu state
@@ -105,6 +107,27 @@ const NavBar = () => {
               {item.label}
             </button>
           ))}
+          
+          {/* Language Switcher - Desktop */}
+          <div className="flex items-center gap-2 ml-2">
+            <button 
+              onClick={() => i18n.changeLanguage('sk')}
+              className={`text-lg xl:text-xl font-medium transition-colors ${
+                i18n.language === 'sk' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              SK
+            </button>
+            <span className="text-gray-500">|</span>
+            <button 
+              onClick={() => i18n.changeLanguage('en')}
+              className={`text-lg xl:text-xl font-medium transition-colors ${
+                i18n.language === 'en' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              EN
+            </button>
+          </div>
         </div>
 
         {/* Mobile/Tablet Menu Button - show when nav items would wrap */}
@@ -149,7 +172,7 @@ const NavBar = () => {
         {/* Close button inside the sheet */}
         <button
           type="button"
-          aria-label="Zavrieť menu"
+          aria-label={t('common.close')}
           onClick={() => setMobileOpen(false)}
           className="absolute top-3 right-3 z-[95] p-2 rounded-md border-2 border-[#595959] text-[#595959] shadow-[4px_4px_10px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
         >
@@ -182,10 +205,24 @@ const NavBar = () => {
         <div className="pt-4 pb-6 border-t border-gray-700 flex items-center justify-between bg-black shadow-[0_-6px_16px_rgba(0,0,0,0.6)] mt-auto"
              style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}>
           <div className="px-6 w-full">
-            <span className="text-gray-400 text-sm">Jazyk</span>
+            <span className="text-gray-400 text-sm">{i18n.language === 'sk' ? 'Jazyk' : 'Language'}</span>
             <div className="flex gap-3 mt-2">
-              <button className="text-gray-400 text-lg font-medium">SK</button>
-              <button className="text-gray-400 text-lg">EN</button>
+              <button 
+                onClick={() => i18n.changeLanguage('sk')}
+                className={`text-lg font-medium transition-colors ${
+                  i18n.language === 'sk' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                SK
+              </button>
+              <button 
+                onClick={() => i18n.changeLanguage('en')}
+                className={`text-lg font-medium transition-colors ${
+                  i18n.language === 'en' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                EN
+              </button>
             </div>
           </div>
         </div>

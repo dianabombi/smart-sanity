@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormField from '../ui/FormField';
 import ApiService from '../../services/api';
 
-const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
+const ContactForm = ({ title, className = '' }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,12 +17,12 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
   const [submitStatus, setSubmitStatus] = useState('');
 
   const subjectOptions = [
-    { value: 'general', label: 'Všeobecná otázka' },
-    { value: 'quote', label: 'Cenová ponuka' },
-    { value: 'consultation', label: 'Poradenstvo' },
-    { value: 'installation', label: 'Inštalácia' },
-    { value: 'service', label: 'Servis' },
-    { value: 'complaint', label: 'Reklamácia' }
+    { value: 'general', label: t('contact.form.subjects.general') },
+    { value: 'quote', label: t('contact.form.subjects.quote') },
+    { value: 'consultation', label: t('contact.form.subjects.consultation') },
+    { value: 'installation', label: t('contact.form.subjects.installation') },
+    { value: 'service', label: t('contact.form.subjects.service') },
+    { value: 'complaint', label: t('contact.form.subjects.complaint') }
   ];
 
   const handleInputChange = (e) => {
@@ -62,13 +64,13 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
   return (
     <div className={className}>
       <h2 className="text-2xl font-semibold text-gray-300 mb-1">
-        {title}
+        {title || t('contact.formTitle')}
       </h2>
       
       <form onSubmit={handleSubmit} className="space-y-2 pt-1">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <FormField
-            label="Meno a priezvisko"
+            label={t('contact.form.name')}
             type="text"
             name="name"
             value={formData.name}
@@ -77,7 +79,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
           />
           
           <FormField
-            label="Email"
+            label={t('contact.form.email')}
             type="email"
             name="email"
             value={formData.email}
@@ -87,7 +89,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         </div>
 
         <FormField
-          label="Telefón"
+          label={t('contact.form.phone')}
           type="tel"
           name="phone"
           value={formData.phone}
@@ -95,18 +97,18 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
         />
 
         <FormField
-          label="Predmet"
+          label={t('contact.form.subject')}
           type="select"
           name="subject"
           value={formData.subject}
           onChange={handleInputChange}
-          placeholder="-- vyberte druh požiadavky --"
+          placeholder={t('contact.form.selectPlaceholder')}
           options={subjectOptions}
           required
         />
 
         <FormField
-          label="Správa"
+          label={t('contact.form.message')}
           type="textarea"
           name="message"
           value={formData.message}
@@ -117,13 +119,13 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
 
         {submitStatus === 'success' && (
           <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded-lg">
-            Ďakujeme za vašu správu! Odpovieme vám čo najskôr.
+            {t('contact.form.successMessage')}
           </div>
         )}
 
         {submitStatus === 'error' && (
           <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded-lg">
-            Nastala chyba pri odosielaní správy. Skúste to prosím znovu.
+            {t('contact.form.errorMessage')}
           </div>
         )}
 
@@ -132,7 +134,7 @@ const ContactForm = ({ title = 'Napíšte nám', className = '' }) => {
           disabled={isSubmitting}
           className="w-full !mt-8 text-gray-300 border border-gray-400 bg-transparent hover:text-white hover:border-white px-8 py-2 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Odosielam...' : 'Odoslať správu'}
+          {isSubmitting ? t('contact.form.sending') : t('contact.form.send')}
         </button>
       </form>
     </div>

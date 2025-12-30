@@ -1,36 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 
 const CategoryGallery = () => {
   const { category } = useParams();
   const navigate = useNavigate();
-  
-  // Placeholder images - you can replace these with actual category-specific images
-  // const galleryImages = [
-  //   '/bathroom.png',
-  //   '/sinks.png', 
-  //   '/tap_silver.png'
-  // ];
+  const { t } = useTranslation();
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const categoryTitles = {
-    battery: 'RIEŠENIA BATÉRIÍ',
-    tap: 'INŠTALÁCIE KOHÚTIKOV',
-    sink: 'DIZAJNY UMÝVADIEL',
-    toilet: 'TOALETNÉ ZARIADENIA',
-    shower: 'SPRCHOVÉ SYSTÉMY',
-    bathtub: 'KOLEKCIE VANÍ'
-  };
-
-  const categoryDescriptions = {
-    battery: 'Preskúmajte náš sortiment batériových sanitárnych riešení a záložných systémov.',
-    tap: 'Objavte prémiové dizajny kohútikov a inštalácie pre moderné domácnosti.',
-    sink: 'Prehliadnite si našu kolekciu elegantných a funkčných riešení umývadiel.',
-    toilet: 'Pozrite si naše komplexné toaletné zariadenia a moderné dizajny.',
-    shower: 'Preskúmajte inovatívne sprchové systémy a inštalácie.',
-    bathtub: 'Objavte luxusné kolekcie vaní a dizajny.'
-  };
+  const getCategoryTitle = () => t(`categories.${category}`) || 'GALLERY';
+  const getCategoryDescription = () => t(`categories.${category}Desc`) || 'Explore our collection of sanitary facilities.';
 
   return (
     <Layout>
@@ -45,7 +26,7 @@ const CategoryGallery = () => {
             onClick={() => navigate(-1)}
             className="mb-6 group"
             style={{ transform: 'translateX(-60px)' }}
-            title="Späť"
+            title={t('common.back')}
           >
             <img 
               src="/right-chevron.png" 
@@ -62,10 +43,10 @@ const CategoryGallery = () => {
           
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-light text-gray-300 mb-6 tracking-wide">
-              {categoryTitles[category] || 'GALLERY'}
+              {getCategoryTitle()}
             </h1>
             <p className="text-lg text-gray-300 opacity-80 max-w-2xl mx-auto leading-relaxed">
-              {categoryDescriptions[category] || 'Explore our collection of sanitary facilities.'}
+              {getCategoryDescription()}
             </p>
           </div>
         </div>

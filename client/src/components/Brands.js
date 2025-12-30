@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from './layout/Layout';
 import NavBar from './layout/NavBar';
 import BrandCard from './brands/BrandCard';
@@ -24,12 +25,13 @@ const ALSO_IN_OSTATNE_BRANDS = ['axor', 'dornbracht', 'laufen'];
 
 const Brands = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   // Initialize with cache only - NO fallback brands
   const [brands, setBrands] = useState(dataCache.brands || []);
   const [brandsLoading, setBrandsLoading] = useState(!dataCache.isLoaded);
   const [pageDescription, setPageDescription] = useState(
-    dataCache.pageDescription || 'Objavte našu ponuku prémiových značiek pre kúpeľne, interiér i exteriér.'
+    dataCache.pageDescription || t('brands.description')
   );
   const { settings: backgroundSettings, getBackgroundImageStyle, refreshSettings } = useBackgroundSettings();
   
@@ -112,7 +114,7 @@ const Brands = () => {
       <div className="pb-10 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
-            Obchodované značky
+            {t('brands.pageTitle')}
           </h1>
           <p className="text-lg tablet:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mt-5 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
           {pageDescription}

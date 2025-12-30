@@ -1,18 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 // Cache to survive React Strict Mode remounts
-const defaultBulletPoints = [
-  "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
-  "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
-  "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
-  "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
-  "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
-  "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
-];
 
 const entranceCache = {
   bulletPoints: null,
@@ -20,12 +13,21 @@ const entranceCache = {
 };
 
 const Entrance = () => {
+  const { t, i18n } = useTranslation();
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
   const [bulletPoints, setBulletPoints] = useState(
-    entranceCache.bulletPoints || defaultBulletPoints
+    entranceCache.bulletPoints || []
   );
   const isMountedRef = useRef(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+
+  // Set default bullet points from translations if cache is empty
+  useEffect(() => {
+    if (!entranceCache.bulletPoints && i18n.isInitialized) {
+      const defaultPoints = t('entrance.bulletPoints', { returnObjects: true });
+      setBulletPoints(defaultPoints);
+    }
+  }, [i18n.isInitialized, t]);
 
   // Load content from admin only once on mount
   useEffect(() => {
@@ -35,6 +37,13 @@ const Entrance = () => {
     isMountedRef.current = true;
     loadContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload content when language changes
+  useEffect(() => {
+    if (i18n.isInitialized) {
+      loadContent();
+    }
+  }, [i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-refresh background settings every 3 seconds to pick up admin changes
   useEffect(() => {
@@ -47,7 +56,10 @@ const Entrance = () => {
 
   const loadContent = async () => {
     try {
-      const result = await ApiService.getPageContent('what-we-offer', 'main', 'content');
+      // Get current language
+      const currentLanguage = i18n.language || 'sk';
+      
+      const result = await ApiService.getPageContent('what-we-offer', 'main', 'content', currentLanguage);
       
       if (result.success && result.content) {
         const lines = result.content.split('\n').filter(line => line.trim().startsWith('•'));
@@ -110,7 +122,7 @@ const Entrance = () => {
         <div className="pt-32 pb-1 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-0 opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards] tracking-wide">
-              Čo ponúkame
+              {t('entrance.pageTitle')}
             </h1>
           </div>
         </div>
@@ -149,7 +161,7 @@ const Entrance = () => {
             onClick={() => window.location.href = '/contact'}
             className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
           >
-            Kontaktujte nás
+            {t('contact.title')}
           </button>
         </div>
 
