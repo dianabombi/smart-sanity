@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from './layout/Layout';
@@ -8,7 +8,6 @@ const CategoryGallery = () => {
   const { category } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const getCategoryTitle = () => t(`categories.${category}`) || 'GALLERY';
   const getCategoryDescription = () => t(`categories.${category}Desc`) || 'Explore our collection of sanitary facilities.';
