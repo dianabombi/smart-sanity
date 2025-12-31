@@ -49,6 +49,10 @@ const Inspirations = () => {
       setInspirations([]);
     } finally {
       setLoading(false);
+      // Trigger animation after data is loaded
+      setTimeout(() => {
+        setVisible(true);
+      }, 100);
     }
   }, []);
 
@@ -57,11 +61,7 @@ const Inspirations = () => {
     loadInspirations();
     loadPageDescription();
     // Removed auto-refresh to prevent screen flickering
-    
-    // Trigger animation after component mounts
-    setTimeout(() => {
-      setVisible(true);
-    }, 100);
+    // Animation trigger moved to loadInspirations finally block
   }, [loadInspirations]);
 
   // Auto-refresh background settings every 2 seconds
