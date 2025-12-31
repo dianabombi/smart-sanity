@@ -5,14 +5,14 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-black border-t border-gray-700 px-4 sm:px-3 lg:px-8 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center min-h-[80px] sm:py-2">
+    <footer className="bg-black border-t border-gray-700 px-4 sm:px-3 lg:px-8 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center min-h-[60px] py-1">
       <div className="max-w-4xl mx-auto w-full">
         {/* Mobile Layout - Stacked */}
-        <div className="block md:hidden space-y-2">
+        <div className="block md:hidden space-y-0">
           {/* Company Info */}
-          <div className="text-center space-y-1">
-            <h3 className="text-lg font-semibold text-gray-400">Smart Sanit s.r.o.</h3>
-            <p className="text-sm text-gray-400">Premium Design • Smart Solutions</p>
+          <div className="text-center space-y-0 leading-none">
+            <h3 className="text-lg font-semibold text-gray-400 leading-none mb-0">Smart Sanit s.r.o.</h3>
+            <p className="text-sm text-gray-400 leading-none mt-1">Premium Design • Smart Solutions</p>
           </div>
           
           {/* Privacy Policy Link - Centered */}
@@ -83,12 +83,12 @@ const Footer = () => {
         {/* Desktop Layout - Restructured */}
         <div className="hidden md:block">
           {/* Company Name */}
-          <div className="text-center mb-2">
-            <h3 className="text-lg font-semibold text-gray-400">Smart Sanit s.r.o.</h3>
+          <div className="text-center mb-0">
+            <h3 className="text-lg font-semibold text-gray-400 leading-none mb-0">Smart Sanit s.r.o.</h3>
           </div>
           
           {/* Icons, Premium Design Text, and Wavelyne on Same Line */}
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-0 mt-1">
             {/* Social Media Icons - Left */}
             <div className="flex space-x-3 flex-1">
               <a 
@@ -130,7 +130,7 @@ const Footer = () => {
             
             {/* Premium Design Text - Center */}
             <div className="flex-1 text-center">
-              <p className="text-sm text-gray-400">Premium Design • Smart Solutions</p>
+              <p className="text-sm text-gray-400 leading-none">Premium Design • Smart Solutions</p>
             </div>
             
             {/* Wavelyne Credit - Right */}
