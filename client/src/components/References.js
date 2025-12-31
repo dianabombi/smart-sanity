@@ -51,6 +51,7 @@ const References = () => {
   const [pageDescription, setPageDescription] = useState(
     referencesCache.pageDescription || t('references.description')
   );
+  const [visible, setVisible] = useState(false);
   const isMountedRef = useRef(false); // Prevent double loading
   
   // Background settings hook
@@ -97,6 +98,11 @@ const References = () => {
     // Load in background without showing loading state
     loadReferences();
     loadPageDescription();
+    
+    // Trigger animation after component mounts
+    setTimeout(() => {
+      setVisible(true);
+    }, 100);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPageDescription = async () => {
@@ -148,10 +154,22 @@ const References = () => {
         {/* Header Section */}
         <div className="pb-10 px-4 sm:px-6 lg:px-8 pt-32">
         <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards]">
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 tracking-wide ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.2s'
+            }}>
               {t('references.title')}
             </h1>
-            <p className="text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed">
+            <p className={`text-xl text-gray-300 mt-5 max-w-3xl mx-auto leading-relaxed ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.4s'
+            }}>
               {pageDescription}
             </p>
           </div>
@@ -163,8 +181,14 @@ const References = () => {
             {references.map((reference, index) => (
               <div 
                 key={reference.id} 
-                className="group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-all duration-500 cursor-pointer relative pb-16 flex flex-col min-h-[360px]"
-                style={{ opacity: 1, borderWidth: '0.5px' }}
+                className={`group bg-black/30 hover:bg-black/50 border-gray-600 rounded-lg p-6 transition-all duration-500 cursor-pointer relative pb-16 flex flex-col min-h-[360px] ${
+                  visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+                style={{ 
+                  borderWidth: '0.5px',
+                  transition: 'all 0.8s ease-out',
+                  transitionDelay: `${0.6 + index * 0.1}s`
+                }}
               >
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>

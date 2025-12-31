@@ -14,6 +14,7 @@ const Inspirations = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [fullScreenImage, setFullScreenImage] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [visible, setVisible] = useState(false);
   
   // Background settings hook
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
@@ -56,6 +57,11 @@ const Inspirations = () => {
     loadInspirations();
     loadPageDescription();
     // Removed auto-refresh to prevent screen flickering
+    
+    // Trigger animation after component mounts
+    setTimeout(() => {
+      setVisible(true);
+    }, 100);
   }, [loadInspirations]);
 
   // Auto-refresh background settings every 2 seconds
@@ -188,10 +194,22 @@ const Inspirations = () => {
           <div className="container mx-auto px-4 py-12">
         {/* Header Section */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-6 mt-20 tracking-wide ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.2s'
+          }}>
             {t('inspirations.title')}
           </h1>
-          <p className="text-xl text-gray-300 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards] max-w-3xl mx-auto leading-relaxed">
+          <p className={`text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.4s'
+          }}>
             {pageDescription}
           </p>
         </div>
@@ -221,8 +239,14 @@ const Inspirations = () => {
         {/* Photos Only Gallery */}
         {!loading && filteredInspirations.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {filteredInspirations.map((inspiration) => (
-            <div key={inspiration.id} className="group" style={{ opacity: 1 }}>
+          {filteredInspirations.map((inspiration, index) => (
+            <div key={inspiration.id} className={`group ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: `${0.6 + index * 0.1}s`
+            }}>
               <div 
                 className="h-64 bg-gray-800 flex items-center justify-center relative overflow-hidden rounded-lg cursor-pointer"
                 onClick={() => openImageModal(inspiration)}

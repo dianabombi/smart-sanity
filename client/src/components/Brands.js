@@ -33,6 +33,7 @@ const Brands = () => {
   const [pageDescription, setPageDescription] = useState(
     dataCache.pageDescription || t('brands.description')
   );
+  const [visible, setVisible] = useState(false);
   const { settings: backgroundSettings, getBackgroundImageStyle, refreshSettings } = useBackgroundSettings();
   
   // Auto-refresh background settings every 30 seconds to pick up admin changes
@@ -89,6 +90,11 @@ const Brands = () => {
       setBrandsLoading(false);
     }
     loadPageContent();
+    
+    // Trigger animation after component mounts
+    setTimeout(() => {
+      setVisible(true);
+    }, 100);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
@@ -113,10 +119,22 @@ const Brands = () => {
       {/* Header Section */}
       <div className="pb-10 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-6 mt-8 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] tracking-wide">
+          <h1 className={`leading-relaxed text-3xl tablet:text-4xl laptop:text-5xl font-bold text-gray-300 mb-6 mt-8 tracking-wide ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.2s'
+          }}>
             {t('brands.pageTitle')}
           </h1>
-          <p className="text-lg tablet:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mt-5 opacity-0 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
+          <p className={`text-lg tablet:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mt-5 ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+          style={{
+            transition: 'all 0.8s ease-out',
+            transitionDelay: '0.4s'
+          }}>
           {pageDescription}
           </p>
         </div>
@@ -149,13 +167,21 @@ const Brands = () => {
                   );
                 })
                 .map((brand, index) => (
-                <BrandCard
+                <div
                   key={brand.id || brand._id || index}
-                  brand={brand}
-                  index={index}
-                  onClick={handleBrandClick}
-                  variant="main"
-                />
+                  className={visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
+                  style={{
+                    transition: 'all 0.8s ease-out',
+                    transitionDelay: `${0.6 + index * 0.1}s`
+                  }}
+                >
+                  <BrandCard
+                    brand={brand}
+                    index={index}
+                    onClick={handleBrandClick}
+                    variant="main"
+                  />
+                </div>
               ))}
             </div>
           )}

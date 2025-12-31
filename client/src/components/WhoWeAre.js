@@ -30,6 +30,7 @@ const WhoWeAre = () => {
   const [ebkLogo, setEbkLogo] = useState('/ebk-logo.svg');
   const [partnerLogos, setPartnerLogos] = useState([]);
   const [logosCached, setLogosCached] = useState(false);
+  const [visible, setVisible] = useState(false);
   
   // Page headers (editable in admin)
   const [pageTitle, setPageTitle] = useState(t('whoWeAre.pageTitle'));
@@ -45,6 +46,11 @@ const WhoWeAre = () => {
     loadContent();
     loadPartnerLogosOptimized();
     loadBackgroundSettings();
+    
+    // Trigger animation after component mounts
+    setTimeout(() => {
+      setVisible(true);
+    }, 100);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reload content when language changes
@@ -306,7 +312,13 @@ const WhoWeAre = () => {
     <div className="w-full">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-8 mt-5 text-center opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards] tracking-wide">
+        <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-8 mt-5 text-center tracking-wide ${
+          visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+        style={{
+          transition: 'all 0.8s ease-out',
+          transitionDelay: '0.2s'
+        }}>
           {pageTitle}
         </h1>
         
@@ -314,7 +326,9 @@ const WhoWeAre = () => {
         <div className="grid grid-cols-1 gap-6 items-stretch justify-center">
           {/* Combined Main Content */}
           <div className="flex justify-center">
-            <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '0.85rem' }}>
+            <div className={`group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600 ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`} style={{ borderWidth: '0.5px', padding: '0.85rem', transition: 'all 0.8s ease-out', transitionDelay: '0.4s' }}>
               <div className="flex flex-col justify-start items-center space-y-8">
                 {/* Company subtitle */}
                 <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">
@@ -335,7 +349,9 @@ const WhoWeAre = () => {
 
           {/* Partnership Section */}
           <div className="flex justify-center">
-            <div className="group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600" style={{ borderWidth: '0.5px', padding: '0.85rem' }}>
+            <div className={`group rounded-lg transition-colors duration-500 w-full h-full flex flex-col justify-start bg-black/30 hover:bg-black/50 border-gray-600 ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`} style={{ borderWidth: '0.5px', padding: '0.85rem', transition: 'all 0.8s ease-out', transitionDelay: '0.6s' }}>
               <div className="space-y-6">
                 <div className="flex flex-col justify-center items-center space-y-6">
                   <h2 className="text-3xl font-bold text-gray-300 text-center pt-6">

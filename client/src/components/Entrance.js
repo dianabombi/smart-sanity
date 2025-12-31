@@ -20,6 +20,7 @@ const Entrance = () => {
   );
   const isMountedRef = useRef(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   // Set default bullet points from translations if cache is empty
   useEffect(() => {
@@ -36,6 +37,11 @@ const Entrance = () => {
     }
     isMountedRef.current = true;
     loadContent();
+    
+    // Trigger animation after component mounts
+    setTimeout(() => {
+      setVisible(true);
+    }, 100);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reload content when language changes
@@ -121,7 +127,13 @@ const Entrance = () => {
         {/* Header Section */}
         <div className="pt-32 pb-1 px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-300 mb-0 opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards] tracking-wide">
+            <h1 className={`text-4xl md:text-5xl font-bold text-gray-300 mb-0 tracking-wide ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: '0.2s'
+            }}>
               {t('entrance.pageTitle')}
             </h1>
           </div>
@@ -134,8 +146,14 @@ const Entrance = () => {
               {bulletPoints.map((text, index) => (
                 <div
                   key={index}
-                  className="group rounded-lg p-6 transition-colors duration-300 bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400"
-                  style={{ borderWidth: '0.5px' }}
+                  className={`group rounded-lg p-6 transition-colors duration-300 bg-black/40 border-gray-600 hover:bg-black/60 hover:border-gray-400 ${
+                    visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}
+                  style={{ 
+                    borderWidth: '0.5px',
+                    transition: 'all 0.8s ease-out',
+                    transitionDelay: `${0.4 + index * 0.1}s`
+                  }}
                 >
                   <div className="space-y-3">
                     <p className="text-gray-300 leading-relaxed text-lg text-center">
@@ -159,7 +177,13 @@ const Entrance = () => {
         <div className="flex justify-center -mt-10 mb-12 px-4">
           <button 
             onClick={() => window.location.href = '/contact'}
-            className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
+            className={`py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transition: 'all 0.8s ease-out',
+              transitionDelay: `${0.4 + bulletPoints.length * 0.1 + 0.1}s`
+            }}
           >
             {t('contact.title')}
           </button>
