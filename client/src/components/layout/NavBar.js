@@ -112,18 +112,14 @@ const NavBar = () => {
           <div className="flex items-center gap-2 ml-2">
             <button 
               onClick={() => i18n.changeLanguage('sk')}
-              className={`text-lg xl:text-xl font-medium transition-colors ${
-                i18n.language === 'sk' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
-              }`}
+              className="text-lg xl:text-xl font-medium text-gray-400 hover:text-gray-300 transition-colors"
             >
               SK
             </button>
             <span className="text-gray-500">|</span>
             <button 
               onClick={() => i18n.changeLanguage('en')}
-              className={`text-lg xl:text-xl font-medium transition-colors ${
-                i18n.language === 'en' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
-              }`}
+              className="text-lg xl:text-xl font-medium text-gray-400 hover:text-gray-300 transition-colors"
             >
               EN
             </button>
@@ -209,17 +205,13 @@ const NavBar = () => {
             <div className="flex gap-3 mt-2">
               <button 
                 onClick={() => i18n.changeLanguage('sk')}
-                className={`text-lg font-medium transition-colors ${
-                  i18n.language === 'sk' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
-                }`}
+                className="text-lg font-medium text-gray-400 hover:text-gray-300 transition-colors"
               >
                 SK
               </button>
               <button 
                 onClick={() => i18n.changeLanguage('en')}
-                className={`text-lg font-medium transition-colors ${
-                  i18n.language === 'en' ? 'text-white' : 'text-gray-400 hover:text-gray-300'
-                }`}
+                className="text-lg font-medium text-gray-400 hover:text-gray-300 transition-colors"
               >
                 EN
               </button>
