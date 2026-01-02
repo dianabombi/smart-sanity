@@ -78,6 +78,10 @@ const Brands = () => {
       console.error('❌ Error loading brands (light):', error);
     } finally {
       setBrandsLoading(false);
+      // Trigger animation after brands are loaded
+      setTimeout(() => {
+        setVisible(true);
+      }, 100);
     }
   }, []);
 
@@ -88,13 +92,12 @@ const Brands = () => {
       loadBrands();
     } else {
       setBrandsLoading(false);
+      // Trigger animation immediately if data is already cached
+      setTimeout(() => {
+        setVisible(true);
+      }, 100);
     }
     loadPageContent();
-    
-    // Trigger animation after component mounts
-    setTimeout(() => {
-      setVisible(true);
-    }, 100);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
