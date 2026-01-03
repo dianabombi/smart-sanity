@@ -5,23 +5,7 @@ import Footer from './layout/Footer';
 import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
-// Get initial background images from localStorage
-const getInitialBackgroundImages = () => {
-  try {
-    const saved = localStorage.getItem('whoWeAreBackgroundSettings');
-    if (saved) {
-      const settings = JSON.parse(saved);
-      if (settings.whoWeAreBackgroundImages && settings.whoWeAreBackgroundImages.length > 0) {
-        return settings.whoWeAreBackgroundImages
-          .sort((a, b) => a.order - b.order)
-          .map(img => img.dataUrl);
-      }
-    }
-  } catch (error) {
-    console.error('Error loading initial background images:', error);
-  }
-  return [];
-};
+// No localStorage fallback - only use database
 
 const WhoWeAre = () => {
   const { t, i18n } = useTranslation();
@@ -38,7 +22,7 @@ const WhoWeAre = () => {
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [backgroundImages, setBackgroundImages] = useState(getInitialBackgroundImages());
+  const [backgroundImages, setBackgroundImages] = useState([]);
 
   useEffect(() => {
     // Load everything in parallel in background - don't wait
@@ -94,36 +78,23 @@ const WhoWeAre = () => {
 
   const loadBackgroundSettings = async () => {
     try {
-      // Load from localStorage and database
-      const saved = localStorage.getItem('whoWeAreBackgroundSettings');
-      if (saved) {
-        const settings = JSON.parse(saved);
+      // Load only from database
+      const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
+      if (result.success && result.content) {
+        const dbSettings = JSON.parse(result.content);
         
         // Update background images if available
-        if (settings.whoWeAreBackgroundImages && settings.whoWeAreBackgroundImages.length > 0) {
-          const imageUrls = settings.whoWeAreBackgroundImages
+        if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
+          const imageUrls = dbSettings.whoWeAreBackgroundImages
             .sort((a, b) => a.order - b.order)
             .map(img => img.dataUrl);
           setBackgroundImages(imageUrls);
+          console.log(`✅ Loaded ${imageUrls.length} background image(s) from database`);
+        } else {
+          console.log('⚠️ No background images found in database');
         }
-      }
-      
-      // Also check database
-      try {
-        const result = await ApiService.getPageContent('who-we-are', 'background', 'settings');
-        if (result.success && result.content) {
-          const dbSettings = JSON.parse(result.content);
-          
-          // Update background images if available
-          if (dbSettings.whoWeAreBackgroundImages && dbSettings.whoWeAreBackgroundImages.length > 0) {
-            const imageUrls = dbSettings.whoWeAreBackgroundImages
-              .sort((a, b) => a.order - b.order)
-              .map(img => img.dataUrl);
-            setBackgroundImages(imageUrls);
-          }
-        }
-      } catch (dbError) {
-        console.log('⚠️ Database load failed, using localStorage');
+      } else {
+        console.log('⚠️ Failed to load background settings from database');
       }
     } catch (error) {
       console.error('❌ Error loading background settings:', error);
