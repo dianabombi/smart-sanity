@@ -112,16 +112,20 @@ const NavBar = () => {
           <div className="flex items-center gap-2 ml-2">
             <button 
               onClick={() => i18n.changeLanguage('sk')}
-              className="text-lg xl:text-xl font-medium text-gray-400 hover:text-gray-300 transition-colors"
+              className={`text-lg xl:text-xl font-medium transition-colors ${
+                i18n.language === 'sk' ? 'text-gray-300' : 'text-gray-500 hover:text-gray-400'
+              }`}
             >
-              SK
+              sk
             </button>
             <span className="text-gray-500">|</span>
             <button 
               onClick={() => i18n.changeLanguage('en')}
-              className="text-lg xl:text-xl font-medium text-gray-400 hover:text-gray-300 transition-colors"
+              className={`text-lg xl:text-xl font-medium transition-colors ${
+                i18n.language === 'en' ? 'text-gray-300' : 'text-gray-500 hover:text-gray-400'
+              }`}
             >
-              EN
+              en
             </button>
           </div>
         </div>
@@ -205,15 +209,19 @@ const NavBar = () => {
             <div className="flex gap-3 mt-2">
               <button 
                 onClick={() => i18n.changeLanguage('sk')}
-                className="text-lg font-medium text-gray-400 hover:text-gray-300 transition-colors"
+                className={`text-lg font-medium transition-colors ${
+                  i18n.language === 'sk' ? 'text-gray-300' : 'text-gray-500 hover:text-gray-400'
+                }`}
               >
-                SK
+                sk
               </button>
               <button 
                 onClick={() => i18n.changeLanguage('en')}
-                className="text-lg font-medium text-gray-400 hover:text-gray-300 transition-colors"
+                className={`text-lg font-medium transition-colors ${
+                  i18n.language === 'en' ? 'text-gray-300' : 'text-gray-500 hover:text-gray-400'
+                }`}
               >
-                EN
+                en
               </button>
             </div>
           </div>
