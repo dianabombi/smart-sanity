@@ -3064,7 +3064,7 @@ class ApiService {
         return { success: false, message: 'Content not found' };
       }
 
-      console.log(`✅ Loaded page content for ${page}.${section}.${key}`, data[0].content);
+      console.log(`✅ Loaded page content for ${page}.${section}.${key}`);
       return { success: true, content: data[0].content };
     } catch (error) {
       console.error('Exception loading page content:', error);
