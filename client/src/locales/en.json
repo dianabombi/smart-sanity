@@ -1,0 +1,130 @@
+{
+  "nav": {
+    "home": "Home",
+    "whatWeOffer": "What We Offer",
+    "whoWeAre": "About Us",
+    "brands": "Our Brands",
+    "inspirations": "Inspirations",
+    "references": "References",
+    "contact": "Contact"
+  },
+  "home": {
+    "subtitle": "Professional Solutions\nfor Architects and Interior\nDesigners",
+    "enterButton": "Enter"
+  },
+  "entrance": {
+    "pageTitle": "What We Offer",
+    "bulletPoints": [
+      "We trade leading global manufacturers in the field of bathroom equipment, tiles and flooring",
+      "According to your requirements, we will assemble bathrooms from specific products from A to Z",
+      "We will prepare alternative solutions with different price levels",
+      "We will assemble demanding shower or bathtub faucet sets",
+      "We will provide technical support for all offered products",
+      "We offer long-term cooperation based on expertise, reliability and fair approach"
+    ]
+  },
+  "whoWeAre": {
+    "title": "About Us",
+    "aboutCompany": "About the Company",
+    "partnership": "Partnership",
+    "pageTitle": "About Us",
+    "pageSubtitle": "Smart Sanit s.r.o.",
+    "companySubtitle": "Premium Design • Smart Solutions",
+    "ourPartners": "Our Partners",
+    "loadingError": "Error loading content. Please refresh the page."
+  },
+  "brands": {
+    "title": "Our Brands",
+    "description": "We collaborate with premium global brands in sanitary technology and bathroom equipment",
+    "viewImages": "View Images",
+    "closeGallery": "Close Gallery",
+    "otherBrands": "Other Brands",
+    "pageTitle": "Our Brands",
+    "pageSubtitle": "Discover our premium suppliers' offerings."
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Have questions or need advice? Contact us and we will be happy to help you choose the right solutions for your bathroom.",
+    "formTitle": "Write to Us",
+    "contactInfoTitle": "Contact Information",
+    "servicesTitle": "Our Services",
+    "form": {
+      "name": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "successMessage": "Thank you for your message! We will respond as soon as possible.",
+      "errorMessage": "An error occurred while sending the message. Please try again.",
+      "selectPlaceholder": "-- select request type --",
+      "subjects": {
+        "general": "General Question",
+        "quote": "Price Quote",
+        "consultation": "Consultation",
+        "installation": "Installation",
+        "service": "Service",
+        "complaint": "Complaint"
+      }
+    },
+    "services": [
+      "Bathroom design and consulting",
+      "Sanitary equipment supply",
+      "Installation and assembly",
+      "Service and maintenance",
+      "Technical support"
+    ]
+  },
+  "references": {
+    "title": "References",
+    "description": "Our successfully completed projects and satisfied clients are our best business card."
+  },
+  "inspirations": {
+    "title": "Inspirations",
+    "description": "Get inspired by our implementations and design solutions"
+  },
+  "categories": {
+    "battery": "FAUCET SOLUTIONS",
+    "tap": "TAP INSTALLATIONS",
+    "sink": "SINK DESIGNS",
+    "toilet": "TOILET FACILITIES",
+    "shower": "SHOWER SYSTEMS",
+    "bathtub": "BATHTUB COLLECTIONS",
+    "batteryDesc": "Explore our range of faucet sanitary solutions and backup systems.",
+    "tapDesc": "Discover premium tap designs and installations for modern homes.",
+    "sinkDesc": "Browse our collection of elegant and functional sink solutions.",
+    "toiletDesc": "View our comprehensive toilet facilities and modern designs.",
+    "showerDesc": "Explore innovative shower systems and installations.",
+    "bathtubDesc": "Discover luxury bathtub collections and designs."
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "whatWeOffer": "What We Offer",
+    "whoWeAre": "About Us",
+    "contact": "Contact",
+    "brands": "Our Brands",
+    "references": "References",
+    "inspirations": "Inspirations",
+    "category": "Category",
+    "battery": "Faucets",
+    "tap": "Tap",
+    "sink": "Sink",
+    "toilet": "Toilet",
+    "shower": "Shower",
+    "bathtub": "Bathtub"
+  },
+  "common": {
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close"
+  },
+  "footer": {
+    "allRightsReserved": "All rights reserved"
+  }
+}

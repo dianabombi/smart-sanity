@@ -1,0 +1,130 @@
+{
+  "nav": {
+    "home": "Domov",
+    "whatWeOffer": "Čo ponúkame",
+    "whoWeAre": "O nás",
+    "brands": "Obchodované značky",
+    "inspirations": "Inšpirácie",
+    "references": "Referencie",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "subtitle": "Profesionálne riešenia\npre architektov a interiérových\ndizajnérov",
+    "enterButton": "Vstúpte"
+  },
+  "entrance": {
+    "pageTitle": "Čo ponúkame",
+    "bulletPoints": [
+      "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
+      "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
+      "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
+      "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
+      "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
+      "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
+    ]
+  },
+  "whoWeAre": {
+    "title": "O nás",
+    "aboutCompany": "O spoločnosti",
+    "partnership": "Partnerstvo",
+    "pageTitle": "O nás",
+    "pageSubtitle": "Smart Sanit s.r.o.",
+    "companySubtitle": "Premium Design • Smart Solutions",
+    "ourPartners": "Naši partneri",
+    "loadingError": "Chyba pri načítavaní obsahu. Prosím, obnovte stránku."
+  },
+  "brands": {
+    "title": "Obchodované značky",
+    "description": "Spolupracujeme s prémiovými svetovými značkami v oblasti sanitárnej techniky a kúpeľňového vybavenia",
+    "viewImages": "Zobraziť obrázky",
+    "closeGallery": "Zavrieť galériu",
+    "otherBrands": "Ostatné",
+    "pageTitle": "Obchodované značky",
+    "pageSubtitle": "Objavte ponuku našich prémiových dodávateľov."
+  },
+  "contact": {
+    "title": "Kontakt",
+    "subtitle": "Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.",
+    "formTitle": "Napíšte nám",
+    "contactInfoTitle": "Kontaktné údaje",
+    "servicesTitle": "Naše služby",
+    "form": {
+      "name": "Meno a priezvisko",
+      "email": "Email",
+      "phone": "Telefón",
+      "subject": "Predmet",
+      "message": "Správa",
+      "send": "Odoslať správu",
+      "sending": "Odosielam...",
+      "successMessage": "Ďakujeme za vašu správu! Odpovieme vám čo najskôr.",
+      "errorMessage": "Nastala chyba pri odosielaí správy. Skúste to prosím znova.",
+      "selectPlaceholder": "-- vyberte druh požiadavky --",
+      "subjects": {
+        "general": "Všeobecná otázka",
+        "quote": "Cenová ponuka",
+        "consultation": "Poradenstvo",
+        "installation": "Inštalácia",
+        "service": "Servis",
+        "complaint": "Reklamácia"
+      }
+    },
+    "services": [
+      "Poradenstvo a návrh kúpeľní",
+      "Dodávka sanitárnych zariadení",
+      "Inštalácia a montáž",
+      "Servis a údržba",
+      "Technická podpora"
+    ]
+  },
+  "references": {
+    "title": "Referencie",
+    "description": "Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou."
+  },
+  "inspirations": {
+    "title": "Inšpirácie",
+    "description": "Nechajte sa inšpirovať našimi realizáciami a dizajnovými riešeniami"
+  },
+  "categories": {
+    "battery": "RIEŠENIA BATÉRIÍ",
+    "tap": "INŠTALÁCIE KOHÚTIKOV",
+    "sink": "DIZAJNY UMÝVADIEL",
+    "toilet": "TOALETNÉ ZARIADENIA",
+    "shower": "SPRCHOVÉ SYSTÉMY",
+    "bathtub": "KOLEKCIE VANÍ",
+    "batteryDesc": "Preskúmajte náš sortiment batériových sanitárnych riešení a záložných systémov.",
+    "tapDesc": "Objavte prémiové dizajny kohútikov a inštalácie pre moderné domácnosti.",
+    "sinkDesc": "Prehliadnite si našu kolekciu elegantných a funkčných riešení umývadiel.",
+    "toiletDesc": "Pozrite si naše komplexné toaletné zariadenia a moderné dizajny.",
+    "showerDesc": "Preskúmajte inovatívne sprchové systémy a inštalácie.",
+    "bathtubDesc": "Objavte luxusné kolekcie vaní a dizajny."
+  },
+  "breadcrumbs": {
+    "home": "Domov",
+    "whatWeOffer": "Čo ponúkame",
+    "whoWeAre": "O nás",
+    "contact": "Kontakt",
+    "brands": "Obchodované značky",
+    "references": "Referencie",
+    "inspirations": "Inšpirácie",
+    "category": "Kategória",
+    "battery": "Batérie",
+    "tap": "Kohútik",
+    "sink": "Umývadlo",
+    "toilet": "Toaleta",
+    "shower": "Sprcha",
+    "bathtub": "Vaňa"
+  },
+  "common": {
+    "back": "Späť",
+    "loading": "Načítava sa...",
+    "error": "Chyba",
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "edit": "Upraviť",
+    "delete": "Vymazať",
+    "close": "Zavrieť"
+  },
+  "footer": {
+    "allRightsReserved": "Všetky práva vyhradené"
+  }
+}
