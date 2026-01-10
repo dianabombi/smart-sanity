@@ -46,16 +46,18 @@ const Contact = () => {
       
       // Try to load from API with timeout in background
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('API timeout')), 2000)
+        setTimeout(() => reject(new Error('API timeout')), 3000)
       );
       
       try {
-        await Promise.race([
+        const result = await Promise.race([
           ApiService.getContactContent(),
           timeoutPromise
         ]);
         
-        // Temporarily disabled - use fallback with proper line breaks
+        if (result.success && result.content) {
+          setContactContent(result.content);
+        }
       } catch (apiError) {
         console.log('API failed or timed out, keeping fallback content:', apiError.message);
       }
