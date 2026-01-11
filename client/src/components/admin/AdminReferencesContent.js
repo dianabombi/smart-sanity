@@ -12,21 +12,27 @@ const AdminReferencesContent = ({ onLogout }) => {
 
   useEffect(() => {
     loadContent();
-  }, []);
+  }, [selectedLanguage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContent = async () => {
     try {
       setLoading(true);
-      const result = await ApiService.getPageContent('references', 'main', 'description');
+      const result = await ApiService.getPageContent('references', 'main', 'description', selectedLanguage);
       if (result.success && result.content) {
         setDescription(result.content);
       } else {
-        // Set default content if none exists
-        setDescription('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
+        // Set default content based on language
+        const defaultContent = selectedLanguage === 'en' 
+          ? 'Our successfully completed projects and satisfied clients are our best business card.'
+          : 'Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.';
+        setDescription(defaultContent);
       }
     } catch (error) {
       console.error('Error loading content:', error);
-      setDescription('Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.');
+      const defaultContent = selectedLanguage === 'en' 
+        ? 'Our successfully completed projects and satisfied clients are our best business card.'
+        : 'Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.';
+      setDescription(defaultContent);
     } finally {
       setLoading(false);
     }
@@ -35,11 +41,11 @@ const AdminReferencesContent = ({ onLogout }) => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const result = await ApiService.updatePageContent('references', 'main', 'description', description);
+      const result = await ApiService.updatePageContent('references', 'main', 'description', description, selectedLanguage);
       
       if (result.success) {
         setIsEditing(false);
-        alert('Text bol úspešne uložený!');
+        alert(selectedLanguage === 'en' ? 'Text was saved successfully!' : 'Text bol úspešne uložený!');
       } else {
         console.error('Save failed:', result);
         if (result.message && result.message.includes('does not exist')) {

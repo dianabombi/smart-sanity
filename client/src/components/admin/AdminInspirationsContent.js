@@ -12,21 +12,27 @@ const AdminInspirationsContent = ({ onLogout }) => {
 
   useEffect(() => {
     loadContent();
-  }, []);
+  }, [selectedLanguage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContent = async () => {
     try {
       setLoading(true);
-      const result = await ApiService.getPageContent('inspirations', 'main', 'description');
+      const result = await ApiService.getPageContent('inspirations', 'main', 'description', selectedLanguage);
       if (result.success && result.content) {
         setDescription(result.content);
       } else {
-        // Set default content if none exists
-        setDescription('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
+        // Set default content based on language
+        const defaultContent = selectedLanguage === 'en' 
+          ? 'Discover the most beautiful bathrooms and get inspired for your home. From modern minimalist solutions to luxury wellness spaces.'
+          : 'Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.';
+        setDescription(defaultContent);
       }
     } catch (error) {
       console.error('Error loading content:', error);
-      setDescription('Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.');
+      const defaultContent = selectedLanguage === 'en' 
+        ? 'Discover the most beautiful bathrooms and get inspired for your home. From modern minimalist solutions to luxury wellness spaces.'
+        : 'Objavte najkrajšie kúpeľne a nechajte sa inšpirovať pre váš domov. Od moderných minimalistických riešení až po luxusné wellness priestory.';
+      setDescription(defaultContent);
     } finally {
       setLoading(false);
     }
@@ -35,11 +41,11 @@ const AdminInspirationsContent = ({ onLogout }) => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const result = await ApiService.updatePageContent('inspirations', 'main', 'description', description);
+      const result = await ApiService.updatePageContent('inspirations', 'main', 'description', description, selectedLanguage);
       
       if (result.success) {
         setIsEditing(false);
-        alert('Text bol úspešne uložený!');
+        alert(selectedLanguage === 'en' ? 'Text was saved successfully!' : 'Text bol úspešne uložený!');
       } else {
         console.error('Save failed:', result);
         if (result.message && result.message.includes('does not exist')) {

@@ -3143,14 +3143,14 @@ class ApiService {
     }
   }
 
-  async updatePageContent(page, section, key, content) {
+  async updatePageContent(page, section, key, content, language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available');
       return { success: false, message: 'Database connection not available' };
     }
 
     try {
-      console.log(`🔄 Updating page content: ${page}.${section}.${key}`);
+      console.log(`🔄 Updating page content: ${page}.${section}.${key} (language: ${language})`);
       
       // Use RPC function to avoid PostgREST 'page' parameter conflict
       const { data, error } = await supabase
@@ -3158,7 +3158,8 @@ class ApiService {
           p_page: page,
           p_section: section,
           p_key: key,
-          p_content: content
+          p_content: content,
+          p_language: language
         });
 
       if (error) {
