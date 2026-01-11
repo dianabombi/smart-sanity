@@ -33,20 +33,42 @@ const AdminWhatWeOffer = ({ onLogout }) => {
   useEffect(() => {
     loadContent();
     loadBackgroundSettings();
-  }, []);
+  }, [selectedLanguage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadContent = async () => {
     try {
       setLoading(true);
       
+      // Define default content for each language
+      const defaultBulletPointsSK = [
+        "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlaždíb",
+        "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
+        "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
+        "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
+        "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
+        "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
+      ];
+      
+      const defaultBulletPointsEN = [
+        "We trade leading global manufacturers in bathroom equipment, tiles and flooring",
+        "According to your requirements, we will assemble bathrooms from specific products from A to Z",
+        "We will prepare alternative solutions with different price levels",
+        "We will assemble demanding shower or bathtub faucet sets",
+        "We will provide technical support for all offered products",
+        "We offer long-term cooperation based on expertise, reliability and fair approach"
+      ];
+      
+      const defaultTitle = selectedLanguage === 'en' ? 'What We Offer' : 'Čo ponúkame';
+      const defaultBulletPoints = selectedLanguage === 'en' ? defaultBulletPointsEN : defaultBulletPointsSK;
+      
       // Try to load from page content system first
       try {
-        const result = await ApiService.getPageContent('what-we-offer', 'main', 'content');
+        const result = await ApiService.getPageContent('what-we-offer', 'main', 'content', selectedLanguage);
         if (result.success && result.content) {
           // Parse the content from the page content system
           const lines = result.content.split('\n').filter(line => line.trim());
           setContent({
-            title: 'Čo ponúkame',
+            title: defaultTitle,
             content: result.content,
             bulletPoints: lines
           });
@@ -57,27 +79,18 @@ const AdminWhatWeOffer = ({ onLogout }) => {
         console.log('Page content system not available, using fallback');
       }
       
-      // Fallback to default content from the existing webpage
-      const defaultBulletPoints = [
-        "Obchodujeme popredných svetových výrobcov v oblasti vybavenia kúpeľní, obkladov a dlažieb",
-        "Podľa vašich požiadaviek vám vyskladáme kúpeľne z konkrétnych produktov od A po Z",
-        "Spracujeme vám alternatívne riešenia s rôznymi cenovými hladinami",
-        "Vyskladáme vám náročné sprchové, či vaňové zostavy batérií",
-        "Zabezpečíme vám technickú podporu ku všetkým ponúkaným produktom",
-        "Ponúkame vám dlhodobú spoluprácu založenú na odbornosti, spoľahlivosti a férovom prístupe"
-      ];
-      
-      const defaultContent = defaultBulletPoints.map(point => `• ${point}`).join('\n');
+      // Fallback to default content
+      const defaultContent = defaultBulletPoints.join('\n');
       
       setContent({
-        title: 'Čo ponúkame',
+        title: defaultTitle,
         content: defaultContent,
         bulletPoints: defaultBulletPoints
       });
       
     } catch (error) {
       console.error('Error loading content:', error);
-      setError('Chyba pri načítavaní obsahu');
+      setError(selectedLanguage === 'en' ? 'Error loading content' : 'Chyba pri načítavaní obsahu');
     } finally {
       setLoading(false);
     }
@@ -89,11 +102,11 @@ const AdminWhatWeOffer = ({ onLogout }) => {
       setError('');
       setSuccess('');
 
-      // Save to page content system
-      const result = await ApiService.updatePageContent('what-we-offer', 'main', 'content', content.content);
+      // Save to page content system with language
+      const result = await ApiService.updatePageContent('what-we-offer', 'main', 'content', content.content, selectedLanguage);
 
       if (result.success) {
-        setSuccess('Obsah bol úspešne uložený!');
+        setSuccess(selectedLanguage === 'en' ? 'Content saved successfully!' : 'Obsah bol úspešne uložený!');
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError(result.message || 'Chyba pri ukladaní obsahu');
