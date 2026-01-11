@@ -1,6 +1,8 @@
 -- Create contact_content table for Smart Sanit contact page management
+-- Supports multiple languages (SK, EN)
 CREATE TABLE IF NOT EXISTS public.contact_content (
     id BIGSERIAL PRIMARY KEY,
+    language VARCHAR(5) NOT NULL DEFAULT 'sk',
     content JSONB NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -25,20 +27,19 @@ CREATE TRIGGER update_contact_content_updated_at
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.contact_content ENABLE ROW LEVEL SECURITY;
 
--- Create policy to allow all operations for authenticated users
-CREATE POLICY "Allow all operations for authenticated users" ON public.contact_content
-    FOR ALL USING (auth.role() = 'authenticated');
-
--- Alternative: Allow all operations for everyone (less secure but simpler for development)
--- Uncomment the line below if you want to allow anonymous access
--- CREATE POLICY "Allow all operations for everyone" ON public.contact_content FOR ALL USING (true);
+-- Create policy to allow all operations (needed for public page access)
+DROP POLICY IF EXISTS "Allow all operations for authenticated users" ON public.contact_content;
+DROP POLICY IF EXISTS "Allow all operations" ON public.contact_content;
+CREATE POLICY "Allow all operations" ON public.contact_content FOR ALL USING (true) WITH CHECK (true);
 
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_contact_content_updated_at ON public.contact_content(updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_contact_content_language ON public.contact_content(language);
 
--- Insert default contact content
-INSERT INTO public.contact_content (id, content) VALUES (
+-- Insert default Slovak contact content
+INSERT INTO public.contact_content (id, language, content) VALUES (
     1,
+    'sk',
     '{
         "title": "Kontakt",
         "subtitle": "Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.",
@@ -57,6 +58,33 @@ INSERT INTO public.contact_content (id, content) VALUES (
             "Inštalácia a montáž",
             "Servis a údržba",
             "Technická podpora"
+        ]
+    }'::jsonb
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Insert default English contact content
+INSERT INTO public.contact_content (id, language, content) VALUES (
+    2,
+    'en',
+    '{
+        "title": "Contact",
+        "subtitle": "Have questions or need advice? Contact us and we will be happy to help you choose the right solutions for your bathroom.",
+        "formTitle": "Write to Us",
+        "contactInfoTitle": "Contact Information",
+        "servicesTitle": "Our Services",
+        "contactDetails": {
+            "manager": "Ing. Dušan Drinka, PhD.",
+            "phone": "+421 948 882 376",
+            "email": "dusan.drinka@smartsanit.sk",
+            "address": "Továrenská 14\n811 09 Bratislava"
+        },
+        "services": [
+            "Bathroom design and consulting",
+            "Sanitary equipment supply",
+            "Installation and assembly",
+            "Service and maintenance",
+            "Technical support"
         ]
     }'::jsonb
 )

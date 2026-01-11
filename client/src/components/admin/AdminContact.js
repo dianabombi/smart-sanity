@@ -23,6 +23,7 @@ const AdminContact = ({ onLogout }) => {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [editingSection, setEditingSection] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
   
   // Background settings
   const [backgroundSettings, setBackgroundSettings] = useState({
@@ -40,9 +41,13 @@ const AdminContact = ({ onLogout }) => {
   const [showCustomPosition, setShowCustomPosition] = useState(false);
 
   useEffect(() => {
-    loadContactContent();
+    loadContactContent(selectedLanguage);
     loadBackgroundSettings();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedLanguage]); // eslint-disable-line react-hooks/exhaustive-deps
+  
+  const handleLanguageChange = (lang) => {
+    setSelectedLanguage(lang);
+  };
   
   const loadBackgroundSettings = async () => {
     try {
@@ -104,55 +109,83 @@ const AdminContact = ({ onLogout }) => {
     }
   };
 
-  const loadContactContent = async () => {
+  const loadContactContent = async (language = 'sk') => {
     try {
       setLoading(true);
       
-      // Load from localStorage first (for offline functionality)
-      const localContent = localStorage.getItem('adminContactContent');
-      if (localContent) {
-        const parsed = JSON.parse(localContent);
-        setContactContent(parsed);
-        console.log('Loaded contact content from localStorage:', parsed);
-      } else {
-        // Set default content if nothing in localStorage
-        setContactContent(getDefaultContent());
-      }
+      // Set default content immediately for selected language
+      setContactContent(getDefaultContent(language));
       
-      // Try to load from API
-      const result = await ApiService.getContactContent();
+      // Try to load from API first (priority over localStorage)
+      const result = await ApiService.getContactContent(language);
       if (result.success && result.content) {
         setContactContent(result.content);
-        console.log('Loaded contact content from API:', result.content);
+        // Also save to localStorage for offline use
+        const localKey = `adminContactContent_${language}`;
+        localStorage.setItem(localKey, JSON.stringify(result.content));
+        console.log(`Loaded contact content from API (${language}):`, result.content);
+      } else {
+        // Fallback to localStorage if API fails
+        const localKey = `adminContactContent_${language}`;
+        const localContent = localStorage.getItem(localKey);
+        if (localContent) {
+          const parsed = JSON.parse(localContent);
+          setContactContent(parsed);
+          console.log(`Loaded contact content from localStorage (${language}):`, parsed);
+        }
       }
     } catch (error) {
       console.error('Error loading contact content:', error);
-      setContactContent(getDefaultContent());
+      setContactContent(getDefaultContent(language));
     } finally {
       setLoading(false);
     }
   };
 
-  const getDefaultContent = () => ({
-    title: 'Kontakt',
-    subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.',
-    formTitle: 'Napíšte nám',
-    contactInfoTitle: 'Kontaktné údaje',
-    servicesTitle: 'Naše služby',
-    contactDetails: {
-      manager: 'Ing. Dušan Drinka, PhD.',
-      phone: '+421 948 882 376',
-      email: 'dusan.drinka@smartsanit.sk',
-      address: 'Továrenská 14\n811 09 Bratislava'
-    },
-    services: [
-      'Poradenstvo a návrh kúpeľní',
-      'Dodávka sanitárnych zariadení',
-      'Inštalácia a montáž',
-      'Servis a údržba',
-      'Technická podpora'
-    ]
-  });
+  const getDefaultContent = (language = 'sk') => {
+    if (language === 'en') {
+      return {
+        title: 'Contact',
+        subtitle: 'Have questions or need advice? Contact us and we will be happy to help you choose the right solutions for your bathroom.',
+        formTitle: 'Write to Us',
+        contactInfoTitle: 'Contact Information',
+        servicesTitle: 'Our Services',
+        contactDetails: {
+          manager: 'Ing. Dušan Drinka, PhD.',
+          phone: '+421 948 882 376',
+          email: 'dusan.drinka@smartsanit.sk',
+          address: 'Továrenská 14\n811 09 Bratislava'
+        },
+        services: [
+          'Bathroom design and consulting',
+          'Sanitary equipment supply',
+          'Installation and assembly',
+          'Service and maintenance',
+          'Technical support'
+        ]
+      };
+    }
+    return {
+      title: 'Kontakt',
+      subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.',
+      formTitle: 'Napíšte nám',
+      contactInfoTitle: 'Kontaktné údaje',
+      servicesTitle: 'Naše služby',
+      contactDetails: {
+        manager: 'Ing. Dušan Drinka, PhD.',
+        phone: '+421 948 882 376',
+        email: 'dusan.drinka@smartsanit.sk',
+        address: 'Továrenská 14\n811 09 Bratislava'
+      },
+      services: [
+        'Poradenstvo a návrh kúpeľní',
+        'Dodávka sanitárnych zariadení',
+        'Inštalácia a montáž',
+        'Servis a údržba',
+        'Technická podpora'
+      ]
+    };
+  };
 
   const handleSave = async (section, data) => {
     try {
@@ -175,15 +208,16 @@ const AdminContact = ({ onLogout }) => {
       }
       
       // Save to localStorage immediately
-      localStorage.setItem('adminContactContent', JSON.stringify(updatedContent));
+      const localKey = `adminContactContent_${selectedLanguage}`;
+      localStorage.setItem(localKey, JSON.stringify(updatedContent));
       setContactContent(updatedContent);
       
       // Try to save to API
-      const result = await ApiService.updateContactContent(updatedContent);
+      const result = await ApiService.updateContactContent(updatedContent, selectedLanguage);
       if (result.success) {
-        setSuccess('Obsah kontaktu úspešne aktualizovaný!');
+        setSuccess(`Obsah kontaktu (${selectedLanguage.toUpperCase()}) úspešne aktualizovaný!`);
       } else {
-        setSuccess('Obsah kontaktu uložený lokálne (API nedostupné)');
+        setSuccess(`Obsah kontaktu (${selectedLanguage.toUpperCase()}) uložený lokálne (API nedostupné)`);
       }
       
       setEditingSection(null);
@@ -215,7 +249,51 @@ const AdminContact = ({ onLogout }) => {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-white">Správa kontaktu</h1>
+          <h1 className="text-3xl font-bold text-white">
+            {selectedLanguage === 'en' ? '🇬🇧 Contact Management (EN)' : '🇸🇰 Správa kontaktu (SK)'}
+          </h1>
+          
+          {/* Language Toggle */}
+          <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleLanguageChange('sk');
+              }}
+              className={`px-4 py-2 rounded-md font-medium transition-all cursor-pointer ${
+                selectedLanguage === 'sk'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-600 text-gray-300 hover:text-white hover:bg-gray-500'
+              }`}
+            >
+              🇸🇰 SK
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleLanguageChange('en');
+              }}
+              className={`px-4 py-2 rounded-md font-medium transition-all cursor-pointer ${
+                selectedLanguage === 'en'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-600 text-gray-300 hover:text-white hover:bg-gray-500'
+              }`}
+            >
+              🇬🇧 EN
+            </button>
+          </div>
+        </div>
+        
+        {/* Language Info */}
+        <div className={`${selectedLanguage === 'en' ? 'bg-green-900/30 border-green-700' : 'bg-blue-900/30 border-blue-700'} border rounded-lg p-3`}>
+          <p className={`${selectedLanguage === 'en' ? 'text-green-300' : 'text-blue-300'} text-sm`}>
+            📝 Upravujete obsah pre: <strong>{selectedLanguage === 'sk' ? 'Slovenčinu 🇸🇰' : 'Angličtinu 🇬🇧'}</strong>
+            {selectedLanguage === 'en' && <span className="ml-2">(English mode active)</span>}
+          </p>
         </div>
 
         {/* Success/Error Messages */}

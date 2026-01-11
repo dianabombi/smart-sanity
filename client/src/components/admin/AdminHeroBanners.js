@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import DatabaseSetup from './DatabaseSetup';
 import apiService from '../../services/api';
+import LanguageToggle from './shared/LanguageToggle';
 
 const AdminHeroBanners = ({ onLogout }) => {
   const [banners, setBanners] = useState([]);
@@ -13,6 +14,7 @@ const AdminHeroBanners = ({ onLogout }) => {
   const [deletingId, setDeletingId] = useState(null);
   const [showDatabaseSetup, setShowDatabaseSetup] = useState(false);
   const [editingBanner, setEditingBanner] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -238,10 +240,18 @@ const AdminHeroBanners = ({ onLogout }) => {
   return (
     <AdminLayout onLogout={onLogout}>
       <div className="space-y-6">
+        {/* Language Toggle */}
+        <LanguageToggle 
+          selectedLanguage={selectedLanguage} 
+          onLanguageChange={setSelectedLanguage} 
+        />
+        
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-white">Hero Bannery</h1>
+            <h1 className="text-3xl font-bold text-white">
+              {selectedLanguage === 'sk' ? 'Hero Bannery' : 'Hero Banners'}
+            </h1>
             <p className="text-gray-400 mt-1">
               {banners.length} / 10 bannerov • Maximálne 10 obrázkov v carousel
             </p>

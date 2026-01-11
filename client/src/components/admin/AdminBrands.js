@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
 import BackgroundControls from './shared/BackgroundControls';
+import LanguageToggle from './shared/LanguageToggle';
 
 const AdminBrands = ({ onLogout }) => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
   const [editingDescription, setEditingDescription] = useState(false);
   const [tempDescription, setTempDescription] = useState('');
   const [editingName, setEditingName] = useState(false);
@@ -1263,15 +1265,21 @@ const AdminBrands = ({ onLogout }) => {
   return (
     <AdminLayout onLogout={onLogout}>
       <div className="space-y-6">
+        {/* Language Toggle */}
+        <LanguageToggle 
+          selectedLanguage={selectedLanguage} 
+          onLanguageChange={setSelectedLanguage} 
+        />
+        
         {/* Header */}
         <div className="bg-gray-800 rounded-lg shadow p-6">
           <div className="flex justify-between items-start">
             <div>
               <h2 className="text-2xl font-bold text-white mb-2">
-                Správa značiek
+                {selectedLanguage === 'sk' ? 'Správa značiek' : 'Brand Management'}
               </h2>
               <p className="text-gray-300">
-                Spravujte obrázky a obsah pre jednotlivé značky
+                {selectedLanguage === 'sk' ? 'Spravujte obrázky a obsah pre jednotlivé značky' : 'Manage images and content for individual brands'}
               </p>
             </div>
             <button

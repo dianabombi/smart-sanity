@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import LanguageToggle from './shared/LanguageToggle';
 
 const AdminWhoWeAre = ({ onLogout }) => {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
   const [editingSection, setEditingSection] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -760,6 +762,12 @@ const AdminWhoWeAre = ({ onLogout }) => {
   return (
     <AdminLayout onLogout={onLogout}>
       <div className="p-6">
+        {/* Language Toggle */}
+        <LanguageToggle 
+          selectedLanguage={selectedLanguage} 
+          onLanguageChange={setSelectedLanguage} 
+        />
+        
         {/* Public Page Headers - Editable */}
         <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
           <div className="flex justify-between items-start mb-4">

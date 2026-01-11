@@ -5,21 +5,21 @@ import Footer from './layout/Footer';
 import ContactForm from './forms/ContactForm';
 import ContactInfo from './contact/ContactInfo';
 import LoadingSpinner from './ui/LoadingSpinner';
-import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Contact = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [contactContent, setContactContent] = useState(null);
+  const currentLanguage = i18n.language?.substring(0, 2) || 'sk';
   
   // Background settings hook
   const { settings: backgroundSettings, refreshSettings } = useBackgroundSettings();
 
   useEffect(() => {
     loadContactContent();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentLanguage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-refresh background settings every 2 seconds
   useEffect(() => {
@@ -34,33 +34,29 @@ const Contact = () => {
     try {
       setLoading(true);
       
-      // Load fallback content immediately for fast display
-      const fallbackContent = getDefaultContactContent();
-      setContactContent(fallbackContent);
+      // Use translations directly from i18n locale files
+      const content = {
+        title: t('contact.title'),
+        subtitle: t('contact.subtitle'),
+        formTitle: t('contact.formTitle'),
+        contactInfoTitle: t('contact.contactInfoTitle'),
+        servicesTitle: t('contact.servicesTitle'),
+        contactDetails: {
+          manager: 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský',
+          phone: '+421 948 882 376',
+          email: 'dusan.drinka@smartsanit.sk',
+          address: 'Továrenská 14\n811 09 Bratislava'
+        },
+        services: t('contact.services', { returnObjects: true })
+      };
+      
+      setContactContent(content);
       setLoading(false);
       
       // Start animation after content is loaded
       setTimeout(() => {
         setVisible(true);
       }, 400);
-      
-      // Try to load from API with timeout in background
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('API timeout')), 3000)
-      );
-      
-      try {
-        const result = await Promise.race([
-          ApiService.getContactContent(),
-          timeoutPromise
-        ]);
-        
-        if (result.success && result.content) {
-          setContactContent(result.content);
-        }
-      } catch (apiError) {
-        console.log('API failed or timed out, keeping fallback content:', apiError.message);
-      }
       
     } catch (error) {
       console.error('Error loading contact content:', error);

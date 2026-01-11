@@ -1962,46 +1962,51 @@ class ApiService {
   }
 
   // Contact Content Management
-  async getContactContent() {
+  async getContactContent(language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available, using fallback contact content');
-      return { success: true, content: this.getFallbackContactContent() };
+      return { success: true, content: this.getFallbackContactContent(language) };
     }
 
     try {
       const { data, error } = await supabase
         .from('contact_content')
         .select('*')
+        .eq('language', language)
         .single();
       
       if (error) {
         console.log('Supabase error, using fallback contact content:', error);
-        return { success: true, content: this.getFallbackContactContent() };
+        return { success: true, content: this.getFallbackContactContent(language) };
       }
       
       if (!data) {
         console.log('No contact content in database, using fallback');
-        return { success: true, content: this.getFallbackContactContent() };
+        return { success: true, content: this.getFallbackContactContent(language) };
       }
 
       return { success: true, content: data.content };
     } catch (error) {
       console.log('Error fetching contact content, using fallback:', error);
-      return { success: true, content: this.getFallbackContactContent() };
+      return { success: true, content: this.getFallbackContactContent(language) };
     }
   }
 
-  async updateContactContent(content) {
+  async updateContactContent(content, language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       console.log('Supabase not available, simulating contact content update');
       return { success: true, message: 'Contact content updated (simulated)' };
     }
 
     try {
+      // Use language-specific ID: 1 for SK, 2 for EN
+      const langId = language === 'sk' ? 1 : 2;
+      
       const { data, error } = await supabase
         .from('contact_content')
         .upsert({
-          id: 1,
+          id: langId,
+          language: language,
           content: content,
           updated_at: new Date().toISOString()
         })
@@ -2019,7 +2024,29 @@ class ApiService {
     }
   }
 
-  getFallbackContactContent() {
+  getFallbackContactContent(language = 'sk') {
+    if (language === 'en') {
+      return {
+        title: 'Contact',
+        subtitle: 'Have questions or need advice? Contact us and we will be happy to help you choose the right solutions for your bathroom.',
+        formTitle: 'Write to Us',
+        contactInfoTitle: 'Contact Information',
+        servicesTitle: 'Our Services',
+        contactDetails: {
+          manager: 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský',
+          phone: '+421 948 882 376',
+          email: 'dusan.drinka@smartsanit.sk',
+          address: 'Továrenská 14\n811 09 Bratislava'
+        },
+        services: [
+          'Bathroom design and consulting',
+          'Sanitary equipment supply',
+          'Installation and assembly',
+          'Service and maintenance',
+          'Technical support'
+        ]
+      };
+    }
     return {
       title: 'Kontakt',
       subtitle: 'Máte otázky alebo potrebujete poradenstvo? Kontaktujte nás a radi vám pomôžeme s výberom správnych riešení pre vašu kúpeľňu.',

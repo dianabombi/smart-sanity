@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import LanguageToggle from './shared/LanguageToggle';
 
 const AdminReferencesContent = ({ onLogout }) => {
   const [description, setDescription] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
 
   useEffect(() => {
     loadContent();
@@ -76,10 +78,20 @@ const AdminReferencesContent = ({ onLogout }) => {
     <AdminLayout onLogout={onLogout}>
       <div className="p-6">
         <div className="max-w-4xl mx-auto">
+          {/* Language Toggle */}
+          <LanguageToggle 
+            selectedLanguage={selectedLanguage} 
+            onLanguageChange={setSelectedLanguage} 
+          />
+          
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Referencie - Obsah stránky</h1>
-            <p className="text-gray-400">Upravte text pod hlavným nápisom na stránke Referencie</p>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {selectedLanguage === 'sk' ? 'Referencie - Obsah stránky' : 'References - Page Content'}
+            </h1>
+            <p className="text-gray-400">
+              {selectedLanguage === 'sk' ? 'Upravte text pod hlavným nápisom na stránke Referencie' : 'Edit the text under the main heading on the References page'}
+            </p>
           </div>
 
           {/* Content Editor */}

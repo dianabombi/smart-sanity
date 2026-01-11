@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import LanguageToggle from './shared/LanguageToggle';
 
 const AdminWhatWeOffer = ({ onLogout }) => {
   const [content, setContent] = useState(null);
@@ -8,6 +9,7 @@ const AdminWhatWeOffer = ({ onLogout }) => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
 
   // Background settings state
   const [backgroundSettings, setBackgroundSettings] = useState({
@@ -332,13 +334,19 @@ const AdminWhatWeOffer = ({ onLogout }) => {
   return (
     <AdminLayout onLogout={onLogout}>
       <div className="space-y-6">
+        {/* Language Toggle */}
+        <LanguageToggle 
+          selectedLanguage={selectedLanguage} 
+          onLanguageChange={setSelectedLanguage} 
+        />
+        
         {/* Header */}
         <div className="bg-gray-800 rounded-lg shadow p-6">
           <h2 className="text-2xl font-bold text-white mb-2">
-            Správa obsahu - Čo ponúkame
+            {selectedLanguage === 'sk' ? 'Správa obsahu - Čo ponúkame' : 'Content Management - What We Offer'}
           </h2>
           <p className="text-gray-300">
-            Upravte obsah stránky "Čo ponúkame"
+            {selectedLanguage === 'sk' ? 'Upravte obsah stránky "Čo ponúkame"' : 'Edit "What We Offer" page content'}
           </p>
         </div>
 

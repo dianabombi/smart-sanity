@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import ApiService from '../../services/api';
+import LanguageToggle from './shared/LanguageToggle';
 
 const AdminInspirationsContent = ({ onLogout }) => {
   const [description, setDescription] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('sk');
 
   useEffect(() => {
     loadContent();
@@ -76,6 +78,12 @@ const AdminInspirationsContent = ({ onLogout }) => {
     <AdminLayout onLogout={onLogout}>
       <div className="p-6">
         <div className="max-w-4xl mx-auto">
+          {/* Language Toggle */}
+          <LanguageToggle 
+            selectedLanguage={selectedLanguage} 
+            onLanguageChange={setSelectedLanguage} 
+          />
+          
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">Inšpirácie - Obsah stránky</h1>
