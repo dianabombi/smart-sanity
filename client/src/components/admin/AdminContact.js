@@ -326,8 +326,12 @@ const AdminContact = ({ onLogout }) => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">Základný obsah</h2>
             <button
-              onClick={() => setEditingSection('basic')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              type="button"
+              onClick={() => {
+                console.log('Opening basic edit modal');
+                setEditingSection('basic');
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
             >
               Upraviť
             </button>
@@ -485,8 +489,8 @@ const EditModal = ({ section, content, onSave, onCancel, saving }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4" style={{ zIndex: 9999 }}>
+      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto border-2 border-blue-500">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white">
             Upraviť {section === 'basic' ? 'základný obsah' : 

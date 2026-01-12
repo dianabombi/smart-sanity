@@ -6,6 +6,7 @@ import ContactForm from './forms/ContactForm';
 import ContactInfo from './contact/ContactInfo';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
+import ApiService from '../services/api';
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
@@ -34,23 +35,30 @@ const Contact = () => {
     try {
       setLoading(true);
       
-      // Use translations directly from i18n locale files
-      const content = {
-        title: t('contact.title'),
-        subtitle: t('contact.subtitle'),
-        formTitle: t('contact.formTitle'),
-        contactInfoTitle: t('contact.contactInfoTitle'),
-        servicesTitle: t('contact.servicesTitle'),
-        contactDetails: {
-          manager: 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský',
-          phone: '+421 948 882 376',
-          email: 'dusan.drinka@smartsanit.sk',
-          address: 'Továrenská 14\n811 09 Bratislava'
-        },
-        services: t('contact.services', { returnObjects: true })
-      };
+      // Fetch content from database based on current language
+      const result = await ApiService.getContactContent(currentLanguage);
       
-      setContactContent(content);
+      if (result.success && result.content) {
+        // Use database content
+        setContactContent({
+          title: result.content.title || t('contact.title'),
+          subtitle: result.content.subtitle || t('contact.subtitle'),
+          formTitle: result.content.formTitle || t('contact.formTitle'),
+          contactInfoTitle: result.content.contactInfoTitle || t('contact.contactInfoTitle'),
+          servicesTitle: result.content.servicesTitle || t('contact.servicesTitle'),
+          contactDetails: result.content.contactDetails || {
+            manager: 'Ing. Dušan Drinka, PhD.\nMgr. Juraj Stodolovský',
+            phone: '+421 948 882 376',
+            email: 'dusan.drinka@smartsanit.sk',
+            address: 'Továrenská 14\n811 09 Bratislava'
+          },
+          services: result.content.services || t('contact.services', { returnObjects: true })
+        });
+      } else {
+        // Fallback to translations
+        setContactContent(getDefaultContactContent());
+      }
+      
       setLoading(false);
       
       // Start animation after content is loaded
