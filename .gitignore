@@ -109,5 +109,5 @@ FIX_*.md
 URGENT_*.md
 
 # Development files that shouldn't be in production
-public/
+# public/ - DO NOT ignore, needed for React build
 node_modules/
