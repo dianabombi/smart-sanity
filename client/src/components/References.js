@@ -14,18 +14,23 @@ const References = () => {
   const { t } = useTranslation();
   const [references, setReferences] = useState(referencesCache || []);
   const [pageDescription, setPageDescription] = useState(t('references.description'));
-  const [visible, setVisible] = useState(referencesCache ? true : false);
+  const [visible, setVisible] = useState(false); // Always start false for animation
   const [loading, setLoading] = useState(!referencesCache);
   
   // Background settings hook
   const { settings: backgroundSettings } = useBackgroundSettings();
 
   const loadReferences = async (forceRefresh = false) => {
-    // Use cache if available - show immediately with animation
+    // Use cache if available - trigger animation after short delay
     if (referencesCache && !forceRefresh) {
       setReferences(referencesCache);
-      setVisible(true);
       setLoading(false);
+      // Trigger animation with delay for smooth roll-out effect
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          setVisible(true);
+        }, 100);
+      });
       return;
     }
 
