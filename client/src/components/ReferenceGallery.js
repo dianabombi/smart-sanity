@@ -24,11 +24,7 @@ const ReferenceGallery = () => {
       const result = await ApiService.getReferenceById(parseInt(referenceId));
       
       if (result.success && result.reference) {
-        if (result.reference.images && result.reference.images.length > 0) {
-          setReference(result.reference);
-        } else {
-          navigate('/references');
-        }
+        setReference(result.reference);
       } else {
         navigate('/references');
       }
@@ -182,8 +178,9 @@ const ReferenceGallery = () => {
 
           {/* Photos Gallery */}
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
-            {reference.images.map((image, index) => {
+            {reference.images && reference.images.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16">
+              {reference.images.map((image, index) => {
               // Handle both string paths and object formats
               let imageUrl;
               if (typeof image === 'string') {
@@ -231,6 +228,17 @@ const ReferenceGallery = () => {
               );
             })}
             </div>
+            ) : (
+              <div className="text-center py-20 mb-16">
+                <div className="text-gray-400 mb-4">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-medium text-gray-300 mb-2">Žiadne fotografie</h3>
+                <p className="text-gray-400">Pre túto referenciu zatiaľ nie sú dostupné žiadne fotografie.</p>
+              </div>
+            )}
           </div>
 
           {/* Navigation Buttons */}
