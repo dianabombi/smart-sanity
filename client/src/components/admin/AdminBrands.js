@@ -191,11 +191,9 @@ const AdminBrands = ({ onLogout }) => {
       
       if (result.success) {
         // Reload brands to get updated data
-        await loadBrands();
-        
-        // Update selectedBrand with the new data
         const updatedBrands = await ApiService.getBrands();
         if (updatedBrands.success) {
+          setBrands(updatedBrands.brands);
           const updatedBrand = updatedBrands.brands.find(b => b.id === brandId || b._id === brandId);
           if (updatedBrand) {
             setSelectedBrand(updatedBrand);
@@ -217,11 +215,9 @@ const AdminBrands = ({ onLogout }) => {
       const result = await ApiService.deleteBrandImage(brandId, imageId);
       if (result.success) {
         // Reload brands to get updated data
-        await loadBrands();
-        
-        // Update selectedBrand with the new data
         const updatedBrands = await ApiService.getBrands();
         if (updatedBrands.success) {
+          setBrands(updatedBrands.brands);
           const updatedBrand = updatedBrands.brands.find(b => b.id === brandId || b._id === brandId);
           if (updatedBrand) {
             setSelectedBrand(updatedBrand);
@@ -255,11 +251,9 @@ const AdminBrands = ({ onLogout }) => {
       
       if (result.success) {
         // Reload brands to get updated data
-        await loadBrands();
-        
-        // Update selectedBrand with the new data
         const updatedBrands = await ApiService.getBrands();
         if (updatedBrands.success) {
+          setBrands(updatedBrands.brands);
           const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
           if (updatedBrand) {
             setSelectedBrand(updatedBrand);
@@ -476,11 +470,9 @@ const AdminBrands = ({ onLogout }) => {
         console.log('✅ Logo delete successful, reloading brands...');
         
         // Reload brands to get updated data
-        await loadBrands();
-        
-        // Update selectedBrand with the new data
         const updatedBrands = await ApiService.getBrands();
         if (updatedBrands.success) {
+          setBrands(updatedBrands.brands);
           const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id || b._id === selectedBrand.id);
           if (updatedBrand) {
             console.log('🔄 Reset to original logo:', updatedBrand.logo);
@@ -1189,9 +1181,9 @@ const AdminBrands = ({ onLogout }) => {
             <div className="flex space-x-3">
               <button
                 onClick={async () => {
-                  await loadBrands();
                   const updatedBrands = await ApiService.getBrands();
                   if (updatedBrands.success) {
+                    setBrands(updatedBrands.brands);
                     const updatedBrand = updatedBrands.brands.find(b => b.id === selectedBrand.id);
                     if (updatedBrand) {
                       setSelectedBrand(updatedBrand);

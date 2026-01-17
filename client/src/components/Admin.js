@@ -13,6 +13,7 @@ import AdminReferenceGallery from './admin/AdminReferenceGallery';
 import AdminContact from './admin/AdminContact';
 import AdminInspirations from './admin/AdminInspirations';
 import AdminInspirationsContent from './admin/AdminInspirationsContent';
+import MigrateBrandImages from './admin/MigrateBrandImages';
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -62,6 +63,7 @@ const Admin = () => {
       <Route path="/references-content" element={<AdminReferencesContent onLogout={handleLogout} />} />
       <Route path="/references-gallery" element={<AdminReferenceGallery onLogout={handleLogout} />} />
       <Route path="/contact" element={<AdminContact onLogout={handleLogout} />} />
+      <Route path="/migrate-images" element={<MigrateBrandImages />} />
     </Routes>
   );
 };

@@ -14,7 +14,9 @@ import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 const dataCache = {
   brands: null,
   pageDescription: null,
-  isLoaded: false
+  isLoaded: false,
+  timestamp: null,
+  maxAge: 300000 // 5 minutes in milliseconds
 };
 
 // Brands that should appear only as logos in the Ostatne section
@@ -33,16 +35,7 @@ const Brands = () => {
     dataCache.pageDescription || t('brands.description')
   );
   const [visible, setVisible] = useState(false);
-  const { settings: backgroundSettings, getBackgroundImageStyle, refreshSettings } = useBackgroundSettings();
-  
-  // Auto-refresh background settings every 30 seconds to pick up admin changes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refreshSettings();
-    }, 30000);
-    
-    return () => clearInterval(interval);
-  }, [refreshSettings]);
+  const { settings: backgroundSettings, getBackgroundImageStyle } = useBackgroundSettings();
 
   const handleBrandClick = (brand) => {
     // Create URL-friendly brand identifier
@@ -65,13 +58,25 @@ const Brands = () => {
 
   const loadBrands = useCallback(async () => {
     try {
+      // Check if cache is still valid (less than 5 minutes old)
+      const now = Date.now();
+      if (dataCache.brands && dataCache.timestamp && (now - dataCache.timestamp) < dataCache.maxAge) {
+        console.log('✅ Using cached brands data (still fresh)');
+        setBrands(dataCache.brands);
+        setVisible(true);
+        return;
+      }
+
+      console.log('🔄 Fetching fresh brands data from database...');
       const result = await ApiService.getBrandsLight();
       
       if (result.success && result.brands) {
         setBrands(result.brands);
-        // Update cache
+        // Update cache with timestamp
         dataCache.brands = result.brands;
+        dataCache.timestamp = Date.now();
         dataCache.isLoaded = true;
+        console.log(`✅ Loaded ${result.brands.length} brands and cached for 5 minutes`);
       }
     } catch (error) {
       console.error('❌ Error loading brands (light):', error);

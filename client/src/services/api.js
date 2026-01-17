@@ -480,70 +480,120 @@ class ApiService {
     }
   }
 
+  // Get single brand WITH images (for detail/gallery pages)
+  async getBrandWithImages(brandId) {
+    if (!this.isSupabaseAvailable()) {
+      return { success: false, message: 'Supabase not available' };
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('*')
+        .eq('id', brandId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching brand with images:', error);
+        return { success: false, message: error.message };
+      }
+
+      // Process images
+      let images = [];
+      try {
+        if (Array.isArray(data.images)) {
+          images = data.images;
+        } else if (typeof data.images === 'string' && data.images.trim().startsWith('[')) {
+          images = JSON.parse(data.images);
+        }
+      } catch (e) {
+        console.error('Error parsing images:', e);
+        images = [];
+      }
+
+      // Validate image URLs
+      const validatedImages = images.map(img => {
+        if (!img) return null;
+
+        // If using data URLs (base64), use as-is
+        if (img.url && img.url.startsWith('data:')) {
+          return img;
+        }
+
+        // If using Supabase Storage, build public URL
+        const imagePath = img.path || img.filename;
+        if (imagePath) {
+          return {
+            ...img,
+            url: `https://lckbwknxfmbjffjsmahs.supabase.co/storage/v1/object/public/brand-images/${imagePath}`
+          };
+        }
+        
+        return null;
+      }).filter(Boolean);
+
+      return { 
+        success: true, 
+        brand: {
+          ...data,
+          images: validatedImages,
+          logoFilter: 'none'
+        }
+      };
+    } catch (error) {
+      console.error('Error in getBrandWithImages:', error);
+      return { success: false, message: 'Chyba pri načítavaní značky' };
+    }
+  }
+
 
 
 
   async uploadBrandImages(brandId, files) {
-    console.log('EMERGENCY MODE: Bypassing Supabase Storage. Converting images to data URLs.');
+    console.log('🚀 Uploading images to Supabase Storage...');
 
     try {
-      // Validate file sizes (max 50MB per image for high quality photos)
-      const maxSize = 50 * 1024 * 1024; // 50MB
+      // Validate file sizes (max 10MB per image - reasonable for web)
+      const maxSize = 10 * 1024 * 1024; // 10MB
       const oversizedFiles = Array.from(files).filter(file => file.size > maxSize);
       if (oversizedFiles.length > 0) {
-        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 50MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
+        throw new Error(`Súbory sú príliš veľké. Maximálna veľkosť je 10MB. Veľké súbory: ${oversizedFiles.map(f => f.name).join(', ')}`);
       }
 
-      // 1. Convert all files to base64 data URLs with compression
-      const dataUrlPromises = Array.from(files).map(file => {
-        return new Promise((resolve, reject) => {
-          // Create canvas for image compression
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
-          
-          img.onload = () => {
-            // Calculate new dimensions (max 1200px width/height)
-            const maxDimension = 1200;
-            let { width, height } = img;
-            
-            if (width > maxDimension || height > maxDimension) {
-              if (width > height) {
-                height = (height * maxDimension) / width;
-                width = maxDimension;
-              } else {
-                width = (width * maxDimension) / height;
-                height = maxDimension;
-              }
-            }
-            
-            canvas.width = width;
-            canvas.height = height;
-            
-            // Draw and compress
-            ctx.drawImage(img, 0, 0, width, height);
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8); // 80% quality
-            
-            resolve({
-              url: compressedDataUrl,
-              originalName: file.name,
-              filename: `${brandId}-${Date.now()}-${file.name}`,
-              size: Math.round(compressedDataUrl.length * 0.75) // Approximate compressed size
-            });
-          };
-          
-          img.onerror = () => reject(new Error(`Chyba pri spracovaní obrázka: ${file.name}`));
-          
-          // Load image from file
-          const reader = new FileReader();
-          reader.onload = (e) => { img.src = e.target.result; };
-          reader.onerror = () => reject(new Error(`Chyba pri čítaní súboru: ${file.name}`));
-          reader.readAsDataURL(file);
-        });
+      // 1. Upload files to Supabase Storage
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substring(7);
+        const filename = `${brandId}/${timestamp}-${randomStr}-${file.name}`;
+        
+        console.log(`📤 Uploading ${file.name} to storage...`);
+        
+        const { error } = await supabase.storage
+          .from('brand-images')
+          .upload(filename, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (error) {
+          console.error(`❌ Upload failed for ${file.name}:`, error);
+          throw new Error(`Chyba pri nahrávaní ${file.name}: ${error.message}`);
+        }
+
+        console.log(`✅ Uploaded ${file.name} successfully`);
+
+        // Return image metadata (only path stored in DB, not the actual image data)
+        return {
+          url: `https://lckbwknxfmbjffjsmahs.supabase.co/storage/v1/object/public/brand-images/${filename}`,
+          path: filename,
+          originalName: file.name,
+          filename: filename,
+          size: file.size
+        };
       });
 
-      const newImages = await Promise.all(dataUrlPromises);
-      console.log(`${newImages.length} images converted to data URLs.`);
+      const newImages = await Promise.all(uploadPromises);
+      console.log(`✅ ${newImages.length} images uploaded to storage`);
 
       // 2. Get the current brand data
       const { data: brand, error: fetchError } = await supabase
@@ -573,22 +623,22 @@ class ApiService {
       const updatedImages = [...existingImages, ...newImages];
       console.log(`Updating brand ${brandId} with a total of ${updatedImages.length} images.`);
 
-      // 4. Save the combined array back to the database
+      // 4. Save only the metadata to database (NOT the image data!)
       const { error: updateError } = await supabase
         .from('brands')
         .update({ images: updatedImages })
         .eq('id', brandId);
 
       if (updateError) {
-        console.error('Failed to save data URLs to database:', updateError);
+        console.error('Failed to save image metadata to database:', updateError);
         throw new Error('Database update failed.');
       }
 
-      console.log('SUCCESS: Images saved directly to database as data URLs.');
+      console.log('✅ SUCCESS: Images uploaded to storage and metadata saved to database');
       return { success: true, images: newImages };
 
     } catch (error) {
-      console.error('EMERGENCY UPLOAD FAILED:', error);
+      console.error('❌ UPLOAD FAILED:', error);
       return { success: false, message: error.message };
     }
   }
