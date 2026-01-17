@@ -143,18 +143,18 @@ const References = () => {
                 }}
               >
                 <div className="flex-1 flex flex-col">
-                  <h3 className="text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
+                  <h3 className="text-xl md:text-xl font-semibold text-gray-300 mb-3 text-center min-h-[3.5rem]">{reference.title}</h3>
                   
-                  <div className="flex gap-2 items-center text-sm text-blue-300 mb-9 w-full text-left">
+                  <div className="flex gap-2 items-center text-base md:text-sm text-blue-300 mb-9 w-full text-left">
                     <span className="font-medium">{reference.year}</span>
                     {reference.location && <span>{reference.location}</span>}
                   </div>
                   
-                  <p className="text-gray-300 text-sm mb-4 text-left w-full">{reference.description}</p>
+                  <p className="text-gray-300 text-base md:text-sm mb-4 text-left w-full">{reference.description}</p>
                 </div>
                 
                 {reference.client && (
-                  <p className="absolute bottom-16 p-2 left-4 right-4 text-sm text-gray-300 text-left">Architekt: {reference.client}</p>
+                  <p className="absolute bottom-16 p-2 left-4 right-4 text-base md:text-sm text-gray-300 text-left">Architekt: {reference.client}</p>
                 )}
                 
                 {/* Gallery button - images are loaded when user clicks */}

@@ -83,11 +83,11 @@ const BrandCard = ({
 
       {/* Brand Info */}
       <div className="space-y-3">
-        <div className="text-blue-300 text-sm font-light tracking-wide">
+        <div className="text-blue-300 text-base md:text-sm font-light tracking-wide">
           {brand.category}
         </div>
         
-        <p className="pt-5 text-sm leading-relaxed text-gray-300 overflow-hidden" style={{
+        <p className="pt-5 text-base md:text-sm leading-relaxed text-gray-300 overflow-hidden" style={{
           display: '-webkit-box',
           WebkitLineClamp: 4,
           WebkitBoxOrient: 'vertical'

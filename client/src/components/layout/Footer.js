@@ -5,28 +5,27 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-black border-t border-gray-700 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center h-16 sm:h-20 md:h-24">
-      <div className="max-w-4xl mx-auto w-full">
+    <footer className="bg-black border-t border-gray-700 shadow-[0_-10px_30px_rgba(89,89,89,0.3)] flex items-center justify-center py-4 md:h-24">
+      <div className="max-w-4xl mx-auto w-full px-4">
         {/* Mobile Layout - Stacked */}
-        <div className="flex md:hidden flex-col items-center justify-center w-full space-y-1">
+        <div className="flex md:hidden flex-col items-center justify-center w-full space-y-2">
           {/* Company Info - Centered */}
-          <h3 className="text-sm font-bold text-gray-400 leading-none text-center">Smart Sanit s.r.o.</h3>
+          <h3 className="text-xs font-bold text-gray-400 leading-none text-center">Smart Sanit s.r.o.</h3>
           
           {/* Premium Design Text - Centered */}
-          <p className="text-sm text-gray-400 text-start">Premium Design • Smart Solutions</p>
+          <p className="text-xs text-gray-400 text-center">Premium Design • Smart Solutions</p>
           
           {/* Privacy Policy Link - Centered */}
           <button 
             onClick={() => navigate('/privacy-policy')}
-            className="text-sm text-gray-400 hover:text-gray-300 transition-colors duration-200"
+            className="text-xs text-gray-400 hover:text-gray-300 transition-colors duration-200"
           >
             Ochrana osobných údajov
           </button>
           
-          {/* Social Icons and Wavelyne on Same Line - Left and Right */}
-          <div className="flex justify-between items-center w-full pt-1">
-            {/* Social Media Icons - Left */}
-            <div className="flex space-x-3">
+          {/* Social Icons - Centered */}
+          <div className="flex justify-center items-center w-full pt-1 px-2">
+            <div className="flex space-x-2">
               <a 
                 href="https://www.instagram.com/smart_sanit_premium_bathrooms?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
                 target="_blank"
@@ -63,18 +62,18 @@ const Footer = () => {
                 </svg>
               </a>
             </div>
-            
-            {/* Wavelyne Credit */}
-            <div className="text-sm">
-              <a 
-                href="https://wavelynecode.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gray-300 transition-colors duration-200 mr-12"
-              >
-                Created by Wavelyne & Design 6
-              </a>
-            </div>
+          </div>
+          
+          {/* Wavelyne Credit - Centered on separate line */}
+          <div className="w-full text-center pt-2">
+            <a 
+              href="https://wavelynecode.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs text-gray-400 hover:text-gray-300 transition-colors duration-200"
+            >
+              Created by Wavelyne & Design 6
+            </a>
           </div>
         </div>
 

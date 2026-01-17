@@ -74,7 +74,7 @@ const NavBar = () => {
         <img 
           src="/logo vektory_bez pozadia.png" 
           alt="SMART SANITY" 
-          className="h-10 mobile:h-14 tablet:h-16 laptop:h-12 w-auto object-contain"
+          className="h-12 mobile:h-14 tablet:h-16 laptop:h-12 w-auto object-contain"
           style={{
             imageRendering: 'high-quality',
           }}
@@ -94,7 +94,7 @@ const NavBar = () => {
       {/* Navbar - Compact with large gray shadow (desktop only) */}
       <nav className="bg-black fixed top-0 left-0 right-0 z-[50]">
         <div className="hidden xl:block absolute inset-0 pointer-events-none" style={{ boxShadow: '0 10px 25px -3px rgba(156, 163, 175, 0.4), 0 4px 6px -2px rgba(156, 163, 175, 0.2), 0 20px 40px -10px rgba(156, 163, 175, 0.15)' }}></div>
-        <div className="flex items-center justify-end pl-1 pr-2 md:px-2 lg:px-3 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 h-16 sm:h-20 md:h-24">
+        <div className="flex items-center justify-end pl-1 pr-2 md:px-2 lg:px-3 tablet:px-2 laptop:px-2 ml-36 mobile:ml-40 tablet:ml-44 laptop:ml-52 h-20 sm:h-20 md:h-24">
         
         {/* Navigation Links - show only when there's enough space (1200px+) */}
         <div className="hidden xl:flex items-baseline justify-end flex-wrap gap-x-6 mr-10 mt-4">
@@ -131,23 +131,21 @@ const NavBar = () => {
         </div>
 
         {/* Mobile/Tablet Menu Button - show when nav items would wrap */}
-        <div className="xl:hidden flex-shrink-0 ml-2 mr-4 min-w-[40px]">
-          <button
-            className="text-white p-1.5 rounded-md border-2 border-[#595959] shadow-[4px_4px_10px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-bottom-sheet"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            <svg className="w-8 h-8 text-[#595959]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
+        {!mobileOpen && (
+          <div className="xl:hidden flex-shrink-0 ml-2 mr-4 min-w-[40px]">
+            <button
+              className="text-white p-2 rounded-md border-2 border-[#595959] shadow-[4px_4px_10px_0_#595959] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#595959]"
+              aria-label="Open menu"
+              aria-expanded={false}
+              aria-controls="mobile-bottom-sheet"
+              onClick={() => setMobileOpen(true)}
+            >
+              <svg className="w-9 h-9 text-[#595959]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 9h16M4 15h16" />
-              )}
-            </svg>
-          </button>
-        </div>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Mobile Menu Overlay */}

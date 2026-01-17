@@ -309,7 +309,7 @@ const WhoWeAre = () => {
                   {content?.mainContent?.map((text, index) => (
                     <div 
                       key={index} 
-                      className="text-lg leading-relaxed text-gray-300 text-justify"
+                      className="text-lg leading-relaxed text-gray-300 text-center md:text-justify"
                       dangerouslySetInnerHTML={{ __html: text }}
                     />
                   ))}
@@ -329,24 +329,18 @@ const WhoWeAre = () => {
                     {t('whoWeAre.ourPartners')}
                   </h2>
                   <div className="flex justify-center w-full pb-8">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: '1rem', columnGap: '2rem', maxWidth: '900px', width: '100%', justifyItems: 'center' }}>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-[900px] w-full justify-items-center">
                       {partnerLogos && partnerLogos.length > 0 ? (
                           partnerLogos.map((logo, index) => (
                             <div 
                               key={logo.id} 
-                              className="rounded-lg p-2 transition-all duration-300" 
-                              style={{ 
-                                height: '110px', 
-                                width: '100%', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center'
-                              }}
+                              className="rounded-lg p-2 transition-all duration-300 flex items-center justify-center w-full h-[140px] md:h-[110px]"
                             >
                               <img 
                                 src={logo.logo} 
                                 alt={logo.name}
-                                style={{ height: '95px', width: 'auto', objectFit: 'contain', mixBlendMode: 'screen' }}
+                                className="h-[120px] md:h-[95px] w-auto object-contain"
+                                style={{ mixBlendMode: 'screen' }}
                                 loading="lazy"
                                 decoding="async"
                                 onError={(e) => {
