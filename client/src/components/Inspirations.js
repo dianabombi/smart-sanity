@@ -6,7 +6,7 @@ import ApiService from '../services/api';
 import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 
 const Inspirations = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [selectedCategory] = useState('all');
   const [inspirations, setInspirations] = useState([]);
   const [pageDescription, setPageDescription] = useState(t('inspirations.description'));
@@ -58,14 +58,19 @@ const Inspirations = () => {
 
   const loadPageDescription = useCallback(async () => {
     try {
-      const result = await ApiService.getPageContent('inspirations', 'main', 'description');
+      const currentLanguage = i18n.language || 'sk';
+      const result = await ApiService.getPageContent('inspirations', 'main', 'description', currentLanguage);
       if (result.success && result.content) {
         setPageDescription(result.content);
+      } else {
+        // Fallback to translation file if no database content
+        setPageDescription(t('inspirations.description'));
       }
     } catch (error) {
       console.error('Error loading page description:', error);
+      setPageDescription(t('inspirations.description'));
     }
-  }, []);
+  }, [i18n.language, t]);
 
   useEffect(() => {
     loadInspirations();
@@ -73,6 +78,11 @@ const Inspirations = () => {
     // Removed auto-refresh to prevent screen flickering
     // Animation trigger moved to loadInspirations finally block
   }, [loadInspirations, loadPageDescription]);
+
+  // Reload description when language changes
+  useEffect(() => {
+    loadPageDescription();
+  }, [i18n.language, loadPageDescription]);
 
   // Auto-refresh background settings every 2 seconds
   useEffect(() => {
@@ -275,7 +285,7 @@ const Inspirations = () => {
             onClick={() => window.location.href = '/contact'}
             className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-full sm:w-48"
           >
-            Kontaktujte nás
+            {t('common.contactUs')}
           </button>
           <button 
             onClick={() => window.location.href = '/brands'}

@@ -40,7 +40,8 @@
     "closeGallery": "Zavrieť galériu",
     "otherBrands": "Ostatné",
     "pageTitle": "Obchodované značky",
-    "pageSubtitle": "Objavte ponuku našich prémiových dodávateľov."
+    "pageSubtitle": "Objavte ponuku našich prémiových dodávateľov.",
+    "enter": "Vstúpte"
   },
   "contact": {
     "title": "Kontakt",
@@ -78,7 +79,9 @@
   },
   "references": {
     "title": "Referencie",
-    "description": "Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou."
+    "description": "Naše úspešne realizované projekty a spokojní klienti sú našou najlepšou vizitkou.",
+    "architect": "Architekt",
+    "gallery": "Galéria"
   },
   "inspirations": {
     "title": "Inšpirácie",
@@ -122,7 +125,8 @@
     "cancel": "Zrušiť",
     "edit": "Upraviť",
     "delete": "Vymazať",
-    "close": "Zavrieť"
+    "close": "Zavrieť",
+    "contactUs": "Kontaktujte nás"
   },
   "footer": {
     "allRightsReserved": "Všetky práva vyhradené"

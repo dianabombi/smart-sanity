@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const BrandCard = ({ 
   brand, 
@@ -7,6 +8,7 @@ const BrandCard = ({
   showImages = true,
   variant = 'main' // 'main' or 'compact'
 }) => {
+  const { t } = useTranslation();
   const handleClick = () => {
     onClick(brand);
   };
@@ -98,7 +100,7 @@ const BrandCard = ({
         {/* Vstúpte Button - Fixed Position */}
         <div className="absolute bottom-4 left-4 right-4">
           <button className="w-full py-2 px-4 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm">
-            Vstúpte
+            {t('brands.enter')}
           </button>
         </div>
       </div>

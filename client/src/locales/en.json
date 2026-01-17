@@ -40,7 +40,8 @@
     "closeGallery": "Close Gallery",
     "otherBrands": "Other Brands",
     "pageTitle": "Our Brands",
-    "pageSubtitle": "Discover our premium suppliers' offerings."
+    "pageSubtitle": "Discover our premium suppliers' offerings.",
+    "enter": "Enter"
   },
   "contact": {
     "title": "Contact",
@@ -78,7 +79,9 @@
   },
   "references": {
     "title": "References",
-    "description": "Our successfully completed projects and satisfied clients are our best business card."
+    "description": "Our successfully completed projects and satisfied clients are our best business card.",
+    "architect": "Architect",
+    "gallery": "Gallery"
   },
   "inspirations": {
     "title": "Inspirations",
@@ -122,7 +125,8 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
-    "close": "Close"
+    "close": "Close",
+    "contactUs": "Contact us"
   },
   "footer": {
     "allRightsReserved": "All rights reserved"

@@ -368,7 +368,7 @@ const WhoWeAre = () => {
             onClick={() => window.location.href = '/contact'}
             className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-black/30 text-sm w-full max-w-xs"
           >
-            Kontaktujte nás
+            {t('common.contactUs')}
           </button>
         </div>
       </div>

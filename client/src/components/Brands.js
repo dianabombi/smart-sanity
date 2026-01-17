@@ -16,6 +16,7 @@ const dataCache = {
   pageDescription: null,
   isLoaded: false,
   timestamp: null,
+  language: null,
   maxAge: 300000 // 5 minutes in milliseconds
 };
 
@@ -27,7 +28,7 @@ const ALSO_IN_OSTATNE_BRANDS = ['axor', 'dornbracht', 'laufen'];
 
 const Brands = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   // Initialize with cache only - NO fallback brands
   const [brands, setBrands] = useState(dataCache.brands || []);
@@ -46,35 +47,42 @@ const Brands = () => {
 
   const loadPageContent = useCallback(async () => {
     try {
-      const result = await ApiService.getPageContent('brands', 'header', 'description');
+      const currentLanguage = i18n.language || 'sk';
+      const result = await ApiService.getPageContent('brands', 'header', 'description', currentLanguage);
       if (result.success && result.content) {
         setPageDescription(result.content);
         dataCache.pageDescription = result.content; // Update cache
+      } else {
+        setPageDescription(t('brands.description'));
       }
     } catch (error) {
       // Silently use fallback
+      setPageDescription(t('brands.description'));
     }
-  }, []);
+  }, [i18n.language, t]);
 
   const loadBrands = useCallback(async () => {
     try {
       // Check if cache is still valid (less than 5 minutes old)
       const now = Date.now();
-      if (dataCache.brands && dataCache.timestamp && (now - dataCache.timestamp) < dataCache.maxAge) {
+      const currentLanguage = i18n.language || 'sk';
+      
+      if (dataCache.brands && dataCache.timestamp && dataCache.language === currentLanguage && (now - dataCache.timestamp) < dataCache.maxAge) {
         console.log('✅ Using cached brands data (still fresh)');
         setBrands(dataCache.brands);
         setVisible(true);
         return;
       }
 
-      console.log('🔄 Fetching fresh brands data from database...');
-      const result = await ApiService.getBrandsLight();
+      console.log(`🔄 Fetching fresh brands data from database (${currentLanguage})...`);
+      const result = await ApiService.getBrandsLight(currentLanguage);
       
       if (result.success && result.brands) {
         setBrands(result.brands);
-        // Update cache with timestamp
+        // Update cache with timestamp and language
         dataCache.brands = result.brands;
         dataCache.timestamp = Date.now();
+        dataCache.language = currentLanguage;
         dataCache.isLoaded = true;
         console.log(`✅ Loaded ${result.brands.length} brands and cached for 5 minutes`);
       }
@@ -88,7 +96,7 @@ const Brands = () => {
         }, 150);
       });
     }
-  }, []);
+  }, [i18n.language]);
 
 
   useEffect(() => {
@@ -105,6 +113,16 @@ const Brands = () => {
     }
     loadPageContent();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reload page content when language changes
+  useEffect(() => {
+    loadPageContent();
+  }, [i18n.language, loadPageContent]);
+
+  // Reload brands when language changes
+  useEffect(() => {
+    loadBrands();
+  }, [i18n.language, loadBrands]);
 
 
 
@@ -232,12 +250,12 @@ const Brands = () => {
       {/* Call to Action Button Section */}
       <div className="pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
-          <button 
-            onClick={() => navigate('/contact')}
+          <button
+            onClick={() => window.location.href = '/contact'}
             className="py-2 px-4 border-gray-600 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm w-full max-w-xs"
             style={{ borderWidth: '0.5px' }}
           >
-            Kontaktujte nás
+            {t('common.contactUs')}
           </button>
         </div>
       </div>

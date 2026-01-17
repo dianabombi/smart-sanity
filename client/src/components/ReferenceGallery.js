@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import NavBar from './layout/NavBar';
 import Footer from './layout/Footer';
 import ApiService from '../services/api';
@@ -8,6 +9,7 @@ import { useBackgroundSettings } from '../hooks/useBackgroundSettings';
 const ReferenceGallery = () => {
   const { referenceId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [reference, setReference] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -244,11 +246,11 @@ const ReferenceGallery = () => {
           {/* Navigation Buttons */}
           <div className="max-w-6xl mx-auto">
             <div className="flex justify-center mt-12">
-              <button 
+              <button
                 onClick={() => navigate('/contact')}
                 className="py-2 px-4 border border-gray-400 text-gray-300 rounded-lg hover:border-white hover:text-white hover:bg-black/40 transition-colors duration-200 bg-black/30 text-sm w-48"
               >
-                Kontaktujte nás
+                {t('common.contactUs')}
               </button>
             </div>
           </div>

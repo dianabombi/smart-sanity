@@ -419,18 +419,34 @@ class ApiService {
   }
 
   // Lightweight brands fetch: only basic fields, no image parsing
-  async getBrandsLight() {
+  async getBrandsLight(language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       console.log('🚫 Supabase not available for brands (light), returning no brands');
       return { success: true, brands: [], source: 'no-supabase' };
     }
 
     try {
-      const { data, error } = await supabase
-        .from('brands')
-        // Only select columns that are known to exist in the table
-        .select('id, name, description, category, logo, order')
-        .order('order', { ascending: true });
+      // Try to select all columns including language-specific ones
+      // If they don't exist, fall back to basic columns
+      let data, error;
+      
+      try {
+        const result = await supabase
+          .from('brands')
+          .select('id, name, description, category, description_sk, description_en, category_sk, category_en, logo, order')
+          .order('order', { ascending: true });
+        data = result.data;
+        error = result.error;
+      } catch (selectError) {
+        // If language columns don't exist yet, try without them
+        console.log('Language columns not found, using basic columns');
+        const result = await supabase
+          .from('brands')
+          .select('id, name, description, category, logo, order')
+          .order('order', { ascending: true });
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
         console.error('Supabase error (light brands):', error.message);
@@ -442,11 +458,24 @@ class ApiService {
         return { success: true, brands: [], source: 'empty' };
       }
 
-      // For light version we just pass data through (no images processing)
-      const processedBrands = data.map(brand => ({
-        ...brand,
-        logoFilter: brand.logoFilter || 'none',
-      }));
+      // For light version we just pass data through with language-specific fields
+      const processedBrands = data.map(brand => {
+        // Use language-specific columns if available, fallback to old columns
+        const description = language === 'en' 
+          ? (brand.description_en || brand.description)
+          : (brand.description_sk || brand.description);
+        
+        const category = language === 'en'
+          ? (brand.category_en || brand.category)
+          : (brand.category_sk || brand.category);
+
+        return {
+          ...brand,
+          description,
+          category,
+          logoFilter: brand.logoFilter || 'none',
+        };
+      });
 
       return { success: true, brands: processedBrands, source: 'database' };
     } catch (error) {

@@ -11,7 +11,7 @@ let referencesCache = null;
 
 const References = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [references, setReferences] = useState(referencesCache || []);
   const [pageDescription, setPageDescription] = useState(t('references.description'));
   const [visible, setVisible] = useState(false); // Always start false for animation
@@ -61,14 +61,23 @@ const References = () => {
     loadPageDescription();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Reload description when language changes
+  useEffect(() => {
+    loadPageDescription();
+  }, [i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const loadPageDescription = async () => {
     try {
-      const result = await ApiService.getPageContent('references', 'main', 'description');
+      const currentLanguage = i18n.language || 'sk';
+      const result = await ApiService.getPageContent('references', 'main', 'description', currentLanguage);
       if (result.success && result.content) {
         setPageDescription(result.content);
+      } else {
+        setPageDescription(t('references.description'));
       }
     } catch (error) {
       console.log('Using default page description');
+      setPageDescription(t('references.description'));
     }
   };
 
@@ -154,7 +163,7 @@ const References = () => {
                 </div>
                 
                 {reference.client && (
-                  <p className="absolute bottom-16 p-2 left-4 right-4 text-base md:text-sm text-gray-300 text-left">Architekt: {reference.client}</p>
+                  <p className="absolute bottom-16 p-2 left-4 right-4 text-base md:text-sm text-gray-300 text-left">{t('references.architect')}: {reference.client}</p>
                 )}
                 
                 {/* Gallery button - images are loaded when user clicks */}
@@ -163,7 +172,7 @@ const References = () => {
                     onClick={() => openReferenceGallery(reference.id)}
                     className="w-full py-2 px-4 mt-5 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-sm"
                   >
-                    Galéria
+                    {t('references.gallery')}
                   </button>
                 </div>
               </div>
@@ -188,7 +197,7 @@ const References = () => {
             className="py-2 px-4 border-gray-600 text-gray-300 rounded-lg hover:text-white transition-colors duration-500 bg-black/30 hover:bg-black/50 text-sm w-full max-w-xs mx-auto"
             style={{ borderWidth: '0.5px' }}
           >
-            Kontaktujte nás
+            {t('common.contactUs')}
           </button>
         </div>
       </div>
