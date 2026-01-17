@@ -49,8 +49,8 @@ const Home = () => {
     <div className="min-h-screen bg-black flex flex-col">
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
-        {/* Hero Banner - full width on mobile/tablet, 2/3 on laptop+ */}
-        <div className="relative w-full laptop:w-2/3 h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
+        {/* Hero Banner - full width on mobile/tablet, 70% on laptop+ */}
+        <div className="relative w-full laptop:w-[70%] h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
           {carouselImages.length > 0 ? (
             <Carousel
               images={carouselImages}
@@ -68,8 +68,8 @@ const Home = () => {
           )}
         </div>
         
-        {/* Right Section - full width on mobile/tablet, 1/3 on laptop+ */}
-        <div className="w-full laptop:w-1/3 bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
+        {/* Right Section - full width on mobile/tablet, slightly less than 1/3 on laptop+ */}
+        <div className="w-full laptop:w-[30%] bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
           {/* Smart Sanit Logo - positioned higher */}
           <div className="flex-shrink-0 pt-12 tablet:pt-16 laptop:pt-24 flex justify-center">
             <img 

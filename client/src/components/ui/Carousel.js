@@ -125,6 +125,7 @@ const Carousel = ({
               style={{
                 imageRendering: 'crisp-edges',
                 filter: 'none',
+                objectPosition: 'center',
                 ...transitionStyles.style
               }}
             />
