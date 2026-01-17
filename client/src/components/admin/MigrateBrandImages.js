@@ -19,19 +19,9 @@ const MigrateBrandImages = () => {
     addLog('🚀 Starting migration of base64 images to Supabase Storage...', 'info');
 
     try {
-      // 0. Authenticate with Supabase (use admin credentials)
-      addLog('🔐 Authenticating with Supabase...', 'info');
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: 'Dusan.drinka@smartsanit.sk',
-        password: 'WeAreAwesome2025@!'
-      });
-
-      if (authError) {
-        addLog(`⚠️  Authentication warning: ${authError.message}`, 'warning');
-        addLog('Continuing with anonymous access...', 'info');
-      } else {
-        addLog('✅ Authenticated successfully', 'success');
-      }
+      // Note: Authentication removed for security reasons
+      // To run migration, you need to add proper storage policies in Supabase Dashboard
+      addLog('📋 Checking storage permissions...', 'info');
 
       // 1. Fetch all brands
       addLog('📥 Fetching all brands from database...', 'info');
