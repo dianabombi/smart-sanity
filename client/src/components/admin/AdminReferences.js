@@ -237,16 +237,45 @@ const AdminReferences = ({ onLogout }) => {
     }
   };
 
-  const handleEdit = (reference) => {
+  const handleEdit = async (reference) => {
     setEditingReference(reference);
-    setFormData({
-      title: reference.title || '',
-      description: reference.description || '',
-      year: reference.year || '',
-      location: reference.location || '',
-      client: reference.client || '',
-      images: reference.images || []
-    });
+    
+    // Load full reference data including images from database
+    try {
+      const result = await ApiService.getReferenceById(reference.id);
+      if (result.success && result.reference) {
+        setFormData({
+          title: result.reference.title || '',
+          description: result.reference.description || '',
+          year: result.reference.year || '',
+          location: result.reference.location || '',
+          client: result.reference.client || '',
+          images: result.reference.images || []
+        });
+      } else {
+        // Fallback to reference data without images
+        setFormData({
+          title: reference.title || '',
+          description: reference.description || '',
+          year: reference.year || '',
+          location: reference.location || '',
+          client: reference.client || '',
+          images: []
+        });
+      }
+    } catch (error) {
+      console.error('Error loading reference details:', error);
+      // Fallback to reference data without images
+      setFormData({
+        title: reference.title || '',
+        description: reference.description || '',
+        year: reference.year || '',
+        location: reference.location || '',
+        client: reference.client || '',
+        images: []
+      });
+    }
+    
     setShowAddModal(true);
   };
 
