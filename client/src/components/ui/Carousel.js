@@ -76,7 +76,7 @@ const Carousel = ({
           className: `${baseTransition} ${isActive ? 'opacity-100' : 'opacity-0'}`,
           style: {
             animation: isActive ? 'smoothZoomIn 8s ease-out forwards' : 'none',
-            transform: isActive ? 'scale(1.1)' : 'scale(1.15)' // Inactive at max zoom, active starts slightly smaller
+            transform: isActive ? 'scale(0.8)' : 'scale(1.0)'
           }
         };
       
@@ -101,8 +101,8 @@ const Carousel = ({
       {/* Smooth zoom-in only animation */}
       <style jsx>{`
         @keyframes smoothZoomIn {
-          0% { transform: scale(1.1); }
-          100% { transform: scale(1.15); }
+          0% { transform: scale(1.0); }
+          100% { transform: scale(1.08); }
         }
       `}</style>
 
@@ -114,7 +114,7 @@ const Carousel = ({
         return (
           <div
             key={index}
-            className={`absolute inset-0 w-full h-full overflow-hidden ${
+            className={`absolute inset-0 w-full h-full ${
               transitionType === 'slide' ? '' : ''
             }`}
           >
@@ -123,7 +123,7 @@ const Carousel = ({
               alt={image.alt}
               className={`w-full h-full object-cover ${transitionStyles.className}`}
               style={{
-                imageRendering: 'crisp-edges',
+                imageRendering: 'auto',
                 filter: 'none',
                 objectPosition: 'center',
                 ...transitionStyles.style

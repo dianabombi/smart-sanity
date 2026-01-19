@@ -1247,8 +1247,8 @@ class ApiService {
 
   async getHeroBanners() {
     if (!this.isSupabaseAvailable()) {
-      console.log('Supabase not available, using fallback hero banners');
-      return { success: true, banners: this.getFallbackHeroBanners() };
+      console.log('Supabase not available');
+      return { success: false, banners: [], error: 'Supabase not available' };
     }
 
     try {
@@ -1260,26 +1260,26 @@ class ApiService {
         .order('order', { ascending: true });
       
       if (error) {
-        console.log('Supabase error, using fallback hero banners:', error);
-        return { success: true, banners: this.getFallbackHeroBanners() };
+        console.error('Supabase error:', error);
+        return { success: false, banners: [], error };
       }
       
       if (!data || data.length === 0) {
-        console.log('No hero banners in database, using fallback');
-        return { success: true, banners: this.getFallbackHeroBanners() };
+        console.log('No hero banners in database');
+        return { success: true, banners: [] };
       }
 
       return { success: true, banners: data };
     } catch (error) {
-      console.log('Error fetching hero banners, using fallback:', error);
-      return { success: true, banners: this.getFallbackHeroBanners() };
+      console.error('Error fetching hero banners:', error);
+      return { success: false, banners: [], error };
     }
   }
 
   async getAllHeroBanners() {
     if (!this.isSupabaseAvailable()) {
-      console.log('Supabase not available, using fallback banners');
-      return { success: true, banners: this.getFallbackHeroBanners() };
+      console.log('Supabase not available');
+      return { success: false, banners: [], error: 'Supabase not available' };
     }
 
     try {
@@ -1305,20 +1305,18 @@ class ApiService {
             success: false, 
             error: 'TABLE_NOT_EXISTS',
             message: 'Tabuľka hero_banners neexistuje. Prosím vytvorte ju v Supabase.',
-            banners: this.getFallbackHeroBanners() 
+            banners: [] 
           };
         }
-        console.log('Using fallback due to database error');
-        return { success: true, banners: this.getFallbackHeroBanners() };
+        return { success: false, banners: [], error };
       }
       
       console.log('Successfully loaded banners from database:', data);
       console.log('Number of banners loaded:', data ? data.length : 0);
-      return { success: true, banners: data || this.getFallbackHeroBanners() };
+      return { success: true, banners: data || [] };
     } catch (error) {
       console.error('Fetch error (timeout or other):', error);
-      console.log('Using fallback due to error:', error.message);
-      return { success: true, banners: this.getFallbackHeroBanners() };
+      return { success: false, banners: [], error };
     }
   }
 

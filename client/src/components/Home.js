@@ -21,20 +21,26 @@ const Home = () => {
 
   const loadHeroBanners = async () => {
     try {
+      console.log('🏠 HOME: Loading hero banners...');
       const response = await apiService.getHeroBanners();
+      console.log('🏠 HOME: Response:', response);
+      console.log('🏠 HOME: Banners count:', response.banners?.length);
+      
       if (response.success && response.banners.length > 0) {
         // Convert hero banners to carousel format
         const carouselData = response.banners.map(banner => ({
           src: banner.src,
           alt: banner.alt || banner.title || 'Hero banner'
         }));
+        console.log('🏠 HOME: Setting carousel images:', carouselData.length);
         setCarouselImages(carouselData);
       } else {
         // No banners found - show empty carousel
+        console.log('🏠 HOME: No banners found, showing empty carousel');
         setCarouselImages([]);
       }
     } catch (error) {
-      console.error('Error loading hero banners:', error);
+      console.error('🏠 HOME: Error loading hero banners:', error);
       setCarouselImages([]);
     }
   };
@@ -50,7 +56,7 @@ const Home = () => {
       {/* Responsive container: stack on mobile/tablet, side-by-side on laptop+ */}
       <div className="min-h-screen w-full bg-black flex flex-col laptop:flex-row">
         {/* Hero Banner - full width on mobile/tablet, 70% on laptop+ */}
-        <div className="relative w-full laptop:w-[70%] h-[35vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
+        <div className="relative w-full laptop:w-[70%] h-[50vh] tablet:h-[50vh] laptop:h-screen mb-4 tablet:mb-0 laptop:mb-0">
           {carouselImages.length > 0 ? (
             <Carousel
               images={carouselImages}
@@ -68,8 +74,8 @@ const Home = () => {
           )}
         </div>
         
-        {/* Right Section - full width on mobile/tablet, slightly less than 1/3 on laptop+ */}
-        <div className="w-full laptop:w-[30%] bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[65vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
+        {/* Right Section - full width on mobile/tablet, 30% on laptop+ */}
+        <div className="w-full laptop:w-[30%] bg-black flex flex-col items-center justify-start tablet:justify-between laptop:justify-between gap-8 tablet:gap-6 laptop:gap-8 px-4 tablet:px-6 py-8 tablet:py-12 laptop:py-0 laptop:items-stretch min-h-[50vh] tablet:min-h-[50vh] laptop:h-screen flex-1 laptop:flex-none">
           {/* Smart Sanit Logo - positioned higher */}
           <div className="flex-shrink-0 pt-12 tablet:pt-16 laptop:pt-24 flex justify-center">
             <img 
