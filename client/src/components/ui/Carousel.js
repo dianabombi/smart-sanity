@@ -73,10 +73,12 @@ const Carousel = ({
       
       case 'ken-burns':
         return {
-          className: `${baseTransition} ${isActive ? 'opacity-100' : 'opacity-0'}`,
+          className: `transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100' : 'opacity-0'}`,
           style: {
-            animation: isActive ? 'smoothZoomIn 8s ease-out forwards' : 'none',
-            transform: isActive ? 'scale(0.8)' : 'scale(1.0)'
+            animation: 'smoothZoomIn 8s ease-out',
+            animationPlayState: isActive ? 'running' : 'paused',
+            animationFillMode: 'both',
+            willChange: 'transform, opacity'
           }
         };
       
