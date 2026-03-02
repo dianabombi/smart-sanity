@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Home",
-    "whatWeOffer": "What We Offer",
+    "whatWeOffer": "Our Offer",
     "whoWeAre": "About Us",
     "brands": "Our Brands",
     "inspirations": "Inspirations",
@@ -13,7 +13,7 @@
     "enterButton": "Enter"
   },
   "entrance": {
-    "pageTitle": "What We Offer",
+    "pageTitle": "Our Offer",
     "bulletPoints": [
       "We trade leading global manufacturers in the field of bathroom equipment, tiles and flooring",
       "According to your requirements, we will assemble bathrooms from specific products from A to Z",
@@ -103,7 +103,7 @@
   },
   "breadcrumbs": {
     "home": "Home",
-    "whatWeOffer": "What We Offer",
+    "whatWeOffer": "Our Offer",
     "whoWeAre": "About Us",
     "contact": "Contact",
     "brands": "Our Brands",

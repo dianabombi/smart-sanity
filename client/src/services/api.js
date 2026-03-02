@@ -1582,16 +1582,16 @@ class ApiService {
   }
 
   // References - load WITHOUT images for fast loading (images are 31MB+)
-  async getReferences() {
+  async getReferences(language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       return { success: false, message: 'Database connection not available' };
     }
 
     try {
-      // Select only needed columns - EXCLUDE images completely to avoid 31MB transfer
+      // Select all columns including English translations
       const { data, error } = await supabase
         .from('references')
-        .select('id, title, description, year, location, client, created_at')
+        .select('id, title, description, year, location, client, title_en, description_en, location_en, client_en, created_at')
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -1599,7 +1599,18 @@ class ApiService {
         return { success: false, message: `Database error: ${error.message}` };
       }
       
-      return { success: true, references: data || [] };
+      // Map data to use language-specific fields
+      const references = (data || []).map(ref => ({
+        id: ref.id,
+        title: language === 'en' && ref.title_en ? ref.title_en : ref.title,
+        description: language === 'en' && ref.description_en ? ref.description_en : ref.description,
+        year: ref.year,
+        location: language === 'en' && ref.location_en ? ref.location_en : ref.location,
+        client: language === 'en' && ref.client_en ? ref.client_en : ref.client,
+        created_at: ref.created_at
+      }));
+      
+      return { success: true, references };
     } catch (error) {
       console.error('Error loading references:', error.message);
       return { success: false, message: `Error loading references: ${error.message}` };

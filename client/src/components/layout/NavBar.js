@@ -9,7 +9,7 @@ const NavBar = () => {
 
   const navItems = [
     { label: t('nav.whoWeAre'), path: '/who-we-are' },
-    { label: t('nav.whatWeOffer'), path: '/what-we-offer' },
+    { label: t('nav.whatWeOffer'), path: '/our-offer' },
     { label: t('nav.brands'), path: '/brands' },
     { label: t('nav.inspirations'), path: '/inspirations' },
     { label: t('nav.references'), path: '/references' },

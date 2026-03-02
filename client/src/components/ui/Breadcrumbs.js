@@ -10,7 +10,7 @@ const Breadcrumbs = () => {
   const getBreadcrumbLabel = (pathname) => {
     const labelMap = {
       '': 'breadcrumbs.home',
-      'what-we-offer': 'breadcrumbs.whatWeOffer',
+      'our-offer': 'breadcrumbs.whatWeOffer',
       'who-we-are': 'breadcrumbs.whoWeAre',
       'contact': 'breadcrumbs.contact',
       'brands': 'breadcrumbs.brands',

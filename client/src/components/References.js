@@ -21,7 +21,10 @@ const References = () => {
   const { settings: backgroundSettings } = useBackgroundSettings();
 
   const loadReferences = async (forceRefresh = false) => {
-    // Use cache if available - trigger animation after short delay
+    // Get current language
+    const currentLanguage = i18n.language || 'sk';
+    
+    // Use cache if available and not forcing refresh - trigger animation after short delay
     if (referencesCache && !forceRefresh) {
       setReferences(referencesCache);
       setLoading(false);
@@ -37,7 +40,7 @@ const References = () => {
     setLoading(true);
     
     try {
-      const result = await ApiService.getReferences();
+      const result = await ApiService.getReferences(currentLanguage);
       
       if (result.success && result.references && result.references.length > 0) {
         referencesCache = result.references;
@@ -61,9 +64,10 @@ const References = () => {
     loadPageDescription();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Reload description when language changes
+  // Reload content when language changes
   useEffect(() => {
     loadPageDescription();
+    loadReferences(true); // Force refresh to get new language
   }, [i18n.language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadPageDescription = async () => {
