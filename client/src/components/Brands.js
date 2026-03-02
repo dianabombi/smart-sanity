@@ -63,31 +63,28 @@ const Brands = () => {
 
   const loadBrands = useCallback(async () => {
     try {
-      // Check if cache is still valid (less than 5 minutes old)
-      const now = Date.now();
       const currentLanguage = i18n.language || 'sk';
       
-      if (dataCache.brands && dataCache.timestamp && dataCache.language === currentLanguage && (now - dataCache.timestamp) < dataCache.maxAge) {
-        console.log('✅ Using cached brands data (still fresh)');
-        setBrands(dataCache.brands);
-        setVisible(true);
-        return;
-      }
-
       console.log(`🔄 Fetching fresh brands data from database (${currentLanguage})...`);
       const result = await ApiService.getBrandsLight(currentLanguage);
       
-      if (result.success && result.brands) {
+      console.log('API Result:', result);
+      
+      if (result.success && result.brands && result.brands.length > 0) {
+        console.log(`✅ Loaded ${result.brands.length} brands`);
         setBrands(result.brands);
         // Update cache with timestamp and language
         dataCache.brands = result.brands;
         dataCache.timestamp = Date.now();
         dataCache.language = currentLanguage;
         dataCache.isLoaded = true;
-        console.log(`✅ Loaded ${result.brands.length} brands and cached for 5 minutes`);
+      } else {
+        console.log('⚠️ No brands returned from API');
+        setBrands([]);
       }
     } catch (error) {
       console.error('❌ Error loading brands (light):', error);
+      setBrands([]);
     } finally {
       // Wait for DOM to render before triggering animation
       requestAnimationFrame(() => {

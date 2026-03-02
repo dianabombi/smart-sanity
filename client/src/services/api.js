@@ -262,7 +262,7 @@ class ApiService {
   }
 
   // Brands
-  async getBrands() {
+  async getBrands(language = 'sk') {
     if (!this.isSupabaseAvailable()) {
       return { success: true, brands: this.getFallbackBrands(), source: 'fallback-no-supabase' };
     }
@@ -272,11 +272,27 @@ class ApiService {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds
       
-      const { data, error } = await supabase
+      // Try to select with English columns first
+      let result = await supabase
         .from('brands')
-        .select('*')
+        .select('id, name, description, logo, images, "order", name_en, description_en, created_at')
         .order('order', { ascending: true })
         .abortSignal(controller.signal);
+      
+      let data = result.data;
+      let error = result.error;
+      
+      // If error mentions missing column, fall back to basic columns
+      if (error && (error.message.includes('name_en') || error.message.includes('description_en') || error.code === '42703')) {
+        console.log('English columns not found in getBrands, using basic columns only');
+        result = await supabase
+          .from('brands')
+          .select('*')
+          .order('order', { ascending: true })
+          .abortSignal(controller.signal);
+        data = result.data;
+        error = result.error;
+      }
       
       clearTimeout(timeoutId);
       
@@ -329,8 +345,11 @@ class ApiService {
           return null;
         }).filter(Boolean);
 
+        // Map data to use language-specific fields
         return {
           ...brand,
+          name: language === 'en' && brand.name_en ? brand.name_en : brand.name,
+          description: language === 'en' && brand.description_en ? brand.description_en : brand.description,
           logoFilter: 'none',
           images: validatedImages,
         };
@@ -426,23 +445,21 @@ class ApiService {
     }
 
     try {
-      // Try to select all columns including language-specific ones
-      // If they don't exist, fall back to basic columns
-      let data, error;
+      // Try to select with English columns first
+      let result = await supabase
+        .from('brands')
+        .select('id, name, description, category, name_en, description_en, logo, "order"')
+        .order('order', { ascending: true });
       
-      try {
-        const result = await supabase
+      let data = result.data;
+      let error = result.error;
+      
+      // If error mentions missing column, fall back to basic columns
+      if (error && (error.message.includes('name_en') || error.message.includes('description_en') || error.code === '42703')) {
+        console.log('English columns not found, using basic columns only');
+        result = await supabase
           .from('brands')
-          .select('id, name, description, category, description_sk, description_en, category_sk, category_en, logo, order')
-          .order('order', { ascending: true });
-        data = result.data;
-        error = result.error;
-      } catch (selectError) {
-        // If language columns don't exist yet, try without them
-        console.log('Language columns not found, using basic columns');
-        const result = await supabase
-          .from('brands')
-          .select('id, name, description, category, logo, order')
+          .select('id, name, description, category, logo, "order"')
           .order('order', { ascending: true });
         data = result.data;
         error = result.error;
@@ -458,24 +475,13 @@ class ApiService {
         return { success: true, brands: [], source: 'empty' };
       }
 
-      // For light version we just pass data through with language-specific fields
-      const processedBrands = data.map(brand => {
-        // Use language-specific columns if available, fallback to old columns
-        const description = language === 'en' 
-          ? (brand.description_en || brand.description)
-          : (brand.description_sk || brand.description);
-        
-        const category = language === 'en'
-          ? (brand.category_en || brand.category)
-          : (brand.category_sk || brand.category);
-
-        return {
-          ...brand,
-          description,
-          category,
-          logoFilter: brand.logoFilter || 'none',
-        };
-      });
+      // Map data to use language-specific fields if they exist
+      const processedBrands = data.map(brand => ({
+        ...brand,
+        name: language === 'en' && brand.name_en ? brand.name_en : brand.name,
+        description: language === 'en' && brand.description_en ? brand.description_en : brand.description,
+        logoFilter: brand.logoFilter || 'none',
+      }));
 
       return { success: true, brands: processedBrands, source: 'database' };
     } catch (error) {
