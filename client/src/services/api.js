@@ -448,14 +448,14 @@ class ApiService {
       // Try to select with English columns first
       let result = await supabase
         .from('brands')
-        .select('id, name, description, category, name_en, description_en, logo, "order"')
+        .select('id, name, description, category, name_en, description_en, category_en, logo, "order"')
         .order('order', { ascending: true });
       
       let data = result.data;
       let error = result.error;
       
       // If error mentions missing column, fall back to basic columns
-      if (error && (error.message.includes('name_en') || error.message.includes('description_en') || error.code === '42703')) {
+      if (error && (error.message.includes('name_en') || error.message.includes('description_en') || error.message.includes('category_en') || error.code === '42703')) {
         console.log('English columns not found, using basic columns only');
         result = await supabase
           .from('brands')
@@ -480,6 +480,7 @@ class ApiService {
         ...brand,
         name: language === 'en' && brand.name_en ? brand.name_en : brand.name,
         description: language === 'en' && brand.description_en ? brand.description_en : brand.description,
+        category: language === 'en' && brand.category_en ? brand.category_en : brand.category,
         logoFilter: brand.logoFilter || 'none',
       }));
 

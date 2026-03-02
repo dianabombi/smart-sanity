@@ -3,7 +3,8 @@
 
 ALTER TABLE "brands" 
 ADD COLUMN IF NOT EXISTS name_en TEXT,
-ADD COLUMN IF NOT EXISTS description_en TEXT;
+ADD COLUMN IF NOT EXISTS description_en TEXT,
+ADD COLUMN IF NOT EXISTS category_en TEXT;
 
 -- Verify columns were added
 SELECT column_name, data_type 
