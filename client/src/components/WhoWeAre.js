@@ -16,9 +16,9 @@ const WhoWeAre = () => {
   const [logosCached, setLogosCached] = useState(false);
   const [visible, setVisible] = useState(false);
   
-  // Page headers (editable in admin)
-  const [pageTitle, setPageTitle] = useState(t('whoWeAre.pageTitle'));
-  const [pageSubtitle, setPageSubtitle] = useState(t('whoWeAre.pageSubtitle'));
+  // Page headers - use translations directly
+  const pageTitle = t('whoWeAre.pageTitle');
+  const pageSubtitle = t('whoWeAre.pageSubtitle');
   
   // Background slideshow state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -26,7 +26,6 @@ const WhoWeAre = () => {
 
   useEffect(() => {
     // Load everything in parallel in background - don't wait
-    loadPageHeaders();
     loadContent();
     loadPartnerLogosOptimized();
     loadBackgroundSettings();
@@ -59,22 +58,6 @@ const WhoWeAre = () => {
       console.log(`✅ Showing ${backgroundImages.length} background image(s) immediately`);
     }
   }, [backgroundImages]);
-
-  const loadPageHeaders = async () => {
-    try {
-      const titleResult = await ApiService.getPageContent('who-we-are', 'page-headers', 'title');
-      if (titleResult.success && titleResult.content) {
-        setPageTitle(titleResult.content);
-      }
-
-      const subtitleResult = await ApiService.getPageContent('who-we-are', 'page-headers', 'subtitle');
-      if (subtitleResult.success && subtitleResult.content) {
-        setPageSubtitle(subtitleResult.content);
-      }
-    } catch (error) {
-      console.log('Failed to load page headers, using defaults');
-    }
-  };
 
   const loadBackgroundSettings = async () => {
     try {
