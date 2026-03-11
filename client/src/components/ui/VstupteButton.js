@@ -9,7 +9,16 @@ const VstupteButton = () => {
   return (
     <button 
       onClick={() => navigate('/brands')}
-      className="h-[40px] px-6 border border-gray-300 text-gray-300 rounded-lg hover:border-white hover:text-white transition-colors duration-200 bg-transparent text-lg font-medium w-[220px] flex items-center justify-center"
+      className="h-[40px] px-6 text-gray-300 rounded-lg hover:text-white transition-all duration-200 bg-transparent text-lg font-semibold w-[220px] flex items-center justify-center"
+      style={{
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        boxShadow: '0 0 0 1px rgb(209, 213, 219)'
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 0 0 1px white'}
+      onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 0 0 1px rgb(209, 213, 219)'}
     >
       {t('home.enterButton')}
     </button>

@@ -89,7 +89,7 @@ const Home = () => {
           
           {/* Text Section */}
           <div className="flex flex-col items-center justify-center pt-3 pb-2 tablet:pt-2 tablet:pb-2 laptop:pt-6 laptop:pb-8">
-            <div className="text-gray-300 opacity-0 animate-fadeInSoftUp max-w-3xl mx-auto text-center space-y-1" style={{ fontSize: '22px' }}>
+            <div className="text-gray-300 max-w-3xl mx-auto text-center space-y-1" style={{ fontSize: '22px', WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
               {t('home.subtitle').split('\n').map((line, index) => (
                 <p key={index} className="text-center">{line}</p>
               ))}
